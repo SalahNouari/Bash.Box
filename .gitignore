@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+*.log
+.htaccess
+php.ini
+config.codekit
+wp-config.php
+/shared
+/local-config.php
+/sql-dump-*.sql
+/db-sync
+/content/upgrade/
+/content/uploads/
+/slicetool/
+/media-server/
