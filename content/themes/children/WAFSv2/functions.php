@@ -58,6 +58,15 @@ return '<script>,<style>,<b>,<br>,<em>'; //add whatever tags you want to this st
 add_image_size( 'home-large', 714, 360, TRUE );
 add_image_size( 'home-small', 266, 160, TRUE );
 
+// Set defaults image properties  [ ALIGN | LINK TYPE | SIZE | GZIP ]
+add_action('admin_init', 'lad_image_defaults', 10);
+function lad_image_defaults() {
+	update_option('image_default_align', 'left');		//  file | post | custom | none
+	update_option('image_default_link_type', 'none');	//  left | center | right | none
+	update_option('image_default_size', 'medium');		//	thumbnail | full | medium | large
+	update_option('gzipcompression', '1');				//	0 | 1
+}
+
 //* Remove the site title
 //remove_action( 'genesis_site_title', 'genesis_seo_site_title' ); 
 //* Remove the site description

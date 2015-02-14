@@ -35,6 +35,15 @@ add_theme_support( 'genesis-structural-wraps', array(
 	'footer'
 ));
 
+// Set defaults image properties  [ ALIGN | LINK TYPE | SIZE | GZIP ]
+add_action('admin_init', 'lad_image_defaults', 10);
+function lad_image_defaults() {
+	update_option('image_default_align', 'left');		//  file | post | custom | none
+	update_option('image_default_link_type', 'none');	//  left | center | right | none
+	update_option('image_default_size', 'medium');		//	thumbnail | full | medium | large
+	update_option('gzipcompression', '1');				//	0 | 1
+}
+
 // Don’t Strip HTML from Excerpts or Content Limit Teasers
 add_filter('get_the_content_limit_allowedtags', 'childtheme_custom_allowedtags'); //Just remember to change “childtheme” to the name of your theme.
 function childtheme_custom_allowedtags() { // Remember to change “childtheme” to the name of your theme here too.
