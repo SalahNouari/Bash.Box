@@ -256,7 +256,10 @@ function incsub_support_open_ticket( $ticket_id ) {
 	if ( 5 != $ticket->ticket_status )
 		return true;
 
+	$previous_status = $ticket->ticket_status;
+
 	$result = incsub_support_ticket_transition_status( $ticket_id, 0 );
+	incsub_support_update_ticket_meta( $ticket_id, 'previous_status', $previous_status );
 
 	return $result;
 }
@@ -272,15 +275,32 @@ function incsub_support_ticket_transition_status( $ticket_id, $status ) {
 	if ( ! $ticket )
 		return false;
 
-	$old_status = $ticket->ticket_status;
-	if ( $old_status == $status )
+	$previous_status = $ticket->ticket_status;
+	if ( $previous_status == $status )
 		return false;
 
 	incsub_support_update_ticket( $ticket_id, array( 'ticket_status' => $status ) );
+	incsub_support_update_ticket_meta( $ticket_id, 'previous_status', $previous_status );
 
-	do_action( 'support_system_ticket_transition_status', $status, $old_status, $ticket_id );
+	do_action( 'support_system_ticket_transition_status', $status, $previous_status, $ticket_id );
 
 	return true;
+}
+
+function incsub_support_restore_ticket_previous_status( $ticket_id ) {
+	$ticket = incsub_support_get_ticket( $ticket_id );
+	if ( ! $ticket )
+		return;
+
+	$previous_status = incsub_support_get_ticket_meta( $ticket_id, 'previous_status', true );
+	if ( $previous_status === false ) {
+		incsub_support_open_ticket( $ticket_id );
+	}
+	else {
+		incsub_support_ticket_transition_status( $ticket_id, $previous_status );
+	}
+
+
 }
 
 /**
@@ -582,16 +602,7 @@ function incsub_support_upload_ticket_attachments( $attachments ) {
 	$upload_cap = $current_user->allcaps['unfiltered_upload'];
 	$current_user->allcaps['unfiltered_upload'] = true;
 
-	$allowed_file_types = apply_filters( 'incsub_support_allowed_mime_types', array(
-		'jpg' =>'image/jpg',
-		'jpeg' =>'image/jpeg',
-		'gif' => 'image/gif',
-		'png' => 'image/png',
-		'zip' => 'application/zip',
-		'gz|gzip' => 'application/x-gzip',
-		'rar' => 'application/rar',
-		'pdf' => 'application/pdf'
-	) );
+	$allowed_file_types = incsub_support_get_allowed_mime_types();
 
 	foreach ( $files_keys as $key ) {
 		$file = array(
@@ -613,6 +624,19 @@ function incsub_support_upload_ticket_attachments( $attachments ) {
 	return $files_uploaded;
 }
 
+function incsub_support_get_allowed_mime_types() {
+	return apply_filters( 'incsub_support_allowed_mime_types', array(
+		'jpg' =>'image/jpg',
+		'jpeg' =>'image/jpeg',
+		'gif' => 'image/gif',
+		'png' => 'image/png',
+		'zip' => 'application/zip',
+		'gz|gzip' => 'application/x-gzip',
+		'rar' => 'application/rar',
+		'pdf' => 'application/pdf',
+		'txt' => 'text/plain',
+	) );
+}
 
 
 function incsub_support_get_edit_ticket_admin_url( $ticket_id ) {
@@ -633,4 +657,21 @@ function incsub_support_get_edit_ticket_admin_url( $ticket_id ) {
 		),
 		$network_admin
 	);
+}
+
+
+function incsub_support_get_ticket_meta( $ticket_id, $key = '', $single = false) {
+	return get_metadata( 'support_ticket', $ticket_id, $key, $single );
+}
+
+function incsub_support_add_ticket_meta( $ticket_id, $meta_key, $meta_value, $unique = false ) {
+	return add_metadata( 'support_ticket', $ticket_id, $meta_key, $meta_value, $unique );
+}
+
+function incsub_support_update_ticket_meta( $ticket_id, $meta_key, $meta_value, $prev_value = '' ) {
+	return update_metadata( 'support_ticket', $ticket_id, $meta_key, $meta_value, $prev_value );
+}
+
+function incsub_support_delete_ticket_meta( $ticket_id, $meta_key, $meta_value = '' ) {
+	return delete_metadata( 'support_ticket', $ticket_id, $meta_key, $meta_value );
 }

@@ -6,13 +6,24 @@ class UM_Members {
 		
 		add_filter('pre_user_query', array(&$this, 'custom_order_query') );
 		
+		add_filter('user_search_columns', array(&$this, 'add_display_name'), 99 );
+		
 		add_action('template_redirect', array(&$this, 'access_members'), 555);
 		
 		$this->core_search_fields = array(
 			'user_login',
 			'username',
+			'display_name',
 		);
 		
+	}
+	
+	/***
+	***	@Add display name
+	***/
+	function add_display_name(){
+		$search_columns[] = 'display_name';
+		return $search_columns;
 	}
 	
 	/***
@@ -137,7 +148,7 @@ class UM_Members {
 		
 		$array['total_users'] = (isset( $max_users ) && $max_users && $max_users <= $users->total_users ) ? $max_users : $users->total_users;
 
-		$array['page'] = get_query_var('members_page') ? get_query_var('members_page') : 1;
+		$array['page'] = isset($_REQUEST['members_page']) ? $_REQUEST['members_page'] : 1;
 		
 		$array['total_pages'] = ceil( $array['total_users'] / $profiles_per_page );
 		

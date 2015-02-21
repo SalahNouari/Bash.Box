@@ -143,6 +143,7 @@ class UM_Setup {
 			'_um_login_primary_btn_hover' => '#44b0ec',
 			'_um_login_primary_btn_text' => '#fff',
 			'_um_login_forgot_pass_link' => 1,
+			'_um_login_show_rememberme' => 1,
 			'_um_login_secondary_btn' => 1,
 			'_um_login_secondary_btn_word' => __('Register','ultimatemember'),
 			'_um_login_secondary_btn_color' => '#eee',
@@ -378,12 +379,11 @@ class UM_Setup {
 			
 			$users = get_users( array('fields' => 'ID') );
 			foreach( $users as $id ) {
-				
-				if ( !get_user_meta( $id, 'account_status', true ) ) {
-					update_user_meta( $id, 'account_status', 'approved' );
-				}
-				
+
+				delete_user_meta( $id, 'account_status' );
 				delete_user_meta( $id, 'role' );
+				
+				update_user_meta( $id, 'account_status', 'approved' );
 				
 				if ( !is_super_admin( $id ) ) {
 					if ( is_numeric( $id ) ) {
@@ -397,6 +397,14 @@ class UM_Setup {
 				
 			}
 
+		}
+		
+		if ( !get_option('um_hashed_passwords_fix') ) {
+			update_option('um_hashed_passwords_fix', 1);
+			$users = get_users( array('fields' => 'ID') );
+			foreach( $users as $id ) {
+				delete_user_meta( $id, '_um_cool_but_hard_to_guess_plain_pw' );
+			}
 		}
 		
 	}

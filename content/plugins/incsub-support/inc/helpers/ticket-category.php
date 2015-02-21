@@ -236,7 +236,7 @@ function incsub_support_update_ticket_category( $ticket_category_id, $args = arr
 }
 
 function incsub_support_get_default_ticket_category() {
-	$default_category = wp_cache_get( 'support_system_default_ticket_category', 'support_system_ticket_categories' );
+	$default_category = wp_cache_get( 'support_system_default_ticket_category', 'support_system_ticket_categories' );	     	 	    		   
 
 	if ( $default_category )
 		return $default_category;

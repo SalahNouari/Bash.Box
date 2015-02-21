@@ -22,6 +22,9 @@
 			unset( $changes['hide_in_members'] );
 		}
 
+		// fired on account page, just before updating profile
+		do_action('um_account_pre_update_profile', $changes, um_user('ID') );
+		
 		$ultimatemember->user->update_profile( $changes );
 
 		// delete account
@@ -57,27 +60,27 @@
 	function um_submit_account_errors_hook( $args ) {
 		global $ultimatemember;
 		
-		if ( strlen(trim( $_POST['first_name'] ) ) == 0 ) {
-			$ultimatemember->form->add_error('first_name', 'You must provide your first name');
+		if ( isset($_POST['first_name']) && strlen(trim( $_POST['first_name'] ) ) == 0 ) {
+			$ultimatemember->form->add_error('first_name', __('You must provide your first name','ultimatemember') );
 		}
 		
-		if ( strlen(trim( $_POST['last_name'] ) ) == 0 ) {
-			$ultimatemember->form->add_error('last_name', 'You must provide your last name');
+		if ( isset($_POST['last_name']) && strlen(trim( $_POST['last_name'] ) ) == 0 ) {
+			$ultimatemember->form->add_error('last_name', __('You must provide your last name','ultimatemember') );
 		}
 		
-		if ( strlen(trim( $_POST['user_email'] ) ) == 0 ) {
-			$ultimatemember->form->add_error('user_email', 'You must provide your e-mail');
+		if ( isset($_POST['user_email']) && strlen(trim( $_POST['user_email'] ) ) == 0 ) {
+			$ultimatemember->form->add_error('user_email', __('You must provide your e-mail','ultimatemember') );
 		}
 		
-		if ( !is_email( $_POST['user_email'] ) ) {
-			$ultimatemember->form->add_error('user_email', 'Please provide a valid e-mail');
+		if ( isset($_POST['user_email']) && !is_email( $_POST['user_email'] ) ) {
+			$ultimatemember->form->add_error('user_email', __('Please provide a valid e-mail','ultimatemember') );
 		}
 		
 		$ultimatemember->account->current_tab = 'general';
 		
 		if ( $_POST['current_user_password'] != '' ) {
 			if ( !wp_check_password( $_POST['current_user_password'], um_user('user_pass'), um_user('ID') ) ) {
-				$ultimatemember->form->add_error('current_user_password', 'This is not your password');
+				$ultimatemember->form->add_error('current_user_password', __('This is not your password','ultimatemember') );
 				$ultimatemember->account->current_tab = 'password';
 			} else { // correct password
 				
@@ -108,10 +111,10 @@
 		
 		if ( isset($_POST['um_account_submit']) && $_POST['um_account_submit'] == __('Delete Account','ultimatemember') ) {
 			if ( strlen(trim( $_POST['single_user_password'] ) ) == 0 ) {
-					$ultimatemember->form->add_error('single_user_password', 'You must enter your password');
+					$ultimatemember->form->add_error('single_user_password', __('You must enter your password','ultimatemember') );
 			} else {
 				if ( !wp_check_password( $_POST['single_user_password'], um_user('user_pass'), um_user('ID') ) ) {
-					$ultimatemember->form->add_error('single_user_password', 'This is not your password');
+					$ultimatemember->form->add_error('single_user_password', __('This is not your password','ultimatemember') );
 				}
 			}
 			$ultimatemember->account->current_tab = 'delete';
@@ -211,7 +214,6 @@
 	function um_account_tab__password( $info ) {
 		global $ultimatemember;
 		extract( $info );
-		extract( $info );
 		
 		$output = $ultimatemember->account->get_tab_output('password');
 		
@@ -234,7 +236,6 @@
 	add_action('um_account_tab__notifications', 'um_account_tab__notifications');
 	function um_account_tab__notifications( $info ) {
 		global $ultimatemember;
-		extract( $info );
 		extract( $info );
 		
 		$output = $ultimatemember->account->get_tab_output('notifications');
@@ -314,22 +315,9 @@
 		global $ultimatemember;
 		extract( $args );
 		
-		$tabs[100]['general']['icon'] = 'um-faicon-user';
-		$tabs[100]['general']['title'] = __('Account','ultimatemember');
+		$ultimatemember->account->tabs = apply_filters('um_account_page_default_tabs_hook', $tabs=array() );
 		
-		$tabs[200]['password']['icon'] = 'um-faicon-asterisk';
-		$tabs[200]['password']['title'] = __('Change Password','ultimatemember');
-		
-		$tabs[300]['privacy']['icon'] = 'um-faicon-lock';
-		$tabs[300]['privacy']['title'] = __('Privacy','ultimatemember');
-		
-		$tabs[400]['notifications']['icon'] = 'um-faicon-bell';
-		$tabs[400]['notifications']['title'] = __('Notifications','ultimatemember');
-		
-		$tabs[500]['delete']['icon'] = 'um-faicon-trash-o';
-		$tabs[500]['delete']['title'] = __('Delete Account','ultimatemember');
-		
-		$ultimatemember->account->tabs = apply_filters('um_account_page_default_tabs_hook', $tabs );
+		ksort( $ultimatemember->account->tabs  );
 		
 		?>
 

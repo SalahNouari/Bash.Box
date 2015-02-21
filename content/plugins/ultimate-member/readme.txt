@@ -5,9 +5,9 @@ Contributors: ultimatemember
 Donate link: 
 Tags: access control, author, authors, author profile, comments, community, communities, conditional fields, conditional logic, conditional menus, content protection, custom fields, file uploads, form builder, front-end login, front-end registration, hide wp-admin, login, login page, logged-in users, mandrill, member, members, membership, member directory, profile, profiles, profile builder, registration, restriction, restrict content, role creation, role menus, search filters, sign in, sign up, social network, star ratings, toolbar, user, users, user fields, user profiles, user roles
 Requires at least: 4.1
-Tested up to: 4.1
+Tested up to: 4.1.1
 
-Stable Tag: 1.0.53
+Stable Tag: 1.0.62
 
 License: GNU Version 2 or Any Later Version
 
@@ -123,11 +123,14 @@ Looking for help with Ultimate Member? Join our [community forum](https://ultima
 Ultimate Member has been translated into the following languages:
 
 * English (US)
-* French
-* Spanish
-* German
-* Italian
-* Turkish
+* Español
+* Français
+* Italiano
+* Deutsch
+* Nederlands
+* Suomi
+* Polski
+* Türkçe
 
 == Installation ==
 
@@ -185,6 +188,74 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 16. Screenshot 16
 
 == Changelog ==
+
+= 1.0.62: February 20, 2015 =
+
+* New: added Polish (Polski) language
+* New: added option to disable Name fields from Account page
+* New: added support for custom profile templates selectable from template dropdown
+* Tweak: remove rows with no fields from profile view
+* Tweak: remove empty rows/row headings from profile
+* Fixed: removed plain password user meta key from all users
+* Fixed: issue with image upload when form has errors
+* Fixed: resolved issue with disabling profile menu / tabs
+
+= 1.0.61: February 20, 2015 =
+
+* Tweak: Upload button text is made translatable
+* Fixed: conflicts with Divi theme
+* Fixed: issue with Roles dropdown field
+
+= 1.0.60: February 18, 2015 =
+
+* Tweak: added a protection to prevent wp-admin lockout for admin users
+* Tweak: new hook for account page form submitting (for developers)
+* Tweak: added a few missing translations
+* Fixed: issue with roles dropdown not saving its state
+* Fixed: issue with roles dropdown when made required in form
+* Fixed: issue with tabbing on form fields
+
+= 1.0.59: February 17, 2015 =
+
+* New added Finnish language (fi_FI)
+* Tweak: show e-mail column in users backend
+* Fixed: issue with showing members directory on frontpage
+
+= 1.0.58: February 16, 2015 =
+
+* Fixed: display name as search field in member directory
+* Fixed: translation issues in backend settings
+* Fixed: issue with non-english letters in display names
+* Fixed: bug with multiple default values for multi-select and checkbox fields
+* Fixed: bug with multiple conditional logic based on different checkbox values
+
+= 1.0.57: February 16, 2015 =
+
+* Tweak: Italian language up-to-date
+* Fixed: issue with registration where it can trigger a php warning
+* Fixed: some translation issues
+
+= 1.0.56: February 15, 2015 =
+
+* Fixed: issue with permalink changes
+
+= 1.0.55: February 15, 2015 =
+
+* New: added Dutch (Nederlands) language
+* New: show user registration/joined date in profile and/or member directory
+* New: added facebook meta tags on user profiles (You have to disable facebook og tags in your SEO plugin)
+* Tweak: sort users by default in "backend" by newest users first
+* Tweak: added a close icon to profile and account notices
+* Fixed: changed all time features to reflect WordPress installation time
+* Fixed: timestamp on registration info shows form submission date/day
+* Fixed: updated language files and new translation words
+
+= 1.0.54: February 15, 2015 =
+
+* New: added a remember me checkbox to login forms by default (optional)
+* Tweak: keep your users signed in even if they close browser (optional)
+* Tweak: minor css changes
+* Fixed: bug with double redirects (causing incorrect loop) after login on some sites
 
 = 1.0.53: February 14, 2015 =
 

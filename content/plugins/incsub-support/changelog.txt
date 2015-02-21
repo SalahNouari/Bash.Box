@@ -3,12 +3,23 @@ Author: WPMU DEV
 Tags: support, ticket, faq
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 2.0.4.1
+Stable tag: 2.1
 
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.1 - 2015-02-03
+----------------------------------------------------------------------
+- Enhancement: FAQs Frontend.
+- Enhancement: Added widgets in Frontend to update ticket details.
+- Enhancement: Cache system reviewed.
+- Enhancement: Edit Ticket Admin page revamped.
+- Enhancement: PHP <5.4 compatibility added.
+- Enhancement: New Tickets meta table.
+- Fixed: Ticket status issue when inserting a reply.
+- Other minor fixes.
 
 2.0.4.1 - 2015-01-21
 ----------------------------------------------------------------------
@@ -278,4 +289,4 @@ to hide tickets from users which did not opened them.
 * Initial Release.
 
 
-133620-1422153956-au
+133620-1424499866-au

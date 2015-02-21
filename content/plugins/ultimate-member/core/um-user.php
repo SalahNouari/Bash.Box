@@ -171,9 +171,9 @@ class UM_User {
 	/***
 	***	@Automatic login by user id
 	***/
-	function auto_login( $user_id ) {
+	function auto_login( $user_id, $rememberme = 0 ) {
 		wp_set_current_user($user_id);
-		wp_set_auth_cookie($user_id);
+		wp_set_auth_cookie($user_id, $rememberme );
 	}
 	
 	/***
@@ -265,9 +265,10 @@ class UM_User {
 		}
 		
 		$this->set_status('approved');
-		$this->delete_meta('account_secret_hash');
-		
 		$ultimatemember->mail->send( um_user('user_email'), $email_tpl );
+		
+		$this->delete_meta('account_secret_hash');
+		$this->delete_meta('_um_cool_but_hard_to_guess_plain_pw');
 	}
 	
 	/***

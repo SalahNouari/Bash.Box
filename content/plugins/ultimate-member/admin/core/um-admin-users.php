@@ -16,6 +16,8 @@ class UM_Admin_Users {
 		
 		add_filter('views_users', array(&$this, 'views_users') );
 		
+		add_filter('pre_user_query', array(&$this, 'sort_by_newest') );
+		
 		add_filter('pre_user_query', array(&$this, 'custom_users_filter') );
 		
 		add_filter('user_row_actions', array(&$this, 'user_row_actions'), 10, 2);
@@ -43,6 +45,27 @@ class UM_Admin_Users {
 
 		return $actions;
 
+	}
+	
+	/***
+	***	@sort users by newest first
+	***/
+	function sort_by_newest( $query ){
+		global $pagenow;
+
+		if ( is_admin() && $pagenow == 'users.php' ) {
+			
+			global $wpdb;
+
+			if (!isset($_REQUEST['orderby'])) {
+				$query->query_vars["order"] = 'desc';
+				$query->query_orderby = " ORDER BY user_registered ".($query->query_vars["order"] == "desc" ? "desc " : "asc ");//set sort order
+			}
+
+		}
+
+		return $query;
+		
 	}
 
 	/***
@@ -294,14 +317,7 @@ class UM_Admin_Users {
 	
 		$admin = new UM_Admin_Metabox();
 		
-		unset($columns['posts']);
-		unset($columns['email']);
-		
 		$columns['um_role'] = __('Community Role','ultimatemember') . $admin->_tooltip( __('This is the membership role set by Ultimate Member plugin','ultimatemember') );
-		
-		$columns['role'] = __('WordPress Role','ultimatemember') . $admin->_tooltip( __('This is the membership role set by WordPress','ultimatemember') );
-		
-		$columns['um_status'] = __('Status','ultimatemember') . $admin->_tooltip( __('This is current user status in your membership site','ultimatemember') );
 
 		return $columns;
 	}
@@ -310,20 +326,7 @@ class UM_Admin_Users {
 	***	@show user columns
 	***/
 	function manage_users_custom_column($value, $column_name, $user_id) {
-	
 		global $ultimatemember;
-
-		if ( 'um_status' == $column_name ) {
-		
-			um_fetch_user( $user_id );
-			if ( um_user('account_status') == 'approved' ) {
-				$output = '<span class="um-admin-tag small approved">'.um_user('account_status_name').'</span>';
-			} else {
-				$output = '<span class="um-admin-tag small pending">'.um_user('account_status_name').'</span>';
-			}
-			return $output;
-			
-		}
 
 		if ( $this->custom_role == $column_name ) {
 		

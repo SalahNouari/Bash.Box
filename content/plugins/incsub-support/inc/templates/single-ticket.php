@@ -3,6 +3,12 @@
 		<div class="support-system-ticket row <?php echo esc_attr( incsub_support_get_the_ticket_class() ); ?>" id="support-system-ticket-<?php echo incsub_support_get_the_ticket_id(); ?>">
 			<div class="large-12 columns">
 				<h1 class="text-center support-system-ticket-title"><?php echo incsub_support_get_the_ticket_title(); ?></h1>
+
+				<?php if ( incsub_support_is_ticket_closed( incsub_support_get_the_ticket_id() ) ): ?>
+					<div data-alert class="alert-box alert">
+						<?php _e( 'This ticket is closed', INCSUB_SUPPORT_LANG_DOMAIN ); ?>
+					</div>
+				<?php endif; ?>
 				<ul class="row">
 					<li class="small-3 large-2 columns">
 						<?php echo get_avatar( incsub_support_get_the_author_id(), 96 ); ?><br/>
@@ -39,13 +45,36 @@
 				<?php incsub_support_ticket_replies(); ?>
 			</div>
 
-			<div class="panel support-system-ticket-details large-4 columns">
-				<h2><?php _e( 'Ticket details', INCSUB_SUPPORT_LANG_DOMAIN ); ?></h2>
-				<ul>
-					<li><?php echo '<strong>' . __( 'Category:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_category(); ?></li>
-					<li><?php echo '<strong>' . __( 'Priority:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_priority(); ?></li>
-					<li><?php echo '<strong>' . __( 'Status:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_status(); ?></li>
-				</ul>
+			<div class="large-4 columns">
+				<div class="row">
+					<?php if ( ! incsub_support_is_staff() ): ?>
+
+						<?php
+							echo incsub_support_widget(
+								array( 'class' => 'panel support-system-ticket-details large-12 columns', 'title' => __( 'Ticket Details', INCSUB_SUPPORT_LANG_DOMAIN ) ),
+								'incsub_support_the_ticket_details_box'
+							);
+						?>
+					<?php else: ?>
+						<?php
+							echo incsub_support_widget(
+								array( 'class' => 'panel support-system-ticket-details support-system-staff-box large-12 columns', 'title' => __( 'Edit Ticket Details', INCSUB_SUPPORT_LANG_DOMAIN ) ),
+								'incsub_support_the_staff_box',
+								array( 'submit_class' => 'button expand' )
+							);
+						?>
+					<?php endif; ?>
+
+					<?php if ( incsub_support_current_user_can( 'close_ticket', incsub_support_get_the_ticket_id() ) ): ?>
+						<?php
+							echo incsub_support_widget(
+								array( 'class' => 'panel support-system-close-ticket large-12 columns' ),
+								'incsub_support_the_open_close_box',
+								array( 'submit_class' => 'button tiny' )
+							);
+						?>
+					<?php endif; ?>
+				</div>
 			</div>
 		</div>
 	<?php endif; ?>

@@ -37,7 +37,7 @@ class Incsub_Support_Settings {
 
 	public function get_default_settings() {
 		$plugin = incsub_support();
-		$super_admins = $plugin::get_super_admins();
+		$super_admins = call_user_func( array( $plugin, 'get_super_admins' ) );
 		return apply_filters( 'support_system_default_settings', array(
 			'incsub_support_menu_name' => __( 'Support', INCSUB_SUPPORT_LANG_DOMAIN ),
 			'incsub_support_from_name' => get_bloginfo( 'blogname' ),
@@ -50,6 +50,7 @@ class Incsub_Support_Settings {
 			'incsub_support_main_super_admin' => key( $super_admins ), //First of the Super Admins
 			'incsub_support_support_page' => 0,
 			'incsub_support_create_new_ticket_page' => 0,
+			'incsub_support_faqs_page' => 0,
 			'incsub_support_blog_id' => false,
 			'incsub_support_activate_front' => false,
 			'incsub_support_use_default_settings' => true
@@ -145,7 +146,7 @@ class Incsub_Support_Settings {
 	}
 
 	function set_front_stylesheet( $stylesheet ) {
-		if ( ! incsub_support_is_support_page() && ! incsub_support_is_new_ticket_page() )
+		if ( ! is_support_system() )
 			return false;
 
 		if ( $this->get( 'incsub_support_use_default_settings' ) )

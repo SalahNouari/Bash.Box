@@ -3,7 +3,7 @@
 class Incsub_Support_Welcome_Menu extends Incsub_Support_Admin_Menu {
 
 	public function add_menu() {
-		$this->menu_title = sprintf( __( 'Welcome to Support System %s', INCSUB_SUPPORT_LANG_DOMAIN ), incsub_support_get_version() );	     	 	    		   
+		$this->menu_title = sprintf( __( 'Welcome to Support System %s', INCSUB_SUPPORT_LANG_DOMAIN ), incsub_support_get_version() );
 		$this->page_id = add_dashboard_page(
 			$this->menu_title,
 			$this->menu_title,

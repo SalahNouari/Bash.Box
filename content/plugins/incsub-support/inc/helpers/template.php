@@ -49,7 +49,7 @@ function support_system_get_template_locations() {
 }
 
 function incsub_support_get_the_ticket_attachments() {
-	$ticket_id = incsub_support()->query->ticket->ticket_id;
+	$ticket_id = incsub_support()->query->item->ticket_id;
 	$ticket = incsub_support_get_ticket( $ticket_id );
 
 	if ( ! $ticket )
@@ -61,12 +61,16 @@ function incsub_support_get_the_ticket_attachments() {
 }
 
 function incsub_support_ticket_replies() {
-	$ticket_id = incsub_support()->query->ticket->ticket_id;
+	$ticket_id = incsub_support()->query->item->ticket_id;
 	incsub_support_get_template( 'ticket-replies', $ticket_id );
 }
 
 function incsub_support_tickets_list_nav() {
 	incsub_support_get_template( 'tickets-nav' );
+}
+
+function incsub_support_faqs_nav() {
+	incsub_support_get_template( 'faqs-nav' );
 }
 
 function incsub_support_reply_form() {
@@ -86,7 +90,7 @@ function incsub_support_reply_form() {
 }
 
 function incsub_support_list_replies( $args = array() ) {
-	$replies = incsub_support()->query->ticket->get_replies();
+	$replies = incsub_support()->query->item->get_replies();
 
 	// Remove the main reply
 	unset( $replies[0] );
@@ -166,23 +170,46 @@ function incsub_support_get_the_reply_attachments() {
 	return $ticket_reply->attachments;
 }
 
-function incsub_support_the_category_filter( $class = '' ) {
+function incsub_support_the_ticket_category_filter( $class = '' ) {
 	$selected = '';
-	if ( ! empty( $_REQUEST['ticket-cat'] ) && incsub_support_get_ticket_category( absint(  $_REQUEST['ticket-cat'] ) ) )
-		$selected = absint( $_REQUEST['ticket-cat'] );
+	if ( ! empty( $_REQUEST['cat-id'] ) && incsub_support_get_ticket_category( absint(  $_REQUEST['cat-id'] ) ) )
+		$selected = absint( $_REQUEST['cat-id'] );
 
 	$args = array(
 		'class' => $class,
-		'selected' => $selected
+		'selected' => $selected,
+		'name' => 'cat-id'
 	);
 
 	incsub_support_ticket_categories_dropdown( $args );
 }
 
-function incsub_support_the_search_input( $class = '' ) {
+function incsub_support_the_faq_category_filter( $class = '' ) {
+	$selected = '';
+	if ( ! empty( $_REQUEST['cat-id'] ) && incsub_support_get_faq_category( absint( $_REQUEST['cat-id'] ) ) )
+		$selected = absint( $_REQUEST['cat-id'] );
+
+	$args = array(
+		'class' => $class,
+		'selected' => $selected,
+		'name' => 'cat-id'
+	);
+
+	incsub_support_faq_categories_dropdown( $args );
+}
+
+function incsub_support_the_search_input( $args = array() ) {
+	$defaults = array(
+		'class' => '',
+		'placeholder' => __( 'Search', INCSUB_SUPPORT_LANG_DOMAIN )
+	);
+
+	$args = wp_parse_args( $args, $defaults );
+	extract( $args );
+
 	$search = ! empty( $_REQUEST['support-system-s'] ) ? stripslashes( $_REQUEST['support-system-s'] ) : '';
 	?>
-		<input type="text" placeholder="<?php esc_attr_e( 'Search tickets', INCSUB_SUPPORT_LANG_DOMAIN ); ?>" name="support-system-s" class="<?php echo esc_attr( $class ); ?>" value="<?php echo esc_attr( $search ); ?>"/>
+		<input type="text" placeholder="<?php esc_attr_e( $placeholder ); ?>" name="support-system-s" class="<?php echo esc_attr( $class ); ?>" value="<?php echo esc_attr( $search ); ?>"/>
 	<?php
 }
 
@@ -278,7 +305,7 @@ function incsub_support_paginate_links( $args = '' ) {
 }
 
 function incsub_support_the_ticket_badges( $args = array() ) {
-	$ticket = incsub_support()->query->ticket;
+	$ticket = incsub_support()->query->item;
 
 	$defaults = array(
 		'badge_base_class' => 'support-system-badge',
@@ -318,7 +345,7 @@ function incsub_support_editor( $type ) {
 }
 
 function incsub_support_reply_form_fields() {
-	$ticket = incsub_support()->query->ticket;
+	$ticket = incsub_support()->query->item;
 	wp_nonce_field( 'support-system-submit-reply-' . $ticket->ticket_id . '-' . get_current_user_id() . '-' . get_current_blog_id() );
 	?>
 		<input type="hidden" name="support-system-reply-fields[user]" value="<?php echo get_current_user_id(); ?>" />
@@ -373,4 +400,144 @@ function incsub_support_reply_form_errors() {
 	incsub_support_get_errors( 'support-system-reply-form' );
 }
 
+function incsub_support_widget( $widget_args, $callback, $callback_args = array() ) {
+	if ( ! function_exists( $callback ) )
+		return '';
 
+	$defaults = array(
+		'title' => '',
+		'class' => 'panel'
+	);
+
+	$widget_args = wp_parse_args( $widget_args, $defaults );
+	extract( $widget_args );
+
+	$class .= ' support-system-widget';
+	ob_start();
+	?>
+		<div class="<?php echo esc_attr( $class ); ?>">
+			<?php if ( $title ): ?>
+				<h2><?php echo esc_html( $title ); ?></h2>
+			<?php endif; ?>
+			<?php call_user_func( $callback, $callback_args ); ?>
+		</div>
+	<?php
+
+	return ob_get_clean();
+}
+
+
+function incsub_support_the_staff_box( $args = array() ) {
+	if ( ! incsub_support_is_staff() )
+		return;
+
+	$defaults = array(
+		'class' => 'support-system-staff-box',
+		'submit_class' => 'button'
+	);
+	$args = wp_parse_args( $args, $defaults );
+
+	extract( $args );
+
+	?>
+		<form action="" method="post">
+			<ul>
+				<li>
+					<label>
+						<?php _e( 'Category', INCSUB_SUPPORT_LANG_DOMAIN ); ?>
+						<?php incsub_support_ticket_categories_dropdown( array( 'show_empty' => false, 'selected' => incsub_support_get_the_ticket_category_id() ) ); ?>
+					</label>
+					<label>
+						<?php _e( 'Priority', INCSUB_SUPPORT_LANG_DOMAIN ); ?>
+						<?php incsub_support_priority_dropdown( array( 'show_empty' => false, 'selected' => incsub_support_get_the_ticket_priority_id() ) ); ?>
+					</label>
+					<label>
+						<?php _e( 'Assign to', INCSUB_SUPPORT_LANG_DOMAIN ); ?>
+						<?php incsub_support_super_admins_dropdown(
+							array(
+								'show_empty' => __( 'Not yet assigned', INCSUB_SUPPORT_LANG_DOMAIN ),
+								'name' => 'ticket-staff' ,
+								'selected' => incsub_support_the_ticket_staff_name()
+							)
+						); ?>
+					</label>
+				</li>
+				<li>
+					<?php echo '<strong>' . __( 'Status:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_status(); ?>
+				</li>
+			</ul>
+			<p class="support-system-staff-box-submit-wrap">
+				<?php wp_nonce_field( 'submit-ticket-details-' . incsub_support_get_the_ticket_id() ); ?>
+				<input type="hidden" name="ticket_id" value="<?php echo incsub_support_get_the_ticket_id(); ?>" />
+				<input type="submit" class="<?php echo esc_attr( $submit_class ); ?>" name="submit-ticket-details" value="<?php esc_attr_e( 'Update', INCSUB_SUPPORT_LANG_DOMAIN ); ?>" />
+			</p>
+		</form>
+	<?php
+}
+
+function incsub_support_the_ticket_details_box( $args = array() ) {
+	?>
+		<ul>
+			<li><?php echo '<strong>' . __( 'Category:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_category(); ?></li>
+			<li><?php echo '<strong>' . __( 'Priority:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_priority(); ?></li>
+			<li><?php echo '<strong>' . __( 'Status:', INCSUB_SUPPORT_LANG_DOMAIN ) . '</strong> ' . incsub_support_get_the_ticket_status(); ?></li>
+		</ul>
+	<?php
+}
+
+function incsub_support_the_open_close_box( $args = array() ) {
+
+	$defaults = array(
+		'class' => 'support-system-staff-box',
+		'submit_class' => 'button'
+	);
+	$args = wp_parse_args( $args, $defaults );
+
+	extract( $args );
+
+	$ticket = incsub_support()->query->item;
+
+	?>
+	<form action="" method="post">
+		<p>
+			<input type="checkbox" id="close-ticket" name="close-ticket" <?php checked( incsub_support_is_ticket_closed( $ticket->ticket_id ) ); ?> />
+			<label for="close-ticket"><strong><?php _e( 'Close ticket', INCSUB_SUPPORT_LANG_DOMAIN ); ?></strong></label>
+
+			<?php wp_nonce_field( 'submit-close-ticket-' . incsub_support_get_the_ticket_id() ); ?>
+			<input type="hidden" name="ticket_id" value="<?php echo incsub_support_get_the_ticket_id(); ?>" />
+			<input type="submit" class="<?php echo esc_attr( $submit_class ); ?>" name="submit-close-ticket" value="<?php esc_attr_e( 'Update', INCSUB_SUPPORT_LANG_DOMAIN ); ?>" />
+		</p>
+	</form>
+	<?php
+}
+
+function incsub_support_new_ticket_form_link( $class = '' ) {
+	$new_ticket_page = incsub_support_get_setting( 'incsub_support_create_new_ticket_page' );
+
+	if ( ! $new_ticket_page )
+		return '';
+
+	$permalink = get_permalink( $new_ticket_page );
+	if ( $permalink ) {
+		return '<a class="' . esc_attr( $class ) . '" href="' . esc_url( $permalink ) . '" title="' . esc_attr__( 'Submit new ticket', INCSUB_SUPPORT_LANG_DOMAIN ) . '">' . __( 'Submit new ticket', INCSUB_SUPPORT_LANG_DOMAIN ) . '</a>';
+	}
+
+	return '';
+}
+
+function incsub_support_the_faq_vote_box( $faq_id = false ) {
+	if ( ! $faq_id )
+		$faq_id = incsub_support_get_the_faq_id();
+
+	if ( ! incsub_support_get_faq( $faq_id ) )
+		return;
+
+	?>
+	<div class="support-system-faq-vote-wrap">
+		<h4><?php _e( 'Was this solution helpful?', INCSUB_SUPPORT_LANG_DOMAIN ); ?></h4>
+		<button class="support-system-faq-vote vote-button button tiny success" data-faq-id="<?php echo incsub_support_get_the_faq_id(); ?>" data-vote="yes"><?php _e( 'Yes', INCSUB_SUPPORT_LANG_DOMAIN ); ?></button>
+		<button class="support-system-faq-vote vote-button button tiny alert" data-faq-id="<?php echo incsub_support_get_the_faq_id(); ?>" data-vote="no"><?php _e( 'No', INCSUB_SUPPORT_LANG_DOMAIN ); ?></button>
+		<span class="support-system-spinner"></span>
+	</div>
+	<?php
+}

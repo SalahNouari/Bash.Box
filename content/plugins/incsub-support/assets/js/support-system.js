@@ -58,7 +58,7 @@
 		version: '2.0',
 		init: function() {
 			var filter_button = $( 'input[name="support-system-submit-filter"]' );
-			var categories_dropdown = $( '#ticket-cat' );
+			var categories_dropdown = $( '#cat-id' );
 			var filter_form = $( '#support-system-filter' );
 
 			if ( ! filter_form.length || ! categories_dropdown.length || ! filter_button.length )
@@ -89,7 +89,8 @@
 			files_list_id: 'support-attachments-list',
 			remove_file_title: 'Remove file',
 			remove_link_class: '',
-			remove_link_text: '[x]'
+			remove_link_text: '[x]',
+			description: ''
 		},
 
 		init : function (scope, options) {
@@ -127,6 +128,7 @@
 				$(this)
 					.append( list )
 					.append( button )
+					.append( settings.description )
 					
 			});
 	      	
@@ -183,8 +185,16 @@
 	Support_System.libs.faqs = {
 		name: 'Support System FAQS',
 		version: '2.0',
+		defaults: {
+			spinner_class: 'support-system-spinner'		
+		},
 
-		init: function() {
+		init: function(options) {
+			var self = this;
+	    	this.settings = this.settings || $.extend({}, this.defaults, options );
+
+	    	var settings = this.settings;
+
 			$( '.vote-button' ).click( function(e) {
 				e.preventDefault();
 				var vote = $(this).data('vote');
@@ -195,13 +205,18 @@
 				var loader = parent.find('img');
 				loader.show();
 
+				var spinner = $(this).siblings('.' + settings.spinner_class);
+				spinner.css('display','inline-block');
+
 				var data = {
 					vote: vote,
 					faq_id: faq_id,
 					action: 'vote_faq_question'
 				}
-				$.post( ajaxurl, data, function(response) {
+
+				$.post( support_system_strings.ajaxurl, data, function(response) {
 					loader.hide();
+					spinner.hide();
 				});
 			});
 
@@ -233,3 +248,4 @@
 		}
 	};
 }(jQuery, window, window.document));
+

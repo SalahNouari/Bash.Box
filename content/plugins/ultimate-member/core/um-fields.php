@@ -10,6 +10,24 @@ class UM_Fields {
 	}
 	
 	/***
+	***	@standard checkbox field
+	***/
+	function checkbox( $id, $title ) {
+		?>
+		
+		<div class="um-field um-field-c">
+			<div class="um-field-area">
+				<label class="um-field-checkbox active">
+					<input type="checkbox" name="<?php echo $id; ?>" value="1" checked /><span class="um-field-checkbox-state"><i class="um-icon-android-checkbox-outline"></i></span>
+					<span class="um-field-checkbox-option"> <?php echo $title; ?></span>
+				</label>
+			</div>
+		</div>
+		
+		<?php
+	}
+	
+	/***
 	***	@show user social links
 	***/
 	function show_social_urls(){
@@ -324,6 +342,9 @@ class UM_Fields {
 	function field_value( $key, $default = false, $data = null ) {
 		global $ultimatemember;
 		
+		if ( isset($_SESSION) && isset($_SESSION['um_social_profile'][$key]) )
+			return $_SESSION['um_social_profile'][$key];
+		
 		$type = (isset($data['type']))?$data['type']:'';
 		
 		// preview in backend
@@ -385,6 +406,10 @@ class UM_Fields {
 					return true;
 				}
 				
+				if ( strstr( $data['default'], ', ') ) {
+					$data['default'] = explode(', ', $data['default']);
+				}
+				
 				if ( isset($data['default']) && !is_array($data['default']) && $data['default'] == $value ) {
 					return true;
 				}
@@ -395,7 +420,7 @@ class UM_Fields {
 			
 			} else {
 			
-				if ( isset( $ultimatemember->form->post_form[$key] ) &&$value == $ultimatemember->form->post_form[$key] ) {
+				if ( isset( $ultimatemember->form->post_form[$key] ) && $value == $ultimatemember->form->post_form[$key] ) {
 					return true;
 				}
 			
@@ -747,7 +772,7 @@ class UM_Fields {
 					$array['allowed_types'] = implode(',',$array['allowed_types']);
 				}
 				if (!isset($array['upload_text'])) $array['upload_text'] = '';
-				if (!isset($array['button_text'])) $array['button_text'] = __('Upload');
+				if (!isset($array['button_text'])) $array['button_text'] = __('Upload','ultimatemember');
 				if (!isset($array['extension_error'])) $array['extension_error'] =  "Sorry this is not a valid image.";
 				if (!isset($array['max_size_error'])) $array['max_size_error'] = "This image is too large!";
 				if (!isset($array['min_size_error'])) $array['min_size_error'] = "This image is too small!";
@@ -768,7 +793,7 @@ class UM_Fields {
 					$array['allowed_types'] = implode(',',$array['allowed_types']);
 				}
 				if (!isset($array['upload_text'])) $array['upload_text'] = '';
-				if (!isset($array['button_text'])) $array['button_text'] = __('Upload');
+				if (!isset($array['button_text'])) $array['button_text'] = __('Upload','ultimatemember');
 				if (!isset($array['extension_error'])) $array['extension_error'] =  "Sorry this is not a valid file.";
 				if (!isset($array['max_size_error'])) $array['max_size_error'] = "This file is too large!";
 				if (!isset($array['min_size_error'])) $array['min_size_error'] = "This file is too small!";
@@ -823,11 +848,15 @@ class UM_Fields {
 		if ( !um_can_view_field( $data ) ) return;
 		if ( !um_can_edit_field( $data ) ) return;
 		
-		// disable these fields in profile edit only
+		// fields that need to be disabled in edit mode (profile)
 		if ( in_array( $key, array('user_email','username','user_login','user_password') ) && $this->editing == true && $this->set_mode == 'profile' ) {
 			return;
 		}
 		
+		// forbidden in edit mode?
+		if ( isset( $data['edit_forbidden'] ) ) return;
+		
+		// required option
 		if ( isset( $data['required_opt'] ) ) {
 			$opt = $data['required_opt'];
 			if ( um_get_option( $opt[0] ) != $opt[1] ) {
@@ -835,12 +864,14 @@ class UM_Fields {
 			}
 		}
 		
+		// required user permission
 		if ( isset( $data['required_perm'] ) ) {
 			if ( !um_user( $data['required_perm'] ) ) {
 				return;
 			}
 		}
 		
+		// do not show passwords
 		if ( isset( $ultimatemember->user->preview ) && $ultimatemember->user->preview ) {
 			if ( $data['type'] == 'password' ){
 				return;
@@ -848,7 +879,6 @@ class UM_Fields {
 		}
 
 		/* Begin by field type */
-
 		switch( $type ) {
 			
 			/* Default: Integration */
@@ -987,7 +1017,7 @@ class UM_Fields {
 						$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="'.$key.'">';
 								
 								if ( isset( $data['label'] ) ) {
-								$output .= $this->field_label( sprintf(__('Confirm New %s','ultimatemember'), $data['label'] ), $key, $data);
+								$output .= $this->field_label( sprintf(__('Confirm %s','ultimatemember'), $data['label'] ), $key, $data);
 								}
 								
 								$output .= '<div class="um-field-area">';
@@ -1172,9 +1202,17 @@ class UM_Fields {
 					
 					if ( $this->field_value( $key, $default, $data ) ) {
 					
+						$uri = um_user_uploads_uri() . $this->field_value( $key, $default, $data );
+						
+						if ( isset( $ultimatemember->form->errors ) && !empty( $ultimatemember->form->errors ) ) {
+							if ( isset( $this->set_mode ) && $this->set_mode == 'register' ) {
+								$uri = $this->field_value( $key, $default, $data );
+							}
+						}
+						
 						$output .= '<div class="um-single-image-preview show '. $crop_class .'" data-crop="'.$crop_data.'" data-key="'.$key.'">
 								<a href="#" class="cancel"><i class="um-icon-close"></i></a>
-								<img src="' . um_user_uploads_uri() . $this->field_value( $key, $default, $data ) . '" alt="" />
+								<img src="' . $uri . '" alt="" />
 							</div><a href="#" data-modal="um_upload_single" data-modal-size="'.$modal_size.'" data-modal-copy="1" class="um-button um-btn-auto-width">'. __('Change photo') . '</a>';
 						
 					} else {
@@ -1342,6 +1380,22 @@ class UM_Fields {
 							$options = $ultimatemember->builtin->get ( 'countries' );
 						}
 						
+						// role field
+						if ( $form_key == 'role' ) {
+		
+							global $wpdb;
+							foreach($options as $key => $val ) {
+								$val = (string) $val;
+								$val = trim( $val );
+								$post_id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'um_role' AND post_title = '$val'");
+								$_role = get_post($post_id);
+								$new_roles[$_role->post_name] = $_role->post_title;
+								wp_reset_postdata();
+							}
+		
+							$options = $new_roles;
+						}
+						
 						// add an empty option!
 						$output .= '<option value=""></option>';
 						
@@ -1357,7 +1411,7 @@ class UM_Fields {
 							}
 							
 							$output .= '<option value="'.$option_value.'" ';
-							if ( $this->is_selected($key, $option_value, $data) ) { 
+							if ( $this->is_selected($form_key, $option_value, $data) ) { 
 								$output.= 'selected';
 							}
 							$output .= '>'.$v.'</option>';
@@ -1440,7 +1494,23 @@ class UM_Fields {
 						}
 						
 						$output .= '<div class="um-field-area">';
-							
+
+						// role field
+						if ( $form_key == 'role' ) {
+		
+							global $wpdb;
+							foreach($options as $key => $val ) {
+								$val = (string) $val;
+								$val = trim( $val );
+								$post_id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'um_role' AND post_title = '$val'");
+								$_role = get_post($post_id);
+								$new_roles[$_role->post_name] = $_role->post_title;
+								wp_reset_postdata();
+							}
+		
+							$options = $new_roles;
+						}
+						
 						// add options
 						$i = 0;
 
@@ -2107,7 +2177,10 @@ class UM_Fields {
 				
 		// show the heading
 		if ( $heading ) {
-					
+
+			$heading_background_color = (isset($heading_background_color))?$heading_background_color:'';
+			$heading_text_color = (isset($heading_text_color))?$heading_text_color:'';
+			
 			if ( $heading_background_color ) {
 				$css_heading_background_color = 'background-color: ' . $heading_background_color .';';
 				$css_heading_padding = 'padding: 10px 15px;';
@@ -2117,7 +2190,7 @@ class UM_Fields {
 			if ( $borderradius ) $css_heading_borderradius = 'border-radius: ' . $borderradius . ' ' . $borderradius . ' 0px 0px;';
 					
 			$output .= '<div class="um-row-heading" style="' . $css_heading_background_color . $css_heading_padding . $css_heading_text_color . $css_heading_borderradius . '">';
-			if ( $icon ) $output .= '<span class="um-row-heading-icon"><i class="' . $icon . '"></i></span>';
+			if ( isset($icon) ) $output .= '<span class="um-row-heading-icon"><i class="' . $icon . '"></i></span>';
 			$output .= $heading_text .'</div>';
 					
 		} else {

@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/avatars
 Description: Allows users to upload 'user avatars' and 'blog avatars' which then can appear in comments and blog / user listings around the site
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
-Version: 4.0.1
+Version: 4.0.2
 Network: true
 Text Domain: avatars
 WDP ID: 10
@@ -41,6 +41,9 @@ define( 'AVATARS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) . 'avatars-files/' );
 define( 'AVATARS_PLUGIN_URL', plugin_dir_url( __FILE__ ) . 'avatars-files/' );
 
 require_once( AVATARS_PLUGIN_DIR . 'helpers.php' );
+
+if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+	include_once( 'avatars-files/ajax.php' );
 
 global $wpmudev_notices;
 $wpmudev_notices[] = array( 'id'=> 10,'name'=> 'Avatars', 'screens' => array( 'settings_page_blog-avatar', 'users_page_user-avatar', 'settings_page_edit-user-avatar-network' ) );
@@ -121,6 +124,14 @@ class Avatars {
 
 	}
 
+	public function get_avatar_dir() {
+		return $this->avatars_dir;
+	}
+
+	public function get_avatar_url() {
+		return $this->avatars_url;
+	}
+
 	public function activate() {
 		update_site_option( 'avatars_plugin_version', $this->current_version );
 	}
@@ -197,7 +208,7 @@ class Avatars {
 						if( $wp_filesystem->delete( WP_CONTENT_DIR . '/avatars', true ) ) // attempt delete of old folder
 							$message = sprintf( __( 'The Avatars plugin now store files in %s. Your old folder has been moved.', 'avatars' ), $this->avatars_dir );
 						else
-							$message = sprintf( __( 'The Avatars plugin now store files in %s. Your old folder has been copied. Please verify that everything is working fine and delete the old folder manually.', 'avatars' ), $this->avatars_dir );	     	  								 
+							$message = sprintf( __( 'The Avatars plugin now store files in %s. Your old folder has been copied. Please verify that everything is working fine and delete the old folder manually.', 'avatars' ), $this->avatars_dir );
 
 					} else { // unsuccessful copy, warns user
 

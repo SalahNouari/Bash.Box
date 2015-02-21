@@ -93,7 +93,11 @@ function incsub_support_get_faq_categories( $args = array() ) {
 		}
 
 		if ( empty( $cats ) )
-			return array();
+			$cats = array();
+
+		foreach ( $cats as $cat ) {
+			wp_cache_set( $cat->cat_id, $cat, 'support_system_faq_category' );
+		}
 
 		return $cats;
 	}
@@ -112,7 +116,7 @@ function incsub_support_get_faq_categories_count( $args = array() ) {
 function incsub_support_faq_categories_dropdown( $args = array() ) {
 	$defaults = array(
 		'name' => 'faq-cat',
-		'id' => 'faq-cat',
+		'id' => false,
 		'show_empty' => __( 'Select a category', INCSUB_SUPPORT_LANG_DOMAIN ),
 		'selected' => '',
 		'class' => '',
@@ -121,6 +125,9 @@ function incsub_support_faq_categories_dropdown( $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	extract( $args );
+
+	if ( ! $id )
+		$id = $name;
 
 	if ( ! $echo )
 		ob_start();
@@ -304,7 +311,7 @@ function incsub_support_delete_faq_category( $faq_category_id ) {
 
 	$wpdb->query( $wpdb->prepare( "DELETE FROM $faq_cats_table WHERE cat_id = %d", $faq_category_id ) );
 
-	wp_cache_delete( $faq_category_id, 'support_system_faq_categories' );
+	wp_cache_delete( $faq_category_id, 'support_system_faq_category' );
 
 	$old_faq_category = $faq_category;
 	do_action( 'support_system_delete_faq_category', $faq_category_id, $old_faq_category );

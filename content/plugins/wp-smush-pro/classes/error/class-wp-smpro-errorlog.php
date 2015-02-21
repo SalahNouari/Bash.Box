@@ -49,7 +49,7 @@ class WpSmproErrorLog {
 	function _update_error_queue( $error ) {
 		$errors = $this->get_all_errors();
 		if ( count( $errors ) >= $this->_limit ) {
-			$errors = array_slice( $errors, ( ( $this->_limit * - 1 ) - 1 ), $this->_limit - 1 );								 	 	   		   
+			$errors = array_slice( $errors, ( ( $this->_limit * - 1 ) - 1 ), $this->_limit - 1 );
 		}
 		$errors[] = $error;
 		update_option( 'sp_error_log', $errors );

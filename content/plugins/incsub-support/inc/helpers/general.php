@@ -30,7 +30,7 @@ function incsub_support_get_model() {
 	return MU_Support_System_Model::get_instance();
 }
 
-function incsub_support_priority_dropdown( $args ) {
+function incsub_support_priority_dropdown( $args = array() ) {
 	$defaults = array(
 		'name' => 'ticket-priority',
 		'id' => false,
@@ -67,7 +67,7 @@ function incsub_support_priority_dropdown( $args ) {
 		return ob_get_clean();
 }
 
-function incsub_support_super_admins_dropdown( $args ) {
+function incsub_support_super_admins_dropdown( $args = array() ) {
 	$defaults = array(
 		'name' => 'super-admins',
 		'id' => false,
@@ -79,7 +79,7 @@ function incsub_support_super_admins_dropdown( $args ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	$plugin = incsub_support();
-	$super_admins = $plugin::get_super_admins();
+	$super_admins = call_user_func( array( $plugin, 'get_super_admins' ) );
 
 	extract( $args );
 
@@ -144,6 +144,11 @@ function incsub_support_register_main_script() {
 		$suffix = '';
 
 	wp_register_script( 'support-system', INCSUB_SUPPORT_PLUGIN_URL . '/assets/js/support-system' . $suffix . '.js', array( 'jquery' ), incsub_support_get_version(), true );
+
+	$l10n = array(
+		'ajaxurl' => admin_url( 'admin-ajax.php' )
+	);
+	wp_localize_script( 'support-system', 'support_system_strings', $l10n );
 }
 
 function incsub_support_enqueue_main_script() {
@@ -151,4 +156,13 @@ function incsub_support_enqueue_main_script() {
 		incsub_support_register_main_script();
 
 	wp_enqueue_script( 'support-system' );
+
+}
+
+function incsub_support_enqueue_foundation_scripts( $in_footer = true ) {
+	$suffix = '.min';
+	if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG )
+		$suffix = '';
+
+	wp_enqueue_script( 'support-system-foundation-js', INCSUB_SUPPORT_PLUGIN_URL . 'assets/js/foundation' . $suffix . '.js', array( 'jquery' ), incsub_support_get_version(), $in_footer );
 }

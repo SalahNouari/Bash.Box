@@ -82,5 +82,5 @@ foreach ( $smush_pro_keys as $key ) {
 	}
 }
 //Delete post meta for all the images
-$wpdb->query( "DELETE FROM $wpdb->postmeta WHERE meta_key='wp-smpro-is-smushed' OR meta_key='wp-smpro-smush-data' OR meta_key LIKE '%wp-smpro-request%' " );
+$wpdb->query( "DELETE FROM $wpdb->postmeta WHERE meta_key='wp-smpro-is-smushed' OR meta_key='wp-smpro-smush-data' OR meta_key LIKE '%wp-smpro-request%' " );								 	 	   		   
 ?>
