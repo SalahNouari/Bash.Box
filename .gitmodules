@@ -10,3 +10,6 @@
 [submodule "content/themes/roots"]
 	path = content/themes/roots
 	url = git@github.com:lakesareadesign/roots.git
+[submodule "content/themes/Foundation5"]
+	path = content/themes/Foundation5
+	url = https://eric-miller@github.com/olefredrik/FoundationPress.git
