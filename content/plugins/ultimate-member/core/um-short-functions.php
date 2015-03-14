@@ -219,11 +219,18 @@ function um_profile_id() {
 	***/
 	function um_is_temp_upload( $url ) {
 		global $ultimatemember;
+
 		$url = explode('/ultimatemember/temp/', $url);
 		if ( isset( $url[1] ) ) {
-			$src = $ultimatemember->files->upload_temp . $url[1];
-			if ( !file_exists( $src ) )
+			
+			if ( strstr( $url[1], '../' ) || strstr( $url[1], '%' ) ) {
 				return false;
+			}
+
+			$src = $ultimatemember->files->upload_temp . $url[1];
+			if ( !file_exists( $src ) ) {
+				return false;
+			}
 			return $src;
 		}
 		return false;
@@ -853,6 +860,18 @@ function um_fetch_user( $user_id ) {
 	}
 	
 	/***
+	***	@get user avatar url
+	***/
+	function um_get_user_avatar_url() {
+		if ( um_profile('profile_photo') ) {
+			$avatar_uri = um_get_avatar_uri( um_profile('profile_photo'), 32 );
+		} else {
+			$avatar_uri = um_get_default_avatar_uri();
+		}
+		return $avatar_uri;
+	}
+	
+	/***
 	***	@default cover
 	***/
 	function um_get_default_cover_uri() {
@@ -1025,6 +1044,8 @@ function um_user( $data, $attrs = null ) {
 			} else {
 				$avatar_uri = um_get_default_avatar_uri();
 			}
+			
+			$avatar_uri = apply_filters('um_user_avatar_url_filter', $avatar_uri, um_user('ID') );
 				
 			if ( $avatar_uri )
 				return '<img src="' . $avatar_uri . '" class="gravatar avatar avatar-'.$attrs.' um-avatar" width="'.$attrs.'" height="'.$attrs.'" alt="" />';

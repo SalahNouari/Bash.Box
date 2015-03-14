@@ -3,14 +3,14 @@
 Plugin Name: Social Marketing
 Plugin URI: http://premium.wpmudev.org/project/social-marketing
 Description: Marketing on social networks.
-Version: 1.2.2
-Author: Incsub
+Version: 1.2.3
+Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 Text Domain: wdsm
 WDP ID: 253
 
 Copyright 2009-2011 Incsub (http://incsub.com)
-
+Author - Ve Bailovity (Incsub)
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
 the Free Software Foundation.
@@ -36,12 +36,12 @@ if (is_multisite() && defined('WPMU_PLUGIN_URL') && defined('WPMU_PLUGIN_DIR') &
 } else if (defined('WP_PLUGIN_URL') && defined('WP_PLUGIN_DIR') && file_exists(WP_PLUGIN_DIR . '/' . WDSM_PLUGIN_SELF_DIRNAME . '/' . basename(__FILE__))) {
 	define ('WDSM_PLUGIN_LOCATION', 'subfolder-plugins', true);
 	define ('WDSM_PLUGIN_BASE_DIR', WP_PLUGIN_DIR . '/' . WDSM_PLUGIN_SELF_DIRNAME, true);
-	define ('WDSM_PLUGIN_URL', WP_PLUGIN_URL . '/' . WDSM_PLUGIN_SELF_DIRNAME, true);
+	define ('WDSM_PLUGIN_URL', plugins_url(WDSM_PLUGIN_SELF_DIRNAME), true);
 	$textdomain_handler = 'load_plugin_textdomain';
 } else if (defined('WP_PLUGIN_URL') && defined('WP_PLUGIN_DIR') && file_exists(WP_PLUGIN_DIR . '/' . basename(__FILE__))) {
 	define ('WDSM_PLUGIN_LOCATION', 'plugins', true);
 	define ('WDSM_PLUGIN_BASE_DIR', WP_PLUGIN_DIR, true);
-	define ('WDSM_PLUGIN_URL', WP_PLUGIN_URL, true);
+	define ('WDSM_PLUGIN_URL', plugins_url(), true);
 	$textdomain_handler = 'load_plugin_textdomain';
 } else {
 	// No textdomain is loaded because we can't determine the plugin location.
@@ -73,7 +73,7 @@ if (is_admin()) {
 
 	require_once WDSM_PLUGIN_BASE_DIR . '/lib/class_wdsm_contextual_help.php';
 	Wdsm_ContextualHelp::serve();
-	
+
 	require_once WDSM_PLUGIN_BASE_DIR . '/lib/class_wdsm_admin_form_renderer.php';
 	require_once WDSM_PLUGIN_BASE_DIR . '/lib/class_wdsm_admin_pages.php';
 	Wdsm_AdminPages::serve();

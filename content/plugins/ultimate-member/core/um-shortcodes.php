@@ -10,6 +10,30 @@ class UM_Shortcodes {
 
 		add_shortcode('ultimatemember', array(&$this, 'ultimatemember'), 1);
 
+		add_filter( 'body_class', array(&$this, 'body_class'), 0 );
+
+	}
+	
+	/***
+	***	@extend body classes
+	***/
+	function body_class( $classes ) {
+		global $ultimatemember;
+		$array = $ultimatemember->permalinks->core;
+		
+		foreach( $array as $slug => $info ) {
+			if ( um_is_core_page( $slug ) ) {
+				$classes[] = 'um-page-' . $slug;
+			}
+		}
+		
+		if ( is_user_logged_in() ) {
+			$classes[] = 'um-page-loggedin';
+		} else {
+			$classes[] = 'um-page-loggedout';
+		}
+		
+		return $classes;
 	}
 	
 	/***
@@ -38,7 +62,7 @@ class UM_Shortcodes {
 	/***
 	***	@Add class based on shortcode
 	***/
-	function get_class( $mode ){
+	function get_class( $mode, $args = array() ){
 	
 		global $ultimatemember;
 		
@@ -54,6 +78,10 @@ class UM_Shortcodes {
 		
 		if ( $ultimatemember->fields->viewing == true ) {
 			$classes .= ' um-viewing';
+		}
+		
+		if ( isset( $args['template'] ) && $args['template'] != $args['mode'] ) {
+			$classes .= ' um-' . $args['template'];
 		}
 		
 		$classes = apply_filters('um_form_official_classes__hook', $classes);
@@ -97,6 +125,7 @@ class UM_Shortcodes {
 			$args = array_merge( $this->get_css_args( $args ), $args );
 		}
 
+		// filter for arguments
 		$args = apply_filters('um_shortcode_args_filter', $args );
 
 		extract( $args, EXTR_SKIP );
@@ -106,6 +135,7 @@ class UM_Shortcodes {
 				$args['role'] != $ultimatemember->query->get_role_by_userid( um_profile_id() ) )
 			return;
 
+		// start loading the template here
 		do_action("um_pre_{$mode}_shortcode", $args);
 		
 		do_action("um_before_form_is_loaded", $args);
@@ -200,7 +230,7 @@ class UM_Shortcodes {
 		$paths[] = glob( um_path . 'templates/' . '*.php');
 		
 		if ( file_exists( get_stylesheet_directory() . '/ultimate-member/templates/' ) ) {
-			$paths[] = glob( get_stylesheet_directory() . '/ultimate-member/templates/' . '*.php');
+			$paths[] = glob( get_stylesheet_directory() . '/ultimate-member/templates/' . '*.php' );
 		}
 		
 		foreach($paths as $k => $files){
@@ -218,7 +248,7 @@ class UM_Shortcodes {
 						T_DOC_COMMENT   // PHPDoc comments      
 					);
 					foreach( $tokens as $token ) {
-						if( in_array($token[0], $comment) && $clean_filename != $excluded ) {
+						if( in_array($token[0], $comment) && strstr( $token[1], '/* Template:' ) && $clean_filename != $excluded ) {
 							$txt = $token[1];
 							$txt = str_replace('/* Template: ','',$txt);
 							$txt = str_replace(' */','',$txt);
@@ -249,10 +279,13 @@ class UM_Shortcodes {
 	***/
 	function convert_user_tags( $str ) {
 		
+		$value = '';
+		
 		$pattern_array = array(
 			'{first_name}',
 			'{last_name}',
-			'{display_name}'
+			'{display_name}',
+			'{user_avatar_small}',
 		);
 		
 		$pattern_array = apply_filters('um_allowed_user_tags_patterns', $pattern_array);
@@ -265,8 +298,16 @@ class UM_Shortcodes {
 				$usermeta = str_replace('{','',$pattern);
 				$usermeta = str_replace('}','',$usermeta);
 				
-				if ( um_user( $usermeta ) ){
-					$str = preg_replace('/'.$pattern.'/', um_user($usermeta) , $str );
+				if ( $usermeta == 'user_avatar_small' ) {
+					$value = um_user('profile_photo', 40);
+				} elseif ( um_user( $usermeta ) ){
+					$value = um_user( $usermeta );
+				}
+				
+				$value = apply_filters("um_profile_tag_hook__{$usermeta}", $value, um_user('ID') );
+				
+				if ( $value ) {
+					$str = preg_replace('/'.$pattern.'/', $value , $str );
 				}
 				
 			}

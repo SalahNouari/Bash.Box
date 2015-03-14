@@ -6,7 +6,7 @@ if (!function_exists('wpmudev_do_settings_sections')) require_once WDSM_PLUGIN_B
 <h2 id="wdsm-settings_start"><?php _e('Settings', 'wdsm');?></h2>
 
 <div class="metabox-holder">
-	
+
 <form action="options.php" method="post">
 <?php settings_fields('wdsm'); ?>
 <?php wpmudev_do_settings_sections('wdsm_options_page'); ?>

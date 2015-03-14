@@ -853,6 +853,9 @@ table.domains td.column-actions a{
 #dm_save_excluded_pages_form{
     padding: 10px;
 }
+.domainmapping-domains.domainmapping-box .tablenav{
+    padding: 0 10px;
+}
 
 
-/* 133620-1424578749-au */
+/* 133620-1426305688-au */

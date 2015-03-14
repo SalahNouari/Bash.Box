@@ -5,6 +5,12 @@ Contributors: Cole Stevenson, Jose Jaureguiberry
 
 == Changelog ==
 
+= 2.6.1.5 =
+Added missing jquery ui images
+
+= 2.6.1.4 =
+Fixed SSL loading issues
+
 = 2.6.1.3 =
 Changed IPN url for better server compatibility
 Fixed pledge button for touch devices
@@ -223,4 +229,4 @@ New custom template structure for your theme
 Addition of several action and filter hooks for external plugins or theme function files.
 
 
-133620-1422153881-au
+133620-1426305691-au

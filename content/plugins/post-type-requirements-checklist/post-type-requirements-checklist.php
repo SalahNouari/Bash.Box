@@ -8,13 +8,13 @@
  * @author    Dave Winter
  * @license   GPL-2.0+
  * @link      http://dauid.us
- * @copyright 2014 dauid.us
+ * @copyright 2014-2015 dauid.us
  *
  * @wordpress-plugin
- * Plugin Name:       Post Type Requirements Checklist
+ * Plugin Name:       Requirements Checklist
  * Plugin URI:        http://dauid.us
- * Description:       Requirements
- * Version:           1.0.2
+ * Description:       Allows admins to set required content to be entered before a page/post or custom post type can be published.
+ * Version:           2.2.1
  * Author:            Dave Winter
  * Author URI:        http://dauid.us
  * Text Domain: 	  post-type-requirements-checklist
@@ -58,4 +58,5 @@ if ( is_admin() ) {
 	add_action( 'plugins_loaded', array( 'Post_Type_Requirements_Checklist_Admin', 'get_instance' ) );
 
 }
+
 

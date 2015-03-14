@@ -26,7 +26,7 @@ class Wdsm_PublicPages {
 		if (!is_singular()) return false;
 		$this->_wdsm->include_frontend_javascript();
 	}
-	
+
 	/**
 	 * Loads css dependencies.
 	 */

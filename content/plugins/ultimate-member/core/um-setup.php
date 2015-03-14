@@ -4,6 +4,8 @@ class UM_Setup {
 
 	function __construct() {
 
+		add_action('init',  array(&$this, 'install_basics'), 9);
+		
 		add_action('init',  array(&$this, 'install_default_forms'), 9);
 		
 		add_action('init',  array(&$this, 'install_default_roles'), 9);
@@ -134,6 +136,7 @@ class UM_Setup {
 			'_um_register_secondary_btn_color' => '#eee',
 			'_um_register_secondary_btn_hover' => '#e5e5e5',
 			'_um_register_secondary_btn_text' => '#666',
+			'_um_register_secondary_btn_url' => '',
 			'_um_login_template' => 'login',
 			'_um_login_max_width' => '450px',
 			'_um_login_align' => 'center',
@@ -149,6 +152,7 @@ class UM_Setup {
 			'_um_login_secondary_btn_color' => '#eee',
 			'_um_login_secondary_btn_hover' => '#e5e5e5',
 			'_um_login_secondary_btn_text' => '#666',
+			'_um_login_secondary_btn_url' => '',
 			'_um_directory_template' => 'members',
 			'_um_directory_header' => __('{total_users} Members','ultimatemember'),
 			'_um_directory_header_single' => __('{total_users} Member','ultimatemember'),
@@ -222,6 +226,14 @@ class UM_Setup {
 			$perms = array_merge($this->perms, $this->nonadmin_perms);
 			return $perms;
 		}
+	}
+	
+	/***
+	***	@Basics
+	***/
+	function install_basics() {
+		if ( !get_option('__ultimatemember_sitekey') )
+			update_option('__ultimatemember_sitekey', str_replace( array('http://','https://'), '', sanitize_user( get_bloginfo('url') ) ) . '-' . wp_generate_password( 20, false ) );
 	}
 	
 	/***

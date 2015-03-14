@@ -4,26 +4,26 @@
  */
 
 class Wdsm_ContextualHelp {
-	
+
 	private $_help;
-	
+
 	private $_pages = array(
 		'list', 'edit', 'get_started', 'settings',
 	);
-	
+
 	private $_social_marketing_sidebar = '';
-	
+
 	private function __construct () {
 		if (!class_exists('WpmuDev_ContextualHelp')) require_once WDSM_PLUGIN_BASE_DIR . '/lib/external/class_wd_contextual_help.php';
 		$this->_help = new WpmuDev_ContextualHelp();
 		$this->_set_up_sidebar();
 	}
-	
+
 	public static function serve () {
 		$me = new Wdsm_ContextualHelp;
 		$me->_initialize();
 	}
-	
+
 	private function _set_up_sidebar () {
 		$this->_social_marketing_sidebar = '<h4>' . __('Social Marketing', 'wdsm') . '</h4>';
 		if (defined('WPMUDEV_REMOVE_BRANDING') && constant('WPMUDEV_REMOVE_BRANDING')) {
@@ -33,11 +33,11 @@ class Wdsm_ContextualHelp {
 					'<li><a href="http://premium.wpmudev.org/project/social-marketing" target="_blank">' . __('Project page', 'wdsm') . '</a></li>' .
 					'<li><a href="http://premium.wpmudev.org/project/social-marketing/installation/" target="_blank">' . __('Installation and instructions page', 'wdsm') . '</a></li>' .
 					'<li><a href="http://premium.wpmudev.org/forums/tags/social-marketing/" target="_blank">' . __('Support forum', 'wdsm') . '</a></li>' .
-				'</ul>' . 
+				'</ul>' .
 			'';
 		}
 	}
-	
+
 	private function _initialize () {
 		foreach ($this->_pages as $page) {
 			$method = "_add_{$page}_page_help";
@@ -45,7 +45,7 @@ class Wdsm_ContextualHelp {
 		}
 		$this->_help->initialize();
 	}
-	
+
 	private function _add_list_page_help () {
 		$this->_help->add_page(
 			'edit-social_marketing_ad',
@@ -103,9 +103,9 @@ class Wdsm_ContextualHelp {
 					'id' => 'wdsm-intro',
 					'title' => __('Intro', 'wdsm'),
 					'content' => '' .
-							'<p>' . 
-								__('This is where you can edit or create a Social Marketing Advert.', 'wdsm') . 
-							'</p>' . 
+							'<p>' .
+								__('This is where you can edit or create a Social Marketing Advert.', 'wdsm') .
+							'</p>' .
 						'',
 					),
 				array(
@@ -135,15 +135,15 @@ class Wdsm_ContextualHelp {
 					'id' => 'wdsm-tutorial',
 					'title' => __('Tutorial', 'wdsm'),
 					'content' => '' .
-						'<p>' . 
-							__('Tutorial dialogs will guide you through the important bits.', 'wdsm') . 
+						'<p>' .
+							__('Tutorial dialogs will guide you through the important bits.', 'wdsm') .
 						'</p>' .
 						'<p><a href="#" class="wdsm-restart_tutorial" data-wdsm_tutorial="edit">' . __('Restart the tutorial', 'wdsm') . '</a></p>',
 				),
 			),
 			$this->_social_marketing_sidebar,
 			true
-		);		
+		);
 	}
 	private function _add_get_started_page_help () {
 		$this->_help->add_page(
@@ -176,7 +176,7 @@ class Wdsm_ContextualHelp {
 			),
 			$this->_social_marketing_sidebar,
 			true
-		);				
+		);
 	}
 	private function _add_settings_page_help () {
 		$this->_help->add_page(
@@ -204,7 +204,7 @@ class Wdsm_ContextualHelp {
 				array(
 					'id' => 'wdsm-javascript',
 					'title' => __('Javascript', 'wdsm'),
-					'content' => '' . 
+					'content' => '' .
 							'<p>' . __('If your site already uses javascripts from one or more of the supported services, say so here to prevent conflicts.', 'wdsm') . '</p>' .
 						'',
 				),
@@ -212,14 +212,14 @@ class Wdsm_ContextualHelp {
 					'id' => 'wdsm-tutorial',
 					'title' => __('Tutorial', 'wdsm'),
 					'content' => '' .
-						'<p>' . 
-							__('Tutorial dialogs will guide you through the important bits.', 'wdsm') . 
+						'<p>' .
+							__('Tutorial dialogs will guide you through the important bits.', 'wdsm') .
 						'</p>' .
 						'<p><a href="#" class="wdsm-restart_tutorial" data-wdsm_tutorial="setup">' . __('Restart the tutorial', 'wdsm') . '</a></p>',
 				),
 			),
 			$this->_social_marketing_sidebar,
 			true
-		);	
+		);
 	}
 }

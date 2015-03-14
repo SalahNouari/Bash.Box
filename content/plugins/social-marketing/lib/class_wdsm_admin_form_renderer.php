@@ -4,7 +4,7 @@
  */
 class Wdsm_AdminFormRenderer {
 	private $_help;
-	
+
 	function __construct () {
 		if (!class_exists('WpmuDev_HelpTooltips')) require_once WDSM_PLUGIN_BASE_DIR . '/lib/external/class_wd_help_tooltips.php';
 		$this->_help = new WpmuDev_HelpTooltips();
@@ -86,12 +86,12 @@ class Wdsm_AdminFormRenderer {
 			$this->_help->add_tip(__("Select &quot;Yes&quot; if you already have Colorbox-based pop-ups on your pages", 'wdsm')) .
 		"</p>";
 	}
-*/	
+*/
 	function create_theme_box () {
 		$wdsm = Wdsm_SocialMarketing::get_instance();
 		$_styles = $wdsm->get_styles();
 		$default = $this->_get_option('theme');
-		
+
 		// Themes
 		echo '<p><select id="wdsm-theme" name="wdsm[theme]">';
 		foreach ($_styles as $style => $lbl) {
@@ -99,7 +99,7 @@ class Wdsm_AdminFormRenderer {
 			echo "<option value='{$style}' {$sel}>{$lbl}&nbsp;</option>";
 		}
 		echo '</select></p>';
-		
+
 		// No theme
 		$check = (!$default) ? 'checked="checked"' : '';
 		echo '<p>' .
@@ -124,7 +124,7 @@ class Wdsm_AdminFormRenderer {
 			$this->_help->add_tip(__('Lazy dependency loading relies on footer hook to deploy properly. If your theme does not implement the default hook, use this field to set your custom one.', 'wdsm')) .
 		'</div>';
 	}
-	
+
 	function create_getting_started_box () {
 		echo '' .
 			'<label for="show_getting_started-yes">' . __("Show &quot;Getting started&quot; page even after all the steps are done:", 'wdsm') . '</label>&nbsp;' .

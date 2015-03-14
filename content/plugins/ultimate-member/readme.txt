@@ -7,7 +7,7 @@ Tags: access control, author, authors, author profile, comments, community, comm
 Requires at least: 4.1
 Tested up to: 4.1.1
 
-Stable Tag: 1.0.63
+Stable Tag: 1.0.84
 
 License: GNU Version 2 or Any Later Version
 
@@ -41,6 +41,19 @@ Features of the plugin include:
 * Developer friendly with dozens of actions and filters
 * Multi-site compatibility
 * Mandrill compatibility
+
+**Paid Extensions**
+
+You can extend the power of Ultimate Member with one of our premium extensions:
+
+* [Social Login](https://ultimatemember.com/extensions/social-login/)
+* [MailChimp](https://ultimatemember.com/extensions/mailchimp/)
+* [bbPress](https://ultimatemember.com/extensions/bbpress/)
+* [myCRED](https://ultimatemember.com/extensions/mycred/)
+
+**Free Extensions**
+
+* [Google reCAPTCHA](https://ultimatemember.com/extensions/google-recaptcha/)
 
 **Front-end registration**
 
@@ -188,6 +201,135 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 16. Screenshot 16
 
 == Changelog ==
+
+= 1.0.84: March 13, 2015 =
+
+* New: adds automatic body class to UM core pages automatically
+* Fixed: important jQuery issue
+* Fixed: upload security issue - extension error was empty
+
+= 1.0.83: March 12, 2015 =
+
+* New: added a logout template If user is already logged in (customizable)
+* New: strong password formula not required when resetting password (optional)
+* Fixed: jQuery issue with live() method - Thanks to Jim Wetton
+
+= 1.0.82: March 11, 2015 =
+
+* Fixed: issue with saving user account general tab
+
+= 1.0.81: March 11, 2015 =
+
+* New: official support for plugin extensions released
+
+= 1.0.80: March 10, 2015 =
+
+* Tweak: added licensing support to plugin core
+* Fixed: issue with account form
+
+= 1.0.79: March 10, 2015 =
+
+* Tweak: Redux up to date
+* Fixed: security issue related to deleting a temp file via ajax
+* Fixed: bug with a php warning on undefined field type
+
+Credits to "James Golovich http://www.pritect.net" for the security checks
+
+= 1.0.78: March 10, 2015 =
+
+* Fixed: important correction from previous version
+
+= 1.0.77: March 10, 2015 =
+
+* New: integration with comments to show user profile link instead of user link (not compatible with all themes)
+* New: option to control maximum size of uploaded profile photo
+* New: option to control maximum size of uploaded cover photo
+* Tweak: URL fields will are now treated as hyperlinks
+* Fixed: bug with member directory privacy option
+* Fixed: bug with using # as a character in file or image upload
+
+= 1.0.76: March 7, 2015 =
+
+* New: added {user_avatar_small} tag to display user photo in menu (requires extra css work)
+* Tweak: Removed !important css rules from colors and backgrounds
+* Fixed: issue with content block field
+
+= 1.0.75: March 5, 2015 =
+
+* New: improved & modern html e-mail templates
+* New: addon to transfer BuddyPress profile photos to Ultimate Member (user request)
+* New: added option to turn off time bot feature (fixes conflict with plugins)
+* New: added built-in addons support
+* Tweak: improved backend design and css
+
+= 1.0.74: March 4, 2015 =
+
+* Fixed: bug with numeric validation for a field
+* Fixed: bug with conditional logic rules with checkbox
+
+= 1.0.73: March 3, 2015 =
+
+* Tweak: general code improvements
+
+= 1.0.72: March 2, 2015 =
+
+* Fixed: bug with e-mail activation since last update
+
+= 1.0.71: March 2, 2015 =
+
+* Fixed: issue with password reset link
+* Fixed: issue with social links showing but user did not fill them
+
+= 1.0.70: March 2, 2015 =
+
+* Tweak: added a filter hook to control profile photo url
+* Tweak: harder random generated passwords by making the length 40 characters for a key/password
+* Tweak: added option to enable/disable custom css tab (off by default)
+* Tweak: changed rewrite rules to be compatible with some themes and plugins
+* Fixed: bug with Role field not showing error when required and left empty
+* Fixed: bug with showing incorrect age when users did not fill their age
+* Fixed: issue with template name for custom profile templates
+
+= 1.0.69: February 28, 2015 =
+
+* Tweak: better WP logout handling
+* Tweak: new action and filter hooks added
+
+= 1.0.68: February 27, 2015 =
+
+* New: added support for mp3 as allowed filetype / upload
+* Fixed: bug with profile privacy option (on non-english sites)
+* Fixed: uncommon php warning caused by um_get_user_avatar_url() function
+* Fixed: new translation corrections
+
+= 1.0.67: February 26, 2015 =
+
+* New: Improved the default HTML e-mail templates design
+* New: added a bunch of action hooks to account tabs and content
+* Tweak: added a few template tags to use in email: {site_url}, {user_account_link}
+* Fixed: issue with making a checkbox required prior to registering
+* Fixed: issue with comments showing in posts tab under profile
+* Fixed: issue with plugin uninstallation link not showing in multisite
+
+= 1.0.66: February 25, 2015 =
+
+* New: added option to send e-mails as HTML
+* New: added default HTML templates for e-mail notifications
+
+= 1.0.65: February 24, 2015 =
+
+* New: added option to customize register form secondary button URL
+* New: added option to customize login form secondary button URL
+* Fixed: issue with global access lock when homepage is excluded
+* Fixed: issue with custom account tabs
+* Fixed: minor css conflict with profile photo
+
+= 1.0.64: February 22, 2015 =
+
+* Tweak: updated language files on server
+* Tweak: modified account page hooks to accept custom hooks easily
+* Fixed: important css issues with safari browser
+* Fixed: language notice will no longer show on (English UK/Other) wordpress sites
 
 = 1.0.63: February 21, 2015 =
 

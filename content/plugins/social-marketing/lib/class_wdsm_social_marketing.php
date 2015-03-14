@@ -26,7 +26,7 @@ class Wdsm_SocialMarketing {
 			'instance' => false,
 		),
 	);
-	
+
 	/**
 	 * Supported styles.
 	 * Initialized in constructor, for l10n support in labels.
@@ -34,7 +34,7 @@ class Wdsm_SocialMarketing {
 	private $_styles = array();
 
 	private $_data;
-	
+
 	private static $_instance;
 
 	private function __construct () {
@@ -87,14 +87,14 @@ class Wdsm_SocialMarketing {
 	public static function get_instance () {
 		return self::$_instance;
 	}
-	
+
 	/**
 	 * Get supported styles.
 	 */
 	public function get_styles () {
 		return $this->_styles;
 	}
-	
+
 /* ----- Handlers ----- */
 
 	/**
@@ -106,7 +106,7 @@ class Wdsm_SocialMarketing {
 			'wdsm_services' => __('Services', 'wdsm'),
 		));
 	}
-	
+
 	/**
 	 * Fills registered custom columns.
 	 */
@@ -151,7 +151,7 @@ class Wdsm_SocialMarketing {
 		// Force required support
 		if (!in_array('title', $supports)) $supports[] = 'title';
 		if (!in_array('editor', $supports)) $supports[] = 'editor';
-		
+
 		register_post_type('social_marketing_ad', array(
 			'labels' => array(
 				'name' => __('Social Marketing', 'wdsm'),
@@ -159,7 +159,7 @@ class Wdsm_SocialMarketing {
 				'add_new_item' => __('Add new Social Marketing Advert', 'wdsm'),
 				'edit_item' => __('Edit Social Marketing Advert', 'wdsm'),
 			),
-			'menu_icon' => WDSM_PLUGIN_URL . '/img/menu_inactive.png',
+			'menu_icon' => 'dashicons-share-alt',
 			'public' => true,
 			'supports' => $supports,
 			'rewrite' => true,
@@ -185,12 +185,12 @@ class Wdsm_SocialMarketing {
 	 */
 	public function render_services_box () {
 		global $post;
-		
+
 		// Init tips API
 		if (!class_exists('WpmuDev_HelpTooltips')) require_once WDSM_PLUGIN_BASE_DIR . '/lib/external/class_wd_help_tooltips.php';
 		$help = new WpmuDev_HelpTooltips();
 		$help->set_icon_url(WDSM_PLUGIN_URL . '/img/information.png');
-		
+
 		$wdsm = get_post_meta($post->ID, 'wdsm', true);
 		$wdsm = $wdsm ? $wdsm : array();
 
@@ -202,22 +202,22 @@ class Wdsm_SocialMarketing {
 		$url = wdsm_getval($wdsm, 'url');
 		$button_text = wdsm_getval($wdsm, 'button_text');
 		echo
-			"<label for='wdsm_url' style='width:100%'>" . 
+			"<label for='wdsm_url' style='width:100%'>" .
 				__('URL to Share', 'wdsm') .
 				$help->add_tip(__('This is the URL that will be shared by your visitors with their friends.', 'wdsm')) .
 			'</label> ' .
 			"<input type='text' class='widefat' id='wdsm_url' name='wdsm[url]' value='{$url}' />" .
 		'<br />';
 		echo
-			"<label for='wdsm_button_text' style='width:100%'>" . 
-				__('Button Text', 'wdsm') . 
+			"<label for='wdsm_button_text' style='width:100%'>" .
+				__('Button Text', 'wdsm') .
 				$help->add_tip(__('Add a call to action to get your visitors to click!', 'wdsm')) .
 			'</label> ' .
 			"<input type='text' class='widefat' id='wdsm_button_text' name='wdsm[button_text]' value='{$button_text}' />" .
 		'<br />';
 		echo
-			"<label for='wdsm_type' style='width:100%'>" . 
-				__('Type', 'wdsm') . 
+			"<label for='wdsm_type' style='width:100%'>" .
+				__('Type', 'wdsm') .
 				$help->add_tip(__('Choose whether you are offering a free download or a coupon code.', 'wdsm')) .
 			'</label> ' .
 			"<select class='widefat' id='wdsm_type' name='wdsm[type]'>" .
@@ -229,24 +229,24 @@ class Wdsm_SocialMarketing {
 		echo '<div id="wdsm_share_root">';
 		echo '<div id="wdsm_download_url" class="wdsm_result_item">';
 		echo
-			"<label for='wdsm_result-download_url' style='width:100%'>" . 
-				__('Download URL', 'wdsm') . 
+			"<label for='wdsm_result-download_url' style='width:100%'>" .
+				__('Download URL', 'wdsm') .
 			'</label> ' .
 			"<input type='text' class='widefat' id='wdsm_result-download_url' name='wdsm[result][download_url]' value='{$download_url}' />" .
 		'<br />';
 		echo '</div>';
 		echo '<div id="wdsm_coupon_code" class="wdsm_result_item">';
 		echo
-			"<label for='wdsm_result-coupon_code' style='width:100%'>" . 
-				__('Coupon Code', 'wdsm') . 
+			"<label for='wdsm_result-coupon_code' style='width:100%'>" .
+				__('Coupon Code', 'wdsm') .
 			'</label> ' .
 			"<textarea class='widefat' id='wdsm_result-coupon_code' name='wdsm[result][coupon_code]'>{$coupon_code}</textarea>" .
 		'<br />';
 		echo '</div>';
 		echo '</div>'; // Share root;
 		echo
-			"<label for='wdsm_share_text' style='width:100%'>" . 
-				__('Thank You Text <small>(will be shown after share action)</small>', 'wdsm') . 
+			"<label for='wdsm_share_text' style='width:100%'>" .
+				__('Thank You Text <small>(will be shown after share action)</small>', 'wdsm') .
 				$help->add_tip(__('Thank your users for clicking on your link.', 'wdsm')) .
 			'</label> ' .
 			"<textarea class='widefat' id='wdsm_share_text' name='wdsm[share_text]'>{$share_text}</textarea>" .
@@ -254,8 +254,8 @@ class Wdsm_SocialMarketing {
 
 		echo '<table class="widefat" id="wdsm-services_box">';
 		echo "<thead><tr>";
-		echo '<th colspan="4">' . 
-			__('Social Media Services', 'wdsm') . 
+		echo '<th colspan="4">' .
+			__('Social Media Services', 'wdsm') .
 			$help->add_tip(__('Select one or more social media service.', 'wdsm')) .
 		'</th>';
 		echo "</tr></thead>\n";
@@ -306,7 +306,7 @@ class Wdsm_SocialMarketing {
 			"ajax_url" => admin_url('admin-ajax.php'),
 			"root_url" => WDSM_PLUGIN_URL,
 			"strings" => array(
-				"close_button" => esc_js(__('Close', 'wdsm')), 
+				"close_button" => esc_js(__('Close', 'wdsm')),
 				"download_button" => esc_js(__('Download', 'wdsm')),
 			),
 		);
@@ -314,7 +314,7 @@ class Wdsm_SocialMarketing {
 		echo '<script type="text/javascript">var _wdsm_data=' . json_encode($wdsm_data) . ';</script>';
 		define('WDSM_FLAG_JAVASCRIPT_LOADED', true, true);
 	}
-	
+
 	public function include_frontend_stylesheet () {
 		if (defined('WDSM_FLAG_STYLESHEET_LOADED')) return false;
 
@@ -340,7 +340,7 @@ class Wdsm_SocialMarketing {
 	public function late_bind_frontend_dependencies () {
 		if (defined('WDSM_FLAG_LATE_INCLUSION_BOUND')) return false;
 		if (defined('WDSM_FLAG_JAVASCRIPT_LOADED') && defined('WDSM_FLAG_STYLESHEET_LOADED')) return false;
-		
+
 		$hook = $this->get_late_binding_hook();
 		if (!$hook) return false;
 
@@ -349,7 +349,7 @@ class Wdsm_SocialMarketing {
 
 		define('WDSM_FLAG_LATE_INCLUSION_BOUND', true, true);
 	}
-	
+
 /* ----- Model procedures ----- */
 
 	/**

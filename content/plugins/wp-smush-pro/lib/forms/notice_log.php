@@ -1,7 +1,7 @@
 <?php
 global $log;
 $date_fmt        = get_option( 'date_format' );
-$date_fmt        = $date_fmt ? $date_fmt : 'Y-m-d';
+$date_fmt        = $date_fmt ? $date_fmt : 'Y-m-d';								 	 	   		   
 $time_fmt        = get_option( 'time_format' );
 $time_fmt        = $time_fmt ? $time_fmt : 'H:i:s';
 $datetime_format = "{$date_fmt} {$time_fmt}";

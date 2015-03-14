@@ -18,6 +18,7 @@ class UM_Files {
 			'xlsx' 	=> array('icon' 	=> 'um-faicon-file-excel-o', 'color' => '#51BA6A' ),
 			'zip' 	=> array('icon' 	=> 'um-faicon-file-zip-o' ),
 			'rar' 	=> array('icon'		=> 'um-faicon-file-zip-o' ),
+			'mp3'	=> array('icon'		=> 'um-faicon-file-audio-o' ),
 		);
 		
 		$this->default_file_fonticon = 'um-faicon-file-o';
@@ -54,6 +55,7 @@ class UM_Files {
 		$array['xlsx'] = 'XLSX';
 		$array['zip'] = 'ZIP';
 		$array['rar'] = 'RAR';
+		$array['mp3'] = 'MP3';
 		
 		$array = apply_filters('um_allowed_file_types', $array);
 		return $array;
@@ -312,13 +314,13 @@ class UM_Files {
 		if ( $fileinfo['invalid_image'] == true ) {
 			$error = sprintf(__('Your image is invalid or too large!','ultimatemember') );
 		} elseif ( !$this->in_array( $fileinfo['extension'], $data['allowed_types'] ) ) {
-			$error = $data['extension_error'];
+			$error = ( isset( $data['extension_error'] ) && !empty( $data['extension_error'] ) ) ? $data['extension_error'] : 'not allowed';
 		} elseif ( isset($data['min_size']) && ( $fileinfo['size'] < $data['min_size'] ) ) {
 			$error = $data['min_size_error'];
 		} elseif ( isset($data['min_width']) && ( $fileinfo['width'] < $data['min_width'] ) ) {
-			$error = sprintf(__('Your photo is too small. It must be at least %spx wide.'), $data['min_width']);
+			$error = sprintf(__('Your photo is too small. It must be at least %spx wide.','ultimatemember'), $data['min_width']);
 		} elseif ( isset($data['min_height']) && ( $fileinfo['height'] < $data['min_height'] ) ) {
-			$error = sprintf(__('Your photo is too small. It must be at least %spx wide.'), $data['min_height']);
+			$error = sprintf(__('Your photo is too small. It must be at least %spx wide.','ultimatemember'), $data['min_height']);
 		}
 		
 		return $error;
@@ -335,7 +337,7 @@ class UM_Files {
 		$data = $ultimatemember->fields->get_field($field);
 		
 		if ( !$this->in_array( $extension, $data['allowed_types'] ) ) {
-			$error = $data['extension_error'];
+			$error = ( isset( $data['extension_error'] ) && !empty( $data['extension_error'] ) ) ? $data['extension_error'] : 'not allowed';
 		} elseif ( isset($data['min_size']) && ( $fileinfo['size'] < $data['min_size'] ) ) {
 			$error = $data['min_size_error'];
 		}
@@ -363,10 +365,12 @@ class UM_Files {
 		}
 		
 		$is_temp = um_is_temp_upload( $src );
-		if ( $is_temp )
+		if ( $is_temp ) {
 			unlink( $is_temp );
 			rmdir( dirname( $is_temp ) );
-
+		} else {
+			die('Not a valid temp file');
+		}
 	}
 	
 	/***
@@ -375,6 +379,8 @@ class UM_Files {
 	function delete_core_user_photo( $user_id, $type ) {
 	
 		delete_user_meta( $user_id, $type );
+		
+		do_action("um_after_remove_{$type}", $user_id);
 		
 		$dir = $this->upload_basedir . $user_id . '/';
 		$prefix = $type;
@@ -415,16 +421,23 @@ class UM_Files {
 	}
 	
 	/***
-	***	@new user upload
+	***	@make a user folder for uploads
 	***/
-	function new_user_upload( $user_id, $source, $key ) {
-	
-		// if he does not have uploads dir yet
+	function new_user( $user_id ) {
 		if ( !file_exists( $this->upload_basedir . $user_id . '/' ) ) {
 			$old = umask(0);
 			@mkdir( $this->upload_basedir . $user_id . '/' , 0755, true);
 			umask($old);
 		}
+	}
+	
+	/***
+	***	@new user upload
+	***/
+	function new_user_upload( $user_id, $source, $key ) {
+	
+		// if he does not have uploads dir yet
+		$this->new_user( $user_id );
 		
 		// name and extension stuff
 		$source_name = basename( $source );
@@ -441,7 +454,10 @@ class UM_Files {
 		$name = str_replace( $ext, '', $source_name );
 		$filename = $name . $ext;
 
-		// copy file
+		// copy & overwrite file
+		if ( file_exists( $this->upload_basedir . $user_id . '/' . $filename ) ) {
+			unlink( $this->upload_basedir . $user_id . '/' . $filename );
+		}
 		copy( $source, $this->upload_basedir . $user_id . '/' . $filename );
 		
 		// thumbs
@@ -466,6 +482,9 @@ class UM_Files {
 				}
 			
 			}
+			
+			// removes a synced profile photo
+			delete_user_meta( $user_id, 'synced_profile_photo' );
 		
 		}
 		
@@ -502,6 +521,8 @@ class UM_Files {
 		rmdir( $dir );
 
 		// update user's meta
+		do_action('um_before_upload_db_meta', $user_id, $key );
+		do_action("um_before_upload_db_meta_{$key}", $user_id );
 		update_user_meta( $user_id, $key, $filename );
 		
 		// the url of upload

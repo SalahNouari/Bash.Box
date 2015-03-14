@@ -4,7 +4,7 @@ class Wdsm_Codec {
 	/**
 	 * Map of shortcodes and processing methods,
 	 * used for automatic codec binding.
-	 * 
+	 *
 	 * Format: pfx => shortcode,
 	 * method: process_pfx_code
 	 */
@@ -30,7 +30,7 @@ class Wdsm_Codec {
 		), $args);
 		$forced = $forced && $forced === 'forced';
 		if (!$forced) $forced = isset($args['forced']) && in_array($args['forced'], array('1', 'yes', 'on', 'true'));
-		
+
 		if (!is_singular() && !$forced) return '';
 
 		$this->_wdsm->late_bind_frontend_dependencies();
@@ -56,7 +56,7 @@ class Wdsm_Codec {
 
 		return $code;
 	}
-	
+
 	/**
 	 * Rendering routine, used instead of "normal" way of file inclusion
 	 * to prevent buffering issues in certain setups.
@@ -65,8 +65,8 @@ class Wdsm_Codec {
 		extract($args);
 		$opts = get_option('wdsm');
 		// Set unique style class
-		$style_class = @$opts['theme'] ? @$opts['theme'] : 'yellow'; 
-		
+		$style_class = @$opts['theme'] ? @$opts['theme'] : 'yellow';
+
 		// Do we already have a "style class" set by user?
 		$wdsm = Wdsm_SocialMarketing::get_instance();
 		$_styles = $wdsm->get_styles();
@@ -76,7 +76,7 @@ class Wdsm_Codec {
 			$style_class = '';
 			break;
 		}
-		
+
 		$ret = "
 <div class='wdsm_ad'>
 	<div class='wdsm_ad_link {$class} {$style_class}'>

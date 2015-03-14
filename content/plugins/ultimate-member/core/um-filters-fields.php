@@ -128,8 +128,10 @@
 	***/
 	add_filter('um_profile_field_filter_hook__', 'um_profile_field_filter_hook__', 99, 2);
 	function um_profile_field_filter_hook__( $value, $data ) {
+		
+		if ( !$value ) return '';
 
-		if ( isset( $data['validate'] ) && $data['validate'] != '' && strstr( $data['validate'], 'url' ) ) {
+		if ( ( isset( $data['validate'] ) && $data['validate'] != '' && strstr( $data['validate'], 'url' ) ) || ( isset( $data['type'] ) && $data['type'] == 'url' ) ) {
 			$alt = ( isset( $data['url_text'] ) && !empty( $data['url_text'] ) ) ? $data['url_text'] : $value;
 			$url_rel = ( isset( $data['url_rel'] ) ) ? 'rel="nofollow"' : '';
 			if( !strstr( $value, 'http' )

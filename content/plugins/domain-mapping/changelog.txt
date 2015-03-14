@@ -1,4 +1,18 @@
 * Speed up DNS A record detection on network settings and allow disabling it via DM_SKIP_DNS_CHECK define
+== 4.3.0.4 ==
+* Fixed issue with excluded pages problem on homepage
+
+== 4.3.0.3 ==
+* Added ability to turn "Check domain propagation before mapping" on and off
+* Fixed issue with static content (image, css, ...) not showing up in some sub-sites
+
+== 4.3.0.2 ==
+* Fixed minor bug when sub-site doesn't have a mapped domain
+
+== 4.3.0.1 ==
+* Fixed double forward slash in urls
+* Fixed sub-site name missing in some urls
+
 == 4.3.0 ==
 * Added ability to disable sub-domains of the original domain to be used as sub-site’s primary (mapped) domain
 * Added ability to prohibit certain domains and their sub-domains
@@ -109,4 +123,4 @@
 * Improved MultiDB compatibility by registering domain mapping tables as global
 
 
-133620-1424578748-au
+133620-1426305688-au

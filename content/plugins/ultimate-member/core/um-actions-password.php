@@ -76,10 +76,10 @@
 		$form_timestamp  = trim($_POST['timestamp']);
 		$live_timestamp  = current_time( 'timestamp' );
 					
-		if ( $form_timestamp == '' )
+		if ( $form_timestamp == '' && um_get_option('enable_timebot') == 1 )
 			wp_die( __('Hello, spam bot!') );
 
-		if ( $live_timestamp - $form_timestamp < 3 )
+		if ( $live_timestamp - $form_timestamp < 3 && um_get_option('enable_timebot') == 1 )
 			wp_die( __('Whoa, slow down! You\'re seeing this message because you tried to submit a form too fast and we think you might be a spam bot. If you are a real human being please wait a few seconds before submitting the form. Thanks!') );
 
 		if ( strlen(trim( $_POST['username_b'] ) ) == 0 ) {
@@ -107,26 +107,30 @@
 		$form_timestamp  = trim($_POST['timestamp']);
 		$live_timestamp  = current_time( 'timestamp' );
 					
-		if ( $form_timestamp == '' )
+		if ( $form_timestamp == '' && um_get_option('enable_timebot') == 1 )
 			wp_die( __('Hello, spam bot!') );
 
-		if ( $live_timestamp - $form_timestamp < 3 )
+		if ( $live_timestamp - $form_timestamp < 3 && um_get_option('enable_timebot') == 1 )
 			wp_die( __('Whoa, slow down! You\'re seeing this message because you tried to submit a form too fast and we think you might be a spam bot. If you are a real human being please wait a few seconds before submitting the form. Thanks!') );
 		
 		if ( !$args['user_password'] ) {
 			$ultimatemember->form->add_error('user_password', 'You must enter a new password');
 		}
 
-		if ( strlen( utf8_decode( $args['user_password'] ) ) < 8 ) {
-			$ultimatemember->form->add_error('user_password', __('Your password must contain at least 8 characters') );
-		}
+		if ( um_get_option('reset_require_strongpass') ) {
 			
-		if ( strlen( utf8_decode( $args['user_password'] ) ) > 30 ) {
-			$ultimatemember->form->add_error('user_password', __('Your password must contain less than 30 characters') );
-		}
+			if ( strlen( utf8_decode( $args['user_password'] ) ) < 8 ) {
+				$ultimatemember->form->add_error('user_password', __('Your password must contain at least 8 characters') );
+			}
+				
+			if ( strlen( utf8_decode( $args['user_password'] ) ) > 30 ) {
+				$ultimatemember->form->add_error('user_password', __('Your password must contain less than 30 characters') );
+			}
 
-		if ( !$ultimatemember->validation->strong_pass( $args['user_password'] ) ) {
-			$ultimatemember->form->add_error('user_password', __('Your password must contain at least one lowercase letter, one capital letter and one number','ultimatemember') );
+			if ( !$ultimatemember->validation->strong_pass( $args['user_password'] ) ) {
+				$ultimatemember->form->add_error('user_password', __('Your password must contain at least one lowercase letter, one capital letter and one number','ultimatemember') );
+			}
+		
 		}
 
 		if ( !$args['confirm_user_password'] ) {

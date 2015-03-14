@@ -33,7 +33,7 @@ class Wdsm_AdminPages {
 		add_settings_field('wdsm_theme', __('Appearance', 'wdsm'), array($form, 'create_theme_box'), 'wdsm_options_page', 'wdsm_services');
 		add_settings_field('wdsm_getting_started', __('Getting started page', 'wdsm'), array($form, 'create_getting_started_box'), 'wdsm_options_page', 'wdsm_services');
 	}
-	
+
 	/**
 	 * Add supplemental submenu entries, and
 	 * also process settings saving.
@@ -70,7 +70,7 @@ class Wdsm_AdminPages {
 	function create_admin_page () {
 		include(WDSM_PLUGIN_BASE_DIR . '/lib/forms/plugin_settings.php');
 	}
-	
+
 	/**
 	 * Quick hack to reorder CPT menu items
 	 * so that the welcome page come first.
@@ -79,7 +79,7 @@ class Wdsm_AdminPages {
 		$opts = get_option('wdsm');
 		if (!wdsm_getval($opts, 'show_getting_started') && $this->_getting_started_complete()) return;
 		global $menu, $submenu;
-		
+
 		foreach ($submenu as $idx => $item) {
 			if ('edit.php?post_type=social_marketing_ad' != $idx) continue;
 			//echo '<pre>'; die(var_export($item));
@@ -89,7 +89,7 @@ class Wdsm_AdminPages {
 			$submenu[$idx] = $item;
 		}
 	}
-	
+
 	/**
 	 * Inject welcome page markup.
 	 */
@@ -99,7 +99,7 @@ class Wdsm_AdminPages {
 		$wdsm_tutorial = $wdsm_tutorial ? $wdsm_tutorial : array();
 		include(WDSM_PLUGIN_BASE_DIR . '/lib/forms/getting_started.php');
 	}
-	
+
 	/**
 	 * Handle calls from welcome page and record progress.
 	 */
@@ -107,7 +107,7 @@ class Wdsm_AdminPages {
 		global $current_user;
 		$wdsm_tutorial = get_user_meta($current_user->ID, 'wdsm_tutorial', true);
 		$wdsm_tutorial = $wdsm_tutorial ? $wdsm_tutorial : array();
-		
+
 		$intent = wdsm_getval($_GET, 'intent');
 		switch ($intent) {
 			case "settings":
@@ -136,16 +136,16 @@ class Wdsm_AdminPages {
 		if ($this->_getting_started_complete()) return false; // User already saw this.
 		$perms = is_multisite() ? 'manage_network_options' : 'manage_options';
 		if (!current_user_can($perms)) return false; // Don't redirect people that can't deal with this
-		
+
 		$opts = get_option('wdsm');
 		if (!wdsm_getval($opts, 'welcome_redirect')) return false; // Not a first time user, move on.
-		
+
 		$opts['welcome_redirect'] = false;
 		update_option('wdsm', $opts);
 		wp_redirect(admin_url('admin.php?page=wdsm-get_started'));
 		die;
 	}
-	
+
 	/**
 	 * Quick "are we done yet" check for welcome page.
 	 */
@@ -154,10 +154,10 @@ class Wdsm_AdminPages {
 		$wdsm_tutorial = get_user_meta($current_user->ID, 'wdsm_tutorial', true);
 		$wdsm_tutorial = $wdsm_tutorial ? $wdsm_tutorial : array();
 		return (
-			wdsm_getval($wdsm_tutorial, 'settings') && 
-			wdsm_getval($wdsm_tutorial, 'add') && 
+			wdsm_getval($wdsm_tutorial, 'settings') &&
+			wdsm_getval($wdsm_tutorial, 'add') &&
 			wdsm_getval($wdsm_tutorial, 'insert')
-		); 
+		);
 	}
 
 	/**
@@ -165,27 +165,13 @@ class Wdsm_AdminPages {
 	 * CPT icons are injected inline, so we get the paths right.
 	 */
 	function css_print_styles () {
-		$base_url = WDSM_PLUGIN_URL;
-		echo <<<EoWdsmStyles
-<style type="text/css">
-li.menu-icon-social_marketing_ad div.wp-menu-image {
-	background: url($base_url/img/menu_inactive.png) no-repeat center;
-}
-li.menu-icon-social_marketing_ad:hover div.wp-menu-image, li.menu-icon-social_marketing_ad.wp-has-current-submenu div.wp-menu-image {
-    background: url($base_url/img/menu_active.png) no-repeat center;
-}
-li.menu-icon-social_marketing_ad div.wp-menu-image img {
-    display: none;
-}
-</style>
-EoWdsmStyles;
 		if ('wdsm-get_started' == wdsm_getval($_GET, 'page') || 'wdsm' == wdsm_getval($_GET, 'page') || 'social_marketing_ad' == wdsm_getval($_GET, 'post_type')) {
 			wp_enqueue_style('wdsm-admin-style', WDSM_PLUGIN_URL . "/css/wdsm-admin.css");
 		}
 	}
 
 	/**
-	 * Inject basic javascript dataset, for consistency. 
+	 * Inject basic javascript dataset, for consistency.
 	 */
 	function js_print_scripts () {
 		if ('wdsm' == wdsm_getval($_GET, 'page') || 'social_marketing_ad' == wdsm_getval($_GET, 'post_type')) {
@@ -199,40 +185,6 @@ EoWdsmStyles;
 			</script>',
 			WDSM_PLUGIN_URL
 		);
-	}
-
-	/**
-	 * Inject post editor button and handler javascript.
-	 */
-	function js_editor_button () {
-		if ('social_marketing_ad' == wdsm_getval($_GET, 'post_type')) return false; // Don't do this if we're on our own page
-		global $post;
-		if ('social_marketing_ad' == @$post->post_type) return false; // Don't show on edit page either
-		
-		wp_enqueue_script('wdsm_editor', WDSM_PLUGIN_URL . '/js/editor-button.js', array('jquery'));
-		wp_localize_script('wdsm_editor', 'l10nWdsm', array(
-			'loading' => __('Loading... please hold on', 'wdsm'),
-			'add_ad' => __('Insert Social Ad', 'wdsm'),
-			'ad_title' => __('Title', 'wdsm'),
-			'ad_date' => __('Date', 'wdsm'),
-			'ad_type' => __('Type', 'wdsm'),
-			'ad_services' => __('Services', 'wdsm'),
-			'appearance' => __('Appearance', 'wdsm'),
-			'advanced' => __('Advanced', 'wdsm'),
-			'ads' => __('Adverts', 'wdsm'),
-			'add_blank' => __('Insert blank placeholder for an ad', 'wdsm'),
-			'or_select_below' => __('or select an Ad to insert from the ones listed below', 'wdsm'),
-			'dflt' => __('Default', 'wdsm'),
-			'ad_class' => __('Additional CSS classes (link)', 'wdsm'),
-			'ad_container_class' => __('Additional CSS classes (container)', 'wdsm'),
-			'download_url' => __('Download URL', 'wdsm'),
-			'coupon_code' => __('Coupon Code', 'wdsm'),
-			'ad_alignment' => __('Alignment', 'wdsm'),
-			'default_alignment' => __('Default', 'wdsm'),
-			'left' => __('Left', 'wdsm'),
-			'right' => __('Right', 'wdsm'),
-			'center' => __('Center', 'wdsm'),
-		));
 	}
 
 /* ----- AJAX request handlers ----- */
@@ -271,21 +223,67 @@ EoWdsmStyles;
 	private function _add_hooks () {
 		add_action('admin_init', array($this, 'handle_getting_started_redirects'));
 		add_action('admin_init', array($this, 'welcome_first_time_user'));
-		
+
 		// Register options and menu
 		add_action('admin_init', array($this, 'register_settings'));
 		add_action('admin_menu', array($this, 'create_admin_menu_entry'));
 
 		add_action('admin_menu', array($this, 'reorder_menu'), 999);
-		
+
 		add_action('admin_print_scripts', array($this, 'js_print_scripts'));
 		add_action('admin_print_styles', array($this, 'css_print_styles'));
-
-		add_action('admin_print_scripts-post.php', array($this, 'js_editor_button'));
-		add_action('admin_print_scripts-post-new.php', array($this, 'js_editor_button'));
 
 		add_action('wp_ajax_wdsm_show_code', array($this, 'json_show_code'));
 		add_action('wp_ajax_nopriv_wdsm_show_code', array($this, 'json_show_code'));
 		add_action('wp_ajax_wdsm_list_ads', array($this, 'json_list_ads'));
+
+		add_action( 'media_buttons', array( $this, 'media_buttons' ), 50 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_scripts' ) );
+	}
+
+	function enqueue_editor_scripts() {
+		wp_enqueue_script('wdsm_editor', WDSM_PLUGIN_URL . '/js/editor-button.js', array('jquery'));
+		wp_localize_script('wdsm_editor', 'l10nWdsm', array(
+			'loading' => __('Loading... please hold on', 'wdsm'),
+			'add_ad' => __('Insert Social Ad', 'wdsm'),
+			'ad_title' => __('Title', 'wdsm'),
+			'ad_date' => __('Date', 'wdsm'),
+			'ad_type' => __('Type', 'wdsm'),
+			'ad_services' => __('Services', 'wdsm'),
+			'appearance' => __('Appearance', 'wdsm'),
+			'advanced' => __('Advanced', 'wdsm'),
+			'ads' => __('Adverts', 'wdsm'),
+			'add_blank' => __('Insert blank placeholder for an ad', 'wdsm'),
+			'or_select_below' => __('or select an Ad to insert from the ones listed below', 'wdsm'),
+			'dflt' => __('Default', 'wdsm'),
+			'ad_class' => __('Additional CSS classes (link)', 'wdsm'),
+			'ad_container_class' => __('Additional CSS classes (container)', 'wdsm'),
+			'download_url' => __('Download URL', 'wdsm'),
+			'coupon_code' => __('Coupon Code', 'wdsm'),
+			'ad_alignment' => __('Alignment', 'wdsm'),
+			'default_alignment' => __('Default', 'wdsm'),
+			'left' => __('Left', 'wdsm'),
+			'right' => __('Right', 'wdsm'),
+			'center' => __('Center', 'wdsm'),
+		));
+	}
+
+	function media_buttons( $editor_id = 'content' ) {
+		global $post;
+
+		if ('social_marketing_ad' == wdsm_getval( $_GET, 'post_type' ) )
+			return false;
+
+		if ( 'social_marketing_ad' == @$post->post_type )
+			return false;
+
+		printf( '<a href="#TB_inline?width=480&amp;inlineId=wdsm_ad_container&amp;width=753&amp;height=48" onclick="return wdsm_openEditor();" id="add_advert" class="button thickbox" data-editor="%s" title="%s">
+				<span class="wp-media-buttons-icon dashicons-before dashicons-share-alt"></span> %s</a>',
+			esc_attr( $editor_id ),
+			esc_attr__('Insert Social Ad', 'wdsm'),
+			__('Insert Social Ad', 'wdsm')
+		);
+
+
 	}
 }

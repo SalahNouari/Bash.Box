@@ -3,7 +3,7 @@
  * Makes sure we have everything we absolutely need.
  */
 class Wdsm_Installer {
-	
+
 	/**
 	 * @access public
 	 * @static
@@ -12,7 +12,7 @@ class Wdsm_Installer {
 		$is_installed = get_option('wdsm', false);
 		if (!$is_installed) Wdsm_Installer::install();
 	}
-	
+
 	/**
 	 * @access private
 	 * @static
@@ -21,7 +21,7 @@ class Wdsm_Installer {
 		$me = new Wdsm_Installer;
 		$me->create_default_options();
 	}
-	
+
 	/**
 	 * @access private
 	 */

@@ -43,6 +43,8 @@ class UM_Admin_Dashboard {
 		}
 		
 		do_action('um_extend_admin_menu');
+		
+		add_submenu_page( $this->slug, __('Extensions', $this->slug), '<span style="color: #3dc3e5">' .__('Extensions', $this->slug) . '</span>', 'manage_options', $this->slug . '-extensions', array(&$this, 'admin_page') );
 	
 	}
 	
@@ -105,7 +107,7 @@ class UM_Admin_Dashboard {
 	***/
 	function language_not_available() {
 		$locale = get_option('WPLANG');
-		if ( $locale && !isset( $ultimatemember->available_languages[$locale] ) && !file_exists( WP_LANG_DIR . '/plugins/ultimatemember-' . $locale . '.mo' ) )
+		if ( $locale && !strstr($locale, 'en_') && !isset( $ultimatemember->available_languages[$locale] ) && !file_exists( WP_LANG_DIR . '/plugins/ultimatemember-' . $locale . '.mo' ) )
 			return true;
 		return false;
 	}
@@ -154,7 +156,7 @@ class UM_Admin_Dashboard {
 	function admin_page() {
 		
 		$page = $_REQUEST['page'];
-		if ( $page == 'ultimatemember' ) {
+		if ( $page == 'ultimatemember' && !isset($_REQUEST['um-addon']) ) {
 
 		?>
 		
@@ -195,6 +197,10 @@ class UM_Admin_Dashboard {
 		</script>
 		
 		<?php
+			
+		} else if ( $page == 'ultimatemember-extensions' ) {
+			
+			include_once um_path . 'admin/templates/extensions.php';
 			
 		} else if ( strstr( $page, 'ultimatemember-' ) ) {
 

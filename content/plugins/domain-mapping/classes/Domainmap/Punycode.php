@@ -40,7 +40,7 @@ class Domainmap_Punycode {
      */
     public static function decode( $domain ){
         $cls = new Punycode();
-        return $cls->decode( $domain );
+        return $cls->decode( $domain );	     	 	  	 	 			
     }
 
     /**

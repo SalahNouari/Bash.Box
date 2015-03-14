@@ -98,6 +98,16 @@ $this->sections[] = array(
 				'off'			=> __('No','ultimatemember'),
         ),
 		
+        array(
+                'id'       		=> 'reset_require_strongpass',
+                'type'     		=> 'switch',
+                'title'   		=> __( 'Require a strong password? (when user resets password only)','ultimatemember' ),
+				'default' 		=> 0,
+				'desc' 	   		=> __('Enable or disable a strong password rules on password reset and change procedure','ultimatemember'),
+				'on'			=> __('On','ultimatemember'),
+				'off'			=> __('Off','ultimatemember'),
+        ),
+		
 	)
 
 );
@@ -392,6 +402,14 @@ $this->sections[] = array(
                 'default'  => get_bloginfo('admin_email'),
         ),
 
+        array(
+                'id'       => 'email_html',
+                'type'     => 'switch',
+                'title'    => __( 'Use HTML for E-mails?','ultimatemember' ),
+				'default'  => 0,
+				'desc' 	   => __('If you enable HTML for e-mails, you can customize the HTML e-mail templates found in <strong>templates/email</strong> folder.','ultimatemember'),
+        ),
+		
         array(
                 'id'       => 'welcome_email_on',
                 'type'     => 'switch',
@@ -816,6 +834,22 @@ $this->sections[] = array(
     'icon'       => 'um-faicon-cloud-upload',
     'title'      => __( 'Uploads','ultimatemember'),
     'fields'     => array(
+	
+		array(
+				'id'       		=> 'profile_photo_max_size',
+                'type'     		=> 'text',
+                'title'    		=> __( 'Profile Photo Maximum File Size','ultimatemember' ),
+                'desc' 	   		=> __( 'Sets a maximum size for the uploaded photo','ultimatemember' ),
+				'validate' 		=> 'numeric',
+        ),
+		
+		array(
+				'id'       		=> 'cover_photo_max_size',
+                'type'     		=> 'text',
+                'title'    		=> __( 'Cover Photo Maximum File Size','ultimatemember' ),
+                'desc' 	   		=> __( 'Sets a maximum size for the uploaded cover','ultimatemember' ),
+				'validate' 		=> 'numeric',
+        ),
 		
 		array(
 				'id'       		=> 'photo_thumb_sizes',
@@ -1541,6 +1575,15 @@ $this->sections[] = array(
 				'required'		=> array( 'register_secondary_btn', '=', 1 ),
         ),
 		
+        array(
+                'id'      		=> 'register_secondary_btn_url',
+                'type'     		=> 'text',
+                'title'    		=> __( 'Registration Secondary Button URL','ultimatemember' ),
+                'default'  		=> um_get_metadefault('register_secondary_btn_url'),
+				'desc' 	   		=> __('You can replace default link for this button by entering custom URL','ultimatemember'),
+				'required'		=> array( 'login_secondary_btn', '=', 1 ),
+        ),
+		
 		array(
 				'id'       		=> 'register_role',
                 'type'     		=> 'select',
@@ -1635,6 +1678,15 @@ $this->sections[] = array(
         ),
 		
         array(
+                'id'      		=> 'login_secondary_btn_url',
+                'type'     		=> 'text',
+                'title'    		=> __( 'Login Secondary Button URL','ultimatemember' ),
+                'default'  		=> um_get_metadefault('login_secondary_btn_url'),
+				'desc' 	   		=> __('You can replace default link for this button by entering custom URL','ultimatemember'),
+				'required'		=> array( 'login_secondary_btn', '=', 1 ),
+        ),
+		
+        array(
                 'id'       		=> 'login_forgot_pass_link',
                 'type'     		=> 'switch',
                 'title'    		=> __( 'Login Forgot Password Link','ultimatemember' ),
@@ -1658,6 +1710,7 @@ $this->sections[] = array(
 	
 );
 
+if ( um_get_option('enable_custom_css') ) {
 $this->sections[] = array(
 	
     'subsection' => true,
@@ -1675,6 +1728,7 @@ $this->sections[] = array(
 	)
 	
 );
+}
 
 /***
 ***	@
@@ -1693,6 +1747,16 @@ $this->sections[] = array(
 				'full_width'    	=> true,
 		),
 	
+        array(
+                'id'       		=> 'enable_timebot',
+                'type'     		=> 'switch',
+                'title'   		=> __( 'Enable Time Check Security','ultimatemember' ),
+				'default' 		=> 1,
+				'desc' 	   		=> __('Turn this option off if you have a conflict with other plugins causing a spam bot message to appear unexpectedly.','ultimatemember'),
+				'on'			=> __('On','ultimatemember'),
+				'off'			=> __('Off','ultimatemember'),
+        ),
+		
         array(
                 'id'       		=> 'disable_minify',
                 'type'     		=> 'switch',
@@ -1740,6 +1804,15 @@ $this->sections[] = array(
                 'desc' 	   		=> __( 'Enter a url or page slug (e.g /about/) to enable loading the plugin\'s css and js on that page.','ultimatemember' ),
 				'add_text'		=> __('Add New Page','ultimatemember'),
 		),
+		
+        array(
+                'id'       		=> 'enable_custom_css',
+                'type'     		=> 'switch',
+                'title'   		=> __( 'Enable custom css tab?','ultimatemember' ),
+				'default' 		=> 0,
+				'on'			=> __('On','ultimatemember'),
+				'off'			=> __('Off','ultimatemember'),
+        ),
 		
         array(
                 'id'       		=> 'allow_tracking',

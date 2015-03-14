@@ -334,13 +334,15 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 		}
 
 
-
-		// Don't map if mapped domain is not healthy
-		$health =  get_site_transient( "domainmapping-{$mapped_domain}-health" );
-		$map_verifydomain = $this->_plugin->get_option("map_verifydomain");
-		if( $health !== "1" && $map_verifydomain){
-			if( !$this->set_valid_transient($mapped_domain)  ) return true;
+		$map_check_health = $this->_plugin->get_option("map_check_domain_health");
+		if( $map_check_health ){
+			// Don't map if mapped domain is not healthy
+			$health =  get_site_transient( "domainmapping-{$mapped_domain}-health" );
+			if( $health !== "1"){
+				if( !$this->set_valid_transient($mapped_domain)  ) return true;
+			}
 		}
+
 
 		$protocol = is_ssl() || $force_ssl ? 'https://' : 'http://';
 		$current_url = untrailingslashit( $protocol . $current_blog->domain . $current_site->path );
@@ -453,7 +455,7 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 		$path = isset( $components['path'] ) ? $components['path'] : '';
 		$query = isset( $components['query'] ) ? '?' . $components['query'] : '';
 		$fragment = isset( $components['fragment'] ) ? '#' . $components['fragment'] : '';
-		return $scheme . $user . $pass . $host . $port . $path . $query . $fragment;
+		return  $scheme . str_replace("//", "/", $user . $pass . $host . $port . $path . $query . $fragment );
 	}
 
 	/**
@@ -494,7 +496,7 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 		}
 
 		$components['host'] = $mapped_domain;
-		$components['path'] = strpos($path, "/") !== 0 ?  "/" . $path : $path;
+		$components['path'] = "/" . $path;
 
 		return self::_build_url( $components );
 	}
@@ -513,7 +515,7 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 	 * @return string Swapped root URL on success, otherwise inital value.
 	 */
 	public function swap_root_url( $url ) {
-		global $current_site, $post;
+		global $current_site, $current_blog;
 
 		// do not swap URL if customizer is running or front end redirection is disabled
 		if ( $this->_suppress_swapping ) {
@@ -521,19 +523,42 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 		}
 
 		$domain = $this->_get_mapped_domain();
+		if ( !$domain ){
+			return $url;
+		}
 
 		$protocol = 'http://';
 		if ( self::$_force_protocol && is_ssl() ) {
 			$protocol = 'https://';
 		}
 
-		$destination = untrailingslashit( $protocol . $domain . $current_site->path );
-		if ( !$domain || $this->is_excluded_by_url( $url ) ) {
-			return $protocol .  $current_site->domain . $current_site->path;
+		$destination = untrailingslashit( $protocol . $domain  . $current_site->path );
+
+		if ( $this->is_excluded_by_url( $url ) ) {
+			$_url = $current_site->domain . $current_blog->path .$current_site->path;
+			return untrailingslashit( $protocol .  str_replace("//", "/", $_url) );
 		}
 
 		return $destination;
 	}
+
+	/**
+	 * Retrieves original domain from the given mapped_url
+	 *
+	 * @since 4.1.3
+	 * @access public
+	 *
+	 * @uses self::unswap_url()
+	 *
+	 * @param $url
+	 * @param bool $blog_id
+	 * @param bool $include_path
+	 * @return string
+	 */
+	public function unswap_mapped_url( $url, $blog_id = false, $include_path = true ) {
+		return self::unswap_url( $url, $blog_id, $include_path );
+	}
+
 
 	/**
 	 * Unswaps URL to use original domain.
@@ -544,11 +569,11 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 	 * @access public
 	 * @global object $current_site Current site object.
 	 * @param string $url Current URL to unswap.
-	 * @param int $blog_id The blog ID to which current URL is related to.
+	 * @param int|bool|null $blog_id The blog ID to which current URL is related to.
 	 * @param bool $include_path whether to include the url path
 	 * @return string Unswapped URL.
 	 */
-	public function unswap_mapped_url( $url, $blog_id = false, $include_path = true ) {
+	public static function unswap_url( $url, $blog_id = false, $include_path = true ){
 		global $current_site, $wpdb;
 
 		// if no blog id is passed, then take current one
@@ -582,23 +607,6 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 
 		$url_components['path'] = str_replace( '//', '/', $current_site->path . $orig_path . $url_path );
 		return self::_build_url( $url_components );
-	}
-
-	/**
-	 * Retrieves original domain from the given mapped_url
-	 *
-	 * @since 4.1.3
-	 * @access public
-	 *
-	 * @usces self::unswap_mapped_url()
-	 *
-	 * @param $mapped_url
-	 * @param bool $blog_id
-	 * @param bool $include_path
-	 * @return string
-	 */
-	public static function unswap_url( $mapped_url, $blog_id = false, $include_path = true ){
-		return self::unswap_mapped_url( $mapped_url, $blog_id, $include_path );
 	}
 
 
@@ -750,7 +758,7 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 			return $excluded_pages === "" ? array() :  array_map("intval", array_map("trim", explode(",", $excluded_pages)) );
 		}
 
-		return $excluded_pages;
+		return $excluded_pages === "" ? false : $excluded_pages;
 	}
 
 	/**
@@ -764,7 +772,9 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 	 */
 	public static function get_excluded_page_urls( $return_array = false ){
 		global $current_blog;
-		$excluded_page_urls = get_option( "dm_excluded_page_urls", "");
+		$excluded_page_urls = trim( get_option( "dm_excluded_page_urls", "") );
+
+		if( empty(  $excluded_page_urls   ) ) return array();
 
 		if( $return_array ){
 			if( $excluded_page_urls === "" )
@@ -800,8 +810,8 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 	 */
 	public static function get_ssl_forced_page_urls( $return_array = false ){
 		global $current_blog;
-		$excluded_page_urls = get_option( "dm_ssl_forced_page_urls", "");
-
+		$excluded_page_urls =  trim( get_option( "dm_ssl_forced_page_urls", "") );
+		if( empty(  $excluded_page_urls   ) ) return array();
 		if( $return_array ){
 			if( $excluded_page_urls === "" )
 				return array();
@@ -865,10 +875,10 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 	 * @return bool
 	 */
 	function is_excluded_by_url( $url ){
-
-		if( $url === false ) return true;
-		if( empty( $url ) ) return false;
 		$excluded_ids =  self::get_excluded_pages( true );
+
+		if( empty( $url ) || !$excluded_ids ) return false;
+
 		$permalink_structure = get_option("permalink_structure");
 		$comps = parse_url( $url );
 		if( empty( $permalink_structure ) )
@@ -925,7 +935,7 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 	 */
 	function exclude_page_links( $permalink, $post_id, $leavename  ){
 
-		if( empty($post_id) ) return $permalink;
+		if( empty($post_id) || $this->is_original_domain( $permalink ) ) return $permalink;
 
 		if( $this->is_excluded_by_id( $post_id) ){
 			return $this->unswap_url( $permalink );

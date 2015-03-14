@@ -1,11 +1,11 @@
 <?php
 
 class Wdsm_Tutorial {
-	
+
 	private $_edit_tutorial;
 	private $_setup_tutorial;
 	private $_insert_tutorial;
-	
+
 	private $_edit_steps = array(
 		'welcome',
 		'title',
@@ -17,7 +17,7 @@ class Wdsm_Tutorial {
 		'share_text',
 		'services',
 	);
-	
+
 	private $_setup_steps = array(
 		'settings',
 		//'popup',
@@ -29,7 +29,7 @@ class Wdsm_Tutorial {
 	private $_insert_steps = array(
 		'insert',
 	);
-	
+
 	private function __construct () {
 		if (!class_exists('Pointer_Tutorial')) require_once WDSM_PLUGIN_BASE_DIR . '/lib/external/pointers_tutorial.php';
 		$this->_edit_tutorial = new Pointer_Tutorial('wdsm-edit', __('Social Marketing tutorial', 'wdsm'), false, false);
@@ -38,18 +38,18 @@ class Wdsm_Tutorial {
 		$this->_edit_tutorial->add_icon(WDSM_PLUGIN_URL . '/img/pointer_icon.png');
 		$this->_setup_tutorial->add_icon(WDSM_PLUGIN_URL . '/img/pointer_icon.png');
 		$this->_insert_tutorial->add_icon(WDSM_PLUGIN_URL . '/img/pointer_icon.png');
-	} 
-	
+	}
+
 	public static function serve () {
 		$me = new Wdsm_Tutorial;
 		$me->_add_hooks();
 	}
-	
+
 	private function _add_hooks () {
 		add_action('admin_init', array($this, 'process_tutorial'));
 		add_action('wp_ajax_wdsm_restart_tutorial', array($this, 'json_restart_tutorial'));
 	}
-	
+
 	function process_tutorial () {
 		global $pagenow;
 		if ('wdsm' == wdsm_getval($_GET, 'page')) $this->_init_tutorial($this->_setup_steps);
@@ -63,13 +63,13 @@ class Wdsm_Tutorial {
 		$this->_setup_tutorial->initialize();
 		$this->_insert_tutorial->initialize();
 	}
-	
+
 	function json_restart_tutorial () {
 		$tutorial = @$_POST['tutorial'];
 		$this->restart($tutorial);
 		die;
 	}
-	
+
 	public function restart ($part=false) {
 		$tutorial = "_{$part}_tutorial";
 		if ($part && isset($this->$tutorial)) return $this->$tutorial->restart();
@@ -77,23 +77,23 @@ class Wdsm_Tutorial {
 			$this->_edit_tutorial->restart();
 			$this->_setup_tutorial->restart();
 		}
-	} 
-	
+	}
+
 	private function _init_tutorial ($steps) {
 		$this->_edit_tutorial->set_textdomain('wdsm');
 		$this->_edit_tutorial->set_textdomain('wdsm');
 		$this->_setup_tutorial->set_capability('manage_options');
 		$this->_setup_tutorial->set_capability('manage_options');
-		
+
 		foreach ($steps as $step) {
 			$call_step = "add_{$step}_step";
 			if (method_exists($this, $call_step)) $this->$call_step();
 		}
 	}
-	
+
 /* ----- Edit Steps ----- */
 
-	function add_welcome_step () {	
+	function add_welcome_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#icon-edit',
@@ -103,10 +103,10 @@ class Wdsm_Tutorial {
 				'position' => array('edge' => 'top', 'align' => 'left'),
 			)
 		);
-		
+
 	}
 
-	function add_title_step () {	
+	function add_title_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#title',
@@ -116,10 +116,10 @@ class Wdsm_Tutorial {
 				'position' => array('edge' => 'top', 'align' => 'left'),
 			)
 		);
-		
+
 	}
 
-	function add_body_step () {	
+	function add_body_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#postdivrich',
@@ -129,10 +129,10 @@ class Wdsm_Tutorial {
 				'position' => array('edge' => 'bottom', 'align' => 'left'),
 			)
 		);
-		
+
 	}
-	
-	function add_options_step () {	
+
+	function add_options_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#wdsm_services',
@@ -142,10 +142,10 @@ class Wdsm_Tutorial {
 				'position' => array('edge' => 'bottom', 'align' => 'left'),
 			)
 		);
-		
+
 	}
 
-	function add_share_url_step () {	
+	function add_share_url_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#wdsm_url',
@@ -157,7 +157,7 @@ class Wdsm_Tutorial {
 		);
 	}
 
-	function add_button_text_step () {	
+	function add_button_text_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#wdsm_button_text',
@@ -169,7 +169,7 @@ class Wdsm_Tutorial {
 		);
 	}
 
-	function add_type_step () {	
+	function add_type_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#wdsm_type',
@@ -181,7 +181,7 @@ class Wdsm_Tutorial {
 		);
 	}
 
-	function add_share_text_step () {	
+	function add_share_text_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#wdsm_share_text',
@@ -193,7 +193,7 @@ class Wdsm_Tutorial {
 		);
 	}
 
-	function add_services_step () {	
+	function add_services_step () {
 		$this->_edit_tutorial->add_step(
 			admin_url('post-new.php?post_type=social_marketing_ad'), 'post-new.php',
 			'#wdsm-services_box',
@@ -204,9 +204,9 @@ class Wdsm_Tutorial {
 			)
 		);
 	}
-	
+
 /* ----- Setup Steps ----- */
-	
+
 	function add_settings_step () {
 		$this->_setup_tutorial->add_step(
 			admin_url('edit.php?post_type=social_marketing_ad&page=wdsm'), 'social_marketing_ad_page_wdsm',

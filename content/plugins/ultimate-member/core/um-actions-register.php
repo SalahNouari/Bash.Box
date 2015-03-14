@@ -98,7 +98,7 @@
 		$ultimatemember->user->set_plain_password( $args['user_password'] );
 		
 		do_action('um_post_registration_save', $user_id, $args);
-				
+
 		do_action('um_post_registration_listener', $user_id, $args);
 		
 		do_action('um_post_registration', $user_id, $args);
@@ -168,8 +168,9 @@
 				}
 				
 				if ( um_user( $status . '_action' ) == 'show_message' && um_user( $status . '_message' ) != '' ) {
-					$url = $ultimatemember->permalinks->add_query( 'message', $status );
-					$url = $ultimatemember->permalinks->add_query( 'uid', um_user('ID') );
+					$url = um_get_core_page('register');
+					$url = add_query_arg( 'message', $status, $url );
+					$url = add_query_arg( 'uid', um_user('ID'), $url );
 					exit( wp_redirect( $url ) );
 				}
 				
@@ -242,6 +243,9 @@
 		$secondary_btn_word = $args['secondary_btn_word'];
 		$secondary_btn_word = apply_filters('um_register_form_button_two', $secondary_btn_word);
 		
+		$secondary_btn_url = ( isset( $args['secondary_btn_url'] ) && $args['secondary_btn_url'] ) ? $args['secondary_btn_url'] : um_get_core_page('login');
+		$secondary_btn_url = apply_filters('um_register_form_button_two_url', $secondary_btn_url);
+		
 		?>
 		
 		<div class="um-col-alt">
@@ -249,7 +253,7 @@
 			<?php if ( isset($args['secondary_btn']) && $args['secondary_btn'] != 0 ) { ?>
 			
 			<div class="um-left um-half"><input type="submit" value="<?php echo $primary_btn_word; ?>" class="um-button" /></div>
-			<div class="um-right um-half"><a href="<?php echo um_get_core_page('login'); ?>" class="um-button um-alt"><?php echo $secondary_btn_word; ?></a></div>
+			<div class="um-right um-half"><a href="<?php echo $secondary_btn_url; ?>" class="um-button um-alt"><?php echo $secondary_btn_word; ?></a></div>
 			
 			<?php } else { ?>
 			

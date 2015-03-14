@@ -10,15 +10,15 @@ class Wdsm_WidgetAdvert extends WP_Widget {
 		add_action('wp_print_scripts', array($this, 'enqueue_js_dependencies'));
 		add_action('wp_print_styles', array($this, 'enqueue_css_dependencies'));
 	}
-	
+
 	function enqueue_js_dependencies () {
 		if (is_admin()) return false;
 		if (!is_active_widget(false, false, $this->id_base)) return false;
-		
+
 		$wdsm = Wdsm_SocialMarketing::get_instance();
 		$wdsm->include_frontend_javascript();
 	}
-		
+
 	function enqueue_css_dependencies () {
 		if (is_admin()) return false;
 		if (!is_active_widget(false, false, $this->id_base)) return false;

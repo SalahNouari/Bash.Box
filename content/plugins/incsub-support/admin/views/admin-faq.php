@@ -66,7 +66,7 @@
 							add_filter( 'the_content', 'shortcode_unautop'  );
 							add_filter( 'the_content', 'prepend_attachment' );
 
-							$answer = preg_replace_callback( '|^\s*(https?://[^\s"]+)\s*$|im', array( &$this, 'embed_media' ), $faq->answer );
+							$answer = preg_replace_callback( '|^\s*(https?://[^\s"]+)\s*$|im', array( &$this, 'embed_media' ), $faq->answer );	     	 	    		   
 		    				$answer = apply_filters( 'the_content', $answer );
 						?>
 

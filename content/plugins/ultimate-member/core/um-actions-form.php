@@ -152,12 +152,16 @@
 		$form_id = $args['form_id'];
 		$mode = $args['mode'];
 		$fields = unserialize( $args['custom_fields'] );
-
+		
 		foreach( $fields as $key => $array ) {
+			
+			if ( isset( $array['type'] ) && $array['type'] == 'checkbox' && isset( $array['required'] ) && $array['required'] == 1 && !isset( $args[$key] ) ) {
+				$ultimatemember->form->add_error($key, sprintf(__('You must check %s.','ultimatemember'), $array['title'] ) );
+			}
 			
 			if ( $key == 'role_select' || $key == 'role_radio' ) {
 				if ( isset($args['role']) && empty($args['role']) && isset( $array['required'] ) && $array['required'] == 1 ) {
-					$ultimatemember->form->add_error($key, __('Please specify account type.','ultimatemember') );
+					$ultimatemember->form->add_error('role', __('Please specify account type.','ultimatemember') );
 				}
 			}
 			
@@ -224,6 +228,12 @@
 			
 				switch( $array['validate'] ) {
 				
+					case 'numeric':
+						if ( $args[$key] && !is_numeric( $args[$key] ) ) {
+							$ultimatemember->form->add_error($key, __('Please enter numbers only in this field','ultimatemember') );
+						}
+						break;
+						
 					case 'phone_number':
 						if ( !$ultimatemember->validation->is_phone_number( $args[$key] ) ) {
 							$ultimatemember->form->add_error($key, __('Please enter a valid phone number','ultimatemember') );

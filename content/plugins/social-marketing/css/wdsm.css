@@ -63,7 +63,7 @@ add_theme_support('wdsm');
  	margin-right: auto;
  	width: 50%;
  }
- 
+
 .wdsm_ad_container_wrapper {
 	display: none;
 }
@@ -201,7 +201,7 @@ add_theme_support('wdsm');
 }
 #wdsm-popup_close {
 	position: absolute;
-	top: 4px; 
+	top: 4px;
 	right: 4px;
 	border: 1px solid #ddd;
 	background-color: #f1f1f1;
@@ -256,3 +256,6 @@ add_theme_support('wdsm');
        max-width: inherit !important
 }
 
+
+
+/* 133620-1426305703-au */

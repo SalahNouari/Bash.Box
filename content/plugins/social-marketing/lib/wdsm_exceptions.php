@@ -6,8 +6,8 @@ function wdsm_getval ($val, $prop, $next=false) {
 		else return false;
 	} else if (is_array($val)) {
 		if (isset($val[$prop])) return $next ? (isset($val[$prop][$next]) ? $val[$prop][$next] : false) : $val[$prop];
-		else return false;		
-	} 
+		else return false;
+	}
 	return false;
 }
 
