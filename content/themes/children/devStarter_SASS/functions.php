@@ -197,7 +197,7 @@ return '<script>,<style>,<b>,<br>,<em>'; //add whatever tags you want to this st
 		echo '<p>Designed by <a href="http://www.lakesareadesign.com/" title="Lakes Area Design">Lakes Area Design</a></p>';
 	}
 
-	// if you want widgets in the footer, you can use this 
+	// widgets in the footer, you can use this 
 	add_theme_support( 'genesis-footer-widgets', 3 );
 	
 	// COMMENTS & PINGBACKS ******************************

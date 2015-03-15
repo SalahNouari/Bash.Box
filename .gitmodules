@@ -13,3 +13,6 @@
 [submodule "content/themes/Foundation5"]
 	path = content/themes/Foundation5
 	url = https://eric-miller@github.com/olefredrik/FoundationPress.git
+[submodule "content/plugins/woocommerce"]
+	path = content/plugins/woocommerce
+	url = https://github.com/woothemes/woocommerce.git
