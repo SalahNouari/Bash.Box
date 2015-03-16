@@ -175,7 +175,7 @@ class IncPopupRule_User extends IncPopupRule {
 
 		if ( null === $Comment ) {
 			// Guests (and maybe logged in users) are tracked via a cookie.
-			$Comment = isset( $_COOKIE['comment_author_' . COOKIEHASH] ) ? 1 : 0;	     	 	  		 				
+			$Comment = isset( $_COOKIE['comment_author_' . COOKIEHASH] ) ? 1 : 0;
 
 			if ( ! $Comment && is_user_logged_in() ) {
 				// For logged-in users we can also check the database.

@@ -215,8 +215,9 @@ class GFUserSignups {
 
         if(is_multisite()) {
             $ms_options = rgars( $signup->config, 'meta/multisite_options');
-            if($ms_options['create_site'])
+            if( rgar( $ms_options, 'create_site' ) ){
                 $blog_id = GFUser::create_new_multisite($user_id, $signup->config, $signup->lead, $user_data['password']);
+			}
         }
 
         return array('user_id' => $user_id, 'password' => $user_data['password'], 'blog_id' => $blog_id);
