@@ -1,9 +1,6 @@
 [submodule "daux"]
 	path = daux
 	url = https://lakesareadesign@github.com/lakesareadesign/daux.io.git
-[submodule "SRDB"]
-	path = SRDB
-	url = https://github.com/interconnectit/Search-Replace-DB.git
 [submodule "cms"]
 	path = cms
 	url = https://github.com/WordPress/WordPress.git
