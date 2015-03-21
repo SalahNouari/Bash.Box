@@ -105,7 +105,7 @@ class TheLib_2_0_1_Core extends TheLib_2_0_1 {
 		foreach ( $components as $component ) {
 			if ( ! property_exists( $this, $component ) ) { continue; }
 
-			$class_name = str_replace( 'Core', ucfirst( $component ), __CLASS__ );	     	 	  		 				
+			$class_name = str_replace( 'Core', ucfirst( $component ), __CLASS__ );
 			$this->$component = new $class_name();
 		}
 	}

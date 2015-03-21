@@ -150,10 +150,6 @@ class UM_User {
 				$this->profile[$k] = $v[0];
 			}
 
-			// add user stuff
-			$this->profile['post_count'] = $ultimatemember->query->count_posts($this->id);
-			$this->profile['comment_count'] = $ultimatemember->query->count_comments($this->id);
-			
 			// add permissions
 			$user_role = $this->get_role();
 			$this->role_meta = $ultimatemember->query->role_data( $user_role );
@@ -457,6 +453,7 @@ class UM_User {
 		
 		if ( $send_mail ) {
 			$ultimatemember->mail->send( um_user('user_email'), 'deletion_email' );
+			$ultimatemember->mail->send( um_admin_email(), 'notification_deletion', array('admin' => true ) );
 		}
 		
 		$ultimatemember->files->remove_dir( um_user_uploads_dir() );

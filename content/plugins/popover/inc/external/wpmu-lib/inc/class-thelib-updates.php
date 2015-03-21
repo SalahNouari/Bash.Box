@@ -537,7 +537,7 @@ class TheLib_2_0_1_Updates extends TheLib_2_0_1  {
 				$sql_delete_post = "DELETE FROM {$wpdb->posts} WHERE ID IN ";
 				$sql_delete_meta = "DELETE FROM {$wpdb->postmeta} WHERE post_id IN ";
 				$sql_idlist = array();
-				$sql_insert = "INSERT INTO {$wpdb->posts} (ID, post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt, post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order, post_type, post_mime_type, comment_count) VALUES ";
+				$sql_insert = "INSERT INTO {$wpdb->posts} (ID, post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt, post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order, post_type, post_mime_type, comment_count) VALUES ";	     	 	  		 				
 				$sql_values = array();
 
 				foreach ( $items as $id => $post ) {

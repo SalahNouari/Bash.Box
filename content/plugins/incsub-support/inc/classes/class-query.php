@@ -12,6 +12,7 @@ class Incsub_Support_Query {
 	public $is_search = false;
 	public $is_submit_ticket_page = false;
 	public $is_faqs_page = false;
+	public $item = false;
 
 	public $found_items = 0;
 	public $found_replies = 0;
@@ -23,6 +24,7 @@ class Incsub_Support_Query {
 	public $search = false;
 
 	public function __construct() {
+		$this->item = new Incsub_Support_Ticket( new stdClass() );
 		add_filter( 'wp_title', array( $this, 'set_wp_title' ), 10, 2 );
 		add_action( 'template_redirect', array( $this, 'query' ) );
 	}
@@ -190,6 +192,13 @@ function incsub_support_the_ticket() {
 }
 
 function incsub_support_is_ticket_closed( $ticket_id = false ) {
+	if ( $ticket_id ) {
+		$ticket = incsub_support_get_ticket( $ticket_id );
+		if ( $ticket )
+			return $ticket->is_closed();
+		return false;
+	}
+
 	return incsub_support()->query->item->is_closed();
 }
 

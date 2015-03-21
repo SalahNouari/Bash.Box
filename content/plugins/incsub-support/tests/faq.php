@@ -64,7 +64,7 @@ class Support_faq extends WP_UnitTestCase {
 
         $new_answer = "The new answer";
 
-        incsub_support_update_faq( $faq_id, array( 'answer' => $new_answer ) );
+        incsub_support_update_faq( $faq_id, array( 'answer' => $new_answer ) );	     	 	    		   
 
         $faq = incsub_support_get_faq( $faq_id );
         $this->assertEquals( $faq->answer, $new_answer );

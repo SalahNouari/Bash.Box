@@ -7,7 +7,7 @@ Tags: access control, author, authors, author profile, comments, community, comm
 Requires at least: 4.1
 Tested up to: 4.1.1
 
-Stable Tag: 1.0.85
+Stable Tag: 1.0.92
 
 License: GNU Version 2 or Any Later Version
 
@@ -17,7 +17,7 @@ The easiest way to create powerful online communities and beautiful user profile
 
 Ultimate Member is a powerful plugin that allows you to add beautiful user profiles to your site and create advanced online communities. The plugin enables users to sign up and become members of your site all from the front-end. With a focus on flexibility and simplicity creating a community and membership site with WordPress has never been so easy.
 
-**Live Demo: Check out all of Ultimate Member's features on our [live demo](http://ultimatememberdemo.com/)!**
+**Check out all of the plugin features on our [Live Demo](https://ultimatemember.com/).**
 
 **Get support by posting in our [community forum](https://ultimatemember.com/forums/).**
 
@@ -47,9 +47,10 @@ Features of the plugin include:
 You can extend the power of Ultimate Member with one of our premium extensions:
 
 * [Social Login](https://ultimatemember.com/extensions/social-login/)
-* [MailChimp](https://ultimatemember.com/extensions/mailchimp/)
 * [bbPress](https://ultimatemember.com/extensions/bbpress/)
+* [MailChimp](https://ultimatemember.com/extensions/mailchimp/)
 * [myCRED](https://ultimatemember.com/extensions/mycred/)
+* [Notices](https://ultimatemember.com/extensions/notices/)
 
 **Free Extensions**
 
@@ -201,6 +202,41 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 16. Screenshot 16
 
 == Changelog ==
+
+= 1.0.92: March 20, 2015 =
+
+* New: added option to customize redirection URL after e-mail activation
+* Fixed: issue with hardcoded ajax/upload URLs - they are now localized
+* Fixed: issue with admin notification for a deleted account
+* Fixed: admin notifications are in plain text format
+
+= 1.0.91: March 20, 2015 =
+
+* Tweak: featured image in user posts goes to post link
+* Fixed: solved a bug with e-mail validation
+
+= 1.0.90: March 19, 2015 =
+
+* Tweak: minor admin css changes
+* Tweak: error message for frontend upload with theme/plugin conflicts
+
+= 1.0.89: March 18, 2015 =
+
+* Tweak: Major Performance Improvements (beta)
+
+= 1.0.88: March 18, 2015 =
+
+* Fixed: bug with viewing member profiles
+
+= 1.0.87: March 17, 2015 =
+
+* Tweak: profile edit form tweaked to be processed for profile edit only. allows you to have custom (not nested) valid forms in other profile tabs
+
+= 1.0.86: March 16, 2015 =
+
+* Tweak: UM admins can see unapproved users on front-end members directory
+* Fixed: few misspelling errors
+* Fixed: bug with custom profile templates (showing blank) resolved
 
 = 1.0.85: March 14, 2015 =
 
