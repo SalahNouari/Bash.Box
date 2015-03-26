@@ -7,7 +7,7 @@ Tags: access control, author, authors, author profile, comments, community, comm
 Requires at least: 4.1
 Tested up to: 4.1.1
 
-Stable Tag: 1.0.92
+Stable Tag: 1.0.96
 
 License: GNU Version 2 or Any Later Version
 
@@ -49,6 +49,7 @@ You can extend the power of Ultimate Member with one of our premium extensions:
 * [Social Login](https://ultimatemember.com/extensions/social-login/)
 * [bbPress](https://ultimatemember.com/extensions/bbpress/)
 * [MailChimp](https://ultimatemember.com/extensions/mailchimp/)
+* [User Reviews](https://ultimatemember.com/extensions/user-reviews/)
 * [myCRED](https://ultimatemember.com/extensions/mycred/)
 * [Notices](https://ultimatemember.com/extensions/notices/)
 
@@ -145,6 +146,7 @@ Ultimate Member has been translated into the following languages:
 * Suomi
 * Polski
 * Türkçe
+* العربية
 
 == Installation ==
 
@@ -202,6 +204,28 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 16. Screenshot 16
 
 == Changelog ==
+
+= 1.0.96: March 25, 2015 =
+
+* New: Added Arabic language (ar) support
+* Fixed: Date fields not working in Safari
+* Fixed: issue with HTML e-mails
+* Fixed: issue with showing sidebar logout widget on bbpress forums
+
+= 1.0.95: March 24, 2015 =
+
+* Tweak: added more hooks to mail function to allow for sending custom e-mails
+* Fixed: issue with content lock settings in backend appearing for non-admins
+* Fixed: issue with form errors handling
+
+= 1.0.94: March 23, 2015 =
+
+* Fixed: bug with member directory search
+* Fixed: bug with custom role homepage
+
+= 1.0.93: March 22, 2015 =
+
+* Fixed: bug with showing register and login forms on same page
 
 = 1.0.92: March 20, 2015 =
 

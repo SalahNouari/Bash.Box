@@ -6,6 +6,10 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.1.4 =
+* Fixed incorrect count for newsletters scheduled to be sent at chosen time
+* Added date info for newsletter scheduled to be sent at chosen time
+
 = 2.7.1.3 =
 * Fixed problems with groups subscribe behavior
 
@@ -403,4 +407,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1423010934-au
+133620-1427340113-au

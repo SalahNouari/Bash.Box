@@ -71,19 +71,19 @@ if ( ! class_exists( 'WpSmProReceive' ) ) {
 			$attachment = new WP_Query( $args );
 			if ( $attachment->post_count == 1 ) {
 				$attachment_id = $attachment->posts[0];
-				if( !empty( $attachment_id ) ) {
-					$smush_sent = get_post_meta($attachment_id, WP_SMPRO_PREFIX . 'request-' . $request_id, true);
+				if ( ! empty( $attachment_id ) ) {
+					$smush_sent = get_post_meta( $attachment_id, WP_SMPRO_PREFIX . 'request-' . $request_id, true );
 				}
-				if( !empty( $smush_sent ) ) {
+				if ( ! empty( $smush_sent ) ) {
 					//Check request token
-					if( $smush_sent['token'] == $req_data['token'] ) {
+					if ( $smush_sent['token'] == $req_data['token'] ) {
 						$insert = $this->save( $attachment_data, array( $attachment_id ), true );
-					}else{
+					} else {
 						$log->error( 'WpSmProReceive: receive', "Smush receive error, Token Mismatch for request " . $request_id );
 						die();
 					}
-				}else{
-					$log->error('WpSmProReceive: receive', "Smush sent data missing for request " . $request_id );
+				} else {
+					$log->error( 'WpSmProReceive: receive', "Smush sent data missing for request " . $request_id );
 					echo json_encode( array( 'status' => 1 ) );
 					die();
 				}
@@ -253,7 +253,9 @@ if ( ! class_exists( 'WpSmProReceive' ) ) {
 					if ( ! empty( $response_body ) ) {
 						$response_body = json_decode( $response_body );
 						if ( ! empty( $response_body->message ) ) {
-							update_option(WP_SMPRO_PREFIX . 'request_status', $response_body->message );
+							update_option( WP_SMPRO_PREFIX . 'request_status', $response_body->message );
+							$smush_notice = '<p><b>' . __( 'Notice - ', WP_SMPRO_DOMAIN ) . '</b>' . __( 'Due to Yahoo seemingly discontinuing their free Smush.it service we have had an unprecedented spike in
+		demand, we are working to bring down wait times as quickly as possible', WP_SMPRO_DOMAIN ) . ', But we do guarantee that your images will be well and truly smushed eventually!</p>';
 							if ( $response_body->message == 'queue' ) {
 								if ( $response_body->pending_requests == 0 ) {
 									$data['message'] = __( 'The smushing elves are busy, You are first in the queue.', WP_SMPRO_DOMAIN );
@@ -262,23 +264,36 @@ if ( ! class_exists( 'WpSmProReceive' ) ) {
 								}
 
 								$ordinal_suffix = $this->getOrdinalSuffix( $response_body->pending_requests + 1 );
-								//n*1 hour for each request, plus an additional hour for margin
-								$wait_time      = ( $response_body->pending_requests * 1 ) + 1;
+								if ( ! empty( $response_body->wait_time ) ) {
+									$time = $this->secondsToTime( $response_body->wait_time );
 
-								$d     = floor( $wait_time / 24 );
-								$hours = $wait_time - $d * 24;
-								if ( $d > 0 ) {
-									$d = $d > 1 ? $d . ' days ' : $d . ' day ';
 								} else {
-									$d = '';
-								}
-								if ( $hours > 0 ) {
-									$hours = $hours > 1 ? $hours . ' hours' : $hours . ' hour';
-								} else {
-									$hours = '';
+									//n*1 hour for each request, plus an additional hour for margin
+									$wait_time = ( $response_body->pending_requests * 0.8 ) + 1;
+
+									$d     = floor( $wait_time / 24 );
+									$hours = $wait_time - $d * 24;
+									if ( $d > 0 ) {
+
+										//Adjust long wait times, as actually it doesn't take that long
+										$d = ( $d >= 5 ) ? $d - 1 : $d;
+
+										$d = $d > 1 ? $d . ' days ' : $d . ' day ';
+									} else {
+										$d = '';
+									}
+									if ( $hours > 0 ) {
+										$hours = $hours > 1 ? $hours . ' hours' : $hours . ' hour';
+									} else {
+										$hours = '';
+									}
+									$time = $d . $hours;
 								}
 
-								$data['message'] = sprintf( $data['message'], $ordinal_suffix, $d . $hours );
+								$data['message'] = sprintf( $data['message'], $ordinal_suffix, $time );
+								if ( $response_body->pending_requests > 10 ) {
+									$data['message'] .= $smush_notice;
+								}
 
 								unset( $d, $hours, $wait_time, $ordinal_suffix );
 
@@ -333,6 +348,21 @@ if ( ! class_exists( 'WpSmProReceive' ) ) {
 			}
 
 			return $abbreviation;
+		}
+
+		/**
+		 * Convert seconds to Day, hour month
+		 *
+		 * @param $seconds
+		 *
+		 * @return string
+		 */
+		function secondsToTime( $seconds ) {
+			$seconds = intval( $seconds );
+			$dtF     = new DateTime( "@0" );
+			$dtT     = new DateTime( "@$seconds" );
+
+			return $dtF->diff( $dtT )->format( '%a days, %h hours' );
 		}
 
 	}

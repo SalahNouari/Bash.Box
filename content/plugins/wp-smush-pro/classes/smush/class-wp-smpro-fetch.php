@@ -193,7 +193,7 @@ if ( ! class_exists( 'WpSmProFetch' ) ) {
 					$file_path    = $upload_path . '/' . $path_prefix . '/' . $filenames[ $size ];
 					$file_details = wp_check_filetype_and_ext( $file_path, $filenames[ $size ] );
 
-					$unlink_files[]                                 = $upload_path . '/' . $path_prefix . '/' . $attachment_meta['sizes'][ $size ]['file'];
+					$unlink_files[]                                 = $upload_path . '/' . $path_prefix . '/' . $attachment_meta['sizes'][ $size ]['file'];								 	 	   		   
 					$attachment_meta['sizes'][ $size ]['file']      = urldecode( $filenames[ $size ] );
 					$attachment_meta['sizes'][ $size ]['mime-type'] = $file_details['type'];
 				}

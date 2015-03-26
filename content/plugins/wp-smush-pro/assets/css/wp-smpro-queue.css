@@ -90,7 +90,7 @@ Smush button transformation
     float: left;
 }
 
-.button#wp-smpro-finished, .button#wp-smpro-finished:disabled, .button#wp-smpro-finished[disabled] {
+.button#wp-smpro-finished, .button#wp-smpro-finished:disabled, .button#wp-smpro-finished[disabled] {								 	 	   		   
     color: #fff !important;
     background: #7ad03a !important;
     border-color: #619f6b !important;
@@ -505,4 +505,4 @@ ul#wp-smpro-selected-images li .img-descr .img-smush-status {
 }
 
 
-/* 133620-1426305718-au */
+/* 133620-1427340120-au */
