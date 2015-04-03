@@ -13,3 +13,6 @@
 [submodule "content/plugins/woocommerce"]
 	path = content/plugins/woocommerce
 	url = git@github.com:woothemes/woocommerce.git
+[submodule "SRDB"]
+	path = SRDB
+	url = git@github.com:lakesareadesign/Search-Replace-DB.git
