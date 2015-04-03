@@ -344,6 +344,15 @@ $this->sections[] = array(
         ),
 		
         array(
+                'id'       		=> 'access_widget_admin_only',
+                'type'     		=> 'switch',
+                'title'   		=> __( 'Enable the Access Control widget for Admins only?','ultimatemember' ),
+				'default' 		=> 1,
+				'on'			=> __('Yes','ultimatemember'),
+				'off'			=> __('No','ultimatemember'),
+        ),
+		
+        array(
 				'id'       		=> 'wpadmin_allow_ips',
                 'type'     		=> 'textarea',
                 'title'    		=> __( 'Whitelisted Backend IPs','ultimatemember' ),
@@ -1757,6 +1766,14 @@ $this->sections[] = array(
 				'full_width'    	=> true,
 		),
 	
+        array(
+                'id'      		=> 'advanced_denied_roles',
+                'type'     		=> 'text',
+                'title'    		=> __( 'Do not allow registering these roles','ultimatemember' ),
+                'default'  		=> '',
+				'desc' 	   		=> __('Comma seperate roles (role slugs) that can not be registered from frontend ever for security.','ultimatemember'),
+        ),
+		
         array(
                 'id'       		=> 'enable_timebot',
                 'type'     		=> 'switch',

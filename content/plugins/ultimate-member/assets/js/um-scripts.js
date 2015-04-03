@@ -64,19 +64,19 @@ jQuery(document).ready(function() {
 
 		var years_n = elem.attr('data-years');
 
-		var min = "[" + elem.attr('data-date_min') + "]";
-		var max = "[" + elem.attr('data-date_max') + "]";
-		var min = JSON.parse(min);
-		var max = JSON.parse(max);
+		var min = elem.attr('data-date_min');
+		var max = elem.attr('data-date_max');
 
 		elem.pickadate({
 			selectYears: years_n + 1,
-			min: min,
-			max: max,
+			min: new Date(min),
+			max: new Date(max),
 			disable: disable,
 			format: elem.attr('data-format'),
 			formatSubmit: 'yyyy/mm/dd',
-			hiddenName: true
+			hiddenName: true,
+			onOpen: function() { elem.blur(); },
+			onClose: function() { elem.blur(); }
 		});
 	});
 
@@ -87,7 +87,9 @@ jQuery(document).ready(function() {
 			format: elem.attr('data-format'),
 			interval: parseInt( elem.attr('data-intervals') ),
 			formatSubmit: 'HH:i',
-			hiddenName: true
+			hiddenName: true,
+			onOpen: function() { elem.blur(); },
+			onClose: function() { elem.blur(); }
 		});
 	});
 

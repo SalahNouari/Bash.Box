@@ -457,7 +457,7 @@ function incsub_support_the_staff_box( $args = array() ) {
 							array(
 								'show_empty' => __( 'Not yet assigned', INCSUB_SUPPORT_LANG_DOMAIN ),
 								'name' => 'ticket-staff' ,
-								'selected' => incsub_support_the_ticket_staff_name()
+								'selected' => incsub_support_the_ticket_staff_login()
 							)
 						); ?>
 					</label>
@@ -519,7 +519,7 @@ function incsub_support_new_ticket_form_link( $class = '' ) {
 
 	$permalink = get_permalink( $new_ticket_page );
 	if ( $permalink ) {
-		return '<a class="' . esc_attr( $class ) . '" href="' . esc_url( $permalink ) . '" title="' . esc_attr__( 'Submit new ticket', INCSUB_SUPPORT_LANG_DOMAIN ) . '">' . __( 'Submit new ticket', INCSUB_SUPPORT_LANG_DOMAIN ) . '</a>';
+		return '<a class="' . esc_attr( $class ) . '" href="' . esc_url( $permalink ) . '" title="' . esc_attr__( 'Submit new ticket', INCSUB_SUPPORT_LANG_DOMAIN ) . '">' . __( 'Submit new ticket', INCSUB_SUPPORT_LANG_DOMAIN ) . '</a>';	     	 	    		   
 	}
 
 	return '';

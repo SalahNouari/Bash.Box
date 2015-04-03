@@ -2,7 +2,7 @@
 /*
 Plugin Name: User Switching
 Description: Instant switching between user accounts in WordPress
-Version:     1.0.3
+Version:     1.0.4
 Plugin URI:  https://johnblackbourn.com/wordpress-plugin-user-switching/
 Author:      John Blackbourn
 Author URI:  https://johnblackbourn.com/
@@ -30,7 +30,7 @@ class user_switching {
 	/**
 	 * Class constructor. Set up some filters and actions.
 	 */
-	public function __construct() {
+	private function __construct() {
 
 		# Required functionality:
 		add_filter( 'user_has_cap',                    array( $this, 'filter_user_has_cap' ), 10, 3 );
@@ -45,6 +45,8 @@ class user_switching {
 		# Nice-to-haves:
 		add_filter( 'ms_user_row_actions',             array( $this, 'filter_user_row_actions' ), 10, 2 );
 		add_filter( 'login_message',                   array( $this, 'filter_login_message' ), 1 );
+		add_filter( 'removable_query_args',            array( $this, 'filter_removable_query_args' ) );
+		add_action( 'wp_meta',                         array( $this, 'action_wp_meta' ) );
 		add_action( 'wp_footer',                       array( $this, 'action_wp_footer' ) );
 		add_action( 'personal_options',                array( $this, 'action_personal_options' ) );
 		add_action( 'admin_bar_menu',                  array( $this, 'action_admin_bar_menu' ), 11 );
@@ -132,6 +134,8 @@ class user_switching {
 			return;
 		}
 
+		$current_user = ( is_user_logged_in() ) ? wp_get_current_user() : null;
+
 		switch ( $_REQUEST['action'] ) {
 
 			# We're attempting to switch to another user:
@@ -150,7 +154,7 @@ class user_switching {
 				$user = switch_to_user( $user_id, self::remember() );
 				if ( $user ) {
 
-					$redirect_to = self::get_redirect( $user );
+					$redirect_to = self::get_redirect( $user, $current_user );
 
 					# Redirect to the dashboard or the home URL depending on capabilities:
 					$args = array( 'user_switched' => 'true' );
@@ -187,7 +191,7 @@ class user_switching {
 				# Switch user:
 				if ( switch_to_user( $old_user->ID, self::remember(), false ) ) {
 
-					$redirect_to = self::get_redirect( $old_user );
+					$redirect_to = self::get_redirect( $old_user, $current_user );
 					$args = array( 'user_switched' => 'true', 'switched_back' => 'true' );
 					if ( $redirect_to ) {
 						wp_safe_redirect( add_query_arg( $args, $redirect_to ) );
@@ -203,19 +207,17 @@ class user_switching {
 			# We're attempting to switch off the current user:
 			case 'switch_off':
 
-				$user = wp_get_current_user();
-
 				# Check authentication:
 				if ( !current_user_can( 'switch_off' ) ) {
 					wp_die( __( 'Could not switch off.', 'user-switching' ) );
 				}
 
 				# Check intent:
-				check_admin_referer( "switch_off_{$user->ID}" );
+				check_admin_referer( "switch_off_{$current_user->ID}" );
 
 				# Switch off:
 				if ( switch_off_user() ) {
-					$redirect_to = self::get_redirect();
+					$redirect_to = self::get_redirect( null, $current_user );
 					$args = array( 'switched_off' => 'true' );
 					if ( $redirect_to ) {
 						wp_safe_redirect( add_query_arg( $args, $redirect_to ) );
@@ -235,20 +237,24 @@ class user_switching {
 	/**
 	 * Fetch the URL to redirect to for a given user (used after switching).
 	 *
-	 * @param  WP_User|null A WP_User object (optional).
+	 * @param  WP_User $new_user The new user's WP_User object (optional).
+	 * @param  WP_User $old_user The old user's WP_User object (optional).
 	 * @return string The URL to redirect to.
 	 */
-	protected static function get_redirect( WP_User $user = null ) {
+	protected static function get_redirect( WP_User $new_user = null, WP_User $old_user = null ) {
 
 		if ( isset( $_REQUEST['redirect_to'] ) and !empty( $_REQUEST['redirect_to'] ) ) {
 			$redirect_to = self::remove_query_args( $_REQUEST['redirect_to'] );
+			$requested_redirect_to = $_REQUEST['redirect_to'];
 		} else {
 			$redirect_to = '';
+			$requested_redirect_to = '';
 		}
 
-		if ( $user ) {
-			$requested_redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';
-			$redirect_to = apply_filters( 'login_redirect', $redirect_to, $requested_redirect_to, $user );
+		if ( ! $new_user ) {
+			$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $requested_redirect_to, $old_user );
+		} else {
+			$redirect_to = apply_filters( 'login_redirect', $redirect_to, $requested_redirect_to, $new_user );
 		}
 
 		return $redirect_to;
@@ -388,11 +394,26 @@ class user_switching {
 	}
 
 	/**
+	 * Adds a 'Switch back to {user}' link to the Meta sidebar widget if the admin toolbar isn't showing.
+	 */
+	public function action_wp_meta() {
+
+		if ( !is_admin_bar_showing() and $old_user = self::get_old_user() ) {
+			$link = sprintf( __( 'Switch back to %1$s (%2$s)', 'user-switching' ), $old_user->display_name, $old_user->user_login );
+			$url = add_query_arg( array(
+				'redirect_to' => urlencode( self::current_url() )
+			), self::switch_back_url( $old_user ) );
+			echo '<li id="user_switching_switch_on"><a href="' . $url . '">' . $link . '</a></li>';
+		}
+
+	}
+
+	/**
 	 * Adds a 'Switch back to {user}' link to the WordPress footer if the admin toolbar isn't showing.
 	 */
 	public function action_wp_footer() {
 
-		if ( !is_admin_bar_showing() and $old_user = self::get_old_user() ) {
+		if ( !did_action( 'wp_meta' ) and !is_admin_bar_showing() and $old_user = self::get_old_user() ) {
 			$link = sprintf( __( 'Switch back to %1$s (%2$s)', 'user-switching' ), $old_user->display_name, $old_user->user_login );
 			$url = add_query_arg( array(
 				'redirect_to' => urlencode( self::current_url() )
@@ -509,6 +530,20 @@ class user_switching {
 	}
 
 	/**
+	 * Filter the list of query arguments which get removed from admin area URLs in WordPress.
+	 * 
+	 * @link https://core.trac.wordpress.org/ticket/23367
+	 *
+	 * @param  array $args List of removable query arguments.
+	 * @return array       Updated list of removable query arguments.
+	 */
+	public function filter_removable_query_args( array $args ) {
+		return array_merge( $args, array(
+			'user_switched', 'switched_off', 'switched_back',
+		) );
+	}
+
+	/**
 	 * Helper function. Returns the switch to or switch back URL for a given user.
 	 *
 	 * @param  WP_User $user The user to be switched to.
@@ -581,12 +616,12 @@ class user_switching {
 	 * @return string The URL with the listed query args removed.
 	 */
 	public static function remove_query_args( $url ) {
-		return remove_query_arg( array(
-			'user_switched', 'switched_off', 'switched_back',
+		$args = apply_filters( 'removable_query_args', array(
 			'message', 'update', 'updated', 'settings-updated', 'saved',
 			'activated', 'activate', 'deactivate', 'enabled', 'disabled',
 			'locked', 'skipped', 'deleted', 'trashed', 'untrashed'
-		), $url );
+		) );
+		return remove_query_arg( $args, $url );
 	}
 
 	/**
@@ -656,6 +691,21 @@ class user_switching {
 			$required_caps[] = 'do_not_allow';
 		}
 		return $required_caps;
+	}
+
+	/**
+	 * Singleton instantiator.
+	 *
+	 * @return user_switching User Switching instance.
+	 */
+	public static function get_instance() {
+		static $instance;
+
+		if ( ! isset( $instance ) ) {
+			$instance = new user_switching;
+		}
+
+		return $instance;
 	}
 
 }
@@ -836,6 +886,4 @@ function current_user_switched() {
 }
 }
 
-global $user_switching;
-
-$user_switching = new user_switching;
+$GLOBALS['user_switching'] = user_switching::get_instance();

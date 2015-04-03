@@ -197,9 +197,7 @@ if ( ! class_exists( 'WpSmProAdmin' ) ) {
 				'no_leave'        => __( 'Images are being fetched from the API. If you leave this screen, the fetching will pause until you return again.', WP_SMPRO_DOMAIN ),
 				'confirm'         => __( 'You really want to remove the bulk request?', WP_SMPRO_DOMAIN ),
 				'confirm_button'  => __( 'Just do it', WP_SMPRO_DOMAIN ),
-				'reset_success'   => __( 'Make sure to send another bulk smush', WP_SMPRO_DOMAIN ),
-				'prompt_manual'   => __( "As you're processing 30 or less images it would be quicker if you Smush individually or you can continue sending the Bulk request", WP_SMPRO_DOMAIN ),
-				'continue'        => __( 'Continue', WP_SMPRO_DOMAIN )
+				'reset_success'   => __( 'Make sure to send another bulk smush', WP_SMPRO_DOMAIN )
 			);
 
 			wp_localize_script( 'wp-smpro-queue', 'wp_smpro_msgs', $wp_smpro_msgs );
@@ -693,10 +691,7 @@ if ( ! class_exists( 'WpSmProAdmin' ) ) {
 					<p>
 						<?php
 						// let the user know that there's an alternative
-						printf(
-							__( 'You can also smush images individually from your <a href="%s">Media Library</a>.', WP_SMPRO_DOMAIN
-							), admin_url( 'upload.php' )
-						);
+						printf( __( 'You can also smush images individually from your <a href="%s">Media Library</a>.', WP_SMPRO_DOMAIN ), admin_url( 'upload.php' ) );
 						?>
 					</p>
 				<?php
@@ -708,8 +703,9 @@ if ( ! class_exists( 'WpSmProAdmin' ) ) {
 				$this->show_notice();
 				// display the appropriate button
 				$this->setup_button();
-				?>
 
+				?>
+				<p class="smush-api-server"><?php printf( __( "API Server: %s", WP_SMPRO_DOMAIN ), parse_url( WP_SMPRO_SERVICE_URL, PHP_URL_HOST ) ); ?></p>
 			</div>
 		<?php
 		}
@@ -1495,7 +1491,7 @@ if ( ! class_exists( 'WpSmProAdmin' ) ) {
 			}
 
 			//send a request to API, to reset the request from there too, as we don't want to waste the resources
-			$response = $wp_smpro->sender->reset_bulk( $bulk_request, $current_requests[ $bulk_request ]['token'] );
+			$response = $wp_smpro->sender->reset_bulk( $bulk_request, $current_requests[ $bulk_request ]['token'], $current_requests[ $bulk_request ] );
 
 			//Server is down or other issue
 			if ( is_wp_error( $response ) || $response['api']['response']['code'] !== 200 ) {
@@ -1534,10 +1530,13 @@ if ( ! class_exists( 'WpSmProAdmin' ) ) {
 		/**
 		 * Creates a reset button for bulk request
 		 */
-		function reset_bulk_button() {
+		function reset_bulk_button( $show = false ) {
 			$reset_nonce = wp_nonce_field( 'reset_bulk_request', 'wp-smpro-reset-nonce', '', false );
 			//Check URL for show_smush arg
 			$class        = ( ! empty( $_REQUEST[ WP_SMPRO_PREFIX . 'allow_reset' ] ) && $_REQUEST[ WP_SMPRO_PREFIX . 'allow_reset' ] == 'true' ) ? '' : ' class="hide"';
+			if( $show ) {
+				$class = '';
+			}
 			$reset_button = '<a href="#" id="wp-smpro-reset-bulk"' . $class . '>' . __( 'Reset bulk request', WP_SMPRO_PREFIX ) . '</a>';
 
 			return $reset_button . $reset_nonce;

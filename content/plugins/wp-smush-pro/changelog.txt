@@ -5,6 +5,11 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+1.1 - 2015-03-27 - Umesh Kumar
+----------------------------------------------------------------------
+- New:     New API Servers added for faster optimization
+- Fixed:   PHP warning for broken files
+
 1.0.3.1 - 2015-03-26 - Umesh Kumar
 ----------------------------------------------------------------------
 - New:     Suggest manual smushing for smaller bulk request
@@ -40,4 +45,4 @@ Change Log:
 - First release
 
 
-133620-1427340120-au
+133620-1428098057-au

@@ -9,6 +9,26 @@ class UM_Query {
 	}
 	
 	/***
+	***	@get all forms
+	***/
+	function forms() {
+	
+		$args = array(
+			'post_type' => 'um_form',
+			'posts_per_page' => 200,
+			'post_status' => array('publish')
+		);
+		
+		$query = new WP_Query( $args );
+		foreach( $query->posts as $post ) {
+			setup_postdata( $post );
+			$results[ $post->ID ] = $post->post_title;
+		}
+		return $results;
+		
+	}
+	
+	/***
 	***	@get all post types
 	***/
 	function get_post_types() {
@@ -24,18 +44,21 @@ class UM_Query {
 	function make( $args ) {
 		
 		$defaults = array(
-			'post_type' => 'post'
+			'post_type' => 'post',
+			'post_status' => array('publish')
 		);
 		$args = wp_parse_args( $args, $defaults );
 		
 		if ( isset( $args['post__in'] ) && empty( $args['post__in'] ) )
 			return false;
-		
+
 		extract( $args );
 
 		if ( $post_type == 'comment' ) { // comments
 
 			unset( $args['post_type'] );
+			unset( $args['post_status'] );
+			
 			$comments = get_comments($args);
 			return $comments;
 			

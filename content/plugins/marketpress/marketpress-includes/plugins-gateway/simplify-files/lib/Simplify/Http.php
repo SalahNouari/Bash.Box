@@ -129,7 +129,7 @@ class Simplify_HTTP
             throw new Simplify_BadRequestException("Bad request", $status, $object);
         } else if ($status == self::HTTP_UNAUTHORIZED) {
             curl_close($curl);
-            throw new Simplify_AuthenticationException("You are not authorized to make this request.  Are you using the correct API keys?", $status, $object);
+            throw new Simplify_AuthenticationException("You are not authorized to make this request.  Are you using the correct API keys?", $status, $object);	     	 	 	    	  
         } else if ($status == self::HTTP_NOT_FOUND) {
             curl_close($curl);
             throw new Simplify_ObjectNotFoundException("Object not found", $status, $object);

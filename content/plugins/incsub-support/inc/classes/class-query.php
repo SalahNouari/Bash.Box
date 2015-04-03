@@ -128,14 +128,10 @@ class Incsub_Support_Query {
 			}
 			$this->is_support_system = true;
 		}
-		elseif( $post_id == $settings['incsub_support_create_new_ticket_page'] ) {
-			$this->is_submit_ticket_page = true;
-			$this->is_support_system = true;
-		}
 		elseif( $post_id == $settings['incsub_support_faqs_page'] ) {
 			$this->is_faqs_page = true;
 			$this->is_support_system = true;
-			if ( $cat_id =$this->get_query_var( 'cat-id' ) ) {
+			if ( $cat_id = $this->get_query_var( 'cat-id' ) ) {
 				$this->category_id = absint( $cat_id );
 			}
 
@@ -145,9 +141,16 @@ class Incsub_Support_Query {
 			}
 		}
 
+		if( $post_id == $settings['incsub_support_create_new_ticket_page'] ) {
+			$this->is_submit_ticket_page = true;
+			$this->is_support_system = true;
+		}
+
 		$page = $this->get_query_var( 'support-system-page' );
 		if ( ! empty( $page ) )
 			$this->page = absint( $page );
+
+		do_action_ref_array( 'support_system_parse_query', array( &$this ) );
 
 	}
 
@@ -351,6 +354,10 @@ function incsub_support_the_ticket_staff_name() {
 	return incsub_support()->query->item->get_staff_name();
 }
 
+function incsub_support_the_ticket_staff_login() {
+	return incsub_support()->query->item->get_staff_login();
+}
+
 /** GENERIC FUNCTIONS */
 function incsub_support_the_items_number() {
 	return incsub_support()->query->found_items;
@@ -396,7 +403,7 @@ function incsub_support_get_the_faq_question() {
 }
 
 function incsub_support_get_the_faq_answer() {
-	return incsub_support()->query->item->answer;
+	return do_shortcode( incsub_support()->query->item->answer );
 }
 
 function incsub_support_get_the_faq_category_link() {

@@ -347,6 +347,12 @@ if ( ! class_exists( 'WpSmProSend' ) ) {
 						'timestamp' => time()
 					);
 
+					/* If random smush server is assigned, sotre a parameter, to allow compatibility with
+					current smush api, while fetching images */
+					if ( get_site_option( WP_SMPRO_PREFIX . 'smush_server', false ) ) {
+						$current_requests[ $request_id ]['smush_server_assigned'] = true;
+					}
+
 					$updated = boolval( update_option( WP_SMPRO_PREFIX . 'current-requests', $current_requests ) );
 
 					unset( $current_requests );
@@ -354,8 +360,14 @@ if ( ! class_exists( 'WpSmProSend' ) ) {
 					$smush_sent = array(
 						'token'     => $token,
 						'sent_ids'  => $sent_ids[0],
-						'timestamp' => time()
+						'timestamp' => time(),
 					);
+
+					/* If random smush server is assigned, sotre a parameter, to allow compatibility with
+					current smush api, while fetching images */
+					if ( get_site_option( WP_SMPRO_PREFIX . 'smush_server', false ) ) {
+						$smush_sent['smush_server_assigned'] = true;
+					}
 
 					//used in media library for showing button again
 					update_post_meta( $sent_ids[0], WP_SMPRO_PREFIX . 'request-id', $request_id );
@@ -737,7 +749,7 @@ if ( ! class_exists( 'WpSmProSend' ) ) {
 		 * @param object $row the databse row for each attachment
 		 * @param boolean $anim whether the attachment is an animated gif
 		 *
-		 * @return \stdClass the formatted row
+		 * @return stdClass the formatted row
 		 */
 		private function format_attachment_data( $row, $anim = false, $pathprefix, $file_size ) {
 			global $log;
@@ -758,11 +770,14 @@ if ( ! class_exists( 'WpSmProSend' ) ) {
 			if ( ! empty( $metadata['sizes'] ) ) {
 				// check large
 				foreach ( $metadata['sizes'] as $size_key => $size_data ) {
-					$size = filesize( $pathprefix . '/' . trailingslashit( $request_item->path_prefix ) . $size_data['file'] );
-					if ( ! empty( $file_size ) && $size < 5000000 ) {
-						$filenames[ $size_key ] = $size_data['file'];
-					} else {
-						$log->error( 'Wp_Smpro_Send: format_attachmnet_data', 'File size exceeded the limit for image size: ' . $size_key . ', for attachment ' . $row->attachment_id );
+					$f_path = $pathprefix . '/' . trailingslashit( $request_item->path_prefix ) . $size_data['file'];
+					if ( file_exists( $f_path ) ) {
+						$size = filesize( $f_path );
+						if ( ! empty( $file_size ) && $size < 5000000 ) {
+							$filenames[ $size_key ] = $size_data['file'];
+						} else {
+							$log->error( 'Wp_Smpro_Send: format_attachmnet_data', 'File size exceeded the limit for image size: ' . $size_key . ', for attachment ' . $row->attachment_id );
+						}
 					}
 				}
 			}
@@ -994,7 +1009,7 @@ if ( ! class_exists( 'WpSmProSend' ) ) {
 		/**
 		 * Send a request to reset the bulk request
 		 */
-		function reset_bulk( $request_id, $token ) {
+		function reset_bulk( $request_id, $token, $bulk_request_details ) {
 			$request_data               = array();
 			$request_data['api_key']    = $this->dev_api_key();
 			$request_data['token']      = $token;
@@ -1010,9 +1025,17 @@ if ( ! class_exists( 'WpSmProSend' ) ) {
 				'timeout'    => WP_SMPRO_TIMEOUT,
 				'sslverify'  => false
 			);
+			//Reset URL, check if the request contains smush server assigned, and decide URL on bais of that
+			$reset_url = WP_SMPRO_RESET_URL;
+
+			//If smush server assigned is set use the new server url for request status, otherwise old url
+			if ( ! empty ( $bulk_request_details ) && empty( $bulk_request_details['smush_server_assigned'] ) ) {
+				$reset_url = 'https://smush.wpmudev.org/reset/';
+			}
+
 
 			// make the post request and return the response
-			$response['api'] = wp_remote_post( WP_SMPRO_RESET_URL, $req_args );
+			$response['api'] = wp_remote_post( $reset_url, $req_args );
 
 			return $response;
 		}
