@@ -119,6 +119,13 @@ class UM_Query {
 	***/
 	function get_role_by_userid( $user_id ) {
 		$role = get_user_meta( $user_id, 'role', true );
+		if ( !$role ) {
+			if ( $user_id == get_current_user_id() && current_user_can('edit_users') ) {
+				$role = 'admin';
+			} else {
+				$role = 'member';
+			}
+		}
 		return $role;
 	}
 	
@@ -206,12 +213,11 @@ class UM_Query {
 	***/
 	function role_data( $role_slug ) {
 		global $wpdb, $ultimatemember;
-		
-		// get cache
-		if ( $ultimatemember->cache->role_data( $role_slug ) ) {
-			return $ultimatemember->cache->role_data( $role_slug );
-		}
 
+		if ( get_option("um_cached_role_{$role_slug}") ) {
+			return get_option("um_cached_role_{$role_slug}");
+		}
+		
 		if ($role_slug == 'admin' || $role_slug == 'member'){
 			$try = $this->find_post_id('um_role','_um_core',$role_slug);
 			if ( isset( $try ) ){
@@ -241,8 +247,9 @@ class UM_Query {
 
 		}
 		
-		// set cache
-		$ultimatemember->cache->set_role_data( $role_slug, $array );
+		if ( !get_option("um_cached_role_{$role_slug}") ) {
+			update_option("um_cached_role_{$role_slug}", $array );
+		}
 
 		return $array;
 	}

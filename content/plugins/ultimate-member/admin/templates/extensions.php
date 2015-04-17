@@ -1,5 +1,19 @@
 <?php
 
+	$premium['profile-completeness'] = array(
+		'url' => 'https://ultimatemember.com/extensions/profile-completeness/',
+		'image' => 'https://ultimatemember.com/wp-content/uploads/2015/04/pc3-01-copy.png',
+		'name' => 'Profile Completeness',
+		'desc' => 'Encourage users to complete their profiles or force them to fill specific profile fields with the Profile Completeness extension.',
+	);
+	
+	$premium['real-time-notifications'] = array(
+		'url' => 'https://ultimatemember.com/extensions/real-time-notifications/',
+		'image' => 'https://ultimatemember.com/wp-content/uploads/2015/04/notifications-01-copy.png',
+		'name' => 'Real-time Notifications',
+		'desc' => 'Add a real-time notification system to your site so users can receive updates and notifications directly on your website as they happen.',
+	);
+	
 	$premium['user-reviews'] = array(
 		'url' => 'https://ultimatemember.com/extensions/user-reviews/',
 		'image' => 'https://ultimatemember.com/wp-content/uploads/2015/03/userrating800x300.png',
@@ -40,6 +54,13 @@
 		'image' => 'https://ultimatemember.com/wp-content/uploads/2015/02/notices.png',
 		'name' => 'Notices',
 		'desc' => 'Alert users to important information or let them know about promotions or new features using conditional notices.',
+	);
+	
+	$free['online-users'] = array(
+		'url' => 'https://ultimatemember.com/extensions/online-users/',
+		'image' => 'https://ultimatemember.com/wp-content/uploads/2015/04/onlineuser1-01-copy.png',
+		'name' => 'Online Users',
+		'desc' => 'Adds online users widget to your site and allow you to show the online users anywhere with a simple shortcode, and also see user online status.'
 	);
 	
 	$free['google-recaptcha'] = array(

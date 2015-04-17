@@ -30,7 +30,7 @@ jQuery(document).ready(function() {
 	jQuery('.um-tip-e').tipsy({gravity: 'e', opacity: 1, live: 'a.live', offset: 3 });
 	jQuery('.um-tip-s').tipsy({gravity: 's', opacity: 1, live: 'a.live', offset: 3 });
 
-	jQuery('.um-field input[type=radio]').change(function(){
+	jQuery(document).on('change', '.um-field input[type=radio]', function(){
 		var field = jQuery(this).parents('.um-field');
 		var this_field = jQuery(this).parents('label');
 		field.find('.um-field-radio').removeClass('active');
@@ -39,7 +39,7 @@ jQuery(document).ready(function() {
 		this_field.find('i').removeClass().addClass('um-icon-android-radio-button-on');
 	});
 
-	jQuery('.um-field input[type=checkbox]').change(function(){
+	jQuery(document).on('change', '.um-field input[type=checkbox]', function(){
 		
 		var field = jQuery(this).parents('.um-field');
 		var this_field = jQuery(this).parents('label');
@@ -63,14 +63,17 @@ jQuery(document).ready(function() {
 		}
 
 		var years_n = elem.attr('data-years');
-
+		
 		var min = elem.attr('data-date_min');
 		var max = elem.attr('data-date_max');
 
+		var min = min.split(",");
+		var max = max.split(",");
+		
 		elem.pickadate({
-			selectYears: years_n + 1,
-			min: new Date(min),
-			max: new Date(max),
+			selectYears: years_n,
+			min: min,
+			max: max,
 			disable: disable,
 			format: elem.attr('data-format'),
 			formatSubmit: 'yyyy/mm/dd',
