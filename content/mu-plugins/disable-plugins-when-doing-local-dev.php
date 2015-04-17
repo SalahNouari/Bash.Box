@@ -83,7 +83,6 @@ if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) {
 		'w3-total-cache/w3-total-cache.php', 
 		'domain-mapping/domain-mapping.php', 
 		'akismet/akismet.php', 
-		'snapshot/snapshot.php',
 		'cloudflare/cloudflare.php' ) );
 	/*
 		For programmatic disabling, you can initialize the object (e.g. as $_localdev) then do:
