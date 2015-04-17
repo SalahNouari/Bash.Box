@@ -2,26 +2,67 @@
     <h2><?php _e( 'Google Analytics', $this->text_domain ) ?></h2>
 
     <?php
+        global $google_analytics_async_dashboard;
+
         //Display status message
         if ( isset( $_GET['dmsg'] ) ) { ?>
-            <div id="message" class="updated fade"><p><?php echo urldecode( $_GET['dmsg'] ); ?></p></div><?php
+            <div id="message" class="updated <?php echo (isset( $_GET['type'] ) && $_GET['type'] == 'error') ? 'error' : ''; ?>"><p><?php echo urldecode( $_GET['dmsg'] ); ?></p></div><?php
         }
 
         if ( 'network' == $network ): ?>
             <div id="ga-network-settings">
-                <p><?php  _e( 'Google Analytics is the enterprise-class web analytics solution that gives you rich insights into your website traffic and marketing effectiveness. Powerful, flexible and easy-to-use features now let you see and analyze your traffic data in an entirely new way. With Google Analytics, you\'re more prepared to write better-targeted ads, strengthen your marketing initiatives and create higher converting websites.', $this->text_domain ); ?></p>
+                <p><?php echo apply_filters('ga_login_main_description', __( 'Google Analytics is the enterprise-class web analytics solution that gives you rich insights into your website traffic and marketing effectiveness. Powerful, flexible and easy-to-use features now let you see and analyze your traffic data in an entirely new way. With Google Analytics, you\'re more prepared to write better-targeted ads, strengthen your marketing initiatives and create higher converting websites.', $this->text_domain )); ?></p>
+
                 <p><?php  _e( 'To get going, just <a href="http://www.google.com/analytics/">sign up for Google Analytics</a>, set up a new account and log in with the button below to automatically configure basic settings. You may have to manually adjust settings if necessary.', $this->text_domain ); ?> <?php _e( 'Please keep in mind that it can take several hours before you see any stats.', $this->text_domain ); ?></p>
 
                 <h3 class="title ga-basic-tracking"><?php _e( 'Basic Network Tracking Settings', $this->text_domain ) ?></h3>
-                <?php
-                if(!isset($accounts)) {
-                    echo '<p>'.__( 'Please login to google analytics account to automatically get tracking code for this website and enable access to network statistics inside WordPress Admin Dashboard.', $this->text_domain ).'</p>';
-                    echo '<p><a href="'.add_query_arg('google_login', 1).'" class="button button-secondary">'.__( 'Login with Google account', $this->text_domain ).'</a></p>';
-                }
-                else {
-                    echo '<p><a href="'.add_query_arg('google_logout', 1).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
-                }
-                ?>
+                <form method="post" action="" class="control-modules">
+                    <?php
+                    if(!isset($accounts)) {
+                        ?>
+                            <p><?php echo __( 'Get access to google analytics account to automatically get tracking code for this website and enable access to network statistics inside WordPress Admin Dashboard.', $this->text_domain ).' '.__( 'You can do it in two ways:', $this->text_domain ); ?></p>
+                            <p style="display: none;"><a href="<?php echo add_query_arg('google_login', 1); ?>" class="button button-secondary"><?php _e( 'Login with Google account', $this->text_domain ); ?></a></p>
+                            <p class="button-holder"><?php _e( 'Easily <button class="button button-secondary open-module-options" data-module="code">get access code</button> or <button class="button button-secondary open-module-options" data-module="api_project">set up Google API project</button>', $this->text_domain ); ?></p>
+                        <?php
+                    }
+                    else {
+                        echo '<p><a href="'.add_query_arg('google_logout', 1).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
+
+                        if($google_analytics_async_dashboard->google_login['logged_in'] == '1') {
+                            ?>
+                                <p><?php _e( 'Google is changing login method. Reauthentication is needed.', $this->text_domain ).' '.__( 'You can do it in two ways:', $this->text_domain ); ?></p>
+                                <p class="button-holder"><?php _e( 'Easily <button class="button button-primary open-module-options" data-module="code">get access code</button> or <button class="button button-primary open-module-options" data-module="api_project">set up Google API project</button>', $this->text_domain ); ?></p>
+                            <?php
+                        }
+                    }
+                    if(!isset($accounts) || ($google_analytics_async_dashboard->google_login['logged_in'] == '1' && (!isset($google_api['verified']) || $google_api['verified'] != true))) {
+                        ?>
+                        <div data-module="api_project" class="sub-options">
+                            <div class="postbox">
+                                <ol>
+                                    <li><span><?php _e( 'Google Client ID:', $this->text_domain ) ?></span> <input name="client_id" type="text" value="<?php echo isset($this->current_settings['google_api']['client_id']) ? $this->current_settings['google_api']['client_id'] : ''; ?>"/></li>
+                                    <li><span><?php _e( 'Google Client Secret:', $this->text_domain ) ?></span> <input name="client_secret" type="text" value="<?php echo isset($this->current_settings['google_api']['client_secret']) ? $this->current_settings['google_api']['client_secret'] : ''; ?>"/></li>
+                                    <li><span><?php _e( 'Google API key:', $this->text_domain ) ?></span> <input name="api_key" type="text" value="<?php echo isset($this->current_settings['google_api']['api_key']) ? $this->current_settings['google_api']['api_key'] : ''; ?>"/></li>
+                                </ol>
+
+                                <button type="submit" name="by_api" class="button button-primary"><?php _e( 'Authorize', $this->text_domain ) ?></button>
+                            </div>
+                        </div>
+                        <div data-module="code" class="sub-options">
+                            <div class="postbox">
+                                <ol>
+                                    <li><?php printf(__( 'Login and get access code <a target="_blank" href="%s">here</a>.', $this->text_domain ), $google_analytics_async_dashboard->google_client->createAuthUrl() ); ?></li>
+                                    <li><?php _e( 'Input access code: ', $this->text_domain ) ?> <input name="code" type="text"/></li>
+                                </ol>
+                                <button type="submit" name="by_code" class="button button-primary"><?php _e( 'Authorize', $this->text_domain ) ?></button>
+                            </div>
+                        </div>
+
+                        <p><?php echo apply_filters('ga_login_method_description', __( 'Access code it quicker solution but setting up Google API project is more suitable for high traffic website and will result in smoother experience for site admins (whole login process will be automatic, no access code copy pasting). You can read more about setting Google API project <a target="_blank" href="http://premium.wpmudev.org/project/google-analytics-for-wordpress-mu-sitewide-and-single-blog-solution/#product-usage">here</a> under "usage"')); ?></p>
+                    <?php
+                    }
+                    ?>
+                </form>
 
                 <form method="post" action="">
                     <table  class="form-table ga-basic-tracking">
@@ -212,15 +253,52 @@
                 ?>
 
                 <h3 class="title ga-basic-tracking"><?php _e( 'Basic Site Tracking Settings', $this->text_domain ) ?></h3>
-                <?php
-                if(!isset($accounts)) {
-                    echo '<p>'.__( 'Please login to google analytics account to automatically get site tracking code for this account and enable access to statistics inside WordPress Admin Dashboard.', $this->text_domain ).'</p>';
-                    echo '<p><a href="'.add_query_arg('google_login', 1).'" class="button button-secondary">'.__( 'Login with google account', $this->text_domain ).'</a></p>';
-                }
-                else {
-                    echo '<p><a href="'.add_query_arg('google_logout', 1).'" class="button button-secondary">'.__( 'Logout from google account', $this->text_domain ).'</a></p>';
-                }
-                ?>
+
+                <form method="post" class="control-modules" action="">
+                    <?php
+                    $google_api = isset($this->network_settings['google_api']) ? $this->network_settings['google_api'] : array();
+
+                    if(!isset($accounts)) {
+                        ?>
+                            <p><?php echo __( 'Get access to google analytics account to automatically get tracking code for this website and enable access to network statistics inside WordPress Admin Dashboard.', $this->text_domain ); ?></p>
+                            <p style="display: none;"><a href="<?php echo add_query_arg('google_login', 1); ?>" class="button button-secondary"><?php _e( 'Login with Google account', $this->text_domain ); ?></a></p>
+                            <?php if(isset($google_api['verified']) && $google_api['verified'] == true ) { ?>
+                                <p><a href="<?php echo add_query_arg('google_login', 2);?>" class="button button-secondary"><?php _e( 'Login with google account', $this->text_domain ); ?></a></p>
+                            <?php } else { ?>
+                                <p class="button-holder"><button class="button button-secondary open-module-options" data-module="code"><?php _e( 'Login with google account', $this->text_domain ); ?> <?php _e( 'and get access code', $this->text_domain ); ?></button></p>
+                            <?php } ?>
+                        <?php
+                    }
+                    else {
+                        echo '<p><a href="'.add_query_arg('google_logout', 1).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
+
+                        if(isset($this->settings['google_login']['logged_in']) && $this->settings['google_login']['logged_in'] == '1') {
+                            if(isset($google_api['verified']) && $google_api['verified'] == true ) {
+                                ?>
+                                <p><a href="<?php echo add_query_arg('google_login', 2);?>" class="button button-primary"><?php _e( 'Reauthenticate', $this->text_domain ); ?></a> <?php _e( 'Google is changing login method. Reauthentication is needed.', $this->text_domain ) ?></p>
+                            <?php
+                            } else {
+                            ?>
+                                <p class="button-holder"><button class="button button-primary open-module-options" data-module="code"><?php _e( 'Reauthenticate', $this->text_domain ); ?></button> <?php _e( 'Google is changing login method. Reauthentication is needed.', $this->text_domain ) ?></p>
+                            <?php
+                            }
+                        }
+                    }
+                    if(!isset($accounts) || (isset($this->settings['google_login']['logged_in']) && $this->settings['google_login']['logged_in'] == '1' && (!isset($google_api['verified']) || $google_api['verified'] != true))) {
+                        ?>
+                        <div data-module="code" class="sub-options">
+                            <div class="postbox">
+                                <ol>
+                                    <li><?php printf(__( 'Login and get access code <a target="_blank" href="%s">here</a>.', $this->text_domain ), $google_analytics_async_dashboard->google_client->createAuthUrl() ); ?></li>
+                                    <li><?php _e( 'Input access code: ', $this->text_domain ) ?> <input name="code" type="text"/></li>
+                                </ol>
+                                <button type="submit" name="by_code" class="button button-primary"><?php _e( 'Authorize', $this->text_domain ) ?></button>
+                            </div>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                </form>
                 <form method="post" action="">
                     <table class="form-table ga-basic-tracking">
                         <tr class="ga-tracking-code" valign="top">
@@ -240,7 +318,7 @@
                                 if(isset($network_settings['google_login']['logged_in']) && isset($network_settings['track_settings']['google_analytics_account_id']) && $network_settings['track_settings']['google_analytics_account_id'])
                                     $network_stats_message = __( 'Currently .', $this->text_domain );
                                 if(isset($accounts) ) {
-                                    if(count($accounts) > 0) {
+                                    if(is_array($accounts) && count($accounts) > 0) {
                                         echo '<select name="google_analytics_account_id">';
                                             echo '<option value="0"></option>';
                                         foreach($accounts as $account_id => $account_name) {
@@ -337,3 +415,19 @@
             </div>
         <?php endif; ?>
 </div>
+
+<script type="text/javascript">
+    //Network admin login control
+    jQuery('.control-modules .open-module-options').click(function(event) {
+        event.preventDefault();
+
+        var target = jQuery(this).attr('data-module');
+        var position = jQuery(this).position();
+
+        jQuery('.control-modules .sub-options').hide();
+        jQuery('.control-modules .open-module-options').removeClass('active');
+
+        jQuery('.control-modules .sub-options[data-module="'+target+'"]').show();
+        jQuery(this).addClass('active');
+    });
+</script>

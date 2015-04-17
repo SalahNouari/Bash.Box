@@ -41,5 +41,5 @@ function incsub_sbe_sanitize_from_email( $email ) {
 	if ( is_email( $from_email ) )
 		return $from_email;
 
-	return new WP_Error( 'invalid-from-email', __( 'Notification From Email is not a valid email', INCSUB_SBE_LANG_DOMAIN ) );	     	 	  			  		
+	return new WP_Error( 'invalid-from-email', __( 'Notification From Email is not a valid email', INCSUB_SBE_LANG_DOMAIN ) );
 }

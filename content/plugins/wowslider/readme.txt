@@ -20,6 +20,10 @@ all browsers, all devices,  search engine friendly, clean and valid markup.
 **Live Demos**:
 
 
+*    [Image Slider - Zippy Template Demo - Louvers effect](http://wowslider.com/image-slider-zippy-louvers-demo.html "Image Slider - Zippy Template Demo with Louvers effect")	
+*    [Carousel Bootstrap - Bootstrap Template Demo - TV effect](http://wowslider.com/carousel-bootstrap-tv-demo.html "Carousel Bootstrap - Bootstrap Template Demo with TV effect")	
+*    [Responsive Slider - Convex Template Demo - Basic effect](http://wowslider.com/responsive-slider-convex-basic-demo.html "Responsive Slider - Convex Template Demo with Basic effect")	
+*    [Jquery Image Slider - Fill Template Demo - Basic effect](http://wowslider.com/jquery-image-slider-fill-basic-demo.html "Jquery Image Slider - Fill Template Demo with Basic effect")	
 *    [Content Slider - Material Template Demo - Collage effect](http://wowslider.com/content-slider-material-collage-demo.html "Content Slider - Material Template Demo with Collage effect")	
 *    [Bootstrap Slider - Bootstrap Template Demo - Basic Linear effect](http://wowslider.com/bootstrap-slider-baisc-linear-demo.html "Bootstrap Slider - Bootstrap Template Demo with Basic Linear effect")	
 *    [Wordpress Slider Plugin - Absent Template Example - Cube effect](http://wowslider.com/wordpress-slider-plugin-absent-cube-demo.html "Wordpress Slider Plugin - Absent Template Example with Cube effect")	
@@ -96,16 +100,16 @@ all browsers, all devices,  search engine friendly, clean and valid markup.
 
 More Info: http://wowslider.com/
 
-*    [How to create Wordpress slider with WOW Slider - Full Tutorial](view-source:http://wowslider.com/wordpress-jquery-slider.html "Wordpress Image Slider Plugin Tutorial")
-*    [How to update existing WOWSlider galleries in Wordpress - Video Tutorial](view-source:http://www.youtube.com/watch?v=0NCBHINEPvE "How to update existing WOWSlider galleries in Wordpress - Video Tutorial")
+*    [How to create Wordpress slider with WOW Slider - Full Tutorial](view-source:http://wowslider.com/help/add-wowslider-wordpress-34.html "Wordpress Image Slider Plugin Tutorial")
+*    [How to update existing WOWSlider galleries in Wordpress - Tutorial](view-source:http://wowslider.com/help/new-slider-wordpress-42.html "How to update existing WOWSlider galleries in Wordpress - Video Tutorial")
 
-[youtube http://www.youtube.com/watch?v=o82IuhWtgTo]
+[youtube http://www.youtube.com/watch?v=Omi32W6QyY4]
 
 
 == Credits ==
 
 Copyright:<br>
-WOWSlider.com 2014<br>
+WOWSlider.com 2015<br>
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
@@ -114,7 +118,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 == Installation ==
 
 Please see full tutorial+video here:
-http://wowslider.com/wordpress-jquery-slider.html
+http://wowslider.com/help/add-wowslider-wordpress-34.html
 
 1. Download WOWSlider Desktop application for Win or Mac from  
    http://wowslider.com/wowslider-free-setup.zip
@@ -125,7 +129,7 @@ http://wowslider.com/wordpress-jquery-slider.html
 1. Preview changes 
 1. Use WOW Slider menu WOW Slider -> Add New to add each next slider
 
-[youtube http://www.youtube.com/watch?v=o82IuhWtgTo]
+[youtube http://www.youtube.com/watch?v=Omi32W6QyY4]
 
 == Frequently Asked Questions ==
 
@@ -215,10 +219,6 @@ Yes, it'll. WOWSlider supports all modern devices.
 
 = 15. I want my slideshow to begin from a random slide and play images in random order. Is it possible with WOWSlider? =
 
-Some of templates provide this feature already. For example: Prime Time, Calm, Shady, Noir, etc.
-
-You can change other templates manually in generated "style.css" file. Open it in any text editor (for example, Notepad), find following lines:
-
 Yes, it's possible. You should go to
 Gallery->Properties->General
 and enable "Random order" option.
@@ -229,7 +229,7 @@ and enable "Random order" option.
 
 = 17. Is there a way to add a video (iframe/pdf/page/etc.) in WOWSlider? =
 	
- It's impossible in a current version. WOW Slider supports images only. Video will be supported in version 5.7
+ You can add a video from either YouTube or Vimeo. Ideally, these should be videos you have permission to use on your website! Click on 'Add images and videos' button, then select 'Add video from Youtube' or 'Add video from Vimeo'.
 
 = 18. I want to buy full version of WOWSlider. Is there a way to prevent it from launching automatically until I launch it? =
 

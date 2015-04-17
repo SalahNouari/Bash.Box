@@ -321,7 +321,7 @@ and nothing more will happen.', INCSUB_SBE_LANG_DOMAIN );
 	}
 
 	public function get_taxonomies_by_post_type( $post_type_slug ) {
-		return isset( $this->taxonomies[ $post_type_slug ] ) ? $this->taxonomies[ $post_type_slug ] : array();
+		return isset( $this->taxonomies[ $post_type_slug ] ) ? $this->taxonomies[ $post_type_slug ] : array();	     	 	  			  		
 	}
 
 	public function get_selected_taxonomies_by_post_type( $post_type_slug ) {

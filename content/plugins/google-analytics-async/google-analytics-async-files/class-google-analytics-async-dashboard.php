@@ -9,11 +9,17 @@ class Google_Analytics_Async_Dashboard {
     var $required_capability;
 
     var $ready;
+
     var $oauth_token;
     var $oauth_secret;
+
+    var $google_client;
+    var $google_login;
+
     var $profile_id = 0;
     var $post;
     var $stats_source = 0;
+    var $setting_page = 0;
 
     var $base_url = 'https://www.googleapis.com/analytics/v2.4/';
     var $account_base_url = 'https://www.googleapis.com/analytics/v2.4/management/';
@@ -51,12 +57,47 @@ class Google_Analytics_Async_Dashboard {
         elseif(isset($google_analytics_async->network_settings['google_login']['logged_in']) && isset($google_analytics_async->network_settings['track_settings']['google_analytics_account_id']) && $google_analytics_async->network_settings['track_settings']['google_analytics_account_id'])
             $this->stats_source = 'network';
 
+        add_action('admin_init', array($this, 'create_tables' ));
 
         add_action('admin_init', array($this, 'admin_init_handle_google_login' ));
+
+        add_action('admin_init', array($this, 'admin_init_handle_google_login2' ), 20);
+        add_action('init', array($this, 'init_handle_google_login2' ));
+
+        add_action('admin_init', array($this, 'settings_page_data'), 5);
+
         if($this->stats_source) {
             add_action('admin_init', array($this, 'admin_init'));
             add_action('admin_menu', array($this, 'admin_menu'));
             add_action('network_admin_menu', array($this, 'network_admin_menu'));
+        }
+
+        add_action('admin_notices', array($this,'reauthenticate_notice'));
+        add_action('network_admin_notices', array($this,'reauthenticate_notice'));
+    }
+
+
+    function create_tables() {
+        global $wpdb;
+
+        $ver = apply_filters('gaplus_ver', 0);
+        if(!$ver)
+            $ver = get_site_option('gaplus_ver', 0);
+
+        if($ver < 1) {
+            if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->base_prefix}gaplus_login'" ) != $wpdb->base_prefix.'gaplus_login' ) {
+
+                $table = "CREATE TABLE `{$wpdb->base_prefix}gaplus_login` (
+                    `id` int(11) NOT NULL auto_increment,
+                    `user_id` varchar(255),
+                    `token` longtext,
+                    PRIMARY KEY (`id`)
+                ) DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+
+                $result = $wpdb->query( $table );
+            }
+
+            update_site_option( 'gaplus_ver', 1 );
         }
     }
 
@@ -74,7 +115,7 @@ class Google_Analytics_Async_Dashboard {
                 (isset($_POST['action']) && $_POST['action'] == 'load_google_analytics')
             )
         ) {
-			//filter variables
+            //filter variables
             $this->cache_timeout = apply_filters('ga_cache_timeout', $this->cache_timeout);
             $this->cache_timeout_personal = apply_filters('ga_cache_timeout_personal', $this->cache_timeout);
 
@@ -85,6 +126,8 @@ class Google_Analytics_Async_Dashboard {
                 $this->oauth_token = $google_analytics_async->settings['google_login']['token'];
                 $this->oauth_secret = $google_analytics_async->settings['google_login']['token_secret'];
 
+                $this->google_login = $google_analytics_async->settings['google_login'];
+
                 //change cache timeout for site based stats
                 $this->cache_timeout = $this->cache_timeout_personal;
             }
@@ -94,23 +137,27 @@ class Google_Analytics_Async_Dashboard {
                 $this->oauth_token = $google_analytics_async->network_settings['google_login']['token'];
                 $this->oauth_secret = $google_analytics_async->network_settings['google_login']['token_secret'];
 
-                //set up filters to show correct stats for current site
-                if(!$this->is_network_admin) {
-                    $url = function_exists('domain_mapping_siteurl') ? domain_mapping_siteurl(home_url()) : home_url();
+                $this->google_login = $google_analytics_async->network_settings['google_login'];
+            }
 
-                    $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', $url)));
-                    if(!$site_url_parts)
-                        $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', site_url())));
+            //set up filters to show correct stats for current site
+            if($this->stats_source == 'network'&& !$this->is_network_admin) {
+                global $dm_map;
 
-                    $this->filter[] = 'ga:hostname=='.$site_url_parts[0];
+                $url = method_exists($dm_map, 'domain_mapping_siteurl') ? $dm_map->domain_mapping_siteurl(home_url()) : home_url();
 
-                    //if its in subdirectory mode, then set correct beggining for page path
-                    if(count($site_url_parts) > 1) {
-                        unset($site_url_parts[0]);
-                        $pagepath = implode('/', $site_url_parts);
+                $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', $url)));
+                if(!$site_url_parts)
+                    $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', site_url())));
 
-                        $this->filter[] = 'ga:pagePath=~^/'.$pagepath.'/.*';
-                    }
+                $this->filter[] = 'ga:hostname=='.$site_url_parts[0];
+
+                //if its in subdirectory mode, then set correct beggining for page path
+                if(count($site_url_parts) > 1) {
+                    unset($site_url_parts[0]);
+                    $pagepath = implode('/', $site_url_parts);
+
+                    $this->filter[] = 'ga:pagePath=~^/'.$pagepath.'/.*';
                 }
             }
 
@@ -188,7 +235,7 @@ class Google_Analytics_Async_Dashboard {
         $params['load_mode'] = $this->load_mode;
         wp_localize_script( 'google_analytics_async', 'ga', $params );
 
-        wp_register_style( 'GoogleAnalyticsAsyncStyle', $this->plugin_url . 'google-analytics-async-files/ga-async.css', array(), 38);
+        wp_register_style( 'GoogleAnalyticsAsyncStyle', $this->plugin_url . 'google-analytics-async-files/ga-async.css', array(), 39);
         wp_enqueue_style( 'GoogleAnalyticsAsyncStyle' );
     }
 
@@ -253,13 +300,40 @@ class Google_Analytics_Async_Dashboard {
             add_meta_box('google_analytics_dashboard', __('Statistics - Last 30 Days', $this->text_domain), array(&$this, 'google_analytics_widget'), $screen, 'normal');
     }
 
+    function reauthenticate_notice() {
+        global $google_analytics_async;
+
+        if(current_user_can('manage_options') && isset($google_analytics_async->settings['google_login']['logged_in']) && $google_analytics_async->settings['google_login']['logged_in'] == '1')
+            echo '<div class="error"><p>'.sprintf(__('Google Analytics dashboard statistics require reauthentication. You can do it <a href="%s">here</a> and this message will disappear.', $this->text_domain), admin_url('options-general.php?page=google-analytics')).'</p></div>';
+
+        if(is_super_admin() && isset($google_analytics_async->network_settings['google_login']['logged_in']) && $google_analytics_async->network_settings['google_login']['logged_in'] == '1')
+            echo '<div class="error"><p>'.sprintf(__('Google Analytics dashboard network statistics require reauthentication. You can do it <a href="%s">here</a> and this message will disappear.', $this->text_domain), network_admin_url('settings.php?page=google-analytics')).'</p></div>';
+    }
+
+    function settings_page_data() {
+        global $google_analytics_async, $pagenow;
+
+        //load only for: dashboard, post type page and correct ajax call
+        if(($pagenow == 'settings.php' || $pagenow == 'options-general.php') && isset($_GET['page']) && $_GET['page'] == 'google-analytics') {
+            //this is just for getting accounts for now and then we need current settings... always.
+            if(isset($google_analytics_async->current_settings['google_login']['logged_in'])) {
+                $this->oauth_token = $google_analytics_async->current_settings['google_login']['token'];
+                $this->oauth_secret = $google_analytics_async->current_settings['google_login']['token_secret'];
+            }
+
+            $this->google_login = $google_analytics_async->current_settings['google_login'];
+
+            $this->setting_page = is_network_admin() ? 'network' : 'site';
+        }
+    }
+
     function admin_init_handle_google_login() {
         global $google_analytics_async;
         $is_network = is_network_admin() ? 'network' : '';
         $redirect_url = $is_network ? admin_url('/network/settings.php') : admin_url('/options-general.php');
 
         //handle google login process
-        if( isset($_REQUEST['google_login']) && $_REQUEST['google_login'] == 1 ) {
+        if( isset($_REQUEST['google_login']) && $_REQUEST['google_login'] == '1' ) {
             if(($is_network && !is_super_admin()) || !current_user_can('manage_options'))
                 die(__('Cheatin&#8217; uh?'));
 
@@ -336,37 +410,222 @@ class Google_Analytics_Async_Dashboard {
                 exit();
             }
         }
+        //REMEMBER logout part is also needed for new login method
         elseif( isset($_REQUEST['google_logout']) && $_REQUEST['google_logout'] == 1 ) {
             if(($is_network && !is_super_admin()) || !current_user_can('manage_options'))
                 die(__('Cheatin&#8217; uh?'));
 
             $google_analytics_async->save_options(array('google_login' => array()), $is_network);
 
+            if(isset($google_analytics_async->network_settings['google_api']) && $is_network) {
+                $google_api = $google_analytics_async->network_settings['google_api'];
+                $google_api['verified'] = false;
+                $google_analytics_async->save_options(array('google_api' => $google_api), $is_network);
+            }
+
             wp_redirect(add_query_arg(array('page' => 'google-analytics', 'dmsg' => urlencode(__( 'Logout successful!', $this->text_domain ))), $redirect_url));
             exit();
         }
     }
 
-    function prepare_authentication_header($url) {
-        $signature_method = new Google_Analytics_OAuthSignatureMethod_HMAC_SHA1();
-        $consumer = new Google_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
-        $token = new Google_Analytics_OAuthConsumer($this->oauth_token, $this->oauth_secret);
-        $oauth_req = Google_Analytics_OAuthRequest::from_consumer_and_token($consumer, $token, 'GET', $url, array());
-        $oauth_req->sign_request($signature_method, $consumer, $token);
+    function init_handle_google_login2() {
+        //we might be getting authentication code from google - we might need to redirect to ga setting page
+        if(isset($_GET['state'])) {
+            $state = json_decode(urldecode($_GET['state']), true);
+            if(isset($state['gaplus_login'])) {
+                $code = isset($_GET['code']) ? $_GET['code'] : false;
+                $url = $state['orgin'] == 'network' ? network_admin_url('settings.php') : get_admin_url($state['orgin']).'options-general.php';
 
-        $headers = $oauth_req->to_header();
-        $headers = explode(": ",$headers);
-        $headers[$headers[0]] = $headers[1];
+                wp_redirect($url.'?page=google-analytics&gaplus_loggedin=true&code='.$code);
+                exit();
+            }
+        }
+    }
+
+    function admin_init_handle_google_login2() {
+        global $google_analytics_async, $wpdb;
+
+        $is_network = is_network_admin() ? 'network' : '';
+
+        include_once 'externals/google/autoload.php';
+
+        $this->google_client = new Google_Client();
+        $this->google_client->setScopes(array('https://www.googleapis.com/auth/analytics.readonly', 'https://www.googleapis.com/auth/userinfo.profile'));
+        $this->google_client->setAccessType('offline');
+
+        $google_api = isset($google_analytics_async->network_settings['google_api']) ? $google_analytics_async->network_settings['google_api'] : array();
+
+        //lets save api detials if user tries to configure them
+        if(isset($_POST['by_api'])) {
+            $google_analytics_async->save_options(array('google_api' => array('client_id' => $_POST['client_id'], 'client_secret' => $_POST['client_secret'], 'api_key' => $_POST['api_key'], 'verified' => false)), $is_network);
+
+            $this->google_client->setApprovalPrompt('force');
+            $this->google_client->setRedirectUri(network_site_url());
+            $this->google_client->setClientId($_POST['client_id']);
+            $this->google_client->setClientSecret($_POST['client_secret']);
+            $this->google_client->setDeveloperKey($_POST['api_key']);
+        }
+        elseif(isset($_GET['gaplus_loggedin']) || (isset($google_api['verified']) && $google_api['verified'] == true )) {
+            $this->google_client->setApprovalPrompt('force');
+            $this->google_client->setRedirectUri(network_site_url());
+            $this->google_client->setClientId($google_api['client_id']);
+            $this->google_client->setClientSecret($google_api['client_secret']);
+            $this->google_client->setDeveloperKey($google_api['api_key']);
+        }
+        else {
+            $this->google_client->setApplicationName('Google Analytics +');
+            $this->google_client->setRedirectUri('urn:ietf:wg:oauth:2.0:oob');
+            $this->google_client->setClientId(apply_filters('ga_project_client_id', '640050123521-r5bp4142nh6dkh8bn0e6sn3pv852v3fm.apps.googleusercontent.com'));
+            $this->google_client->setClientSecret(apply_filters('ga_project_client_secret', 'wWEelqN4DvE2DJjUPp-4KSka'));
+            $this->google_client->setDeveloperKey(apply_filters('ga_project_key', 'AIzaSyBGtoZs_e4AgakpuM1q04KdwfBxkt7TQv8'));
+        }
+
+        //lets save orgin used to login and redirect to login page
+        if(isset($_POST['by_api']) || (isset($_REQUEST['google_login']) && $_REQUEST['google_login'] == '2')) {
+            $orgin = $is_network ? 'network' : get_current_blog_id();
+
+            $this->google_client->setState(urlencode(json_encode(array('gaplus_login' => true, 'orgin' => $orgin))));
+
+            wp_redirect($this->google_client->createAuthUrl());
+            exit();
+        }
+
+        if(isset($_REQUEST['by_code']) || isset($_GET['gaplus_loggedin'])) {
+            if($_REQUEST['code']) {
+                try {
+                    $this->google_client->authenticate($_REQUEST['code']);
+                    $token = $this->google_client->getAccessToken();
+                    $token_object = json_decode($token);
+
+                    $this->google_client->setAccessToken($token);
+
+                    $google_user_info = new Google_Service_Oauth2($this->google_client);
+                    $google_user_id = $google_user_info->userinfo->get();
+                    $google_user_id = $google_user_id->id;
+
+                    $db_token = $wpdb->get_row($wpdb->prepare("SELECT id, token FROM {$wpdb->base_prefix}gaplus_login WHERE user_id = %s", $google_user_id), ARRAY_A);
+                    if($db_token['id']) {
+                        $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->base_prefix}gaplus_login SET token = %s WHERE id = %d", $token, $db_token['id']));
+                    }
+                    else {
+                        $wpdb->query( $wpdb->prepare("INSERT INTO {$wpdb->base_prefix}gaplus_login SET user_id = %s, token = %s", $google_user_id, $token));
+                        $db_token['id'] = $wpdb->insert_id;
+                    }
+
+                    if(isset($_GET['gaplus_loggedin']) && $is_network) {
+                        $google_api = $google_analytics_async->network_settings['google_api'];
+                        $google_api['verified'] = true;
+                        $google_analytics_async->save_options(array('google_api' => $google_api), $is_network);
+                    }
+
+                    //lets store data for site
+                    $google_analytics_async->save_options(array('google_login' => array('token_id' => $db_token['id'], 'token' => $token, 'orginal_token' => $token, 'expire' => time() + $token_object->expires_in, 'token_secret' => 1, 'logged_in' => 2)), $is_network);
+
+                    wp_redirect(add_query_arg(array('dmsg' => urlencode(__('You are successfuly logged in.', $this->text_domain)), 'type' => 'success', 'gaplus_loggedin' => false, 'code' => false)));
+                    exit();
+                } catch (Google_IO_Exception $e) {
+                    wp_redirect(add_query_arg(array('dmsg' => urlencode(esc_html($e)), 'type' => 'error')));
+                    exit();
+                } catch (Google_Service_Exception $e) {
+                    wp_redirect(add_query_arg(array('dmsg' => urlencode(esc_html("(" . $e->getCode() . ") " . $e->getMessage())), 'type' => 'error', 'gaplus_loggedin' => false, 'code' => false)));
+                    exit();
+                } catch (Exception $e) {
+                    $google_analytics_async->save_options(array('google_login' => array()), $is_network);
+                    $google_analytics_async->save_options(array('google_api' => array()), $is_network);
+                }
+            }
+
+            wp_redirect(add_query_arg(array('dmsg' => urlencode(__('Authorisation error.', $this->text_domain)), 'type' => 'error', 'gaplus_loggedin' => false, 'code' => false)));
+            exit();
+        }
+
+        //this is used to translate token data from token table to old method
+        if(isset($this->google_login['token_id']) && $this->google_login['token_id']) {
+            global $wpdb;
+            $db_token = $wpdb->get_var($wpdb->prepare("SELECT token FROM {$wpdb->base_prefix}gaplus_login WHERE id = %d", $this->google_login['token_id']));
+            if($db_token) {
+                $db_token_object = json_decode($db_token);
+                $this->google_login['token'] = $this->google_login['orginal_token'] = $db_token;
+                $this->google_login['expire'] = $db_token_object->created + $db_token_object->expires_in;
+            }
+        }
+
+        if(isset($this->google_login['logged_in']) && $this->google_login['logged_in'] == 2) {
+            $token = $this->google_login['token'];
+            $token_object = json_decode($token);
+
+            if($this->google_login['expire'] < time()) {
+	            $orginal_token = $this->google_login['orginal_token'];
+	            $orginal_token_object = json_decode($orginal_token);
+
+                if(isset($orginal_token_object->refresh_token)) {
+                    if($this->setting_page)
+                        $source = $this->setting_page == 'network' ? 'network' : '';
+                    else
+                        $source = $this->stats_source == 'network' ? 'network' : '';
+
+                    try {
+                        $this->google_client->refreshToken($orginal_token_object->refresh_token);
+                        $token = $this->google_client->getAccessToken();
+                        $token_object = json_decode($token);
+
+                        $this->google_login['token'] = $token;
+                        $this->google_login['expire'] = time() + $token_object->expires_in;
+
+                        //lets store the refresh token
+                        if(isset($this->google_login['token_id']) && $this->google_login['token_id']) {
+                            //lets keep refresh token
+                            $db_token_object = $token_object;
+                            $db_token_object->refresh_token = $orginal_token_object->refresh_token;
+                            $db_token_object->token_type = $orginal_token_object->token_type;
+                            $db_token = json_encode($db_token_object);
+
+                            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->base_prefix}gaplus_login SET token = %s WHERE id = %d", $db_token, $this->google_login['token_id']));
+                        }
+
+                        $google_analytics_async->save_options(array('google_login' => $this->google_login), $source);
+                    } catch (Google_IO_Exception $e) {
+                        $token = false;
+                        $google_analytics_async->save_options(array('google_login' => array()), $source);
+                    } catch (Exception $e) {
+                        $token = false;
+                        $google_analytics_async->save_options(array('google_login' => array()), $source);
+                    }
+                }
+            }
+            if($token)
+                $this->google_client->setAccessToken($token);
+        }
+    }
+
+    function prepare_authentication_header($url) {
+        global $google_analytics_async;
+
+        if($this->google_login['logged_in'] == 2) {
+            $token = $this->google_login['token'];
+            $token_object = json_decode($token);
+            $orginal_token = $this->google_login['orginal_token'];
+            $orginal_token_object = json_decode($orginal_token);
+
+            $headers['Authorization'] = $orginal_token_object->token_type.' '.$token_object->access_token;
+        }
+        else {
+            $signature_method = new Google_Analytics_OAuthSignatureMethod_HMAC_SHA1();
+            $consumer = new Google_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
+            $token = new Google_Analytics_OAuthConsumer($this->oauth_token, $this->oauth_secret);
+            $oauth_req = Google_Analytics_OAuthRequest::from_consumer_and_token($consumer, $token, 'GET', $url, array());
+            $oauth_req->sign_request($signature_method, $consumer, $token);
+
+            $headers = $oauth_req->to_header();
+            $headers = explode(": ",$headers);
+            $headers[$headers[0]] = $headers[1];
+        }
 
         return $headers;
     }
 
     function get_accounts() {
         global $google_analytics_async;
-
-        //when getting account we need current settings... always.
-        $this->oauth_token = $google_analytics_async->current_settings['google_login']['token'];
-        $this->oauth_secret = $google_analytics_async->current_settings['google_login']['token_secret'];
 
         $headers = $this->prepare_authentication_header($this->account_base_url_new.'accounts/~all/webproperties/~all/profiles');
         $response = wp_remote_get($this->account_base_url_new.'accounts/~all/webproperties/~all/profiles', array('sslverify' => false, 'headers' => $headers));
@@ -940,4 +1199,3 @@ class Google_Analytics_Async_Dashboard {
 
 global $google_analytics_async_dashboard;
 $google_analytics_async_dashboard = new Google_Analytics_Async_Dashboard();
-?>
