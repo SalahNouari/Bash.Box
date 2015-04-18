@@ -2,7 +2,7 @@
 ## Core
 [submodule "cms"]
 	path = cms
-	url = https://github.com/WordPress/WordPress.git
+	url = git@github.com:lakesareadesign/WordPress.git
 
 ################################################
 ## Plugins
@@ -16,32 +16,26 @@
 
 [submodule "Woocommerce"]
 	path = content/plugins/woocommerce
-	url = git@github.com:woothemes/woocommerce.git
+	url = git@github.com:lakesareadesign/woocommerce.git
 
-[submodule "DeployMint"]
-	path = content/plugins/DeployMint
-	url = git@github.com:mmaunder/DeployMint.git
-
-################################################
-## Themes
 [submodule "Roots"]
 	path = content/themes/roots
 	url = git@github.com:lakesareadesign/roots.git
 
 [submodule "Foundation5"]
-	path = content/themes/Foundation5
-	url = eric-miller@github.com/olefredrik/FoundationPress.git
-
-[submodule "Altitude-Pro"]
-	path = content/themes/children/altitude-pro
-	url = git@github.com:eric-miller/dev2015.git
+	path = content/themes/FoundationPress
+	url = git@github.com:lakesareadesign/FoundationPress.git
 
 ################################################
 ## Admin
 [submodule "daux"]
 	path = daux
-	url = https://lakesareadesign@github.com/lakesareadesign/daux.io.git
+	url = git@github.com:lakesareadesign/daux.git
 
+[submodule "TGM-Plugin-Activation"]
+	path = TGM-Plugin-Activation
+	url = git@github.com:lakesareadesign/TGM-Plugin-Activation.git
+	
 [submodule "SRDB"]
 	path = SRDB
 	url = git@github.com:lakesareadesign/Search-Replace-DB.git
