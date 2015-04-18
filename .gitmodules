@@ -1,24 +1,47 @@
-[submodule "daux"]
-	path = daux
-	url = https://lakesareadesign@github.com/lakesareadesign/daux.io.git
+################################################
+## Core
 [submodule "cms"]
 	path = cms
 	url = https://github.com/WordPress/WordPress.git
-[submodule "Roots"]
-	path = content/themes/roots
-	url = git@github.com:lakesareadesign/roots.git
-[submodule "Foundation5"]
-	path = content/themes/Foundation5
-	url = eric-miller@github.com/olefredrik/FoundationPress.git
+
+################################################
+## Plugins
+[submodule "Sync DB"]
+	path = content/plugins/wp-sync-db
+	url = git@github.com:lakesareadesign/wp-sync-db.git
+
+[submodule "Sync DB Media Files"]
+	path = content/plugins/wp-sync-db-media-files
+	url = git@github.com:lakesareadesign/wp-sync-db-media-files.git
+
 [submodule "Woocommerce"]
 	path = content/plugins/woocommerce
 	url = git@github.com:woothemes/woocommerce.git
-[submodule "SRDB"]
-	path = SRDB
-	url = git@github.com:lakesareadesign/Search-Replace-DB.git
+
 [submodule "DeployMint"]
 	path = content/plugins/DeployMint
 	url = git@github.com:mmaunder/DeployMint.git
+
+################################################
+## Themes
+[submodule "Roots"]
+	path = content/themes/roots
+	url = git@github.com:lakesareadesign/roots.git
+
+[submodule "Foundation5"]
+	path = content/themes/Foundation5
+	url = eric-miller@github.com/olefredrik/FoundationPress.git
+
 [submodule "Altitude-Pro"]
 	path = content/themes/children/altitude-pro
 	url = git@github.com:eric-miller/dev2015.git
+
+################################################
+## Admin
+[submodule "daux"]
+	path = daux
+	url = https://lakesareadesign@github.com/lakesareadesign/daux.io.git
+
+[submodule "SRDB"]
+	path = SRDB
+	url = git@github.com:lakesareadesign/Search-Replace-DB.git
