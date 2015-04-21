@@ -132,4 +132,8 @@ class Membership_Model_Rule_Marketpress_Pages extends Membership_Model_Rule {
 		return array_unique( $pages );
 	}
 
+	public function get_data() {
+		return '';
+	}
+
 }

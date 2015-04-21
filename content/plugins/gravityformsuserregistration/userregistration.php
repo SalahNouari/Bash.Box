@@ -3,12 +3,12 @@
 Plugin Name: Gravity Forms User Registration Add-On
 Plugin URI: http://www.gravityforms.com
 Description: Allows WordPress users to be automatically created upon submitting a Gravity Form
-Version: 2.1
+Version: 2.2
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 
 ------------------------------------------------------------------------
-Copyright 2009 rocketgenius
+Copyright 2009-2015 rocketgenius
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class GFUser {
     private static $path = "gravityformsuserregistration/userregistration.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravityformsuserregistration";
-    private static $version = "2.1";
+    private static $version = "2.2";
     private static $min_gravityforms_version = "1.7";
     private static $supported_fields = array( "checkbox", "radio", "select", "text", "website", "textarea", "email", "hidden", "number", "phone", "multiselect", "post_title",
 		                                      "post_tags", "post_custom_field", "post_content", "post_excerpt" );
@@ -123,29 +123,30 @@ class GFUser {
                 add_action('gform_entry_info', array('GFUser', 'entry_activation_button'), 10, 2);
             }
         }
-        else{
-            //loading data class
-            require_once(self::get_base_path() . "/data.php");
+		else{
 
-            // handling post submission
-            add_action('gform_pre_submission', array( __class__, 'handle_existing_images_submission' ) );
-            add_action("gform_after_submission", array("GFUser", "gf_create_user"), 10, 2);
-            add_filter("gform_validation", array("GFUser", "user_registration_validation"));
+			// add paypal ipn hooks
+			add_action("gform_paypal_fulfillment", array("GFUser", "add_paypal_user"), 10, 8);
+			add_action("gform_subscription_canceled", array("GFUser", "downgrade_paypal_user"), 10, 8);
 
-            // add paypal ipn hooks
-            add_action("gform_paypal_fulfillment", array("GFUser", "add_paypal_user"), 10, 8);
-            add_action("gform_subscription_canceled", array("GFUser", "downgrade_paypal_user"), 10, 8);
+			// ManageWP premium update filters
+			add_filter( 'mwp_premium_update_notification', array('GFUser', 'premium_update_push') );
+			add_filter( 'mwp_premium_perform_update', array('GFUser', 'premium_update') );
+		}
 
-            // custom registration form page
-            add_action('wp_loaded', array('GFUser', 'custom_registration_page'));
+		//loading data class
+		require_once(self::get_base_path() . "/data.php");
 
-            // add support for prepopulating update feeds
-            add_action('gform_pre_render', array('GFUser', 'maybe_prepopulate_form'));
+		// handling post submission
+		add_action('gform_pre_submission', array( __class__, 'handle_existing_images_submission' ) );
+		add_action("gform_after_submission", array("GFUser", "gf_create_user"), 10, 2);
+		add_filter("gform_validation", array("GFUser", "user_registration_validation"));
 
-            // ManageWP premium update filters
-            add_filter( 'mwp_premium_update_notification', array('GFUser', 'premium_update_push') );
-            add_filter( 'mwp_premium_perform_update', array('GFUser', 'premium_update') );
-        }
+		// custom registration form page
+		add_action('wp_loaded', array('GFUser', 'custom_registration_page'));
+
+		// add support for prepopulating update feeds
+		add_action('gform_pre_render', array('GFUser', 'maybe_prepopulate_form'));
 
         // buddypress hooks
         if(self::is_bp_active()) {
@@ -157,6 +158,8 @@ class GFUser {
             self::add_multisite_hooks();
         }
     }
+
+
 
     public static function update_feed_active(){
         check_ajax_referer('rg_user_update_feed_active','rg_user_update_feed_active');
@@ -3287,12 +3290,10 @@ class GFUser {
             add_action("gform_user_registration_add_option_section", array("GFUser", "add_buddypress_options"), 10, 2);
             add_filter("gform_user_registration_save_config", array("GFUser", "save_buddypress_meta"));
 
-        } else {
-
-            // buddypress non-admin hooks
-            add_action("gform_user_updated", array("GFUser", "prepare_buddypress_data"), 10, 3);
-
         }
+
+		// buddypress non-admin hooks
+		add_action("gform_user_updated", array("GFUser", "prepare_buddypress_data"), 10, 3);
 
         // as of UR 1.5 pending activations, the "gform_user_registered" hook can be fired both in the admin (when manually activating)
         // pending activations and on the front-end (by default)
@@ -3310,17 +3311,15 @@ class GFUser {
             add_filter("gform_user_registration_save_config", array("GFUser", "save_multisite_config"));
             add_filter("gform_user_registration_config_validation", array("GFUser", "validate_multisite_config"), 10, 2);
 
-        } else {
-
-            // multisite non-admin hooks
-            add_action("gform_user_registration_validation", array("GFUser", "validate_multisite_submission"), 10, 3);
-            add_action("gform_user_registered", array("GFUser", "create_new_multisite"), 10, 4);
-            add_action("gform_user_updated", array("GFUser", "create_new_multisite"), 10, 4);
-
-            // add paypal ipn hooks for multisite
-            add_action("gform_subscription_canceled", array("GFUser", "downgrade_paypal_site"), 10, 2);
-
         }
+
+		// multisite non-admin hooks
+		add_action("gform_user_registration_validation", array("GFUser", "validate_multisite_submission"), 10, 3);
+		add_action("gform_user_registered", array("GFUser", "create_new_multisite"), 10, 4);
+		add_action("gform_user_updated", array("GFUser", "create_new_multisite"), 10, 4);
+
+		// add paypal ipn hooks for multisite
+		add_action("gform_subscription_canceled", array("GFUser", "downgrade_paypal_site"), 10, 2);
 
     }
 

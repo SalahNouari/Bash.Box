@@ -1,3 +1,6 @@
+V2.0.1.5: 2015-04-21
+- Fixes possible WordPress XSS bug.
+
 V2.0.1.4: 2014-07-23
 - Fixed sql for random page liking 
 
@@ -118,4 +121,4 @@ V1.0.0:
 
 
 
-133620-1408425437-au
+133620-1429610663-au

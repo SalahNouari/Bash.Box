@@ -90,12 +90,12 @@ class Membership_Render_Page_Registration_Standard extends Membership_Render {
 	 */
 	private function _render_standard_form() {
 		$permalink = get_permalink();
-		$login_url = wp_login_url( add_query_arg( array( 'action' => 'registeruser', 'subscription' => $this->subscription ), $permalink ) );
+		$login_url = wp_login_url( esc_url( add_query_arg( array( 'action' => 'registeruser', 'subscription' => $this->subscription ), $permalink ) ) );
 
 		?><div id="membership-wrapper">
 			<?php $this->_render_errors() ?>
 
-			<form class="form-membership" action="<?php echo add_query_arg( array( 'action' => 'validatepage1', 'subscription' => $this->subscription ), $permalink ) ?>" method="post">
+			<form class="form-membership" action="<?php echo esc_url( add_query_arg( array( 'action' => 'validatepage1', 'subscription' => $this->subscription ), $permalink ) ) ?>" method="post">
 				<?php do_action( "signup_hidden_fields" ) ?>
 				<input type="hidden" name="subscription" value="<?php echo esc_attr( $this->subscription ) ?>">
 
@@ -379,7 +379,7 @@ class Membership_Render_Page_Registration_Standard extends Membership_Render {
 			<?php do_action( 'bp_before_register_page' ) ?>
 
 			<div class="page" id="register-page">
-				<form action="<?php echo add_query_arg( array( 'action' => 'validatepage1bp', 'subscription' => $this->subscription ), $permalink ) ?>" name="signup_form" id="signup_form" class="standard-form" method="post" enctype="multipart/form-data">
+				<form action="<?php echo esc_url( add_query_arg( array( 'action' => 'validatepage1bp', 'subscription' => $this->subscription ), $permalink ) ) ?>" name="signup_form" id="signup_form" class="standard-form" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="subscription" value="<?php echo esc_attr( $this->subscription ) ?>">
 
 					<h2><?php _e( 'Create an Account', 'membership' ) ?></h2>

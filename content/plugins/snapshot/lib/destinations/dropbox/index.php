@@ -97,6 +97,9 @@ if ((!class_exists('SnapshotDestinationDropbox'))
 					}
 					$link = add_query_arg( 'type', 'dropbox', $link );
 					$d_info = get_option('snapshot-dropbox-tokens');
+
+					// Avoid XSS.
+					$link = esc_url( $link );
 					wp_redirect($link);
 				}
 			}
@@ -142,7 +145,7 @@ if ((!class_exists('SnapshotDestinationDropbox'))
 				update_option('snapshot-dropbox-tokens', $d_info);
 
 				$action = "snapshot-destination-dropdown-authorize";
-				$link = add_query_arg( '_wpnonce', wp_create_nonce( $action ) );
+				$link = esc_url( add_query_arg( '_wpnonce', wp_create_nonce( $action ) ) );
 				$admin_url = admin_url();
 				$admin_url_parts = parse_url($admin_url);
 				$admin_url = $admin_url_parts['scheme'] ."://". $admin_url_parts['host'];
@@ -725,7 +728,7 @@ if ((!class_exists('SnapshotDestinationDropbox'))
 			$this->error_array['errorArray'][] 	= $error_string;
 
 			if (defined( 'DOING_AJAX' ) && DOING_AJAX) {
-				echo json_encode($error_array);
+				echo json_encode($this->error_array);
 				die();
 			}
 		}

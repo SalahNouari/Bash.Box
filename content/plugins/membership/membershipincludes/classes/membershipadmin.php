@@ -1055,7 +1055,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								foreach ($levels as $key => $level) {
 					$edit_link_args['level_id'] = $level->id;
 										echo "<tr>";
-										echo "<td><a href='" . esc_url( add_query_arg( $edit_link_args, $admin_link ) ) . "'>" . esc_html($level->level_title) . "</a></td>";
+										echo "<td><a href='" . esc_url( esc_url( add_query_arg( $edit_link_args, $admin_link ) ) ) . "'>" . esc_html($level->level_title) . "</a></td>";
 										// find out how many people are in this level
 										$thiscount = $this->count_on_level($level->id);
 
@@ -1228,7 +1228,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 
 								case 'removeheader':
 					$this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url( remove_query_arg('action') ) );
 										break;
 
 								case 'toggle':
@@ -1240,9 +1240,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$member = $factory->get_member($user_id);
 
 												if ($member->toggle_activation()) {
-														wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 8, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 8, wp_get_referer())));
 												}
 										}
 										break;
@@ -1259,7 +1259,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 
 								case 'bulkaddlevel-level-complete':
@@ -1281,7 +1281,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 
 										$this->update_levelcounts();
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 
 								case 'bulkdroplevel-level-complete':
@@ -1303,7 +1303,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 
 										$this->update_levelcounts();
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 
 								case 'bulkmovelevel-level-complete':
@@ -1327,7 +1327,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 
 										$this->update_levelcounts();
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 
 								case 'bulkaddsub-sub-complete':
@@ -1353,7 +1353,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 										$this->update_levelcounts();
 										$this->update_subcounts();
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 
 								case 'bulkdropsub-sub-complete':
@@ -1376,7 +1376,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 										$this->update_levelcounts();
 										$this->update_subcounts();
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 
 								case 'bulkmovesub-sub-complete':
@@ -1403,7 +1403,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 										$this->update_levelcounts();
 										$this->update_subcounts();
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 
 								case 'bulkmovegateway-gateway-complete':
@@ -1431,7 +1431,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 3, wp_get_original_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_original_referer())));
 										break;
 						}
 				}
@@ -2122,7 +2122,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 				            if (isset($_GET['msg'])) {
 				                echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-				                $_SERVER['REQUEST_URI'] = remove_query_arg(array( 'msg' ), $_SERVER['REQUEST_URI']);
+				                $_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array( 'msg' ), $_SERVER['REQUEST_URI']) );
 		            		}
 
 				            if ($this->show_user_help($page)) { ?>
@@ -2729,7 +2729,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								// Always flush the rewrite rules
 								$wp_rewrite->flush_rules();
 
-								wp_safe_redirect(add_query_arg('msg', 1, wp_get_referer()));
+								wp_safe_redirect(esc_url( add_query_arg('msg', 1, wp_get_referer())));
 						} elseif (!empty($action)) {
 
 								if (defined('MEMBERSHIP_GLOBAL_TABLES') && MEMBERSHIP_GLOBAL_TABLES === true) {
@@ -2793,7 +2793,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 
 								do_action('membership_options_pagecreation_process');
 
-								wp_safe_redirect(add_query_arg('msg', 2, wp_get_referer()));
+								wp_safe_redirect(esc_url( add_query_arg('msg', 2, wp_get_referer())));
 						}
 				}
 
@@ -2809,7 +2809,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 						<div id="poststuff" class="metabox-holder m-settings">
@@ -2955,7 +2955,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 						<div id="poststuff" class="metabox-holder m-settings">
@@ -3198,7 +3198,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 
@@ -3302,7 +3302,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 
@@ -3487,7 +3487,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 						<div id="poststuff" class="metabox-holder m-settings">
@@ -3787,7 +3787,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 						<div id="poststuff" class="metabox-holder m-settings">
@@ -3823,7 +3823,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($_GET['msg'])) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 						<div id="poststuff" class="metabox-holder m-settings">
@@ -4133,7 +4133,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						<?php
 						if (isset($usemsg)) {
 								echo '<div id="message" class="updated fade"><p>' . $messages[$usemsg] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 
@@ -4363,7 +4363,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						switch (addslashes($action)) {
 
 								case 'removeheader': $this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url( remove_query_arg('action') ) );
 										break;
 
 								case 'added': $id = (int) $_POST['level_id'];
@@ -4378,12 +4378,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 																$level->update_meta('level_protectedcontent', $_POST['level_protectedcontent']);
 														}
 														// redirect
-														wp_safe_redirect(add_query_arg('msg', 1, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 1, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page)));
 										}
 
 										break;
@@ -4401,12 +4401,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 																$level->delete_meta('level_protectedcontent');
 														}
 														// redirect
-														wp_safe_redirect(add_query_arg('msg', 3, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 3, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 5, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 5, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 5, 'admin.php?page=' . $page)));
 										}
 										break;
 
@@ -4421,9 +4421,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 														// delete the meta information
 														$level->delete_meta('level_protectedcontent');
 														// redirect
-														wp_safe_redirect(add_query_arg('msg', 2, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 2, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 6, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 6, wp_get_referer())));
 												}
 										}
 										break;
@@ -4436,9 +4436,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$level = $factory->get_level($level_id);
 
 												if ($level->toggleactivation()) {
-														wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 8, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 8, wp_get_referer())));
 												}
 										}
 										break;
@@ -4455,7 +4455,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 2, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 2, wp_get_referer())));
 										break;
 
 								case 'bulk-toggle':
@@ -4470,7 +4470,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 						}
 				}
@@ -4544,7 +4544,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								if ($this->show_user_help($page)) {
@@ -4777,8 +4777,8 @@ if ( !class_exists( 'membershipadmin' ) ) :
 
 						<?php
 						if (isset($usemsg)) {
-								echo '<div id="message" class="updated fade"><p>' . $messages[$usemsg] . '</p></div>';
-								$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+								//echo '<div id="message" class="updated fade"><p>' . $messages[$usemsg] . '</p></div>';
+								$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 						}
 						?>
 
@@ -4969,7 +4969,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						switch (addslashes($action)) {
 
 								case 'removeheader': $this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url( remove_query_arg('action') ) );
 										break;
 
 								case 'added': $id = (int) $_POST['sub_id'];
@@ -4979,12 +4979,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$sub = Membership_Plugin::factory()->get_subscription($id);
 
 												if ($sub->add()) {
-														wp_safe_redirect(add_query_arg('msg', 1, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 1, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page)));
 										}
 
 										break;
@@ -4994,12 +4994,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$sub = Membership_Plugin::factory()->get_subscription($id);
 
 												if ($sub->update()) {
-														wp_safe_redirect(add_query_arg('msg', 3, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 3, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 5, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 5, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 5, 'admin.php?page=' . $page)));
 										}
 										break;
 
@@ -5011,9 +5011,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$sub = Membership_Plugin::factory()->get_subscription($sub_id);
 
 												if ($sub->delete()) {
-														wp_safe_redirect(add_query_arg('msg', 2, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 2, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 6, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 6, wp_get_referer())));
 												}
 										}
 										break;
@@ -5029,9 +5029,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$sub->toggleactivation();
 
 												if ($sub->togglepublic()) {
-														wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 8, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 8, wp_get_referer())));
 												}
 										}
 										break;
@@ -5044,9 +5044,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$sub = Membership_Plugin::factory()->get_subscription($sub_id);
 
 												if ($sub->toggleactivation()) {
-														wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 8, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 8, wp_get_referer())));
 												}
 										}
 										break;
@@ -5060,9 +5060,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$sub = Membership_Plugin::factory()->get_subscription($sub_id);
 
 												if ($sub->togglepublic()) {
-														wp_safe_redirect(add_query_arg('msg', 9, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 9, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 5, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, wp_get_referer())));
 												}
 										}
 										break;
@@ -5079,7 +5079,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 2, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 2, wp_get_referer())));
 										break;
 
 								case 'bulk-toggle':
@@ -5094,7 +5094,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 
 								case 'bulk-togglepublic':
@@ -5109,7 +5109,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 9, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 9, wp_get_referer())));
 										break;
 						}
 				}
@@ -5174,7 +5174,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								if ($this->show_user_help($page)) {
@@ -5409,7 +5409,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						switch (addslashes($action)) {
 
 								case 'removeheader': $this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url( remove_query_arg('action') ) );
 										break;
 
 								case 'added': check_admin_referer('add-comm');
@@ -5417,9 +5417,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 										$comm = new M_Communication(false);
 
 										if ($comm->add()) {
-												wp_safe_redirect(add_query_arg('msg', 8, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 8, 'admin.php?page=' . $page)));
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 9, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 9, 'admin.php?page=' . $page)));
 										}
 
 										break;
@@ -5429,12 +5429,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$comm = new M_Communication($id);
 
 												if ($comm->update()) {
-														wp_safe_redirect(add_query_arg('msg', 1, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 1, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 2, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 2, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 2, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 2, 'admin.php?page=' . $page)));
 										}
 										break;
 
@@ -5446,9 +5446,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$comm = new M_Communication($id);
 
 												if ($comm->delete()) {
-														wp_safe_redirect(add_query_arg('msg', 10, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 10, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 11, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 11, wp_get_referer())));
 												}
 										}
 										break;
@@ -5461,7 +5461,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						$comm = new M_Communication( $id );
 						$comm->send_message( get_current_user_id() );
 
-						wp_safe_redirect( add_query_arg( 'msg', 12, wp_get_referer() ) );
+						wp_safe_redirect( esc_url( add_query_arg( 'msg', 12, wp_get_referer() ) ) );
 					}
 					break;
 
@@ -5474,9 +5474,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$comm = new M_Communication($id);
 
 												if ($comm->toggle()) {
-														wp_safe_redirect(add_query_arg('msg', 5, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 6, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 6, wp_get_referer())));
 												}
 										}
 										break;
@@ -5489,9 +5489,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$comm = new M_Communication($id);
 
 												if ($comm->toggle()) {
-														wp_safe_redirect(add_query_arg('msg', 3, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 4, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 4, wp_get_referer())));
 												}
 										}
 										break;
@@ -5508,7 +5508,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 10, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 10, wp_get_referer())));
 										break;
 
 								case 'bulk-toggle':
@@ -5523,7 +5523,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 						}
 				}
@@ -5634,7 +5634,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								if (isset($_GET['comm_id'])) {
@@ -5753,7 +5753,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 																								$actions['toggle'] = "<span class='edit activate'><a href='" . wp_nonce_url("?page=" . $page . "&amp;action=activate&amp;comm=" . $comm->id . "", 'toggle-comm_' . $comm->id) . "'>" . __('Activate', 'membership') . "</a></span>";
 																						}
 
-											$actions['sendme'] = sprintf( '<span class="sendme"><a href="%s" title="%s">%s</a></span>', wp_nonce_url( add_query_arg( array( 'action' => 'sendme', 'comm' => $comm->id ) ), 'sendme-' . $comm->id ), __( 'Send this communication message to me', 'membership' ), _x( 'Send Me', 'Send this communication message to me', 'membership' ) );
+											$actions['sendme'] = sprintf( '<span class="sendme"><a href="%s" title="%s">%s</a></span>', wp_nonce_url( esc_url( add_query_arg( array( 'action' => 'sendme', 'comm' => $comm->id ) ) ), 'sendme-' . $comm->id ), __( 'Send this communication message to me', 'membership' ), _x( 'Send Me', 'Send this communication message to me', 'membership' ) );
 																						$actions['delete'] = "<span class='delete'><a href='" . wp_nonce_url("?page=" . $page . "&amp;action=delete&amp;comm=" . $comm->id . "", 'delete-comm_' . $comm->id) . "'>" . __('Delete', 'membership') . "</a></span>";
 																						?>
 																						<br><div class="row-actions"><?php echo implode(" | ", $actions); ?></div>
@@ -5888,7 +5888,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						switch (addslashes($action)) {
 
 								case 'removeheader': $this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url( remove_query_arg('action') ) );
 										break;
 
 								case 'added': check_admin_referer('add-group');
@@ -5896,9 +5896,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 										$group = new M_Urlgroup(0);
 
 										if ($group->add()) {
-												wp_safe_redirect(add_query_arg('msg', 3, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 3, 'admin.php?page=' . $page)));
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page)));
 										}
 
 										break;
@@ -5908,12 +5908,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$group = new M_Urlgroup($id);
 
 												if ($group->update()) {
-														wp_safe_redirect(add_query_arg('msg', 1, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 1, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 2, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 2, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 2, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 2, 'admin.php?page=' . $page)));
 										}
 										break;
 
@@ -5925,9 +5925,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$group = new M_Urlgroup($id);
 
 												if ($group->delete()) {
-														wp_safe_redirect(add_query_arg('msg', 5, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 6, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 6, wp_get_referer())));
 												}
 										}
 										break;
@@ -5944,7 +5944,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 						}
 				}
@@ -6051,7 +6051,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								$groups = $this->get_urlgroups();
@@ -6199,7 +6199,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						switch (addslashes($action)) {
 
 								case 'removeheader': $this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url(  remove_query_arg('action') ) );
 										break;
 
 								case 'added': check_admin_referer('add-ping');
@@ -6207,9 +6207,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 										$ping = new M_Ping(0);
 
 										if ($ping->add()) {
-												wp_safe_redirect(add_query_arg('msg', 3, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 3, 'admin.php?page=' . $page)));
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page)));
 										}
 
 										break;
@@ -6219,12 +6219,12 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$ping = new M_Ping($id);
 
 												if ($ping->update()) {
-														wp_safe_redirect(add_query_arg('msg', 1, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 1, 'admin.php?page=' . $page)));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 2, 'admin.php?page=' . $page));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 2, 'admin.php?page=' . $page)));
 												}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 2, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 2, 'admin.php?page=' . $page)));
 										}
 										break;
 
@@ -6236,9 +6236,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												$ping = new M_Ping($id);
 
 												if ($ping->delete()) {
-														wp_safe_redirect(add_query_arg('msg', 5, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 6, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 6, wp_get_referer())));
 												}
 										}
 										break;
@@ -6255,7 +6255,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 
 								case 'history':
@@ -6264,11 +6264,11 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												switch ($_GET['resend']) {
 														case 'new': $ping = new M_Ping(false);
 																$ping->resend_historic_ping($history, true);
-																wp_safe_redirect(add_query_arg('msg', 1, wp_get_referer()));
+																wp_safe_redirect(esc_url( add_query_arg('msg', 1, wp_get_referer())));
 																break;
 														case 'over': $ping = new M_Ping(false);
 																$ping->resend_historic_ping($history, false);
-																wp_safe_redirect(add_query_arg('msg', 1, wp_get_referer()));
+																wp_safe_redirect(esc_url( add_query_arg('msg', 1, wp_get_referer())));
 																break;
 												}
 										}
@@ -6365,7 +6365,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								$ping = new M_Ping($ping_id);
@@ -6520,7 +6520,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								$pings = $this->get_pings();
@@ -6663,7 +6663,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								if (!current_user_is_member()) {
@@ -7207,9 +7207,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												if ($found !== false) {
 														unset($active[$found]);
 														update_option('membership_activated_gateways', array_unique($active));
-														wp_safe_redirect(add_query_arg('msg', 5, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 5, wp_get_referer())));
 												} else {
-														wp_safe_redirect(add_query_arg('msg', 6, wp_get_referer()));
+														wp_safe_redirect(esc_url( add_query_arg('msg', 6, wp_get_referer())));
 												}
 										}
 										break;
@@ -7219,15 +7219,15 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												check_admin_referer('toggle-gateway-' . $key);
 
 												if ( defined( 'M_LITE' ) && ! in_array( $key, array( 'freesubscriptions', 'paypalexpress', 'paypalsolo' ) ) ) {
-													wp_safe_redirect(add_query_arg('msg', 8, wp_get_referer()));
+													wp_safe_redirect(esc_url( add_query_arg('msg', 8, wp_get_referer())));
 												} else {
 
 													if (!in_array($key, $active)) {
 															$active[] = $key;
 															update_option('membership_activated_gateways', array_unique($active));
-															wp_safe_redirect(add_query_arg('msg', 3, wp_get_referer()));
+															wp_safe_redirect(esc_url( add_query_arg('msg', 3, wp_get_referer())));
 													} else {
-															wp_safe_redirect(add_query_arg('msg', 4, wp_get_referer()));
+															wp_safe_redirect(esc_url( add_query_arg('msg', 4, wp_get_referer())));
 													}
 												}
 										}
@@ -7244,7 +7244,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 										update_option('membership_activated_gateways', array_unique($active));
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										break;
 
 								case 'updated':
@@ -7252,9 +7252,9 @@ if ( !class_exists( 'membershipadmin' ) ) :
 					check_admin_referer( 'updated-' . $gateway );
 					$gateway = Membership_Gateway::get_gateway( $gateway );
 					if ( $gateway && $gateway->update() ) {
-						wp_safe_redirect( add_query_arg( 'msg', 1, 'admin.php?page=' . $page ) );
+						wp_safe_redirect( esc_url( add_query_arg( 'msg', 1, 'admin.php?page=' . $page ) ) );
 					} else {
-						wp_safe_redirect( add_query_arg( 'msg', 2, 'admin.php?page=' . $page ) );
+						wp_safe_redirect( esc_url( add_query_arg( 'msg', 2, 'admin.php?page=' . $page ) ) );
 					}
 
 					break;
@@ -7310,7 +7310,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 								<?php
 								if (isset($_GET['msg'])) {
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 								}
 
 								if ($this->show_user_help($page)) {
@@ -7506,7 +7506,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						switch (addslashes($action)) {
 
 								case 'removeheader': $this->dismiss_user_help($page);
-										wp_safe_redirect(remove_query_arg('action'));
+										wp_safe_redirect( esc_url( remove_query_arg('action') ) );
 										break;
 
 								case 'added': $id = (int) $_POST['ID'];
@@ -7518,19 +7518,19 @@ if ( !class_exists( 'membershipadmin' ) ) :
 											$errors = $coupon->add($_POST);
 
 											if ( empty( $errors ) ) {
-												wp_safe_redirect(add_query_arg('msg', 1, 'admin.php?page=' . $page));
+												wp_safe_redirect(esc_url( add_query_arg('msg', 1, 'admin.php?page=' . $page)));
 											} else {
-												$url = add_query_arg( 'msg', 2, 'admin.php?page=' . $page );
+												$url = esc_url( add_query_arg( 'msg', 2, 'admin.php?page=' . $page ) );
 
 												foreach( $errors as $key => $error ) {
 													$errors[ $key ] = str_replace( ' ', '_', $error );
 												}
 
-												$url = add_query_arg( 'errors', $errors, $url );
+												$url = esc_url( add_query_arg( 'errors', $errors, $url ) );
 												wp_safe_redirect( $url );
 											}
 										} else {
-												wp_safe_redirect(add_query_arg('msg', 4, 'admin.php?page=' . $page));
+												wp_safe_redirect( esc_url( add_query_arg('msg', 4, 'admin.php?page=' . $page) ) );
 										}
 
 										break;
@@ -7547,7 +7547,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						}
 					}
 
-					wp_safe_redirect( add_query_arg( 'msg', $msg, 'admin.php?page=' . $page ) );
+					wp_safe_redirect( esc_url( add_query_arg( 'msg', $msg, 'admin.php?page=' . $page ) ) );
 					break;
 
 				case 'delete':
@@ -7555,7 +7555,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 						$coupon_id = (int) $_GET['coupon_id'];
 						check_admin_referer( 'delete-coupon_' . $coupon_id );
 						$coupon = new M_Coupon( $coupon_id );
-						wp_safe_redirect( add_query_arg( 'msg', $coupon->delete() ? 5 : 6, wp_get_referer() ) );
+						wp_safe_redirect( esc_url( add_query_arg( 'msg', $coupon->delete() ? 5 : 6, wp_get_referer() ) ) );
 					}
 					break;
 
@@ -7572,7 +7572,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 												}
 										}
 
-										wp_safe_redirect(add_query_arg('msg', 7, wp_get_referer()));
+										wp_safe_redirect(esc_url( add_query_arg('msg', 7, wp_get_referer())));
 										exit;
 										break;
 						}
@@ -7691,7 +7691,7 @@ if ( !class_exists( 'membershipadmin' ) ) :
 											$extra_html .= '</ul>';
 										}
 										echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p>' . $extra_html . '</div>';
-										$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+										$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI'] ) );
 								}
 
 								if ($this->show_user_help($page)) {

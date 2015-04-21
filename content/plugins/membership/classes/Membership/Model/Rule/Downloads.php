@@ -124,4 +124,7 @@ class Membership_Model_Rule_Downloads extends Membership_Model_Rule {
 		}
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

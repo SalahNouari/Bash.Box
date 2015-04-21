@@ -83,7 +83,7 @@ if(!class_exists('M_Wizard')) {
 
 				$this->hide_wizard();
 
-				wp_safe_redirect( remove_query_arg( 'action', remove_query_arg( '_wpnonce') ) );
+				wp_safe_redirect( esc_url( remove_query_arg( 'action', remove_query_arg( '_wpnonce') ) ) );
 			}
 
 		}

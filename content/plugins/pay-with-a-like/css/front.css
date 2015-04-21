@@ -40,7 +40,7 @@ For correct display, you may need to change other css properties too*/
 	margin-left: -999em;
 }
 
-/* .fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_ltr {display: none !important;} */
+/* .fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_ltr {display: none !important;} */	   	  		 	  	 		 
 
 /* Hiding Google pop-up. As G+ does not wait, removing this line will not give any pratical result */
 .pwal_container .gc-bubbleDefault.pls-container{display:none !important;}
@@ -48,4 +48,4 @@ For correct display, you may need to change other css properties too*/
 
 
 
-/* 133620-1408425437-au */
+/* 133620-1429610663-au */

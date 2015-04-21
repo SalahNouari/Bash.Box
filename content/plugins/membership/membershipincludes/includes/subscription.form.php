@@ -22,11 +22,11 @@
 									$class = '';
 									if ( isset( $M_options['formtype'] ) && $M_options['formtype'] == 'new' ) {
 										// pop up form
-										$link = add_query_arg( array( 'action' => 'buynow', 'subscription' => (int)$sub->id ), admin_url( 'admin-ajax.php' ) );
+										$link = esc_url( add_query_arg( array( 'action' => 'buynow', 'subscription' => (int)$sub->id ), admin_url( 'admin-ajax.php' ) ) );
 										$class = 'popover';
 									} else {
 										// original form
-										$link = add_query_arg( array( 'action' => 'registeruser', 'subscription' => (int)$sub->id ) );
+										$link = esc_url( add_query_arg( array( 'action' => 'registeruser', 'subscription' => (int)$sub->id ) ) );
 									}
 
 									if ( empty( $linktext ) ) {

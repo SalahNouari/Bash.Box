@@ -177,7 +177,7 @@ class Membership_Table_Gateway_Transaction_Authorize extends Membership_Table {
 		$views = array(
 			'all' => sprintf(
 				'<a href="%s"%s>%s <span class="count">(%d)</span></a>',
-				add_query_arg( array( 'status' => false, 'paged' => false ) ),
+				esc_url( add_query_arg( array( 'status' => false, 'paged' => false ) ) ),
 				!isset( $_GET['status'] ) ? ' class="current"' : '',
 				__( 'All', 'membership' ),
 				intval( $wpdb->get_var( sprintf(
@@ -192,7 +192,7 @@ class Membership_Table_Gateway_Transaction_Authorize extends Membership_Table {
 		foreach ( $this->_args['statuses'] as $key => $label ) {
 			$views[$key] = sprintf(
 				'<a href="%s"%s>%s <span class="count">(%d)</span></a>',
-				add_query_arg( array( 'status' => $key, 'paged' => false ) ),
+				esc_url( add_query_arg( array( 'status' => $key, 'paged' => false ) ) ),
 				$status == $key ? ' class="current"' : '',
 				$label,
 				intval( $wpdb->get_var( sprintf(

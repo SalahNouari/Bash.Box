@@ -238,4 +238,7 @@ class Membership_Model_Rule_Buddypress_Blogs extends Membership_Model_Rule {
 		return $blogs;
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

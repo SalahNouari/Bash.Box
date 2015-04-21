@@ -3,7 +3,7 @@
 Plugin Name: Pay With a Like
 Description: Allows protecting posts/pages until visitor likes the page or parts of the page with Facebook, Linkedin, Twitter or Google +1.
 Plugin URI: http://premium.wpmudev.org/project/pay-with-a-like
-Version: 2.0.1.4
+Version: 2.0.1.5
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
 TextDomain: pwal
@@ -13,7 +13,6 @@ WDP ID: 7330
 
 /*
 Copyright 2009-2014 Incsub (http://incsub.com)
-Author - Paul Menard
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -1422,6 +1421,7 @@ class PayWithaLike {
 		}
 
 		$url_to_like = remove_query_arg('PWAL_DEBUG', $url_to_like);
+		$url_to_like = esc_url( $url_to_like );  // Avoid XSS
 		$url_to_like = apply_filters( 'pwal_url_to_like', $url_to_like );
 
 		if ($this->pwal_js_data['debug'] == 'true') {
@@ -1562,7 +1562,7 @@ class PayWithaLike {
 							}
 							list($google_button_size, $google_button_annotation) = explode('-', $google_layout_style);
 
-							$content .= "<div class='pwal_button pwal_button_".$n." pwal_button_google'><g:plusone size='". $google_button_size ."' href='". $url_to_like ."' annotation='". $google_button_annotation ."' callback='pwal_google_callback_". $atts['content_id'] ."'></g:plusone><script type='text/javascript'> function pwal_google_callback_". $atts['content_id'] ."(data){ wpmudev_pwal.google_plus_callback_js('".$atts['content_id'] ."', data); } </script></div>";
+							$content .= "<div class='pwal_button pwal_button_".$n." pwal_button_google'><g:plusone size='". $google_button_size ."' href='". $url_to_like ."' annotation='". $google_button_annotation ."' callback='pwal_google_callback_". $atts['content_id'] ."'></g:plusone><script type='text/javascript'> function pwal_google_callback_". $atts['content_id'] ."(data){ wpmudev_pwal.google_plus_callback_js('".$atts['content_id'] ."', data); } </script></div>";	   	  		 	  	 		 
 						}
 						break;
 				}

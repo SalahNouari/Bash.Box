@@ -4,7 +4,7 @@ Plugin Name: Snapshot
 Plugin URI: http://premium.wpmudev.org/project/snapshot
 Description: This plugin allows you to take quick on-demand backup snapshots of your working WordPress database. You can select from the default WordPress tables as well as custom plugin tables within the database structure. All snapshots are logged, and you can restore the snapshot as needed.
 Author: WPMU DEV
-Version: 2.4.3.2
+Version: 2.4.3.3
 Author URI: http://premium.wpmudev.org/
 Network: true
 WDP ID: 257
@@ -757,6 +757,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 
 							$return_url = add_query_arg('page', sanitize_text_field($_GET['page']), $return_url);
 							$return_url = add_query_arg('message', 'success-runonce', $return_url);
+							$return_url = esc_url( $return_url ); // Avoid XSS
 							if ($return_url) {
 								wp_redirect($return_url);
 							}
@@ -1276,7 +1277,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 			if ($CONFIG_CHANGED) {
 				$this->save_config();
 
-				$location = add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_edit_panel');
+				$location = esc_url( add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_edit_panel') );
 				if ($location) {
 					wp_redirect($location);
 					die();
@@ -1355,7 +1356,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				if ($CONFIG_CHANGED) {
 					$this->save_config();
 
-					$location = add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_edit_panel');
+					$location = esc_url( add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_edit_panel') );
 					if ($location) {
 						wp_redirect($location);
 						die();
@@ -1723,7 +1724,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 	  		if (defined('DOING_AJAX') && DOING_AJAX) {
 				return $item['timestamp'];
 			} else {
-				$location = add_query_arg('message', 'success-add', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_edit_panel');
+				$location = esc_url( add_query_arg('message', 'success-add', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_edit_panel') );
 				if ($location) {
 					wp_redirect($location);
 				}
@@ -1858,7 +1859,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				$this->save_config();
 			}
 
-			$location = add_query_arg('message', 'success-settings', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_settings_panel');
+			$location = esc_url( add_query_arg('message', 'success-settings', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_settings_panel') );
 			if ($location) {
 				wp_redirect($location);
 				die();
@@ -5799,7 +5800,8 @@ if (!class_exists('WPMUDEVSnapshot')) {
 						if ((isset($destination_info['form-step-url'])) && (!empty($destination_info['form-step-url']))) {
 							$location_redirect_url = add_query_arg('item', $destination_slug, $destination_info['form-step-url']);
 							$location_redirect_url = add_query_arg('message', 'success-add', $location_redirect_url);
-							//$location_redirect_url = add_query_arg('snapshot-action', 'edit', $location_redirect_url);
+							$location_redirect_url = esc_url( $location_redirect_url ); // Avoid XSS
+							//$location_redirect_url = esc_url( add_query_arg('snapshot-action', 'edit', $location_redirect_url) );
 						}
 
 						//$this->save_config();
@@ -5819,7 +5821,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				if (empty($location_redirect_url)) {
 					$location_redirect_url = $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_destinations_panel';
 				}
-				$location = add_query_arg('message', 'success-add', $location_redirect_url);
+				$location = esc_url( add_query_arg('message', 'success-add', $location_redirect_url) );
 				//echo "location=[". $location ."]<br />";
 				//die();
 				if ($location) {
@@ -5875,13 +5877,14 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				if ((isset($destination_info['form-step-url'])) && (!empty($destination_info['form-step-url']))) {
 					$location_redirect_url = add_query_arg('item', $destination_key, $destination_info['form-step-url']);
 					$location_redirect_url = add_query_arg('message', 'success-add', $location_redirect_url);
-					//$location_redirect_url = add_query_arg('snapshot-action', 'edit', $location_redirect_url);
+					$location_redirect_url = esc_url( $location_redirect_url ); // Avoid XSS.
+					//$location_redirect_url = esc_url( add_query_arg('snapshot-action', 'edit', $location_redirect_url) );
 				}
 
 				if (empty($location_redirect_url)) {
 					$location_redirect_url = $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_destinations_panel';
 				}
-				$location = add_query_arg('message', 'success-add', $location_redirect_url);
+				$location = esc_url( add_query_arg('message', 'success-add', $location_redirect_url) );
 				//echo "location[". $location ."]<br />";
 				//die();
 
@@ -5919,7 +5922,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 
 				$this->save_config();
 
-				$location = add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_destinations_panel');
+				$location = esc_url( add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_destinations_panel') );
 				if ($location) {
 					wp_redirect($location);
 					die();
@@ -5951,7 +5954,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				if ($CONFIG_CHANGED) {
 					$this->save_config();
 
-					$location = add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_destinations_panel');
+					$location = esc_url( add_query_arg('message', 'success-delete', $this->_settings['SNAPSHOT_MENU_URL'] .'snapshots_destinations_panel') );
 					if ($location) {
 						wp_redirect($location);
 						die();

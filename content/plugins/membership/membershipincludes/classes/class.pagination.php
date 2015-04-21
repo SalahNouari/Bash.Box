@@ -147,7 +147,7 @@ class M_Pagination {
             if ($this->page) {
                 //anterior button
 				$this->pagination .= $this->page > 1
-					? "<a href=\"" . add_query_arg( 'page_num', 1 ) . "\" class=\"first-page\">&laquo;</a>&nbsp;<a href=\"" . add_query_arg( 'page_num', $prev ) . "\" class=\"prev-page\">&lsaquo;</a>&nbsp;"
+					? "<a href=\"" . esc_url( add_query_arg( 'page_num', 1 ) ) . "\" class=\"first-page\">&laquo;</a>&nbsp;<a href=\"" . esc_url( add_query_arg( 'page_num', $prev ) ) . "\" class=\"prev-page\">&lsaquo;</a>&nbsp;"
 					: "<a class=\"first-page disabled\">&laquo;</a>&nbsp;<a class=\"prev-page disabled\">&lsaquo;</a>&nbsp;";
             }
 
@@ -155,7 +155,7 @@ class M_Pagination {
 
             if ($this->page) {
                 if ($this->page < $lastpage) {
-                    $this->pagination .= "&nbsp;<a href=\"" . add_query_arg( 'page_num', $next ) . "\" class=\"next-page\">&rsaquo;</a>&nbsp;<a href=\"" . add_query_arg( 'page_num', $lastpage ) . "\" class=\"last-page\">&raquo;</a>";
+                    $this->pagination .= "&nbsp;<a href=\"" . esc_url( add_query_arg( 'page_num', $next ) ) . "\" class=\"next-page\">&rsaquo;</a>&nbsp;<a href=\"" . esc_url( add_query_arg( 'page_num', $lastpage ) ) . "\" class=\"last-page\">&raquo;</a>";
 				} else {
                     $this->pagination .= "&nbsp;<a class=\"next-page disabled\">&rsaquo;</a>&nbsp;<a class=\"last-page disabled\">&raquo;</a>";
 				}

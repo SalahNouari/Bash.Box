@@ -28,7 +28,7 @@
 class Membership_Plugin {
 
 	const NAME    = 'membership';
-	const VERSION = '3.5.2.9';
+	const VERSION = '3.5.3';
 
 	/**
 	 * Singletone instance of the plugin.
@@ -265,7 +265,7 @@ class Membership_Plugin {
 						$levels = $subscription->get_levels();
 						if ( !empty( $levels ) ) {
 							$member->assign_level( $levels[0]->level_id );
-							membership_debug_log( __( 'Default subscription for registered users is used to assign a level for current member.', 'membership' ) );	     	 	 	       
+							membership_debug_log( __( 'Default subscription for registered users is used to assign a level for current member.', 'membership' ) );
 						}
 					}elseif(isset( $M_options['strangerlevel'] ) && $M_options['strangerlevel'] != 0 ){
 						$member->assign_level( $M_options['strangerlevel'] );

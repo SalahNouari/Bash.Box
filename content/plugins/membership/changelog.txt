@@ -1,3 +1,15 @@
+== 3.5.3.0 ==
+* Security Update: Fixing possible WordPress XSS bug.
+* Fixed issue with WPML and Protected Content page.
+* Added filter to shortcode color.
+* Fixed issue where `pre_get_posts` hooks were causing an endless loop.
+* Fixed up conflict with *Category* and *Post* rules. Rules now merge properly when both used as positive or negative rule. Negative rule wins over positive rule when using an advanced rule.
+* Fixed issue with recent posts listing non-accessible posts.
+* Previous/next post links are removed for posts that user does not have access to.
+* Fixed issue with access level 'leave' ping not firing when the subscription expires.
+* Fixed new lines converted to br tags in checkout form
+* Fixed wrong transaction amount for non-recurring payments.
+
 == 3.5.2.9 ==
 * Fixed popup window issue when using 100% discount coupon code.
 * Fixed issue with duplicate coupon names. Duplicate names are not allowed.
@@ -293,4 +305,4 @@ Critical Updates
 * Implemented ability to add a title and "lost password" link to the login widget
 
 
-133620-1428332832-ai
+133620-1429610658-au

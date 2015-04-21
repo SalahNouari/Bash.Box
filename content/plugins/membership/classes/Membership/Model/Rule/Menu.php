@@ -300,4 +300,7 @@ class Membership_Model_Rule_Menu extends Membership_Model_Rule {
 
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

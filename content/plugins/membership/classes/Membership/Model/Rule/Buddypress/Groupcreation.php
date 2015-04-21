@@ -184,4 +184,7 @@ class Membership_Model_Rule_Buddypress_Groupcreation extends Membership_Model_Ru
 		echo '<div id="message" class="error"><p>' . $message . '</p></div>';
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

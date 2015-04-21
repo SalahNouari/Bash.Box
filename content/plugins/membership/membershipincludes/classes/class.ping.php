@@ -397,9 +397,12 @@ if ( !class_exists( 'M_Ping' ) ) {
 			$url = $this->ping->pingurl;
 			switch ( $this->ping->pingtype ) {
 				case 'GET':
+					if ( strpos( $url, '?') === false ) {
+						$url .= '?';
+					}
 					$url .= http_build_query($pingtosend);
 					// old method kept for consideration as using WP method.
-					// $url = add_query_arg( array_map( 'urlencode', $pingtosend ), $url );
+					// $url = esc_url( add_query_arg( array_map( 'urlencode', $pingtosend ), $url ) );
 					$result = $request->request( $url, array( 'method' => 'GET', 'body' => '' ) );
 					break;
 
@@ -516,18 +519,24 @@ function M_ping_joinedsub( $tosub_id, $tolevel_id, $to_order, $user_id ) {
 
 add_action( 'membership_drop_subscription', 'M_ping_leftsub', 10, 3 );
 function M_ping_leftsub( $fromsub_id, $fromlevel_id, $user_id ) {
+	$x = '';
 	// Leaving the level
 	M_ping_leftlevel( $fromlevel_id, $user_id );
 	// Leaving the sub
-	M_ping_expiresub( $fromsub_id, $user_id );
+	M_ping_expiresub( $fromsub_id, $fromlevel_id, $user_id );
 }
 
-add_action( 'membership_expire_subscription', 'M_ping_expiresub', 10, 2 );
-function M_ping_expiresub( $sub_id, $user_id ) {
+add_action( 'membership_expire_subscription', 'M_ping_expiresub', 10, 3 );
+function M_ping_expiresub( $sub_id, $from_level, $user_id ) {
+	if( ! empty( $from_level ) ) {
+		M_ping_leftlevel( $from_level, $user_id );
+	}
+
 	$sub = Membership_Plugin::factory()->get_subscription( $sub_id );
 	$subleavingping_id = $sub->get_meta( 'leaving_ping' );
 	if ( !empty( $subleavingping_id ) ) {
 		$ping = new M_Ping( $subleavingping_id );
+		membership_debug_log( "M_ping_expiresub: LINE 548" . print_r( $ping, true ) );
 		$ping->send_ping( $sub_id, false, $user_id );
 	}
 }

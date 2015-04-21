@@ -220,4 +220,8 @@ class Membership_Model_Rule_URLGroups extends Membership_Model_Rule {
 		return true;
 	}
 
+	public function get_data() {
+		return '';
+	}
+
 }

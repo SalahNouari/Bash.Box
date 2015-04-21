@@ -145,4 +145,7 @@ class Membership_Model_Rule_Buddypress_Friendship extends Membership_Model_Rule 
 		echo '<div id="message" class="error"><p>' . stripslashes( $MBP_options['buddypressmessage'] ) . '</p></div>';
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

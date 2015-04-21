@@ -317,7 +317,7 @@ abstract class Membership_Gateway extends Membership_Hooker {
 			<ul class="subsubsub">
 				<?php foreach ( $types as $key => $label ) : ?>
 				<li>
-					<a href="<?php echo add_query_arg( 'type', $key ) ?>" class="rbutton<?php echo $type == $key ? ' current' : '' ?>"><?php echo $label ?></a>
+					<a href="<?php echo esc_url( add_query_arg( 'type', $key ) ) ?>" class="rbutton<?php echo $type == $key ? ' current' : '' ?>"><?php echo $label ?></a>
 					<?php if ( $count > ++$current ) : ?>|<?php endif; ?>
 				</li>
 				<?php endforeach; ?>
@@ -363,7 +363,7 @@ abstract class Membership_Gateway extends Membership_Hooker {
 		$transactions = $this->_get_transactions( $type, $startat, $perpage, $total );
 
 		$trans_navigation = paginate_links( array(
-			'base'    => add_query_arg( 'paged', '%#%' ),
+			'base'    => esc_url( add_query_arg( 'paged', '%#%' ) ),
 			'format'  => '',
 			'total'   => ceil( $total / 50 ),
 			'current' => $paged

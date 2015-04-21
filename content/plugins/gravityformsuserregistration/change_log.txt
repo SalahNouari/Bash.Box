@@ -1,4 +1,9 @@
 -----------------------------------------------------------
+Version 2.2
+	- Fixed a low severity security vulnerability in the admin area which could be exploited by authenticated users with form administration permissions.
+	- Fixed issue where user wasn't created when form was submitted from the dashboard.
+
+-----------------------------------------------------------
 Version 2.1
     - Added "gform_user_registration_prepared_value" filter for modifying the prepared value returned by the GFUser::get_prepared_value() method
         add_filter( 'gform_user_registration_prepared_value', function( $value, $field, $input_id, $entry, $is_username ) {

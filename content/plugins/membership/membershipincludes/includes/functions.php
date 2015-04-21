@@ -4,6 +4,11 @@ if ( !function_exists( 'is_plugin_active_for_network' ) ) {
     require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 }
 
+// Rule globals
+global $M_previous_positive;
+global $M_previous_negative;
+global $M_rule_filters;
+
 // Addons loading code
 
 function get_membership_addons() {
@@ -1012,11 +1017,12 @@ function membership_redirect_to_protected() {
 		}
 	}
 
-	$url = get_permalink( absint( $M_options['nocontent_page'] ) );
+	$protected_page_id = absint( $M_options['nocontent_page'] );
+	$url = apply_filters( 'membership_protected_content_page_url', get_permalink( $protected_page_id ), $protected_page_id );
 	$current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 	if ( $url != $current_url && !headers_sent() ) {
-		wp_safe_redirect( add_query_arg( 'redirect_to', urlencode( $current_url ), $url ) );
+		wp_safe_redirect( esc_url( add_query_arg( 'redirect_to', urlencode( $current_url ), $url ) ) );
 		exit;
 	}
 }
@@ -1331,6 +1337,21 @@ function M_KeepBuddyPressPages( $pages ) {
 	}
 
 	return $pages;
+}
+
+function M_get_category_post_ids($cat, $taxonomy='category')
+{
+	return get_posts(array(
+		'numberposts'   => -1, // get all posts.
+		'tax_query'     => array(
+			array(
+				'taxonomy'  => $taxonomy,
+				'field'     => 'id',
+				'terms'     => is_array($cat) ? $cat : array($cat),
+			),
+		),
+		'fields'        => 'ids', // only get post IDs.
+	));
 }
 
 function M_overrideBPSignupSlug( $slug ) {

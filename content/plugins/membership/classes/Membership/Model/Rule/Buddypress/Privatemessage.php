@@ -113,4 +113,7 @@ class Membership_Model_Rule_Buddypress_Privatemessage extends Membership_Model_R
 		echo '<div id="message" class="error"><p>' . stripslashes( $MBP_options['buddypressmessage'] ) . '</p></div>';
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

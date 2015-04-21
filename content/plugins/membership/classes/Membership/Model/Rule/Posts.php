@@ -30,6 +30,7 @@ class Membership_Model_Rule_Posts extends Membership_Model_Rule {
 	var $name = 'posts';
 	var $label = 'Posts';
 	var $description = 'Allows specific posts to be protected.';
+	var $post_ids = array();
 
 	var $rulearea = 'public';
 
@@ -255,53 +256,166 @@ class Membership_Model_Rule_Posts extends Membership_Model_Rule {
 	function on_positive( $data ) {
 		$this->data = (array) $data;
 		add_action( 'pre_get_posts', array( $this, 'add_viewable_posts' ), 99 );
+		add_filter('widget_posts_args', array($this, 'filter_wp_recent_posts_positive' ), 99 );
+		add_filter( 'previous_post_link', array( $this, 'post_link' ), 10, 4 );
+		add_filter( 'next_post_link', array( $this, 'post_link' ), 10, 4 );
+	}
+
+	function post_link( $output, $format, $link, $post ) {
+		global $M_rule_filters, $wp_query;
+
+		$hide_link = false;
+		$b_post_in = false;
+		$b_post_not_in = false;
+		$b_cat_in = false;
+		$b_cat_not_in = false;
+
+		/* == POSITIVE RULES == */
+		if ( ! empty( $M_rule_filters['post_viewable']['post__in'] ) ) {
+			if ( ! in_array( $post->ID, $M_rule_filters['post_viewable']['post__in'] ) ) {
+				$b_post_in = true;
+			}
+		}
+
+		if ( ! empty( $M_rule_filters['category_viewable']['category__in'] ) ) {
+			foreach ( $M_rule_filters['category_viewable']['category__in'] as $cat_id ) {
+				if ( ! has_category( $cat_id, $post ) ) {
+					$b_cat_in = true;
+				}
+			}
+		}
+
+		$hide_link = $b_post_in ? $b_cat_in ? true : $hide_link : $b_cat_in ? true : $hide_link;
+
+		/* == NEGATIVE RULES == */
+		if ( ! empty( $M_rule_filters['post_not_viewable']['post__not_in'] ) ) {
+			if ( in_array( $post->ID, $M_rule_filters['post_not_viewable']['post__not_in'] ) ) {
+				$b_post_not_in = true;
+			}
+		}
+
+		if( ! empty( $M_rule_filters['category_not_viewable']['category__not_in'] ) ) {
+
+			foreach ( $M_rule_filters['category_not_viewable']['category__not_in'] as $cat_id ) {
+				if ( has_category( $cat_id, $post ) ) {
+					$b_cat_not_in = true;
+				}
+			}
+		}
+
+		$hide_link = $b_post_not_in ? $b_cat_not_in ? $hide_link : false : $b_cat_not_in ? true : $hide_link;
+
+		$output = $hide_link ? '' : $output;
+
+		return $output;
 	}
 
 	function on_negative( $data ) {
 		$this->data = (array) $data;
 		add_action( 'pre_get_posts', array( $this, 'add_unviewable_posts' ), 99 );
+		add_filter('widget_posts_args', array($this, 'filter_wp_recent_posts_negative' ), 99 );
+		add_filter( 'previous_post_link', array( $this, 'post_link' ), 10, 4 );
+		add_filter( 'next_post_link', array( $this, 'post_link' ), 10, 4 );
 	}
 
 	function add_viewable_posts( $wp_query ) {
+		global $post, $M_rule_filters;
+
+		// For Post and Category rules to work together, we convert categories to post ids
+		if ( ! empty( $wp_query->query_vars['category__in'] ) && empty( $wp_query->query_vars['post__in'] ) ) {
+			$wp_query->query_vars['post_in'] = M_get_category_post_ids( $wp_query->query_vars['category__in'] );
+			unset( $wp_query->query_vars['category__in'] );
+		}
+
+		if( ! $wp_query->is_main_query() ) { return false; }
 
 		if ( !$wp_query->is_singular && empty( $wp_query->query_vars['pagename'] ) && ( !isset( $wp_query->query_vars['post_type'] ) || in_array( $wp_query->query_vars['post_type'], array( 'post', '' ) )) ) {
 
 			$post_ids = $this->get_dripped_post_ids( $this->data );
 
-			$wp_query->query_vars['post__in'] = is_array( $wp_query->query_vars['post__in'] ) ? $wp_query->query_vars['post__in'] : array();
+			$M_rule_filters['post_viewable']['post__in'] = is_array( $wp_query->query_vars['post__in'] ) ? $wp_query->query_vars['post__in'] : array();
 
 			foreach ( (array) $post_ids as $key => $value ) {
-				$wp_query->query_vars['post__in'][] = $value;
+				$M_rule_filters['post_viewable']['post__in'][] = $value;
 			}
 
-			$wp_query->query_vars['post__in'] = array_unique( $wp_query->query_vars['post__in'] );
+			// Merge posts from viewable categories
+			if ( isset( $M_rule_filters['category_viewable']['category__in'] ) && ! empty( $M_rule_filters['category_viewable']['category__in'] ) ) {
+				$M_rule_filters['post_viewable']['post__in'] = array_merge( $M_rule_filters['post_viewable']['post__in'], M_get_category_post_ids( $M_rule_filters['category_viewable']['category__in'] ) );
+			}
+
+			$wp_query->query_vars['post__in'] = array_unique( $M_rule_filters['post_viewable']['post__in'] );
+		} else if( $wp_query->is_singular ) {
+			$post_ids = $this->get_dripped_post_ids( $this->data );
+			$M_rule_filters['post_viewable']['post__in'] = isset( $M_rule_filters['post_viewable']['post__in'] ) ? array_unique( array_merge( $M_rule_filters['post_viewable']['post__in'], $post_ids ) ) : $post_ids;
 		}
 	}
 
 	function add_unviewable_posts( $wp_query ) {
+		global $M_rule_filters;
+
+		if( ! $wp_query->is_main_query() ) { return false; }
+
 		if ( !$wp_query->is_singular && empty( $wp_query->query_vars['pagename'] ) && ( !isset( $wp_query->query_vars['post_type'] ) || in_array( $wp_query->query_vars['post_type'], array( 'post', '' ) ) ) ) {
 
 			$post_ids = $this->get_dripped_post_ids( $this->data );
 
-			$wp_query->query_vars['post__not_in'] = is_array( $wp_query->query_vars['post__not_in'] ) ? $wp_query->query_vars['post__not_in'] : array();
+			$M_rule_filters['post_not_viewable']['post__not_in'] = is_array( $wp_query->query_vars['post__not_in'] ) ? $wp_query->query_vars['post__not_in'] : array();
 
 			foreach ( (array) $post_ids as $key => $value ) {
-				$wp_query->query_vars['post__not_in'][] = $value;
+				$M_rule_filters['post_not_viewable']['post__not_in'][] = $value;
 			}
 
-			$wp_query->query_vars['post__not_in'] = array_unique( $wp_query->query_vars['post__not_in'] );
+			// Merge posts from non viewable categories
+			if ( isset( $M_rule_filters['category_not_viewable']['category__not_in'] ) && ! empty( $M_rule_filters['category_not_viewable']['category__not_in'] ) ) {
+				$M_rule_filters['post_not_viewable']['post__not_in'] = array_merge( $M_rule_filters['post_not_viewable']['post__not_in'], M_get_category_post_ids( $M_rule_filters['category_not_viewable']['category__not_in'] ) );
+			}
+
+			$wp_query->query_vars['post__not_in'] = array_unique( $M_rule_filters['post_not_viewable']['post__not_in'] );
+		} else if( $wp_query->is_singular ) {
+			$post_ids = $this->get_dripped_post_ids( $this->data );
+			$M_rule_filters['post_not_viewable']['post__not_in'] = isset( $M_rule_filters['post_not_viewable']['post__not_in'] ) ? array_unique( array_merge( $M_rule_filters['post_not_viewable']['post__not_in'], $post_ids ) ) : $post_ids;
 		}
 	}
 
-	public function validate_negative( $args = null ) {
+	function filter_wp_recent_posts_positive( $args ) {
+		global $M_rule_filters;
 
-		if( ! $this->is_category_valid( $args ) ) {
+		$M_rule_filters['post_viewable']['post__in'] = isset( $M_rule_filters['post_viewable']['post__in'] ) ? $M_rule_filters['post_viewable']['post__in'] : array();
+
+		$categories = isset( $args['category__in'] ) ? $args['category__in'] : array();
+		unset($args['category__in']);
+
+		$posts = array_unique( array_merge( $M_rule_filters['post_viewable']['post__in'], M_get_category_post_ids( $categories ) ) );
+		$args['post__in'] = $posts;
+		$args['ignore_sticky_posts'] = 1;
+
+		return $args;
+	}
+
+	function filter_wp_recent_posts_negative( $args ) {
+		global $M_rule_filters;
+
+		$M_rule_filters['post_not_viewable']['post__not_in'] = isset( $M_rule_filters['post_not_viewable']['post__not_in'] ) ? $M_rule_filters['post_not_viewable']['post__not_in'] : array();
+
+		$categories = isset( $args['category__not_in'] ) ? $args['category__not_in'] : array();
+		unset($args['category__not_in']);
+
+		$posts = array_unique( array_merge( $M_rule_filters['post_not_viewable']['post__not_in'], M_get_category_post_ids( $categories ) ) );
+		$args['post__not_in'] = $posts;
+		$args['ignore_sticky_posts'] = 1;
+
+		return $args;
+	}
+
+	public function validate_negative( $args = null ) {
+		if( $this->is_category_invalid( $args ) ) {
 			return false;
 		}
 		$page = get_queried_object();
-		$post_ids = $this->get_dripped_post_ids( $this->data );
+		$this->post_ids = $this->get_dripped_post_ids( $this->data );
 		return is_a( $page, 'WP_Post' ) && $page->post_type == 'post'
-			? !in_array( $page->ID, $post_ids )
+			? !in_array( $page->ID, $this->post_ids )
 			: parent::validate_negative();
 	}
 
@@ -310,11 +424,27 @@ class Membership_Model_Rule_Posts extends Membership_Model_Rule {
 			return true;
 		}
 		$page = get_queried_object();
-		$post_ids = $this->get_dripped_post_ids( $this->data );
+		$this->post_ids = $this->get_dripped_post_ids( $this->data );
 		return is_a( $page, 'WP_Post' ) && $page->post_type == 'post'
-			? in_array( $page->ID, $post_ids )
+			? in_array( $page->ID, $this->post_ids )
 			: parent::validate_positive();
 
+	}
+
+	private function is_category_invalid( $arr ) {
+		$invalid = false;
+		if( ! is_array( $arr ) ) {
+			return false;
+		}
+
+		foreach( $arr as $key => $item ) {
+
+			if( 'categories' == $item['name'] ) {
+				$invalid |= ! $item['result'];
+			}
+
+		}
+		return $invalid;
 	}
 
 	private function is_category_valid( $arr ) {
@@ -331,6 +461,10 @@ class Membership_Model_Rule_Posts extends Membership_Model_Rule {
 
 		}
 		return $valid;
+	}
+
+	public function get_data() {
+		return $this->post_ids;
 	}
 
 }

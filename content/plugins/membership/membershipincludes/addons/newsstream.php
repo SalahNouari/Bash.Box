@@ -91,7 +91,7 @@ function membership_record_user_level($tolevel_id, $user_id) {
 }
 add_action( 'membership_add_level', 'membership_record_user_level' , 10, 2 );
 
-function membership_record_user_expire($sub_id, $user_id) {
+function membership_record_user_expire($sub_id, $from_level, $user_id) {
 
 	global $wpdb;
 
@@ -106,7 +106,7 @@ function membership_record_user_expire($sub_id, $user_id) {
 	$wpdb->insert( $table, array( 'newsitem' => $message, 'newsdate' => current_time('mysql') ) );
 
 }
-add_action( 'membership_expire_subscription', 'membership_record_user_expire', 10, 2 );
+add_action( 'membership_expire_subscription', 'membership_record_user_expire', 10, 3 );
 
 function membership_record_sub_drop($sub_id, $level_id, $user_id) {
 

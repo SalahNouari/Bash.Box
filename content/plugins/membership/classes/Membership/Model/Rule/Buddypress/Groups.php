@@ -243,4 +243,7 @@ class Membership_Model_Rule_Buddypress_Groups extends Membership_Model_Rule {
 			: parent::validate_positive();
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

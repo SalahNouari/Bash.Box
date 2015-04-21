@@ -43,8 +43,8 @@ class M_Membershiprepair {
 
 			<?php
 			if ( isset($_GET['msg']) ) {
-				echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
-				$_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+				//echo '<div id="message" class="updated fade"><p>' . $messages[(int) $_GET['msg']] . '</p></div>';
+				//$_SERVER['REQUEST_URI'] = esc_url( remove_query_arg(array('message'), $_SERVER['REQUEST_URI']) );
 			}
 			?>
 

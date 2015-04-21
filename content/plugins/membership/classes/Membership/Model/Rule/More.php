@@ -71,4 +71,7 @@ class Membership_Model_Rule_More extends Membership_Model_Rule {
 		}
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

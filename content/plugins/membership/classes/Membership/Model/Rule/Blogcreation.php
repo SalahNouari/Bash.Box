@@ -152,4 +152,7 @@ class Membership_Model_Rule_Blogcreation extends Membership_Model_Rule {
 
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

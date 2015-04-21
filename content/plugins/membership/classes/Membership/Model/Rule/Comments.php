@@ -69,4 +69,8 @@ class Membership_Model_Rule_Comments extends Membership_Model_Rule {
 		return $open;
 	}
 
+	public function get_data() {
+		return '';
+	}
+
 }

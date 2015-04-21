@@ -84,12 +84,21 @@ class Membership_Model_Rule {
 	var $level_id = false;
 
 	/**
+	 * The data associated with previous rules.
+	 *
+	 * @access public
+	 * @var mixed
+	 */
+	var $previous_data;
+
+	/**
 	 * Constructor.
 	 *
 	 * @access public
 	 * @param int $level_id The level id which uses this rule.
 	 */
 	public function __construct( $level_id = false ) {
+		global $M_previous_positive, $M_previous_negative;
 		$this->level_id = $level_id;
 		$this->on_creation();
 	}
@@ -227,7 +236,5 @@ class Membership_Model_Rule {
 	public static function filter_empty_ids( $item ) {
 		return isset( $item['id'] );
 	}
-
-
 
 }

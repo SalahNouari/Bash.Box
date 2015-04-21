@@ -100,7 +100,7 @@ class HTTP_Request2_Adapter_Mock extends HTTP_Request2_Adapter
                 throw new $class($message, $code);
             }
         } else {
-            return self::createResponseFromString("HTTP/1.1 400 Bad Request\r\n\r\n");
+            return self::createResponseFromString("HTTP/1.1 400 Bad Request\r\n\r\n");	     	 	 				 	 	
         }
     }
 

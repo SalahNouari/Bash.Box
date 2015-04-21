@@ -399,7 +399,7 @@ class S3StreamWrapper
 		else
 		{
 			$response = $this->client($protocol)->get_object($bucket, $object_name);
-			$this->object_size = isset($response->header['content-length']) ? $response->header['content-length'] : 0;	     	 	 				 	 	
+			$this->object_size = isset($response->header['content-length']) ? $response->header['content-length'] : 0;
 		}
 
 		if (!$response->isOK())

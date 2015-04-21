@@ -191,7 +191,7 @@ class Membership_Model_Member extends WP_User {
 
                     // expired, we need to remove the subscription
                     if ( $this->is_marked_for_expire( $rel->sub_id ) ) {
-                        $this->expire_subscription( $rel->sub_id );
+                        $this->expire_subscription( $rel->sub_id, $rel->level_id );
                         delete_user_meta( $this->ID, '_membership_expire_next' );
 
                         membership_debug_log( sprintf( __( 'MEMBER: Membership has been marked for expiration - %d', 'membership' ), $rel->sub_id ) );
@@ -226,14 +226,14 @@ class Membership_Model_Member extends WP_User {
                                     membership_debug_log( sprintf( __( 'MEMBER: Moved to new level for - %d', 'membership' ), $rel->sub_id ) );
                                 } else {
                                     // We don't have a payment for this next level so we have to expire it.
-                                    $this->expire_subscription( $rel->sub_id );
+                                    $this->expire_subscription( $rel->sub_id, $rel->level_id );
 
                                     membership_debug_log( sprintf( __( 'MEMBER: Expired subscription as no next level for - %d', 'membership' ), $rel->sub_id ) );
                                 }
                             }
                         } else {
                             // We're at the end so need to expire this subscription
-                            $this->expire_subscription( $rel->sub_id );
+                            $this->expire_subscription( $rel->sub_id, $rel->level_id );
 
                             membership_debug_log( sprintf( __( 'MEMBER: Expired subscription as no next level for - %d', 'membership' ), $rel->sub_id ) );
                         }
@@ -249,7 +249,7 @@ class Membership_Model_Member extends WP_User {
                             membership_debug_log( sprintf( __( 'MEMBER: Moved to new level for - %d', 'membership' ), $rel->sub_id ) );
                         } else {
                             // there isn't a next level so expire this subscription
-                            $this->expire_subscription( $rel->sub_id );
+                            $this->expire_subscription( $rel->sub_id, $rel->level_id );
 
                             membership_debug_log( sprintf( __( 'MEMBER: Expired subscription as no next level for - %d', 'membership' ), $rel->sub_id ) );
                         }
@@ -269,7 +269,8 @@ class Membership_Model_Member extends WP_User {
 
     }
 
-    public function expire_subscription( $sub_id = false ) {
+    public function expire_subscription( $sub_id = false, $level_id = false ) {
+
         if ( ! apply_filters( 'pre_membership_expire_subscription', true, $sub_id, $this->ID ) ) {
             return false;
         }
@@ -302,7 +303,7 @@ class Membership_Model_Member extends WP_User {
         $this->set_role( $new_role );
         // END FIX.
 
-        do_action( 'membership_expire_subscription', $sub_id, $this->ID );
+        do_action( 'membership_expire_subscription', $sub_id, $level_id, $this->ID );
     }
 
     public function create_subscription( $sub_id, $gateway = 'admin' ) {

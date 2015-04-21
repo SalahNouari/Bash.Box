@@ -424,6 +424,8 @@ class Membership_Model_Rule_Pages extends Membership_Model_Rule {
 		return $valid;
 	}
 
-
+	public function get_data() {
+		return '';
+	}
 
 }

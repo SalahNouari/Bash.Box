@@ -31,6 +31,7 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
 	public $posts_array = array();
 	public $cat_ids = array();
 	public $flag_protected = false;
+
     /**
      * Handles rule's stuff initialization.
      *
@@ -296,7 +297,7 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
 
         add_action('pre_get_posts', array($this, 'filter_viewable_posts'), 1);
         add_filter('get_terms', array($this, 'filter_viewable_categories'), 1, 3);
-	    add_filter('widget_posts_args', array($this, 'filter_wp_recent_posts' ) );
+	    add_filter('widget_posts_args', array($this, 'filter_wp_recent_posts_positive' ) );
     }
 
     /**
@@ -314,13 +315,18 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
 
         add_action('pre_get_posts', array($this, 'filter_unviewable_posts'), 1);
         add_filter('get_terms', array($this, 'filter_unviewable_categories'), 1, 3);
-	    add_filter('widget_posts_args', array($this, 'filter_wp_recent_posts' ) );
+	    add_filter('widget_posts_args', array($this, 'filter_wp_recent_posts_negative' ) );
     }
 
-	function filter_wp_recent_posts( $args ) {
-		$args['cat'] = join( ',', $this->cat_ids );
+	function filter_wp_recent_posts_positive( $args ) {
+        $args['category__in'] = $this->cat_ids;
 		return $args;
 	}
+
+    function filter_wp_recent_posts_negative( $args ) {
+        $args['category__not_in'] = $this->cat_ids;
+        return $args;
+    }
 
     /**
      * Adds category__in filter for posts query to remove all posts which not
@@ -334,33 +340,15 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
      */
     public function filter_viewable_posts($query)
     {
+        global $M_rule_filters;
+        $M_rule_filters['category_viewable']['category__in'] = array_unique(array_merge((array)$query->query_vars['category__in'], $this->cat_ids) );
 	    // Only for the main query to prevent an endless loop.
 	    if( ! $query->is_main_query() ) { return false; }
-
-//	    if( is_category() ) {
-//		    $cat = get_category_by_slug( $query->get( 'category_name' ) );
-//		    if( in_array( $cat->term_id, $this->cat_ids ) ) {
-//			    $this->posts_array = $this->get_category_posts( array($cat->term_id) , false );
-//		    } else {
-//			    $this->posts_array = array();
-//			    $this->flag_protected = true;
-//		    }
-//	    } else {
-//		    $this->posts_array = $this->get_category_posts($this->cat_ids, true);
-//	    }
-//
-//		$post_ids = $this->posts_array;
 
         //don't apply these rules to custom post types!
         if ($query->get('post_type') == 'post' || ((is_home() || is_search() || is_archive() || $query->is_home ) ) ) {
             if ('post' != $query->get('post_type')) {
-	            // if( ! empty( $post_ids ) ) {
-	            // 		            $query->set('post__in', array_unique(array_merge((array)$query->query_vars['post__in'], $post_ids)));
-	            // 		            //reset the paging count
-	            // 		            $query->post_count = $query->found_posts = count($query->query_vars['post__in']);
-	            // } else {
-                    $query->set('category__in', array_unique(array_merge((array)$query->query_vars['category__in'], $this->cat_ids) ) );
-	            // }
+                    $query->set('category__in', $M_rule_filters['category_viewable']['category__in'] );
             }
         }
     }
@@ -440,32 +428,16 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
      */
     public function filter_unviewable_posts($query)
     {
+        global $M_rule_filters;
+        $M_rule_filters['category_not_viewable']['category__not_in'] = array_unique(array_merge((array)$query->query_vars['category__not_in'], $this->cat_ids) );
+
 	    // Only for the main query to prevent an endless loop.
 	    if( ! $query->is_main_query() ) { return false; }
-
-//	    if( is_category() ) {
-//		    $cat = get_category_by_slug( $query->get( 'category_name' ) );
-//		    if( in_array( $cat->term_id, $this->cat_ids ) ) {
-//			    $this->posts_array = $this->get_category_posts( array($cat->term_id) , false );
-//		    } else {
-//			    $this->posts_array = array();
-//		    }
-//	    } else {
-//		    $this->posts_array = $this->get_category_posts($this->cat_ids, true);
-//	    }
-//
-//	    $post_ids = $this->posts_array;
 
 	    //don't apply these rules to custom post types!
 	    if ($query->get('post_type') == 'post' || ((is_home() || is_search() || is_archive() || $query->is_home ) ) ) {
 		    if ('post' != $query->get('post_type')) {
-//			    if( ! empty( $post_ids ) ) {
-//				    $query->set('post__not_in', array_unique(array_merge((array)$query->query_vars['post__not_in'], $post_ids)));
-//				    //reset the paging count
-//				    $query->post_count = $query->found_posts = count($query->query_vars['post__in']);
-//			    } else {
-				    $query->set('category__not_in', array_unique(array_merge((array)$query->query_vars['category__not_in'], $this->cat_ids) ) );
-//			    }
+				    $query->set('category__not_in', $M_rule_filters['category_not_viewable']['category__not_in'] );
 		    }
 	    }
 
@@ -548,19 +520,19 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
     public function validate_negative($args = null)
     {
 
+        $this->cat_ids = $this->get_dripped_category_ids($this->data);
         // if( $this->is_post_valid( $args ) ) {
         // 	return true;
         // };
 
-        $cat_ids = $this->get_dripped_category_ids($this->data);
         if (is_single() && in_array('category', get_object_taxonomies(get_post_type()))) {
             $categories = wp_get_post_categories(get_the_ID());
-            $intersect = array_intersect($categories, $cat_ids);
+            $intersect = array_intersect($categories, $this->cat_ids);
             return empty($intersect);
         }
 
         if (is_category()) {
-            return !in_array(get_queried_object_id(), $cat_ids);
+            return !in_array(get_queried_object_id(), $this->cat_ids);
         }
 
         return parent::validate_negative();
@@ -574,18 +546,19 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
      */
     public function validate_positive($args = null)
     {
+        $this->cat_ids = $this->get_dripped_category_ids($this->data);
         if ($this->is_post_valid($args)) {
             return true;
         };
-        $cat_ids = $this->get_dripped_category_ids($this->data);
+
         if (is_single() && in_array('category', get_object_taxonomies(get_post_type()))) {
             $categories = wp_get_post_categories(get_the_ID());
-            $intersect = array_intersect($categories, $cat_ids);
+            $intersect = array_intersect($categories, $this->cat_ids);
             return !empty($intersect);
         }
 
         if (is_category()) {
-            return in_array(get_queried_object_id(), $cat_ids);
+            return in_array(get_queried_object_id(), $this->cat_ids);
         }
 
         return parent::validate_positive();
@@ -607,5 +580,10 @@ class Membership_Model_Rule_Categories extends Membership_Model_Rule
         }
         return $valid;
     }
+
+    public function get_data() {
+        return $this->cat_ids;
+    }
+
 
 }

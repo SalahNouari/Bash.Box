@@ -51,6 +51,21 @@ if ( !class_exists( 'membershippublic', false ) ) :
 			// Level shortcodes filters
 			add_filter( 'membership_level_shortcodes', array( &$this, 'build_level_shortcode_list' ) );
 			add_filter( 'membership_not_level_shortcodes', array( &$this, 'build_not_level_shortcode_list' ) );
+
+			// WPML Protexted Content Page
+			add_filter( 'membership_protected_content_page_url', array( &$this, 'wpml_protected_content_page'), 10, 2 );
+
+		}
+
+		function wpml_protected_content_page( $url, $id ) {
+			global $M_options;
+			// Translate Protected Content Page
+			if( absint( $M_options['nocontent_page'] ) == $id && function_exists( 'icl_object_id') ) {
+				$current_language = isset( $_COOKIE['_icl_current_language'] ) ? $_COOKIE['_icl_current_language'] : ICL_LANGUAGE_CODE;
+				$url = get_permalink( icl_object_id( $id, 'any', true, $current_language ) );
+			}
+
+			return $url;
 		}
 
 		function register_shortcodes() {
@@ -251,7 +266,7 @@ if ( !class_exists( 'membershippublic', false ) ) :
 					}
 
 					if(!empty($key)) {
-						$output = add_query_arg('k', $key, untrailingslashit($output));
+						$output = esc_url( add_query_arg('k', $key, untrailingslashit($output) ) );
 					}
 				}
 
@@ -1266,10 +1281,10 @@ if ( !class_exists( 'membershippublic', false ) ) :
 					$anyerrors = $this->_register_errors->get_error_code();
 					if ( empty( $anyerrors ) ) {
 						// redirect to payments page
-						wp_redirect( add_query_arg( array(
+						wp_redirect( esc_url( add_query_arg( array(
 							'action'       => 'subscriptionsignup',
 							'subscription' => $subscription,
-						) ) );
+						) ) ) );
 						exit;
 					}
 
@@ -1421,10 +1436,10 @@ if ( !class_exists( 'membershippublic', false ) ) :
 							do_action( 'bp_complete_signup' );
 
 							// redirect to payments page
-							wp_redirect( add_query_arg( array(
+							wp_redirect( esc_url( add_query_arg( array(
 								'action'       => 'subscriptionsignup',
 								'subscription' => $subscription,
-							) ) );
+							) ) ) );
 							exit;
 						}
 					} else {

@@ -287,7 +287,7 @@ if ( !class_exists( 'M_extrashortcodes' ) ) {
                 "wrapwith" => '',
                 "wrapwithclass" => '',
                 "subscription" => '',
-                "color" => 'blue',
+                "color" => apply_filters( 'membership_subscription_button_color', ''),
                 'buttontext' => __('Subscribe', 'membership')
             );
 

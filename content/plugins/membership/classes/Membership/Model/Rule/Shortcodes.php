@@ -143,4 +143,7 @@ class Membership_Model_Rule_Shortcodes extends Membership_Model_Rule {
 		return stripslashes( $M_options['shortcodemessage'] );
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

@@ -414,7 +414,7 @@ class twocheckout extends Membership_Gateway {
 		$form .= '<input type="hidden" name="li_1_tangible" value="N" />';
 		// $form .= '<input type="hidden" name="li_1_product_id" value="'.$subscription->id.'" />';
 		$form .= '<input type="hidden" name="li_1_product_id" value="'.$product_id.'" />';
-		$form .= '<input type="hidden" name="li_1_description" value="'.strip_tags($subscription->sub_description()).'" />';
+		$form .= '<input type="hidden" name="li_1_description" value="'.trim(strip_tags($subscription->sub_description())).'" />';
 		if($repeat) {
 			$form .= '<input type="hidden" name="li_1_recurrence" value="'.$this->convert_duration($pricing[0]['period'], $pricing[0]['unit']).'" />';
 			$form .= '<input type="hidden" name="li_1_duration" value="Forever" />';
@@ -604,7 +604,7 @@ class twocheckout extends Membership_Gateway {
 							$this->_record_transaction( $user_id, $sub_id, $_REQUEST['item_rec_list_amount_1'], $_REQUEST['list_currency'], $timestamp, $_POST['invoice_id'], 'Processed', '' );
 							$member = Membership_Plugin::factory()->get_member( $user_id );
 							if ( $member ) {
-								remove_action( 'membership_expire_subscription', 'membership_record_user_expire', 10, 2 );
+								remove_action( 'membership_expire_subscription', 'membership_record_user_expire', 10, 3 );
 								remove_action( 'membership_add_subscription', 'membership_record_user_subscribe', 10, 4 );
 								if ( $from_sub_id ) {
 									$member->drop_subscription( $from_sub_id );
@@ -626,7 +626,8 @@ class twocheckout extends Membership_Gateway {
 						break;
 					case 'ORDER_CREATED':
 					case 'RECURRING_RESTARTED':
-						$this->_record_transaction($user_id, $sub_id, $_REQUEST['item_rec_list_amount_1'], $_REQUEST['list_currency'], $timestamp, $_POST['invoice_id'], 'Processed', '');
+                        $transaction_amount = !empty($_REQUEST['item_rec_list_amount_1']) ? $_REQUEST['item_rec_list_amount_1'] : $_REQUEST['item_list_amount_1'];
+                        $this->_record_transaction($user_id, $sub_id, $transaction_amount, $_REQUEST['list_currency'], $timestamp, $_POST['invoice_id'], 'Processed', '');
 						$member = Membership_Plugin::factory()->get_member($user_id);
 						if($member) {
 							if ( $from_sub_id ) {

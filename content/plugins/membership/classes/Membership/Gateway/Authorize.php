@@ -141,7 +141,7 @@ class Membership_Gateway_Authorize extends Membership_Gateway {
 		$this->_add_action( 'M_gateways_settings_' . $this->gateway, 'render_settings' );
 		$this->_add_action( 'membership_purchase_button', 'render_subscribe_button', 10, 3 );
 		$this->_add_action( 'membership_payment_form_' . $this->gateway, 'render_payment_form', 10, 3 );
-		$this->_add_action( 'membership_expire_subscription', 'cancel_subscription_transactions', 10, 2 );
+		$this->_add_action( 'membership_expire_subscription', 'cancel_subscription_transactions', 10, 3 );
 		$this->_add_action( 'membership_drop_subscription', 'drop_subscription_transactions', 10, 3 );
 		$this->_add_action( 'membership_move_subscription', 'capture_next_transaction', 10, 6 );
 		$this->_add_filter( 'membership_unsubscribe_subscription', 'process_unsubscribe_subscription', 10, 3 );
@@ -201,9 +201,10 @@ class Membership_Gateway_Authorize extends Membership_Gateway {
 	 * @access public
 	 *
 	 * @param int $sub_id  The subscription ID.
+	 * @param mixed $from_level
 	 * @param int $user_id The user ID.
 	 */
-	public function cancel_subscription_transactions( $sub_id, $user_id ) {
+	public function cancel_subscription_transactions( $sub_id, $from_level, $user_id ) {
 		$transactions = $this->db->get_results( sprintf(
 			'SELECT transaction_ID AS record_id, transaction_paypal_ID AS id, transaction_status AS status FROM %s WHERE transaction_user_ID = %d AND transaction_status IN (%d, %d, %d)%s',
 			MEMBERSHIP_TABLE_SUBSCRIPTION_TRANSACTION,
@@ -528,7 +529,7 @@ class Membership_Gateway_Authorize extends Membership_Gateway {
 		$pay_button_label       = trim( $this->_get_option( 'pay_button_label' ) );
 		$template->button_label = ! empty( $pay_button_label ) ? $pay_button_label : $label;
 
-		$actionurl           = add_query_arg( array( 'action' => 'registeruser', 'subscription' => $subscription->id ), $actionurl );
+		$actionurl           = esc_url( add_query_arg( array( 'action' => 'registeruser', 'subscription' => $subscription->id ), $actionurl ) );
 		$template->actionurl = $actionurl;
 
 		$coupon                = membership_get_current_coupon();
@@ -1375,7 +1376,7 @@ class Membership_Gateway_Authorize extends Membership_Gateway {
 		if ( membership_is_registration_page() || membership_is_subscription_page() ) {
 			wp_enqueue_script( 'membership-authorize', MEMBERSHIP_ABSURL . 'js/authorizenet.js', array( 'jquery' ), Membership_Plugin::VERSION, true );
 			wp_localize_script( 'membership-authorize', 'membership_authorize', array(
-				'return_url'        => add_query_arg( 'action', 'processpurchase_' . $this->gateway, admin_url( 'admin-ajax.php', 'https' ) ),
+				'return_url'        => esc_url( add_query_arg( 'action', 'processpurchase_' . $this->gateway, admin_url( 'admin-ajax.php', 'https' ) ) ),
 				'payment_error_msg' => __( 'There was an unknown error encountered with your payment. Please contact the site administrator.', 'membership' ),
 				'stylesheet_url'    => MEMBERSHIP_ABSURL . 'css/authorizenet.css',
 			) );

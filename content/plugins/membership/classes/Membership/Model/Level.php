@@ -328,6 +328,13 @@ class Membership_Model_Level {
 
 	function load_rules( $loadtype = array( 'public', 'core' ) ) {
 		global $M_Rules;
+		global $M_previous_positive;
+		global $M_previous_negative;
+		global $M_rule_filters;
+
+		$M_previous_positive = array();
+		$M_previous_negative = array();
+		$M_rule_filters = array();
 
 		membership_debug_log( __( 'Loading level - ', 'membership' ) . $this->level_title() );
 
@@ -512,14 +519,12 @@ class Membership_Model_Level {
 	}
 
 	function can_view_current_page() {
-		global $wp_query, $M_options;
+		global $wp_query, $M_options, $M_previous_positive, $M_previous_negative;
 		$valid = true;
 
 		$global = Membership_Plugin::is_global_tables()
 			? MEMBERSHIP_GLOBAL_MAINSITE != get_current_blog_id()
 			: false;
-
-		$this->positive_results = array();
 
 		// validate positive rules
 		foreach ( $this->positiverules as $key => $rule ) {
@@ -527,19 +532,21 @@ class Membership_Model_Level {
 				continue;
 			}
 
-			$this->positive_results[$key]['name'] = $rule->name;
-			$this->positive_results[$key]['cascade'] = $this->allow_page_cascade;
-			$this->positive_results[$key]['result'] = $rule->validate_positive( $this->positive_results );
-			$valid = $this->positive_results[$key]['result'];
+			if( method_exists( get_class( $rule ), 'alter_positive_queries' ) ) {
+				$rule->alter_positive_queries();
+			}
+			$M_previous_positive[$key]['name'] = $rule->name;
+			$M_previous_positive[$key]['cascade'] = $this->allow_page_cascade;
+			$M_previous_positive[$key]['result'] = $rule->validate_positive( $M_previous_positive );
+			$M_previous_positive[$key]['data'] = $rule->get_data();
+			$valid = $M_previous_positive[$key]['result'];
 
-			if ( !$this->positive_results[$key]['result'] ) {
+			if ( !$M_previous_positive[$key]['result'] ) {
 				if( !in_array( $rule->name, array('posts', 'categories') ) ) {
 					break;
 				}
 			}
 		}
-
-		$this->negative_results = array();
 
 		if ( $valid ) {
 			// validate negative rules
@@ -548,12 +555,13 @@ class Membership_Model_Level {
 					continue;
 				}
 
-				$this->negative_results[$key]['name'] = $rule->name;
-				$this->negative_results[$key]['cascade'] = $this->allow_page_cascade;
-				$this->negative_results[$key]['result'] = $rule->validate_negative( $this->negative_results );
-				$valid = $this->negative_results[$key]['result'];
+				$M_previous_negative[$key]['name'] = $rule->name;
+				$M_previous_negative[$key]['cascade'] = $this->allow_page_cascade;
+				$M_previous_negative[$key]['result'] = $rule->validate_negative( $M_previous_negative );
+				$M_previous_negative[$key]['data'] = $rule->get_data();
+				$valid = $M_previous_negative[$key]['result'];
 
-				if ( ! $this->negative_results[$key]['result'] ) {
+				if ( ! $M_previous_negative[$key]['result'] ) {
 					if( !in_array( $rule->name, array('posts', 'categories') ) ) {
 						break;
 					}

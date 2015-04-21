@@ -261,7 +261,7 @@ if ( !class_exists( 'Pointer_Tutorial' ) ) {
 			if ( !current_user_can($this->capability) )
 				return false;
 
-			return add_query_arg( array($this->tutorial_key.'-start' => $step), $this->registered_pointers[$step]['url'] );
+			return esc_url( add_query_arg( array($this->tutorial_key.'-start' => $step), $this->registered_pointers[$step]['url'] ) );
 		}
 
 		/*

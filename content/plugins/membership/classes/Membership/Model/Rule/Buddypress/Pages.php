@@ -202,4 +202,7 @@ class Membership_Model_Rule_Buddypress_Pages extends Membership_Model_Rule {
 		return parent::validate_positive();
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

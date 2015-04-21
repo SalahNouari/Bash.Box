@@ -120,4 +120,7 @@ class Membership_Model_Rule_Admin_Plugins extends Membership_Model_Rule {
 		return $plugins;
 	}
 
+	public function get_data() {
+		return '';
+	}
 }

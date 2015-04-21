@@ -167,4 +167,7 @@ class Membership_Model_Rule_Admin_Submenus extends Membership_Model_Rule {
 		}
 	}
 
+	public function get_data() {
+		return '';
+	}
 }
