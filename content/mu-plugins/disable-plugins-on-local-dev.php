@@ -78,7 +78,7 @@ return $plugins;
 
 if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) {
 	new CWS_Disable_Plugins_When_Local_Dev( array( 
-		'jetpack/jetpack.php',
+		//'jetpack/jetpack.php',
 		'snapshot/snapshot.php',
 		'w3-total-cache/w3-total-cache.php', 
 		'domain-mapping/domain-mapping.php', 
