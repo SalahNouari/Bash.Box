@@ -4,7 +4,7 @@ Plugin Name: Subscribe by Email
 Plugin URI: http://premium.wpmudev.org/project/subscribe-by-email
 Description: This plugin allows you and your users to offer subscriptions to email notification of new posts
 Author: WPMU DEV
-Version: 3.0.3
+Version: 3.1
 Author URI: http://premium.wpmudev.org
 WDP ID: 127
 Text Domain: subscribe-by-email
@@ -141,7 +141,7 @@ class Incsub_Subscribe_By_Email {
 	 */
 	private function set_globals() {
 		if ( ! defined( 'INCSUB_SBE_VERSION' ) )
-			define( 'INCSUB_SBE_VERSION', '3.0.3' );
+			define( 'INCSUB_SBE_VERSION', '3.1' );
 		if ( ! defined( 'INCSUB_SBE_PLUGIN_URL' ) )
 			define( 'INCSUB_SBE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		if ( ! defined( 'INCSUB_SBE_PLUGIN_DIR' ) )
@@ -201,7 +201,6 @@ class Incsub_Subscribe_By_Email {
 		// Helpers
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/helpers/general-helpers.php' );
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/helpers/extra-fields-helpers.php' );
-		require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/helpers/subscriber-helpers.php' );
 
 		// Log class
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/logger.php' );
@@ -581,7 +580,6 @@ class Incsub_Subscribe_By_Email {
 
 
 	public function enqueue_emails( $posts_ids = array() ) {
-		$model = incsub_sbe_get_model();
 
 		$args = array( 'posts_ids' => array() );
 
@@ -605,11 +603,20 @@ class Incsub_Subscribe_By_Email {
 		// Check if the taxonomy is valid
 		foreach ( $args['posts_ids'] as $key => $post_id ) {
 			$post_type = get_post_type( $post_id );
-			$allowed_post_type_taxonomies = array_keys( $settings['taxonomies'][ $post_type ] );
-			$allowed_post_type_terms = array();
-			foreach ( $allowed_post_type_taxonomies as $post_type_tax ) {
-				$allowed_post_type_terms = array_merge( $allowed_post_type_terms, array_values( $settings['taxonomies'][ $post_type ][ $post_type_tax ] ) );
+
+			if ( isset( $settings['taxonomies'][ $post_type ] ) ) {
+				$allowed_post_type_taxonomies = array_keys( $settings['taxonomies'][ $post_type ] );
+				$allowed_post_type_terms = array();
+				foreach ( $allowed_post_type_taxonomies as $post_type_tax ) {
+					$allowed_post_type_terms = array_merge( $allowed_post_type_terms, array_values( $settings['taxonomies'][ $post_type ][ $post_type_tax ] ) );
+				}
 			}
+			else {
+				// The post type has no taxonomies, send it
+				$allowed_post_type_terms = array( 'all' );
+				$allowed_post_type_taxonomies = array();
+			}
+
 
 			if ( in_array( 'all', $allowed_post_type_terms ) ) {
 				// All terms in this taxonomy are accepted
@@ -630,22 +637,17 @@ class Incsub_Subscribe_By_Email {
 		if ( empty( $args['posts_ids'] ) )
 			return;
 
-		$log_id = $model->add_new_mail_log( '', $args );
+		$campaign_id = incsub_sbe_insert_campaign( '', $args );
+		$campaign = incsub_sbe_get_campaign( $campaign_id );
 
-		$emails_list = $model->get_log_emails_list( $log_id );
-
-		if ( ! empty( $emails_list ) ) {
-			$model->insert_queue_items( $emails_list, $log_id, $args );
-		}
-		else {
-			$model->delete_log( $log_id );
-			Subscribe_By_Email_Logger::delete_log( $log_id );
-		}
+		$result = incsub_sbe_insert_queue_items( $campaign_id );
+		if ( ! $result )
+			incsub_sbe_delete_campaign( $campaign_id );
 
 		foreach ( $args['posts_ids'] as $post_id )
 			update_post_meta( $post_id, 'sbe_sent', true );
 
-		return $log_id;
+		return $campaign_id;
 	}
 
 	/**
@@ -678,12 +680,11 @@ class Incsub_Subscribe_By_Email {
 				self::set_next_week_schedule_time( $settings['day_of_week'], $settings['time'] );
 				$days = self::get_last_x_days_sending_time( 7 );
 
-				$today_sending_time = self::get_today_sending_time();
 				$args = array(
 					'post_type' => $settings['post_types'],
 					'after_date' => date( 'Y-m-d H:i:s', $days )
 				);
-				$posts_ids = $model->get_posts_ids( $args );
+				$posts_ids = incsub_sbe_get_digest_posts_ids( $args );
 
 				$this->enqueue_emails( $posts_ids );
 				// Trigger the first batch
@@ -698,14 +699,14 @@ class Incsub_Subscribe_By_Email {
 				self::set_next_day_schedule_time( $settings['time'] );
 				$days = self::get_last_x_days_sending_time( 1 );
 
-				$today_sending_time = self::get_today_sending_time();
 				$args = array(
 					'post_type' => $settings['post_types'],
 					'after_date' => date( 'Y-m-d H:i:s', $days )
 				);
-				$posts_ids = $model->get_posts_ids( $args );
+				$posts_ids = incsub_sbe_get_digest_posts_ids( $args );
 
 				$this->enqueue_emails( $posts_ids );
+
 				// Trigger the first batch
 				delete_transient( self::$pending_mails_transient_slug );
 
@@ -811,7 +812,7 @@ class Incsub_Subscribe_By_Email {
 			$days_old = absint( $settings['keep_logs_for'] );
 			$timestamp_old = current_time( 'timestamp' ) - ( $days_old * 24 * 60 * 60 );
 
-			$old_campaigns = incsub_sbe_get_sent_campaigns( $timestamp_old );
+			$old_campaigns = incsub_sbe_get_campaigns_since( $timestamp_old );
 
 			if ( ! empty( $old_campaigns ) ) {
 				foreach ( $old_campaigns as $campaign )
