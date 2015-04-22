@@ -429,7 +429,7 @@ EOBpFormInjection;
 		if ( ! $this->model->registration_allowed() ) {
 			return;
 		}
-		$url = add_query_arg( 'fb_registration_page', 1 );
+		$url = esc_url( add_query_arg( 'fb_registration_page', 1 ) );
 		echo '<p><a class="wdfb_register_button" href="' . $url . '"><span>' . __( 'Register with Facebook', 'wdfb' ) . '</span></a></p>';
 	}
 
@@ -644,12 +644,15 @@ EOBpFormInjection;
 				$permalink     = $use_shortlink ? wp_get_shortlink( $post_id ) : get_permalink( $post_id );
 				$permalink     = $permalink ? $permalink : get_permalink( $post_id );
 				$picture       = wdfb_get_og_image( $post_id );
+				$description   = $post->post_excerpt ? $post->post_excerpt : strip_shortcodes( $post->post_content );
+				$description   = htmlspecialchars( wp_strip_all_tags( $description ), ENT_QUOTES );
+				$description   = apply_filters( 'wdfb_fb_post_description', $description );
 				$send          = array(
-					'caption'     => substr( $post_content, 0, 999 ),
+					'caption'     => home_url( '/' ),
 					'message'     => $post_title,
 					'link'        => $permalink,
 					'name'        => $post->post_title,
-					'description' => get_option( 'blogdescription' ),
+					'description' => $description,
 					'actions'     => array(
 						'name' => __( 'Share', 'wdfb' ),
 						'link' => 'http://www.facebook.com/sharer.php?u=' . rawurlencode( $permalink ),
@@ -700,14 +703,6 @@ EOBpFormInjection;
 
 		add_action( $footer_hook, array( $this, 'inject_fb_root_div' ), 99 );
 		add_action( $footer_hook, array( $this, 'inject_fb_init_js' ), 99 );
-
-		/*
-				// Automatic Facebook button
-				if ('manual' != $this->data->get_option('wdfb_button', 'button_position')) {
-					add_filter('the_content', array($this, 'inject_facebook_button'), 10);
-					if (defined('BP_VERSION')) add_filter('bp_get_activity_content_body', array($this, 'inject_facebook_button_bp'));
-				}
-		*/
 
 		// OpenGraph
 		if ( $this->data->get_option( 'wdfb_opengraph', 'use_opengraph' ) ) {

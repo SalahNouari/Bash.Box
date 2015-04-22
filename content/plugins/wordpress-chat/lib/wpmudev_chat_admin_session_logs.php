@@ -376,7 +376,7 @@ if ( ! class_exists( 'WPMUDEVChat_Session_Logs_Table' ) ) {
 				$date_str .= date_i18n( $row_time_format, strtotime( $item->end ) + get_option( 'gmt_offset' ) * 3600, false );
 			}
 
-			$chat_href = remove_query_arg( array( '_wpnonce', 'maction', 'message' ) );
+			$chat_href = esc_url_raw( remove_query_arg( array( '_wpnonce', 'maction', 'message' ) ) );
 			$chat_href = add_query_arg( 'chat_id', $item->chat_id, $chat_href );
 			$chat_href = add_query_arg( 'lid', $item->id, $chat_href );
 

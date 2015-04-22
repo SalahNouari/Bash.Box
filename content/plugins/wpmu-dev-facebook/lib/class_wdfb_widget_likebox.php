@@ -61,7 +61,7 @@ class Wdfb_WidgetLikebox extends WP_Widget {
 
 		$html .= '<p>';
 		$html .= '<label for="' . $this->get_field_id('hide_if_logged_out') . '">' . __('Hide widget if user is not logged into Facebook:', 'wdfb') . '</label> ';
-		$html .= '<input type="checkbox" name="' . $this->get_field_name('hide_if_logged_out') . '" id="' . $this->get_field_id('hide_if_logged_out') . '" value="1" ' . ($hide_if_logged_out ? 'checked="checked"' : '') . ' />';
+		$html .= '<input type="checkbox" name="' . $this->get_field_name('hide_if_logged_out') . '" id="' . $this->get_field_id('hide_if_logged_out') . '" value="1" ' . ($hide_if_logged_out ? 'checked="checked"' : '') . ' />';	     	 	 		 		   
 		$html .= '</p>';
 
 		$html .= '<p>';

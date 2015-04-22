@@ -378,6 +378,9 @@ class Wdfb_Model {
 		return $this->db->get_var( $sql );
 	}
 
+	/**
+	 * @return User ID or False
+	 */
 	function get_wp_user_from_fb() {
 		$fb_user_id = $this->fb->getUser();
 
@@ -387,7 +390,7 @@ class Wdfb_Model {
 			return $res[0]['user_id'];
 		}
 
-		// User not yet linked. Try finding her by email.
+		// User not yet linked. Try finding by email.
 		$me = false;
 		try {
 			$me = $this->fb->api( '/me' );
@@ -796,7 +799,7 @@ class Wdfb_Model {
 			for ( $i = 0; $i < $limit; $i += $page_size ) {
 				$batch[] = json_encode( array(
 					'method'       => 'GET',
-					'relative_url' => "/{$for}/events/?limit={$page_size}&offset={$i}&fields=id,name,description,start_time,end_time,location,venue,picture,ticket_uri,owner,privacy"
+					'relative_url' => "/{$for}/events/?limit={$page_size}&offset={$i}&fields=id,name,description,start_time,end_time,location,venue,picture,ticket_uri,owner,privacy,timezone"
 				) );
 			}
 			try {

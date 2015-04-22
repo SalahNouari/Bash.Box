@@ -317,7 +317,7 @@ if ( ! class_exists( 'WPMUDEVChat_Session_Messages_Table' ) ) {
 
 			echo $date_str;
 
-			$chat_href = remove_query_arg( array( '_wpnonce', 'maction', 'message' ) );
+			$chat_href = esc_url_raw( remove_query_arg( array( '_wpnonce', 'maction', 'message' ) ) );
 
 			$chat_href = add_query_arg( 'mid', $item->id, $chat_href );
 			$chat_href = add_query_arg( '_wpnonce', wp_create_nonce( 'chat-message-item' ), $chat_href );

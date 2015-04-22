@@ -18,6 +18,10 @@ Add a chat to your blog and allow your readers to chat with you.
 
 == ChangeLog ==
 
+= 2.0.9.2 = Umesh Kumar =
+
+* Fixed (Important - Security Fix ):  Fixed query_arg, xss possibility
+
 = 2.0.9.1 = Umesh Kumar =
 
 * Fixed:  Messages not being sent when Object cache was enabled
@@ -427,4 +431,4 @@ Add a chat to your blog and allow your readers to chat with you.
 * Initial release
 
 
-133620-1428332794-ai
+133620-1429710388-au

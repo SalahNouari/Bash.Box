@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/wordpress-chat-plugin
 Description: Provides you with a fully featured chat area either in a post, page, widget or bottom corner of your site. Support BuddyPress Group chat and private chats between logged in users.
 Author: WPMU DEV
 WDP ID: 159
-Version: 2.0.9.1
+Version: 2.0.9.2
 Author URI: http://premium.wpmudev.org
 Text Domain: wordpress_chat
 Domain Path: /languages
@@ -24,7 +24,7 @@ if ( ( ! defined( 'WPMUDEV_CHAT_SHORTINIT' ) ) || ( WPMUDEV_CHAT_SHORTINIT != tr
 }
 if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 	class WPMUDEV_Chat {
-		var $chat_current_version = '2.0.9.1';
+		var $chat_current_version = '2.0.9.2';
 		var $translation_domain = 'wordpress-chat';
 
 		/**
@@ -1722,7 +1722,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 							$wpmudev_chat_key = base64_decode( $_GET['wpmudev-chat-key'] );
 							if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
 								$chat_session = get_option( $wpmudev_chat_key );
-							}else{
+							} else {
 								$chat_session = get_transient( $wpmudev_chat_key );
 							}
 							if ( ( ! empty( $chat_session ) ) && ( is_array( $chat_session ) ) ) {
@@ -2139,10 +2139,10 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 
 				if ( ( isset( $_GET['maction'] ) ) && ( isset( $_GET['_wpnonce'] ) ) && ( wp_verify_nonce( $_GET['_wpnonce'], 'chat-message-item' ) ) ) {
 
-					$_SERVER['REQUEST_URI'] = remove_query_arg( array(
+					$_SERVER['REQUEST_URI'] = esc_url_raw( remove_query_arg( array(
 						'_wp_http_referer',
 						'_wpnonce'
-					), $_SERVER['REQUEST_URI'] );
+					), $_SERVER['REQUEST_URI'] ) );
 
 					$mid = '';
 					if ( isset( $_GET['mid'] ) ) {
@@ -2154,7 +2154,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 						$maction = esc_attr( $_GET['maction'] );
 					}
 
-					$chat_href = remove_query_arg( array( '_wpnonce', 'maction', 'mid', 'message' ) );
+					$chat_href = esc_url_raw( remove_query_arg( array( '_wpnonce', 'maction', 'mid', 'message' ) ) );
 					if ( $maction == "delete" ) {
 						$this->chat_session_logs_messages( 'message', 'delete', array( $mid ) );
 						$chat_href = add_query_arg( 'message', 'success-message-delete', $chat_href );
@@ -2202,10 +2202,10 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 
 				} else if ( ( isset( $_GET['laction'] ) ) && ( isset( $_GET['_wpnonce'] ) ) && ( wp_verify_nonce( $_GET['_wpnonce'], 'chat-log-item' ) ) ) {
 
-					$_SERVER['REQUEST_URI'] = remove_query_arg( array(
+					$_SERVER['REQUEST_URI'] = esc_url_raw( remove_query_arg( array(
 						'_wp_http_referer',
 						'_wpnonce'
-					), $_SERVER['REQUEST_URI'] );
+					), $_SERVER['REQUEST_URI'] ) );
 
 					$lid = '';
 					if ( isset( $_GET['lid'] ) ) {
@@ -2217,7 +2217,13 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 						$laction = esc_attr( $_GET['laction'] );
 					}
 
-					$chat_href = remove_query_arg( array( '_wpnonce', 'lid', 'laction', 'maction', 'message' ) );
+					$chat_href = esc_url_raw( remove_query_arg( array(
+						'_wpnonce',
+						'lid',
+						'laction',
+						'maction',
+						'message'
+					) ) );
 					if ( $laction == "delete" ) {
 						$this->chat_session_logs_messages( 'log', 'delete', array( $lid ) );
 						$chat_href = add_query_arg( 'message', 'success-log-delete', $chat_href );
@@ -2266,20 +2272,20 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 						$bulk_action = esc_attr( $_GET['action2'] );
 					}
 
-					$_SERVER['REQUEST_URI'] = remove_query_arg( array(
+					$_SERVER['REQUEST_URI'] = esc_url_raw( remove_query_arg( array(
 						'_wp_http_referer',
 						'_wpnonce',
 						'action',
 						'action2',
 						'mid'
-					), $_SERVER['REQUEST_URI'] );
+					), $_SERVER['REQUEST_URI'] ) );
 
 					if ( ( $bulk_action ) && ( ! empty( $bulk_action ) ) ) {
-						$chat_href = remove_query_arg( array(
+						$chat_href = esc_url_raw( remove_query_arg( array(
 							'_wpnonce',
 							'maction',
 							'message'
-						), $_GET['_wp_http_referer'] );
+						), $_GET['_wp_http_referer'] ) );
 						if ( $bulk_action == 'delete' ) {
 							$this->chat_session_logs_messages( 'message', 'delete', $_GET['chat-messages-bulk'] );
 							$chat_href = add_query_arg( 'message', 'success-messages-delete', $chat_href );
@@ -2306,17 +2312,17 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 						$bulk_action = esc_attr( $_GET['action2'] );
 					}
 
-					$_SERVER['REQUEST_URI'] = remove_query_arg( array(
+					$_SERVER['REQUEST_URI'] = esc_url_raw( remove_query_arg( array(
 						'_wp_http_referer',
 						'_wpnonce',
 						'action',
 						'action2',
 						'mid'
-					), $_SERVER['REQUEST_URI'] );
+					), $_SERVER['REQUEST_URI'] ) );
 
 					if ( ( $bulk_action ) && ( ! empty( $bulk_action ) ) ) {
 
-						$chat_href = remove_query_arg( array( '_wpnonce', 'maction', 'message' ) );
+						$chat_href = esc_url_raw( remove_query_arg( array( '_wpnonce', 'maction', 'message' ) ) );
 						if ( $bulk_action == 'delete' ) {
 							$this->chat_session_logs_messages( 'log', 'delete', $_GET['chat-logs-bulk'] );
 							$chat_href = add_query_arg( 'message', 'success-logs-delete', $chat_href );
@@ -2379,7 +2385,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 								$remove_args_array[] = $_key;
 							}
 						}
-						wp_redirect( remove_query_arg( $remove_args_array, $_SERVER['REQUEST_URI'] ) );
+						wp_redirect( esc_url_raw( remove_query_arg( $remove_args_array, $_SERVER['REQUEST_URI'] ) ) );
 						die();
 					}
 
@@ -3613,7 +3619,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 					$query_args   = array(
 						'chat-log-id' => $chat_session_date->id,
 					);
-					$archive_href = add_query_arg( $query_args );
+					$archive_href = esc_url( add_query_arg( $query_args ) );
 
 					$date_str = date_i18n( get_option( 'date_format' ) . ' ' .
 					                       get_option( 'time_format' ), strtotime( $chat_session_date->start ) + get_option( 'gmt_offset' ) * 3600, false ) .
@@ -3621,7 +3627,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 					                               get_option( 'time_format' ), strtotime( $chat_session_date->end ) + get_option( 'gmt_offset' ) * 3600, false );
 
 					if ( isset( $_GET['chat-log-id'] ) && $_GET['chat-log-id'] == $chat_session_date->id ) {
-						$date_content .= '<li>' . $date_str . ' <a href="' . remove_query_arg( 'chat-log-id' ) . '">' . __( 'close', $this->translation_domain ) . "</a>";
+						$date_content .= '<li>' . $date_str . ' <a href="' . esc_url( remove_query_arg( 'chat-log-id' ) ) . '">' . __( 'close', $this->translation_domain ) . "</a>";
 
 						if ( isset( $_GET['chat-log-id'] ) && $_GET['chat-log-id'] == $chat_session_date->id ) {
 							$chat_session_log                 = $chat_session;
@@ -3675,15 +3681,15 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 
 				if ( isset( $_GET['chat-show-logs'] ) ) {
 
-					$return_link = '<a href="' . remove_query_arg( array(
+					$return_link = '<a href="' . esc_url( remove_query_arg( array(
 							'chat-log-id',
 							'chat-show-logs'
-						) ) . '">' . __( 'Return to Chat', $this->translation_domain ) . '</a>';
+						) ) ) . '">' . __( 'Return to Chat', $this->translation_domain ) . '</a>';
 
 					$content .= '<div id="wpmudev-chat-logs-wrap-' . $chat_session['id'] . '" class="wpmudev-chat-logs-wrap"><p>' . $return_link . '</p>' . $date_content . '</div>';
 				} else {
 
-					$chat_link = ' <a href="' . add_query_arg( 'chat-show-logs', '' ) . '">' . $chat_session['log_display_label'] . '</a>';
+					$chat_link = ' <a href="' . esc_url( add_query_arg( 'chat-show-logs', '' ) ) . '">' . $chat_session['log_display_label'] . '</a>';
 
 					$content .= '<div id="wpmudev-chat-logs-wrap-' . $chat_session['id'] . '" class="wpmudev-chat-logs-wrap"><p>' . $chat_link . '</p></div>';
 				}
@@ -6102,7 +6108,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 					$transient_key = "chat-session-" . $chat_id . '-private';
 					if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
 						$transient = get_option( $transient_key );
-					}else{
+					} else {
 						$transient = get_transient( $transient_key );
 					}
 
@@ -6111,7 +6117,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 						$transient['invite-info']['message']['invite-status'] = $invite_status;
 						if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
 							update_option( $transient_key, $transient );
-						}else {
+						} else {
 							set_transient( $transient_key, $transient, 60 * 60 * 24 );
 						}
 					}
@@ -7139,8 +7145,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 			$transient_key = "chat-meta-" . $chat_session['id'] . '-' . $chat_session['session_type'];
 			if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
 				$chat_meta = get_option( $transient_key );
-			}else {
-				$chat_meta = get_transient($transient_key);
+			} else {
+				$chat_meta = get_transient( $transient_key );
 			}
 			if ( ! $chat_meta ) {
 				$chat_meta = array();
@@ -7185,7 +7191,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 			$transient_key = "chat-meta-" . $chat_session['id'] . '-' . $chat_session['session_type'];
 			if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
 				$chat_meta = get_option( $transient_key );
-			}else{
+			} else {
 				$chat_meta = get_transient( $transient_key );
 			}
 			//$chat_meta = get_option($transient_key);

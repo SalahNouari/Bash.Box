@@ -47,18 +47,18 @@ if ((isset($_GET['oauth_token'])) && (!empty($_GET['oauth_token']))
 					unset($_SESSION['wpmudev-chat-twitter-tokens']);
 
 					setcookie('wpmudev-chat-auth', json_encode($wpmudev_chat->chat_auth));
-					wp_redirect(remove_query_arg(array('wpmudev-chat-action', 'oauth_token', 'oauth_verifier')));
+					wp_redirect(esc_url_raw(remove_query_arg(array('wpmudev-chat-action', 'oauth_token', 'oauth_verifier')) ));
 					die();
 				}
 			}
 		}
 		unset($_SESSION['wpmudev-chat-twitter-tokens']);
-		wp_redirect(remove_query_arg(array('wpmudev-chat-action', 'oauth_token', 'oauth_verifier')));
+		wp_redirect(esc_url_raw(remove_query_arg(array('wpmudev-chat-action', 'oauth_token', 'oauth_verifier'))));
 		die();
 	}
 } else if (isset($_GET['denied'])) {
 	unset($_SESSION['wpmudev-chat-twitter-tokens']);
-	wp_redirect(remove_query_arg(array('wpmudev-chat-action', 'denied')));
+	wp_redirect(esc_url_raw(remove_query_arg(array('wpmudev-chat-action', 'denied'))));
 	die();
 
 } else {
@@ -67,7 +67,7 @@ if ((isset($_GET['oauth_token'])) && (!empty($_GET['oauth_token']))
 		'wpmudev-chat-action'	=>	'pop-twitter',
 	);
 
-	$callback_url 	= add_query_arg( $query_args, get_option('siteurl').$_SERVER['REQUEST_URI']);
+	$callback_url 	= esc_url_raw( add_query_arg( $query_args, get_option('siteurl').$_SERVER['REQUEST_URI']) );
 	$request_token 	= $twitter_connection->getRequestToken($callback_url);
 
 	if ((is_array($request_token)) && (isset($request_token['oauth_token']))) {

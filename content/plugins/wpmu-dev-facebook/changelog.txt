@@ -5,6 +5,12 @@ Contributor: Umesh Kumar
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.7.9.3 - 2015-04-21 - Umesh Kumar, Jose Jaureguiberry
+- Fixed: Fix event timezone field not being retrieved
+- Fixed: Use post content for description instead of blog description
+- Fixed (Important - Security): Fix query argument escaping to avoid XSS vulnerability
+
 2.7.9.2 - 2015-01-19 - Umesh Kumar
 - Fixed:    Comment author facebook URL fixed
 - Fixed:    Network Settings - Override all blog settings and Preserve individual blog api settings
@@ -429,4 +435,4 @@ Change Log:
 - Added date threshold parameter for Facebook Events widget.
 
 
-133620-1422153969-au
+133620-1429710383-au

@@ -89,9 +89,9 @@ class UM_Permalinks {
 		
 		if ( !um_user('account_secret_hash') ) return false;
 		
-		$url =  esc_url( add_query_arg( 'act', 'activate_via_email', home_url() ) );
-		$url =  esc_url( add_query_arg( 'hash', um_user('account_secret_hash'), $url ) );
-		$url =  esc_url( add_query_arg( 'user_id', um_user('ID'), $url ) );
+		$url =  add_query_arg( 'act', 'activate_via_email', home_url() );
+		$url =  add_query_arg( 'hash', um_user('account_secret_hash'), $url );
+		$url =  add_query_arg( 'user_id', um_user('ID'), $url );
 		
 		return $url;
 	}
@@ -166,7 +166,7 @@ class UM_Permalinks {
 		
 		} else {
 			
-			$profile_url =  esc_url( add_query_arg( 'um_user', $user_in_url, $profile_url ) );
+			$profile_url =  add_query_arg( 'um_user', $user_in_url, $profile_url );
 			
 		}
 
@@ -178,9 +178,9 @@ class UM_Permalinks {
 	***/
 	function admin_act_url( $action, $subaction ) {
 		$url = $this->get_current_url();
-		$url =  esc_url( add_query_arg( 'um_adm_action', $action, $url ) );
-		$url =  esc_url( add_query_arg( 'sub', $subaction, $url ) );
-		$url =  esc_url( add_query_arg( 'user_id', um_user('ID'), $url ) );
+		$url =  add_query_arg( 'um_adm_action', $action, $url );
+		$url =  add_query_arg( 'sub', $subaction, $url );
+		$url =  add_query_arg( 'user_id', um_user('ID'), $url );
 		return $url;
 	}
 

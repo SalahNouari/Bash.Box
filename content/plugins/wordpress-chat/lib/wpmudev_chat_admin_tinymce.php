@@ -117,7 +117,7 @@
 				numeric = [],
 				pattern, match;
 
-			pattern = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g;	     	 	 	  	  		
+			pattern = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g;
 
 			// Map zero-width spaces to actual spaces.
 			wpmudev_chat_shortcode_str = wpmudev_chat_shortcode_str.replace(/[\u00a0\u200b]/g, ' ');
