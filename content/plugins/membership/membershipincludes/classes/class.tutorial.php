@@ -80,7 +80,7 @@ class M_Tutorial {
 		if(isset($_GET['restarttutorial']) && $_GET['restarttutorial'] == 'yes') {
 			check_admin_referer('restarttutorial');
 			$this->_membership_tutorial->restart();
-			wp_safe_redirect( esc_url( remove_query_arg( 'restarttutorial', remove_query_arg( '_wpnonce') ) ) );
+			wp_safe_redirect( esc_url_raw( remove_query_arg( 'restarttutorial', remove_query_arg( '_wpnonce') ) ) );
 		}
 	}
 

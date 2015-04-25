@@ -1022,7 +1022,7 @@ function membership_redirect_to_protected() {
 	$current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 	if ( $url != $current_url && !headers_sent() ) {
-		wp_safe_redirect( esc_url( add_query_arg( 'redirect_to', urlencode( $current_url ), $url ) ) );
+		wp_safe_redirect( esc_url_raw( add_query_arg( 'redirect_to', urlencode( $current_url ), $url ) ) );
 		exit;
 	}
 }

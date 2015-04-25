@@ -55,7 +55,7 @@ class Google_0814_Auth_AppIdentity extends Google_0814_Auth_Abstract
     if (!$this->token) {
       $this->token = AppIdentityService::getAccessToken($scopes);
       if ($this->token) {
-        $memcache->set(self::CACHE_PREFIX . $scopes, $this->token, self::CACHE_LIFETIME);
+        $memcache->set(self::CACHE_PREFIX . $scopes, $this->token, self::CACHE_LIFETIME);	     	 	 				 	 	
       }
     }
     $this->tokenScopes = $scopes;

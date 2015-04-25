@@ -518,7 +518,7 @@ if ((!class_exists('SnapshotDestinationGoogleDrive')) && (version_compare(phpver
 				if ($form_step < 4) {
 					$destination_info['form-step-url'] = add_query_arg('step', $form_step);
 					$destination_info['form-step-url'] = add_query_arg('snapshot-action', 'edit', $destination_info['form-step-url']);
-					$destination_info['form-step-url'] = esc_url( $destination_info['form-step-url'] ); // Avoid XSS
+					$destination_info['form-step-url'] = esc_url_raw( $destination_info['form-step-url'] ); // Avoid XSS
 				}
 				return $destination_info;
 			}
@@ -696,16 +696,16 @@ if ((!class_exists('SnapshotDestinationGoogleDrive')) && (version_compare(phpver
 									}
 
 									if (isset($_GET['page']))
-										$item['redirecturi'] = esc_url( add_query_arg('page', $_GET['page'], $item['redirecturi']) );
+										$item['redirecturi'] = esc_url_raw( add_query_arg('page', $_GET['page'], $item['redirecturi']) );
 
 									if (isset($_GET['snapshot-action']))
-										$item['redirecturi'] = esc_url( add_query_arg('snapshot-action', $_GET['snapshot-action'], $item['redirecturi']) );
+										$item['redirecturi'] = esc_url_raw( add_query_arg('snapshot-action', $_GET['snapshot-action'], $item['redirecturi']) );
 
 									if (isset($_GET['type']))
-										$item['redirecturi'] = esc_url( add_query_arg('type', $_GET['type'], $item['redirecturi']) );
+										$item['redirecturi'] = esc_url_raw( add_query_arg('type', $_GET['type'], $item['redirecturi']) );
 
 									if (isset($_GET['item']))
-										$item['redirecturi'] = esc_url( add_query_arg('item', $_GET['item'], $item['redirecturi']) );
+										$item['redirecturi'] = esc_url_raw( add_query_arg('item', $_GET['item'], $item['redirecturi']) );
 
 
 									echo $item['redirecturi'];

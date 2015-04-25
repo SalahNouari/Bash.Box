@@ -1,3 +1,7 @@
+== 3.5.3.2 ==
+* Fixed compatibility issue with WP 4.2.
+== 3.5.3.1 ==
+* Fixed redirection issues.
 == 3.5.3.0 ==
 * Security Update: Fixing possible WordPress XSS bug.
 * Fixed issue with WPML and Protected Content page.
@@ -305,4 +309,4 @@ Critical Updates
 * Implemented ability to add a title and "lost password" link to the login widget
 
 
-133620-1429610658-au
+133620-1429935266-au

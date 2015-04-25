@@ -99,7 +99,7 @@ if ((!class_exists('SnapshotDestinationDropbox'))
 					$d_info = get_option('snapshot-dropbox-tokens');
 
 					// Avoid XSS.
-					$link = esc_url( $link );
+					$link = esc_url_raw( $link );
 					wp_redirect($link);
 				}
 			}
@@ -145,7 +145,7 @@ if ((!class_exists('SnapshotDestinationDropbox'))
 				update_option('snapshot-dropbox-tokens', $d_info);
 
 				$action = "snapshot-destination-dropdown-authorize";
-				$link = esc_url( add_query_arg( '_wpnonce', wp_create_nonce( $action ) ) );
+				$link = esc_url_raw( add_query_arg( '_wpnonce', wp_create_nonce( $action ) ) );
 				$admin_url = admin_url();
 				$admin_url_parts = parse_url($admin_url);
 				$admin_url = $admin_url_parts['scheme'] ."://". $admin_url_parts['host'];

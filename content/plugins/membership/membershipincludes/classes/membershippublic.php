@@ -1281,7 +1281,7 @@ if ( !class_exists( 'membershippublic', false ) ) :
 					$anyerrors = $this->_register_errors->get_error_code();
 					if ( empty( $anyerrors ) ) {
 						// redirect to payments page
-						wp_redirect( esc_url( add_query_arg( array(
+						wp_redirect( esc_url_raw( add_query_arg( array(
 							'action'       => 'subscriptionsignup',
 							'subscription' => $subscription,
 						) ) ) );
@@ -1436,7 +1436,7 @@ if ( !class_exists( 'membershippublic', false ) ) :
 							do_action( 'bp_complete_signup' );
 
 							// redirect to payments page
-							wp_redirect( esc_url( add_query_arg( array(
+							wp_redirect( esc_url_raw( add_query_arg( array(
 								'action'       => 'subscriptionsignup',
 								'subscription' => $subscription,
 							) ) ) );

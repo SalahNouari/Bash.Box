@@ -5,7 +5,7 @@
  * @var $menu UB_Admin_Bar_Menu
  * @var $sub UB_Admin_Bar_Menu
  */
-$order = 1;
+$order = 1;	   	 		 		 	   		
 foreach( UB_Admin_Bar::menus() as $menu ):
 ?>
 <div class="meta-box-sortables parent_admin_bar parent_admin_bar_prev not-sortable">
@@ -27,6 +27,18 @@ foreach( UB_Admin_Bar::menus() as $menu ):
                             <p><?php _e("If you'd like to use an image instead of text, please paste the full URL of your image in the box (starting with <code>http://</code> - e.g. <code>http://example.com/myimage.gif</code>).", "ub") ?></p>
                             <p><?php _e("For best results, make sure your image has a transparent background and is no more than 28px high.", "ub") ?></p>
                         </td>
+                    </tr>
+                    <tr>
+	                    <th scope="row"><?php _e("Use Icon", "ub");?></th>
+	                    <td>
+		                    <input class="ub_adminbar_use_icon" type="checkbox" <?php checked($menu->use_icon, true); ?>  name="ub_ab_prev[<?php echo $menu->id ?>][use_icon]">
+	                    </td>
+                    </tr>
+                    <tr class="ub_adminbar_icon_tr <?php echo $menu->use_icon ? '' : 'ub_hidden'; ?>">
+	                    <th scope="row"><?php _e("Icon", "ub") ?> <br><small><?php _e("Icon to be used beside the menu text and shown on mobile devices", "ub") ?></small></th>
+	                    <td>
+							<?php UB_Admin_Bar_Forms::render_dashicons_radios($menu); ?>
+	                    </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e("Title link leads to", "ub"); ?></th>
@@ -54,6 +66,12 @@ foreach( UB_Admin_Bar::menus() as $menu ):
                         <th scope="row"><?php _e("Open in new window?", "ub"); ?></th>
                         <td>
                             <input type="checkbox" name="ub_ab_prev[<?php echo $menu->id ?>][target]"  <?php  checked( $menu->target, "_blank" ); ?> >
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e("Select User Roles allowed to see menu", "ub"); ?></th>
+                        <td>
+                        <?php UB_Admin_Bar_Forms::create_submenu_roles( $menu ); ?>
                         </td>
                     </tr>
                     <tr>

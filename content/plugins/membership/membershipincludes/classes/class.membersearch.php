@@ -9,6 +9,9 @@ if ( !class_exists( 'M_Member_Search' ) ) {
         var $active = false;
         var $users_per_page = 50;
         var $search_errors = false;
+        var $search_term = '';
+        var $raw_page = false;
+        var $page_num = 1;
 
         public function __construct( $search_term = '', $page_num = '', $sub_id = false, $level_id = false, $active = false ) {
 			$this->users_per_page = apply_filters( 'membership_all_members_users_per_page', $this->users_per_page );

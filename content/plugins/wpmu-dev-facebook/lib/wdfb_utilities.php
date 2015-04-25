@@ -117,7 +117,7 @@ function wdfb_get_login_redirect( $force_admin_redirect = false ) {
 					// Set to permalink for current item, if possible
 					$redirect_url = apply_filters( 'wdfb-login-redirect_url-item_url', get_permalink( $post->ID ) );
 				}
-				$fallback_url = ( defined( 'WDFB_EXACT_REDIRECT_URL_FALLBACK' ) && WDFB_EXACT_REDIRECT_URL_FALLBACK ) ? site_url( $wp->request ) : home_url();
+				$fallback_url = ( defined( 'WDFB_EXACT_REDIRECT_URL_FALLBACK' ) && WDFB_EXACT_REDIRECT_URL_FALLBACK ) ? site_url( $wp->request ) : home_url();	     	 	 		 		   
 				// Default to home URL otherwise
 				$redirect_url = $redirect_url ? $redirect_url : $fallback_url;
 			}

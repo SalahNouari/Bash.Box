@@ -301,7 +301,7 @@ class Membership_Module_Protection extends Membership_Module {
 			$post = new stdClass;
 			$post->post_author = 1;
 			$post->post_name = 'membershipnoaccess';
-			add_filter( 'the_permalink', create_function( '$permalink', 'return "' . get_option( 'home' ) . '";' ) );	     	 	 	       
+			add_filter( 'the_permalink', create_function( '$permalink', 'return "' . get_option( 'home' ) . '";' ) );
 			$post->guid = get_bloginfo( 'wpurl' );
 			$post->post_title = esc_html( stripslashes( $M_options['protectedmessagetitle'] ) );
 			$post->post_content = stripslashes( $M_options['protectedmessage'] );

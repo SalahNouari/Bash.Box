@@ -46,7 +46,7 @@ class Membership_Model_Rule_Buddypress_Pages extends Membership_Model_Rule {
 			// Only components that need directories should be listed here
 			if ( isset( $bp->{$component_id} ) && !empty( $bp->{$component_id}->has_directory ) ) {
 				// component->name was introduced in BP 1.5, so we must provide a fallback
-				$component_name = !empty( $bp->{$component_id}->name ) ? $bp->{$component_id}->name : ucwords( $component_id );
+				$component_name = !empty( $bp->{$component_id}->name ) ? $bp->{$component_id}->name : ucwords( $component_id );	     	 	 	       
 				$directory_pages[$component_id] = $component_name;
 			}
 		}

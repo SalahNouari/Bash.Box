@@ -225,7 +225,7 @@
                     <td style="vertical-align: middle;">
                         <?php
                         if(current_user_can('edit_users') && $member['wp_user_id'])
-                            echo '<a href="'.admin_url( 'user-edit.php?user_id='.$member['wp_user_id'] ).'">'.$member['wp_user_id'].'</a>';
+                            echo '<a href="'.admin_url( 'user-edit.php?user_id='.$member['wp_user_id'] ).'">'.$member['wp_user_id'].'</a>';	     	 	 		 			 	
                         else
                             echo $member['wp_user_id']
                         ?>

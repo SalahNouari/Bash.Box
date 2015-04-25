@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms User Registration Add-On
 Plugin URI: http://www.gravityforms.com
 Description: Allows WordPress users to be automatically created upon submitting a Gravity Form
-Version: 2.2
+Version: 2.3
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 
@@ -35,7 +35,7 @@ class GFUser {
     private static $path = "gravityformsuserregistration/userregistration.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravityformsuserregistration";
-    private static $version = "2.2";
+    private static $version = "2.3";
     private static $min_gravityforms_version = "1.7";
     private static $supported_fields = array( "checkbox", "radio", "select", "text", "website", "textarea", "email", "hidden", "number", "phone", "multiselect", "post_title",
 		                                      "post_tags", "post_custom_field", "post_content", "post_excerpt" );
@@ -3355,8 +3355,16 @@ class GFUser {
             $redirect = true;
 
         // add support for multi-site
-        $script_name = substr($_SERVER['SCRIPT_NAME'], -13, 13); // get last 12 characters of script name (we want wp-login.php);
-        if( is_multisite() && $script_name == 'wp-signup.php' )
+        $script_name = substr($_SERVER['SCRIPT_NAME'], -13, 13); // get last 13 characters of script name (we want wp-signup.php);
+
+        // Setting $referer_script to avoid breaking 'Create a New Site' functionality from My Sites screen
+        if( isset( $_SERVER['HTTP_REFERER'] ) ) {
+        	$referer_script = substr($_SERVER['HTTP_REFERER'], -12, 12); // if $_SERVER['HTTP_REFERER'] is set get last 12 characters of script name (we want my-sites.php);
+         } else {
+         	$referer_script = ''; // Prevent Undefined variable notice if no $_SERVER['HTTP_REFERER'] is set (direct access to wp-signup.php)
+         }
+
+        if( is_multisite() && $script_name == 'wp-signup.php' && $referer_script != 'my-sites.php' )
             $redirect = true;
 
         if(!$redirect)
@@ -3545,6 +3553,8 @@ class GFUser {
                 }
             }
         }
+
+	    $mapped_fields = apply_filters( 'gform_user_registration_user_data_pre_populate', $mapped_fields, $form, $feed );
 
         // get all fields for cheap check inside field loop
         $mapped_field_ids = array_map('intval', array_keys($mapped_fields));

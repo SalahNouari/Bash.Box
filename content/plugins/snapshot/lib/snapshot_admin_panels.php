@@ -504,7 +504,7 @@ if ( !class_exists( "wpmudev_snapshot_admin_panels" ) ) {
 
 										if (function_exists('curl_version')) {
 
-											$remoteFile = esc_url($_POST['snapshot-import-archive-remote-url']);
+											$remoteFile = esc_url_raw($_POST['snapshot-import-archive-remote-url']);
 
 											@set_time_limit(900); // 15 minutes Technically, server to server should be quick for large files.
 
