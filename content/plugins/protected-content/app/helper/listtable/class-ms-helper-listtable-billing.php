@@ -138,6 +138,16 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		return $args;
 	}
 
+	/**
+	 * Returns the row-class to be used for the specified table item.
+	 *
+	 * @param  object $item The current item.
+	 * @return string Class to be added to the table row.
+	 */
+	protected function single_row_class( $item ) {
+		return 'invoice-' . $item->status;
+	}
+
 	public function column_invoice( $item ) {
 		$actions = array();
 		$actions['edit'] = sprintf(
@@ -149,40 +159,68 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		);
 		$actions['view'] = sprintf(
 			'<a href="%s">%s</a>',
-			get_permalink(  $item->id ),
+			get_permalink( $item->id ),
 			__( 'View', MS_TEXT_DOMAIN )
 		);
 
 		return sprintf(
-			'%1$s %2$s',
+			'%1$s (#%3$s) %2$s',
 			$item->id,
-			$this->row_actions( $actions )
+			$this->row_actions( $actions ),
+			$item->invoice_number
 		);
+	}
+
+	public function column_user( $item, $column_name ) {
+		$member = MS_Factory::load( 'MS_Model_Member', $item->user_id );
+		$html = $member->username;
+		return $html;
+	}
+
+	public function column_membership( $item, $column_name ) {
+		$membership = MS_Factory::load( 'MS_Model_Membership', $item->membership_id );
+		$html = $membership->name;
+
+		return sprintf(
+			'<span class="ms-membership" style="background:%2$s">%1$s</span>',
+			$html,
+			$membership->get_color()
+		);
+	}
+
+	public function column_status( $item, $column_name ) {
+		return sprintf(
+			'<span class="payment-status-%1$s">%2$s</span>',
+			$item->status_text(),
+			$html
+		);
+	}
+
+	public function column_amount( $item, $column_name ) {
+		$html = MS_Helper_Billing::format_price( $item->amount );
+		return $html;
 	}
 
 	public function column_total( $item, $column_name ) {
 		$html = MS_Helper_Billing::format_price( $item->total );
+		return $html;
+	}
 
+	public function column_due_date( $item, $column_name ) {
+		$html = MS_Helper_Period::format_date( $item->due_date );
+		return $html;
+	}
+
+	public function column_gateway_id( $item, $column_name ) {
+		$html = MS_Model_Gateway::get_name( $item->gateway_id );
 		return $html;
 	}
 
 	public function column_default( $item, $column_name ) {
 		$html = '';
 
-		switch ( $column_name ) {
-			case 'user':
-				$member = MS_Factory::load( 'MS_Model_Member', $item->user_id );
-				$html = $member->username;
-				break;
-
-			case 'membership':
-				$membership = MS_Factory::load( 'MS_Model_Membership', $item->membership_id );
-				$html = $membership->name;
-				break;
-
-			default:
-				$html = $item->$column_name;
-				break;
+		if ( property_exists( $item, $column_name ) ) {
+			$html = $item->column_name;
 		}
 
 		return $html;
@@ -202,7 +240,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		$views = array();
 
 		$args = $this->get_query_args();
-		$url = remove_query_arg( array( 'status', 'msg' ) );
+		$url = esc_url_raw( remove_query_arg( array( 'status', 'msg' ) ) );
 		$count = MS_Model_Invoice::get_invoice_count( $args );
 		$views['all'] = array(
 			'url' => $url,
@@ -210,8 +248,13 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			'count' => $count,
 		);
 
-		$url = remove_query_arg( array( 'status', 'msg' ) );
-		$url = add_query_arg( 'status', 'open', $url );
+		$url = esc_url_raw(
+			add_query_arg(
+				'status',
+				'open',
+				remove_query_arg( array( 'status', 'msg' ) )
+			)
+		);
 		$args = $this->get_query_args();
 		$args['meta_query']['status']['value'] = array(
 			MS_Model_Invoice::STATUS_BILLED,
@@ -229,9 +272,12 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			$args = $this->get_query_args();
 			$args['meta_query']['status']['value'] = $status;
 			$count = MS_Model_Invoice::get_invoice_count( $args );
-			$status_url = add_query_arg(
-				array( 'status' => $status ),
-				remove_query_arg( array( 'msg' ) )
+
+			$status_url = esc_url_raw(
+				add_query_arg(
+					array( 'status' => $status ),
+					remove_query_arg( array( 'msg' ) )
+				)
 			);
 
 			$views[ $status ] =	array(

@@ -126,12 +126,11 @@ class MS_Gateway_Free extends MS_Gateway {
 			$this
 		);
 
-		$invoice = MS_Model_Invoice::get_current_invoice( $subscription );
+		$invoice = $subscription->get_current_invoice();
 
-		if ( 0 == $invoice->total ) {
+		if ( 0 == $invoice->total || $invoice->uses_trial ) {
 			// Free, just process.
-			lib2()->debug->dump( 'Process free embership', $invoice );
-			$invoice->changed();
+			$invoice->pay_it( self::ID, '' );
 		}
 
 		return apply_filters(

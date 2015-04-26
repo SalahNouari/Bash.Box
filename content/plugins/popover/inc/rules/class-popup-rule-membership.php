@@ -47,28 +47,26 @@ class IncPopupRule_Membership extends IncPopupRule {
 		// -- Initialize rule.
 
 		$this->is_active = (
-				function_exists( 'M_get_membership_active' ) && M_get_membership_active()
-			);
+			function_exists( 'M_get_membership_active' ) && M_get_membership_active()
+		);
 
 		if ( ! $this->is_active ) { return; }
 
 		$prefix = $wpdb->get_blog_prefix();
 
-		// TODO: find a more fancy way to get the membership table name.
 		$table_lvl = defined( 'MEMBERSHIP_TABLE_LEVELS' ) ? MEMBERSHIP_TABLE_LEVELS : $prefix . 'm_membership_levels';
 		$sql = "
 			SELECT *
 			FROM {$table_lvl}
 		";
-        $this->levels = $wpdb->get_results( $sql );
+		$this->levels = $wpdb->get_results( $sql );
 
-		// TODO: find a more fancy way to get the membership table name.
 		$table_sub = defined( 'MEMBERSHIP_TABLE_SUBSCRIPTIONS' ) ? MEMBERSHIP_TABLE_SUBSCRIPTIONS : $prefix . 'm_subscriptions';
 		$sql = "
 			SELECT *
 			FROM {$table_sub}
 		";
-        $this->subscriptions = $wpdb->get_results( $sql );
+		$this->subscriptions = $wpdb->get_results( $sql );
 	}
 
 
@@ -114,7 +112,7 @@ class IncPopupRule_Membership extends IncPopupRule {
 	 * @return mixed Data collection of this rule.
 	 */
 	protected function save_membership_lvl() {
-		return @$_POST['po_rule_data']['membership_lvl'];
+		return $_POST['po_rule_data']['membership_lvl'];
 	}
 
 
@@ -159,7 +157,7 @@ class IncPopupRule_Membership extends IncPopupRule {
 	 * @return mixed Data collection of this rule.
 	 */
 	protected function save_membership_sub() {
-		return @$_POST['po_rule_data']['membership_sub'];
+		return $_POST['po_rule_data']['membership_sub'];
 	}
 
 
@@ -181,8 +179,9 @@ class IncPopupRule_Membership extends IncPopupRule {
 	 * @param  array $data
 	 */
 	protected function render_level_form( $name, $label, $data ) {
-		if ( ! is_array( $data ) ) { $data = array(); }
-		if ( ! is_array( @$data['levels'] ) ) { $data['levels'] = array(); }
+		$data = lib2()->array->get( $data );
+		lib2()->array->equip( $data, 'membership_lvl' );
+		$data['membership_lvl'] = lib2()->array->get( $data['membership_lvl'] );
 
 		if ( ! $this->is_active ) {
 			$this->render_plugin_inactive();
@@ -192,10 +191,10 @@ class IncPopupRule_Membership extends IncPopupRule {
 		?>
 		<fieldset>
 			<legend><?php echo esc_html( $label ) ?></legend>
-			<select name="po_rule_data[<?php echo esc_attr( $name ); ?>][levels][]" multiple="multiple">
+			<select name="po_rule_data[<?php echo esc_attr( $name ); ?>][membership_lvl][]" multiple="multiple">
 			<?php foreach ( $this->levels as $level ) : ?>
 			<option value="<?php echo esc_attr( $level->id ); ?>"
-				<?php selected( in_array( $level->id, $data['levels'] ) ); ?>>
+				<?php selected( in_array( $level->id, $data['membership_lvl'] ) ); ?>>
 				<?php echo esc_html( $level->level_title ); ?>
 			</option>
 			<?php endforeach; ?>
@@ -213,8 +212,9 @@ class IncPopupRule_Membership extends IncPopupRule {
 	 * @param  array $data
 	 */
 	protected function render_subscription_form( $name, $label, $data ) {
-		if ( ! is_array( $data ) ) { $data = array(); }
-		if ( ! is_array( @$data['subscriptions'] ) ) { $data['subscriptions'] = array(); }
+		$data = lib2()->array->get( $data );
+		lib2()->array->equip( $data, 'membership_sub' );
+		$data['membership_sub'] = lib2()->array->get( $data['membership_sub'] );
 
 		if ( ! $this->is_active ) {
 			$this->render_plugin_inactive();
@@ -224,10 +224,10 @@ class IncPopupRule_Membership extends IncPopupRule {
 		?>
 		<fieldset>
 			<legend><?php echo esc_html( $label ) ?></legend>
-			<select name="po_rule_data[<?php echo esc_attr( $name ); ?>][subscriptions][]" multiple="multiple">
+			<select name="po_rule_data[<?php echo esc_attr( $name ); ?>][membership_sub][]" multiple="multiple">
 			<?php foreach ( $this->subscriptions as $subscription ) : ?>
 			<option value="<?php echo esc_attr( $subscription->id ); ?>"
-				<?php selected( in_array( $subscription->id, $data['subscriptions'] ) ); ?>>
+				<?php selected( in_array( $subscription->id, $data['membership_sub'] ) ); ?>>
 				<?php echo esc_html( $subscription->sub_name ); ?>
 			</option>
 			<?php endforeach; ?>
@@ -244,13 +244,15 @@ class IncPopupRule_Membership extends IncPopupRule {
 	protected function render_plugin_inactive() {
 		?>
 		<div class="error below-h2"><p>
-			<?php printf(
+			<?php
+			printf(
 				__(
 					'This condition requires that the <a href="%s" target="_blank">' .
 					'Membership Plugin</a> is installed and activated.', PO_LANG
 				),
 				'http://premium.wpmudev.org/project/membership/'
-			);?>
+			);
+			?>
 		</p></div>
 		<?php
 	}
@@ -264,17 +266,21 @@ class IncPopupRule_Membership extends IncPopupRule {
 	 */
 	protected function user_has_level( $data ) {
 		$result = false;
-		if ( ! is_array( $data ) ) { $data = array(); }
-		if ( ! is_array( @$data['membership_lvl'] ) ) { $data['membership_lvl'] = array(); }
-		$level_list = $data['membership_lvl'];
 
-        foreach ( $level_list as $level ) {
-            if ( current_user_on_level( $level ) ) {
-                $result = true;
-                break;
-            }
-        }
-        return $result;
+		if ( $this->is_active ) {
+			$data = lib2()->array->get( $data );
+			lib2()->array->equip( $data, 'membership_lvl' );
+			$data['membership_lvl'] = lib2()->array->get( $data['membership_lvl'] );
+
+			foreach ( $data['membership_lvl'] as $level ) {
+				if ( current_user_on_level( $level ) ) {
+					$result = true;
+					break;
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -286,17 +292,21 @@ class IncPopupRule_Membership extends IncPopupRule {
 	 */
 	protected function user_has_subscription( $data ) {
 		$result = false;
-		if ( ! is_array( $data ) ) { $data = array(); }
-		if ( ! is_array( @$data['membership_sub'] ) ) { $data['membership_sub'] = array(); }
-		$sub_list = $data['membership_sub'];
 
-        foreach ( $sub_list as $subscription ) {
-            if ( current_user_on_subscription( $subscription ) ) {
-                $result = true;
-                break;
-            }
-        }
-        return $result;
+		if ( $this->is_active ) {
+			$data = lib2()->array->get( $data );
+			lib2()->array->equip( $data, 'membership_sub' );
+			$data['membership_sub'] = lib2()->array->get( $data['membership_sub'] );
+
+			foreach ( $data['membership_sub'] as $subscription ) {
+				if ( current_user_on_subscription( $subscription ) ) {
+					$result = true;
+					break;
+				}
+			}
+		}
+
+		return $result;
 	}
 
 };

@@ -18,16 +18,19 @@ class MS_View_Membership_News extends MS_View {
 			$title = sprintf(
 				__( '%s News', MS_TEXT_DOMAIN ),
 				sprintf(
-					'<span class="the-title" style="background-color:%2$s">%1$s</span>',
+					'<span class="ms-membership" style="background-color:%2$s">%1$s</span>',
 					esc_html( $membership->name ),
 					$membership->get_color()
 				)
+			);
+			$url = esc_url_raw(
+				add_query_arg( array( 'step' => MS_Controller_Membership::STEP_OVERVIEW ) )
 			);
 			$back_link = array(
 				'id' => 'back',
 				'type' => MS_Helper_Html::TYPE_HTML_LINK,
 				'value' => __( '&raquo; Back to Overview', MS_TEXT_DOMAIN ),
-				'url' => add_query_arg( array( 'step' => MS_Controller_Membership::STEP_OVERVIEW ) ),
+				'url' => $url,
 				'class' => 'wpmui-field-button button',
 			);
 		} else {

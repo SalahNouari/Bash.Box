@@ -200,6 +200,63 @@ class MS_Rule extends MS_Model {
 	}
 
 	/**
+	 * Tries to determine the queried post-type of the specified WP_Query object.
+	 *
+	 * If the query targetet multiple post_types at once, then an array of
+	 * all queried post_types is returned.
+	 *
+	 * @since  1.1.1.4
+	 * @param  WP_Query $wp_query
+	 * @return string|array The post-type(s) that was queried.
+	 */
+	public static function get_post_type( $wp_query ) {
+		$post_type = $wp_query->get( 'post_type' );
+
+		if ( empty( $post_type )
+			&& isset( $wp_query->queried_object )
+			&& isset( $wp_query->queried_object->post_type )
+		) {
+			// This might set $post_type to an array.
+			$post_type = $wp_query->queried_object->post_type;
+		}
+
+		if ( empty( $post_type ) ) {
+			// The WP_Query does not explicitely specify a post_type. Guess.
+			$qv = $wp_query->query_vars;
+			$qq = $wp_query->query;
+
+			if ( class_exists( 'WooCommerce' ) ) {
+				if ( ! empty( $qv['wc_query'] )
+					|| ! empty( $qq['product_cat'] )
+					|| ! empty( $qq['product_tag'] )
+					|| ! empty( $qq['product_shipping_class'] )
+				) {
+					// WooCommerce Product.
+					$post_type = 'product';
+				}
+			}
+
+			if ( $wp_query->is_home ) {
+				// Home page, showing latest posts.
+				$post_type = 'post';
+			}
+
+			if ( $qv['withcomments'] ) {
+				// Seems to be posts, since it has comments.
+				$post_type = 'post';
+			}
+		}
+
+		$post_type = apply_filters(
+			'ms_rule_post_type',
+			$post_type,
+			$wp_query
+		);
+
+		return $post_type;
+	}
+
+	/**
 	 * Set up the rule.
 	 * This is called right before either the protect_content() or
 	 * protect_admin_content() function is called.
@@ -471,10 +528,14 @@ class MS_Rule extends MS_Model {
 	 * @since 1.0.0
 	 *
 	 * @param string $id The content id to verify access.
+	 * @param bool $admin_has_access Default true: Admin will always have access,
+	 *             no matter how protection is set up. False will ignore the
+	 *             admin status and check protection rules normaly.
+	 *
 	 * @return boolean TRUE if has access, FALSE otherwise.
 	 */
-	public function has_access( $id ) {
-		if ( MS_Model_Member::is_normal_admin() ) {
+	public function has_access( $id, $admin_has_access = true ) {
+		if ( $admin_has_access && MS_Model_Member::is_normal_admin() ) {
 			return true;
 		}
 
@@ -1067,15 +1128,19 @@ class MS_Rule extends MS_Model {
 		 *
 		 * @since 1.1.0
 		 */
-		$exclude = apply_filters(
-			'ms_rule_exclude_items-' . $this->rule_type,
-			$exclude,
-			$args
+		$exclude = array_unique(
+			apply_filters(
+				'ms_rule_exclude_items-' . $this->rule_type,
+				$exclude,
+				$args
+			)
 		);
-		$include = apply_filters(
-			'ms_rule_include_items-' . $this->rule_type,
-			$include,
-			$args
+		$include = array_unique(
+			apply_filters(
+				'ms_rule_include_items-' . $this->rule_type,
+				$include,
+				$args
+			)
 		);
 
 		$res = (object) array(

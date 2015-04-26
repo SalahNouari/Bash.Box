@@ -368,7 +368,7 @@ class TheLib_2_0_1_Ui extends TheLib_2_0_1 {
 				if ( ! is_array( $item ) ) { continue; }
 				$key = sanitize_html_class( $item[0] );
 				$obj = array( 'window.' . $key => $item[1] );
-				$collected = self::$core->array->merge_recursive_distinct( $collected, $obj );
+				$collected = self::$core->array->merge_recursive_distinct( $collected, $obj );	     	 	  		 				
 			}
 
 			echo '<script>';

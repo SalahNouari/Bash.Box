@@ -355,10 +355,11 @@ class MS_Controller_Frontend extends MS_Controller {
 	 * @return string The current signup step after validation.
 	 */
 	private function get_signup_step() {
-		static $steps;
+		static $Valid_Steps = null;
+		static $Login_Steps = null;
 
-		if ( empty( $steps ) ) {
-			$steps = apply_filters(
+		if ( empty( $Valid_Steps ) ) {
+			$Valid_Steps = apply_filters(
 				'ms_controller_frontend_signup_steps',
 				array(
 					self::STEP_CHOOSE_MEMBERSHIP,
@@ -370,11 +371,21 @@ class MS_Controller_Frontend extends MS_Controller {
 					self::STEP_PROCESS_PURCHASE,
 				)
 			);
+
+			// These steps are only available to logged-in users.
+			$Login_Steps = apply_filters(
+				'ms_controller_frontend_signup_steps_private',
+				array(
+					self::STEP_PAYMENT_TABLE,
+					self::STEP_GATEWAY_FORM,
+					self::STEP_PROCESS_PURCHASE,
+				)
+			);
 		}
 
 		lib2()->array->equip_request( 'step', 'membership_id' );
 
-		if ( in_array( $_REQUEST['step'], $steps ) ) {
+		if ( in_array( $_REQUEST['step'], $Valid_Steps ) ) {
 			$step = $_REQUEST['step'];
 		} else {
 			// Initial step
@@ -382,9 +393,6 @@ class MS_Controller_Frontend extends MS_Controller {
 		}
 
 		if ( self::STEP_PAYMENT_TABLE == $step ) {
-			if ( ! MS_Model_Member::is_logged_in() ) {
-				$step = self::STEP_REGISTER_FORM_ALT;
-			}
 			if ( ! MS_Model_Membership::is_valid_membership( $_REQUEST['membership_id'] ) ) {
 				$step = self::STEP_CHOOSE_MEMBERSHIP;
 			}
@@ -392,6 +400,10 @@ class MS_Controller_Frontend extends MS_Controller {
 
 		if ( self::STEP_CHOOSE_MEMBERSHIP == $step && ! empty( $_GET['membership_id'] ) ) {
 			$step = self::STEP_PAYMENT_TABLE;
+		}
+
+		if ( ! MS_Model_Member::is_logged_in() && in_array( $step, $Login_Steps ) ) {
+			$step = self::STEP_REGISTER_FORM_ALT;
 		}
 
 		return apply_filters(
@@ -443,7 +455,7 @@ class MS_Controller_Frontend extends MS_Controller {
 		$url = wp_registration_url();
 
 		if ( self::$handle_registration && ! empty( $step ) ) {
-			$url = add_query_arg( 'step', $step, $url );
+			$url = esc_url_raw( add_query_arg( 'step', $step, $url ) );
 		}
 
 		return $url;
@@ -552,16 +564,20 @@ class MS_Controller_Frontend extends MS_Controller {
 
 			// Go to membership signup payment form.
 			if ( empty( $_REQUEST['membership_id'] ) ) {
-				$redirect = add_query_arg(
-					array(
-						'step' => self::STEP_CHOOSE_MEMBERSHIP,
+				$redirect = esc_url_raw(
+					add_query_arg(
+						array(
+							'step' => self::STEP_CHOOSE_MEMBERSHIP,
+						)
 					)
 				);
 			} else {
-				$redirect = add_query_arg(
-					array(
-						'step' => self::STEP_PAYMENT_TABLE,
-						'membership_id' => absint( $_REQUEST['membership_id'] ),
+				$redirect = esc_url_raw(
+					add_query_arg(
+						array(
+							'step' => self::STEP_PAYMENT_TABLE,
+							'membership_id' => absint( $_REQUEST['membership_id'] ),
+						)
 					)
 				);
 			}
@@ -632,7 +648,7 @@ class MS_Controller_Frontend extends MS_Controller {
 			return $content;
 		}
 
-		$invoice = MS_Model_Invoice::get_current_invoice( $subscription );
+		$invoice = $subscription->get_current_invoice();
 
 		/**
 		 * Notify Add-ons that we are preparing payment details for a membership
@@ -651,12 +667,6 @@ class MS_Controller_Frontend extends MS_Controller {
 		$invoice->save();
 
 		$data['invoice'] = $invoice;
-
-		if ( $invoice->trial_period ) {
-			$next_invoice = MS_Model_Invoice::get_next_invoice( $subscription );
-			$data['next_invoice'] = $next_invoice;
-		}
-
 		$data['membership'] = $membership;
 		$data['member'] = $member;
 		$data['ms_relationship'] = $subscription;
@@ -716,14 +726,17 @@ class MS_Controller_Frontend extends MS_Controller {
 							$member->$field = $value;
 						}
 					}
+
 					try {
 						$member->validate_member_info();
 						$member->save();
-						wp_safe_redirect( remove_query_arg( 'action' ) );
+						wp_safe_redirect(
+							esc_url_raw( remove_query_arg( 'action' ) )
+						);
 						exit;
 
 					}
-					catch (Exception $e) {
+					catch ( Exception $e ) {
 						$data['errors']  = $e->getMessage();
 					}
 				}
@@ -735,18 +748,8 @@ class MS_Controller_Frontend extends MS_Controller {
 				break;
 
 			case self::ACTION_VIEW_INVOICES:
-				$data['invoices'] = MS_Model_Invoice::get_invoices(
-					array(
-						'author' => $member->id,
-						'posts_per_page' => -1,
-						'meta_query' => array(
-							array(
-								'key' => 'amount',
-								'value' => '0',
-								'compare' => '!=',
-							),
-						)
-					)
+				$data['invoices'] = MS_Model_Invoice::get_public_invoices(
+					$member->id
 				);
 
 				$view = MS_Factory::create( 'MS_View_Frontend_Invoices' );

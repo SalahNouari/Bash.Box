@@ -134,7 +134,7 @@ class MS_Rule_Page_Model extends MS_Rule {
 	 * @return bool|null True if has access, false otherwise.
 	 *     Null means: Rule not relevant for current page.
 	 */
-	public function has_access( $id ) {
+	public function has_access( $id, $admin_has_access = true ) {
 		$has_access = null;
 
 		if ( empty( $id ) ) {
@@ -152,7 +152,7 @@ class MS_Rule_Page_Model extends MS_Rule {
 			if ( MS_Model_Pages::is_membership_page( $id ) ) {
 				$has_access = true;
 			} else {
-				$has_access = parent::has_access( $id );
+				$has_access = parent::has_access( $id, $admin_has_access );
 			}
 		}
 
@@ -212,6 +212,17 @@ class MS_Rule_Page_Model extends MS_Rule {
 	 * @return array The contents array.
 	 */
 	public function get_contents( $args = null ) {
+		/**
+		 * The 'hierarchial' flag messes up the offset by skipping some children
+		 * in some cases (i.e. it will always skip pages until the first result
+		 * is a top-level page). We have to get all pages from 0 and paginate
+		 * manually...
+		 */
+		$offset = absint( $args['offset'] );
+		$limit = $offset + absint( $args['number'] );
+		$args['offset'] = 0;
+		$args['number'] = $limit;
+
 		$args = $this->get_query_args( $args );
 
 		if ( isset( $args['s'] ) ) {
@@ -219,7 +230,10 @@ class MS_Rule_Page_Model extends MS_Rule {
 		}
 		$pages = get_pages( $args );
 
-		foreach ( $pages as $content ) {
+		for ( $num = $offset; $num < $limit; $num += 1 ) {
+			if ( ! isset( $pages[$num] ) ) { continue; }
+
+			$content = $pages[$num];
 			$name = $content->post_title;
 
 			$parent = get_post( $content->post_parent );

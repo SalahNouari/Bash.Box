@@ -260,7 +260,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 		}
 
 		// Month filter.
-		if ( ! empty( $_REQUEST['m'] ) && strlen( $_REQUEST['m'] ) == 6 ) {
+		if ( ! empty( $_REQUEST['m'] ) && 6 == strlen( $_REQUEST['m'] ) ) {
 			$args['year'] = substr( $_REQUEST['m'], 0 , 4 );
 			$args['monthnum'] = substr( $_REQUEST['m'], 5 , 2 );
 		}
@@ -566,7 +566,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 		</fieldset>
 		<div class="dripped-form cf no-auto-init hidden">
 			<div class="drip-col col-1">
-				<span class="the-name"></span>
+				<span class="the-name ms-membership"></span>
 				<?php MS_Helper_Html::html_element( $field_id ); ?>
 			</div>
 			<div class="drip-col col-2">
@@ -640,7 +640,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 			$title,
 			'<b>' . esc_html( $type_name ) . '</b>',
 			sprintf(
-				'<span class="the-title" style="background-color:%2$s">%1$s</span>',
+				'<span class="ms-membership" style="background-color:%2$s">%1$s</span>',
 				esc_html( $membership_name ),
 				$membership_color
 			)
@@ -667,7 +667,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 
 		$url = apply_filters(
 			'ms_helper_listtable_' . $this->id . '_url',
-			remove_query_arg( array( 'status', 'paged' ) )
+			esc_url_raw( remove_query_arg( array( 'status', 'paged' ) ) )
 		);
 
 		$views = array();
@@ -678,14 +678,26 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 			//'count' => $count['total'],
 		);
 
+		$public_url = esc_url_raw(
+			add_query_arg(
+				array( 'status' => MS_Model_Rule::FILTER_NOT_PROTECTED ),
+				$url
+			)
+		);
 		$views['public'] = array(
-			'url' => add_query_arg( array( 'status' => MS_Model_Rule::FILTER_NOT_PROTECTED ), $url ),
+			'url' => $public_url,
 			'label' => __( 'Unprotected', MS_TEXT_DOMAIN ),
 			//'count' => $count['restricted'],
 		);
 
+		$protected_url = esc_url_raw(
+			add_query_arg(
+				array( 'status' => MS_Model_Rule::FILTER_PROTECTED ),
+				$url
+			)
+		);
 		$views['protected'] = array(
-			'url' => add_query_arg( array( 'status' => MS_Model_Rule::FILTER_PROTECTED ), $url ),
+			'url' => $protected_url,
 			'label' => __( 'Protected', MS_TEXT_DOMAIN ),
 			//'count' => $count['accessible'],
 		);

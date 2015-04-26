@@ -83,7 +83,7 @@ class MS_Rule_MenuItem_Model extends MS_Rule {
 	 * @return bool|null True if has access, false otherwise.
 	 *     Null means: Rule not relevant for current page.
 	 */
-	public function has_access( $id ) {
+	public function has_access( $id, $admin_has_access = true ) {
 		return null;
 	}
 
@@ -107,10 +107,10 @@ class MS_Rule_MenuItem_Model extends MS_Rule {
 	 * @param  object $item The menu item object.
 	 * @return bool
 	 */
-	protected function can_access_menu( $item ) {
+	protected function can_access_menu( $item, $admin_has_access = true ) {
 		$result = false;
 
-		if ( parent::has_access( $item->ID ) ) {
+		if ( parent::has_access( $item->ID, $admin_has_access ) ) {
 			$result = true;
 		}
 
@@ -225,7 +225,7 @@ class MS_Rule_MenuItem_Model extends MS_Rule {
 	 */
 	public function view_url( $url ) {
 		$menu_id = MS_Controller::get_request_field( 'menu_id', 0, 'REQUEST' );
-		$url = add_query_arg( 'menu_id', $menu_id, $url );
+		$url = esc_url_raw( add_query_arg( 'menu_id', $menu_id, $url ) );
 		return $url;
 	}
 
@@ -316,8 +316,10 @@ class MS_Rule_MenuItem_Model extends MS_Rule {
 				$count_args['menu_id'] = $nav->term_id;
 				$total = $this->get_content_count( $count_args );
 
-				$menu_url = add_query_arg(
-					array( 'menu_id' => $nav->term_id )
+				$menu_url = esc_url_raw(
+					add_query_arg(
+						array( 'menu_id' => $nav->term_id )
+					)
 				);
 
 				$contents[ $nav->term_id ] = array(

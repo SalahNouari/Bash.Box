@@ -70,7 +70,7 @@ class MS_Rule_Url_Model extends MS_Rule {
 	 * @return bool|null True if has access, false otherwise.
 	 *     Null means: Rule not relevant for current page.
 	 */
-	public function has_access( $id ) {
+	public function has_access( $id, $admin_has_access = true ) {
 		$has_access = null;
 
 		if ( MS_Model_Addon::is_enabled( MS_Model_Addon::ADDON_URL_GROUPS ) ) {
@@ -391,7 +391,7 @@ class MS_Rule_Url_Model extends MS_Rule {
 		static $Protected_Urls = null;
 
 		if ( null === $Protected_Urls ) {
-			$base_rule = MS_Model_Membership::get_base()->get_rule( $this->rule_type );
+			$base_rule = MS_Model_Membership::get_base()->get_rule( $this->rule_type );	      		 		  							
 			$Protected_Urls = $base_rule->rule_value;
 		}
 

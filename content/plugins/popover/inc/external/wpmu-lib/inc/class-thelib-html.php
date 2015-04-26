@@ -494,10 +494,15 @@ class TheLib_2_0_1_Html extends TheLib_2_0_1  {
 		}
 
 		if ( $sticky ) {
-			if ( isset( $_POST[$name] ) ) {
-				$value = $_POST[$name];
-			} elseif ( isset( $_GET[$name] ) ) {
-				$value = $_GET[$name];
+			$sticky_key = $name;
+			if ( '[]' == substr( $sticky_key, -2 ) ) {
+				$sticky_key = substr( $sticky_key, 0, -2 );
+			}
+
+			if ( isset( $_POST[$sticky_key] ) ) {
+				$value = $_POST[$sticky_key];
+			} elseif ( isset( $_GET[$sticky_key] ) ) {
+				$value = $_GET[$sticky_key];
 			}
 		}
 
@@ -778,6 +783,12 @@ class TheLib_2_0_1_Html extends TheLib_2_0_1  {
 	private function element_datepicker( $labels, $class, $id, $name, $value, $attr ) {
 		$this->wrap_open( 'datepicker', $class );
 		$this->element_label( $labels );
+
+		if ( ! empty( $value ) ) {
+			if ( ! preg_match( '/\d\d\d\d-\d\d-\d\d/', $value ) ) {
+				$value = date( 'Y-m-d', strtotime( $value ) );
+			}
+		}
 
 		printf(
 			'<span class="wpmui-field-input"><input class="wpmui-datepicker %1$s" type="text" id="%2$s" name="%3$s" value="%4$s" %5$s /><i class="wpmui-icon wpmui-fa wpmui-fa-calendar"></i></span>',

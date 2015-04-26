@@ -600,6 +600,28 @@ class MS_Controller_Shortcode extends MS_Controller {
 					'form'            => '',  // [login|lost|reset|logout]
 					'show_labels'     => false,
 					'nav_pos'         => 'top', // [top|bottom]
+
+					// form="login"
+					'show_remember'   => true,
+					'label_username'  => __( 'Username', MS_TEXT_DOMAIN ),
+					'label_password'  => __( 'Password', MS_TEXT_DOMAIN ),
+					'label_remember'  => __( 'Remember Me', MS_TEXT_DOMAIN ),
+					'label_log_in'    => __( 'Log In', MS_TEXT_DOMAIN ),
+					'id_login_form'   => 'loginform',
+					'id_username'     => 'user_login',
+					'id_password'     => 'user_pass',
+					'id_remember'     => 'rememberme',
+					'id_login'        => 'wp-submit',
+					'value_username'  => '',
+					'value_remember'  => false,
+
+					// form="lost"
+					'label_lost_username' => __( 'Username or E-mail', MS_TEXT_DOMAIN ),
+					'label_lostpass'      => __( 'Reset Password', MS_TEXT_DOMAIN ),
+					'id_lost_form'        => 'lostpasswordform',
+					'id_lost_username'    => 'user_login',
+					'id_lostpass'         => 'wp-submit',
+					'value_username'      => '',
 				),
 				$atts
 			)
@@ -609,6 +631,8 @@ class MS_Controller_Shortcode extends MS_Controller {
 		$data['register'] = lib2()->is_true( $data['register'] );
 		$data['show_note'] = lib2()->is_true( $data['show_note'] );
 		$data['show_labels'] = lib2()->is_true( $data['show_labels'] );
+		$data['show_remember'] = lib2()->is_true( $data['show_remember'] );
+		$data['value_remember'] = lib2()->is_true( $data['value_remember'] );
 
 		$view = MS_Factory::create( 'MS_View_Shortcode_Login' );
 		$view->data = apply_filters( 'ms_view_shortcode_login_data', $data, $this );
@@ -718,18 +742,9 @@ class MS_Controller_Shortcode extends MS_Controller {
 			}
 		}
 
-		$data['invoices'] = MS_Model_Invoice::get_invoices(
-			array(
-				'author' => $data['member']->id,
-				'posts_per_page' => $data['limit_invoices'],
-				'meta_query' => array(
-					array(
-						'key' => 'amount',
-						'value' => '0',
-						'compare' => '!=',
-					),
-				)
-			)
+		$data['invoices'] = MS_Model_Invoice::get_public_invoices(
+			$data['member']->id,
+			$data['limit_invoices']
 		);
 
 		$data['events'] = MS_Model_Event::get_events(
@@ -813,38 +828,6 @@ class MS_Controller_Shortcode extends MS_Controller {
 
 		if ( ! empty( $data['post_id'] ) ) {
 			$invoice = MS_Factory::load( 'MS_Model_Invoice', $data['post_id'] );
-			$trial_invoice = null;
-
-			if ( $invoice->trial_period ) {
-				// This is the trial-period invoice. Use thethe first real invoice instead.
-				$paid_args = array(
-					'meta_query' => array(
-						'relation' => 'AND',
-						array(
-							'key' => 'ms_relationship_id',
-							'value' => $invoice->ms_relationship_id,
-							'compare' => '=',
-						),
-						array(
-							'key' => 'trial_period',
-							'value' => '',
-							'compare' => '=',
-						),
-						array(
-							'key' => 'invoice_number',
-							'value' => $invoice->invoice_number + 1,
-							'compare' => '=',
-						)
-					)
-				);
-				$paid_invoice = MS_Model_Invoice::get_invoices( $paid_args );
-
-				if ( ! empty( $paid_invoice ) ) {
-					$trial_invoice = $invoice;
-					$invoice = reset( $paid_invoice );
-				}
-			}
-
 			$subscription = MS_Factory::load( 'MS_Model_Relationship', $invoice->ms_relationship_id );
 
 			$data['invoice'] = $invoice;
@@ -852,38 +835,6 @@ class MS_Controller_Shortcode extends MS_Controller {
 			$data['ms_relationship'] = $subscription;
 			$data['membership'] = $subscription->get_membership();
 			$data['gateway'] = MS_Model_Gateway::factory( $invoice->gateway_id );
-
-			// Try to find a related trial-period invoice.
-			if ( null === $trial_invoice ) {
-				$trial_args = array(
-					'meta_query' => array(
-						'relation' => 'AND',
-						array(
-							'key' => 'ms_relationship_id',
-							'value' => $invoice->ms_relationship_id,
-							'compare' => '=',
-						),
-						array(
-							'key' => 'trial_period',
-							'value' => '',
-							'compare' => '!=',
-						),
-						array(
-							'key' => 'invoice_number',
-							'value' => $invoice->invoice_number,
-							'compare' => '<',
-							'type' => 'NUMERIC',
-						)
-					)
-				);
-				$trial_invoice = MS_Model_Invoice::get_invoices( $trial_args );
-
-				if ( ! empty( $trial_invoice ) ) {
-					$trial_invoice = reset( $trial_invoice );
-				}
-			}
-
-			$data['trial_invoice'] = $trial_invoice;
 
 			$view = MS_Factory::create( 'MS_View_Shortcode_Invoice' );
 			$view->data = apply_filters(

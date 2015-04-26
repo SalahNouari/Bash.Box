@@ -375,21 +375,33 @@ class MS_Addon_Mailchimp extends MS_Addon {
 	 */
 	public static function subscribe_user( $member, $list_id ) {
 		if ( is_email( $member->email ) && self::get_api_status() ) {
-			$auto_opt_in = self::$settings->get_custom_setting( 'mailchimp', 'auto_opt_in' );
-			$update = apply_filters( 'ms_addon_mailchimp_subscribe_user_update', true, $member, $list_id );
+			$auto_opt_in = self::$settings->get_custom_setting(
+				'mailchimp',
+				'auto_opt_in'
+			);
+			$auto_opt_in = lib2()->is_true( $auto_opt_in );
+
+			$update = apply_filters(
+				'ms_addon_mailchimp_subscribe_user_update',
+				true,
+				$member,
+				$list_id
+			);
 
 			$merge_vars = array();
-			if ( ! empty( $member->first_name ) ) {
-				$merge_vars['FNAME'] = $member->first_name;
-			}
-
-			if ( ! empty( $member->last_name ) ) {
-				$merge_vars['LNAME'] = $member->last_name;
-			}
+			$merge_vars['FNAME'] = $member->first_name;
+			$merge_vars['LNAME'] = $member->last_name;
 
 			if ( $auto_opt_in ) {
 				$merge_vars['optin_ip'] = $_SERVER['REMOTE_ADDR'];
 				$merge_vars['optin_time'] = MS_Helper_Period::current_time();
+			}
+
+			if ( empty( $merge_vars['FNAME'] ) ) {
+				unset( $merge_vars['FNAME'] );
+			}
+			if ( empty( $merge_vars['LNAME'] ) ) {
+				unset( $merge_vars['LNAME'] );
 			}
 
 			$merge_vars = apply_filters(
@@ -399,9 +411,11 @@ class MS_Addon_Mailchimp extends MS_Addon {
 				$list_id
 			);
 
-			self::$mailchimp_api->lists->subscribe(
+			$email_field = array( 'email' => $member->email );
+
+			$res = self::$mailchimp_api->lists->subscribe(
 				$list_id,
-				array( 'email' => $member->email ),
+				$email_field,
 				$merge_vars,
 				'html',
 				( ! $auto_opt_in ),

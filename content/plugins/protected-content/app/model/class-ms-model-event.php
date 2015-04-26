@@ -485,7 +485,7 @@ class MS_Model_Event extends MS_Model_CustomPostType {
 						);
 
 						if ( self::TOPIC_PAYMENT == $event->topic ) {
-							$invoice = MS_Model_Invoice::get_current_invoice( $subscription, false );
+							$invoice = $subscription->get_current_invoice( false );
 							$description = sprintf(
 								self::get_description( $type ),
 								$membership->name,
@@ -498,9 +498,8 @@ class MS_Model_Event extends MS_Model_CustomPostType {
 							);
 						}
 					} else {
-						throw new Exception(
-							__( 'Invalid Membership Relationship', MS_TEXT_DOMAIN )
-						);
+						// The subscription has no ID.
+						// Possibly it was not saved yet...
 					}
 					break;
 
@@ -534,7 +533,7 @@ class MS_Model_Event extends MS_Model_CustomPostType {
 					break;
 
 				default:
-					MS_Helper_Debug::log( " event topic not implemented $event->topic" );
+					MS_Helper_Debug::log( "Event topic not implemented: '$event->topic'" );
 					break;
 			}
 

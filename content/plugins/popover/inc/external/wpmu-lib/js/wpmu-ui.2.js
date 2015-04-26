@@ -1198,6 +1198,26 @@
 		};
 
 		/**
+		 * Adds an event handler to the dialog.
+		 *
+		 * @since  2.0.1
+		 */
+		this.on = function on( event, selector, callback ) {
+			_wnd.on( event, selector, callback );
+			return _me;
+		};
+
+		/**
+		 * Removes an event handler from the dialog.
+		 *
+		 * @since  2.0.1
+		 */
+		this.off = function off( event, selector, callback ) {
+			_wnd.off( event, selector, callback );
+			return _me;
+		};
+
+		/**
 		 * Returns the jQuery object of the window
 		 *
 		 * @since  1.0.0

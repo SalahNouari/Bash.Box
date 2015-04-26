@@ -2,7 +2,7 @@
 /**
 Plugin Name: Protected Content
 Plugin URI:  https://premium.wpmudev.org/project/protected-content/
-Version:     1.1.1.3
+Version:     1.1.1.4
 Description: The most powerful, easy to use and flexible membership plugin for WordPress sites available.
 Author:      WPMU DEV
 Author URI:  http://premium.wpmudev.org/
@@ -40,7 +40,7 @@ Text Domain: protected-content
  *
  * @since 1.0.0
  */
-define( 'MS_PLUGIN_VERSION', '1.1.1.3' );
+define( 'MS_PLUGIN_VERSION', '1.1.1.4' );
 
 /**
  * Plugin text domain.
@@ -485,7 +485,9 @@ class MS_Plugin {
 		if ( $refresh ) { return; }
 
 		lib2()->session->add( 'refresh_url_rules', true );
-		$url = add_query_arg( 'ms_ts', time(), $url );
+		$url = esc_url_raw(
+			add_query_arg( 'ms_ts', time(), $url )
+		);
 		wp_safe_redirect( $url );
 		exit;
 	}
@@ -508,7 +510,7 @@ class MS_Plugin {
 
 		do_action( 'ms_plugin_flush_rewrite_rules', $this );
 
-		$url = remove_query_arg( 'ms_ts' );
+		$url = esc_url_raw( remove_query_arg( 'ms_ts' ) );
 		wp_safe_redirect( $url );
 		exit;
 	}

@@ -106,7 +106,7 @@ class MS_Model_Communication_Registration_Free extends MS_Model_Communication_Re
 			self::COMM_VAR_USERNAME
 		);
 		$body_notice = sprintf(
-			__( 'You have successfully subscribed to our free %1$s membership level at %2$s.', MS_TEXT_DOMAIN ),
+			__( 'Thanks for subscribing to our free <strong>%1$s</strong> membership at %2$s!', MS_TEXT_DOMAIN ),
 			self::COMM_VAR_MS_NAME,
 			self::COMM_VAR_BLOG_NAME
 		);
