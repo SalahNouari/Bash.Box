@@ -1,5 +1,8 @@
 ﻿== Changelog ==
 
+= 1.4.3.8 = 2015-04-27
+- Security Update: Fixed possible WordPress XSS bug
+
 = 1.4.3.7 = 2014-06-26
 - Fixed author display in Q&A backend
 
@@ -246,4 +249,4 @@
 * initial release
 
 
-133620-1428332863-ai
+133620-1430434017-au

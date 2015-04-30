@@ -9,7 +9,7 @@ class Wdqs_Installer {
 	 * @static
 	 */
 	function check () {
-		$is_installed = get_site_option('wdqs', false);	     	 	 			  		 
+		$is_installed = get_site_option('wdqs', false);
 		if (!$is_installed) Wdqs_Installer::install();
 	}
 

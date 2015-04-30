@@ -170,10 +170,10 @@ class Domainmap_Module {
 		$ajax_url = admin_url( 'admin-ajax.php' );
 		$ajax_url = str_replace( parse_url( $ajax_url, PHP_URL_HOST ), $domain, $ajax_url );
 		restore_current_blog();
-		$response = wp_remote_request( add_query_arg( array(
+		$response = wp_remote_request( esc_url_raw( add_query_arg( array(
 			'action' => Domainmap_Plugin::ACTION_HEARTBEAT_CHECK,
 			'check'  => $check,
-		), $ajax_url ), array( 'sslverify' => false ) );
+		), $ajax_url )), array( 'sslverify' => false ) );
 		$status = !is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) == 200 && preg_replace('/\W*/', '', wp_remote_retrieve_body( $response ) ) == $check ? 1 : 0;
 		$this->set_valid_transient( $domain, $status );
 		return $status;
@@ -196,7 +196,21 @@ class Domainmap_Module {
 	 */
 	protected function is_original_domain( $domain = null ){
 		$domain = parse_url( is_null( $domain ) ? $this->_http->hostinfo : $domain  , PHP_URL_HOST );
-		return $domain === $this->get_original_domain() || strpos($domain, "." . $this->get_original_domain());
+
+        /** MULTI DOMAINS INTEGRATION */
+        if( class_exists( 'multi_domain' ) ){
+            global $multi_dm;
+            if( is_array( $multi_dm->domains ) ){
+                foreach( $multi_dm->domains as $key => $domain_item){
+                    if( $domain === $domain_item['domain_name'] || strpos($domain, "." . $domain_item['domain_name']) ){
+	                    return apply_filters("dm_is_original_domain", true, $domain);
+                    }
+                }
+            }
+        }
+
+		$is_oroginal_domain = $domain === $this->get_original_domain() || strpos($domain, "." . $this->get_original_domain());
+		return apply_filters("dm_is_original_domain", $is_oroginal_domain, $domain);
 	}
 
 	/**
@@ -218,7 +232,10 @@ class Domainmap_Module {
 	 * @return bool
 	 */
 	protected function is_login(){
-		return in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ));
+		global $pagenow;
+		$needle = isset( $pagenow ) ? $pagenow : str_replace("/", "", $this->_http->getRequestUri() );
+		$is_login = in_array( $needle, array( 'wp-login.php', 'wp-register.php' ) );
+		return apply_filters("dm_is_login", $is_login, $needle, $pagenow) ;
 	}
 
 	/**
@@ -233,7 +250,8 @@ class Domainmap_Module {
 		global $wpdb;
 		$current_domain = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
 		$domain = $domain === "" ? $current_domain  : $domain;
-		return (int) $wpdb->get_var( $wpdb->prepare("SELECT `scheme` FROM `" . DOMAINMAP_TABLE_MAP . "` WHERE `domain`=%s", $domain) );
+		$force_ssl_on_mapped_domain = (int) $wpdb->get_var( $wpdb->prepare("SELECT `scheme` FROM `" . DOMAINMAP_TABLE_MAP . "` WHERE `domain`=%s", $domain) );
+		return apply_filters("dm_force_ssl_on_mapped_domain", $force_ssl_on_mapped_domain) ;
 	}
 
 	/**
@@ -244,8 +262,9 @@ class Domainmap_Module {
 	 */
 	protected  function server_supports_ssl(){
 		$request = wp_remote_head(  $this->_http->getHostInfo("https") );
+
 		if( is_wp_error( $request ) ){
-			if( isset( $request->errors['http_request_failed'] ) && isset( $request->errors['http_request_failed'][0] ) && $request->errors['http_request_failed'][0] === "SSL: certificate verification failed (result: 5)")
+			if( isset( $request->errors['http_request_failed'] ) && isset( $request->errors['http_request_failed'][0] ) && strpos($request->errors['http_request_failed'][0], "SSL") !== false)
 				return true;
 
 			return false;
@@ -263,17 +282,18 @@ class Domainmap_Module {
 	 */
 	protected function is_subdomain(){
 		$network_domain =  parse_url( network_home_url(), PHP_URL_HOST );
-		return  (bool) str_replace( $network_domain, "", $_SERVER['HTTP_HOST']);
+		return apply_filters("dm_is_subdomain",  (bool) str_replace( $network_domain, "", $_SERVER['HTTP_HOST']));
 	}
 
 	/**
 	 * Returns ajax url based on the main domain
 	 *
 	 * @since 4.2.0.4
+	 * @param string $scheme The scheme to use. Default is 'admin', which obeys force_ssl_admin() and is_ssl(). 'http' or 'https' can be passed to force those schemes.
 	 * @return mixed
 	 */
-	protected function get_main_ajax_url(){
-		return  $this->_replace_last_occurence('network/', '', network_admin_url( 'admin-ajax.php' ) );
+	protected function get_main_ajax_url( $scheme = 'admin'  ){
+		return  $this->_replace_last_occurence('network/', '', network_admin_url( 'admin-ajax.php', $scheme ) );
 	}
 
 	/**
@@ -313,5 +333,16 @@ class Domainmap_Module {
 		}
 		set_site_transient( "domainmapping-{$domain}-health", $valid, $valid ? 4 * WEEK_IN_SECONDS  : 10 * MINUTE_IN_SECONDS );
 		return $valid;
+	}
+
+	/**
+	 * Returns current domain
+	 *
+	 * @since 4.3.1
+	 * @return mixed
+	 */
+	protected function get_current_domain(){
+		$home = home_url( '/' );
+		return parse_url( $home, PHP_URL_HOST );
 	}
 }

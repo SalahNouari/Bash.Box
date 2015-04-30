@@ -104,7 +104,7 @@ input.ms-dripped-spec-date {
 	content:'';
 	display: inline-block;
 	background:url(../images/membership_sprite.png);
-	background:url(../images/membership_sprite.svg), none;	      		 		  							
+	background:url(../images/membership_sprite.svg), none;
 	background-position: -329px -130px;
 	position: relative;
 	top: 5px;
@@ -133,4 +133,4 @@ input.ms-dripped-spec-date {
 */
 
 
-/* 133620-1430063057-au */
+/* 133620-1430434001-au */

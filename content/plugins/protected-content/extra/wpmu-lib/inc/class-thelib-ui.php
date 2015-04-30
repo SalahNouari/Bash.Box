@@ -5,7 +5,7 @@
  *
  * @since  1.1.4
  */
-class TheLib_2_0_1_Ui extends TheLib_2_0_1 {
+class TheLib_2_0_2_Ui extends TheLib_2_0_2 {
 
 	/**
 	 * Class constructor

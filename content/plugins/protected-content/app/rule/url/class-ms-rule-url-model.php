@@ -391,7 +391,7 @@ class MS_Rule_Url_Model extends MS_Rule {
 		static $Protected_Urls = null;
 
 		if ( null === $Protected_Urls ) {
-			$base_rule = MS_Model_Membership::get_base()->get_rule( $this->rule_type );	      		 		  							
+			$base_rule = MS_Model_Membership::get_base()->get_rule( $this->rule_type );
 			$Protected_Urls = $base_rule->rule_value;
 		}
 

@@ -5,7 +5,7 @@
 * @package Thesis
 */
 
-add_action('thesis_hook_before_content', 'do_qa_ask');
+add_action('thesis_hook_before_content', 'do_qa_ask');	     	 	 		  		 	
 function do_qa_ask(){
   ?>
   <div class="post_box top">

@@ -1,5 +1,5 @@
 <?php
-global $user_id;	     	 	 		  		 	
+global $user_id;
 ?>
 <h3><?php _e('Q &amp; A Settings', QA_TEXTDOMAIN);?></h3>
 <table class="form-table">

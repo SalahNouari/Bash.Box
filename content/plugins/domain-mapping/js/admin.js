@@ -58,11 +58,16 @@
 		var $domains = $('.domainmapping-domains');
 
 		$('#domainmapping-front-mapping select').change(function() {
-			var form = $(this).parents('form');
-			$.post(form.attr('action'), form.serialize());
+			var form = $(this).parents('form'),
+                $spinner = $("#domainmapping-front-mapping-spinner");
+
+            $spinner.css({visibility: "visible"});
+			$.post(form.attr('action'), form.serialize(), function(){
+                $spinner.css({visibility: "hidden"});
+            });
 		});
 
-		$('#domainmapping-form-map-domain').submit(function() {
+		$('#domainmapping-form-map-domain').on("submit", function() {
 			var self = this,
 				$self = $(self),
 				domain = $.trim($self.find('.domainmapping-input-domain').val()),
@@ -70,6 +75,7 @@
 
 			if (domain) {
 				wrapper.addClass('domainmapping-domains-wrapper-locked');
+
 				$.post($self.attr('action'), $self.serialize(), function(response) {
 					wrapper.removeClass('domainmapping-domains-wrapper-locked');
 
@@ -78,7 +84,8 @@
 					}
 
 					if (response.success) {
-						$(response.data.html).insertBefore($self.parent());
+                        $(".domainmapping-domains-list li").not(".domainmapping-form").last().after(response.data.html);
+                        $(".domainmapping-front-mapping-form-row").show();
 						self.reset();
 					} else {
 						if (response.data.message) {
@@ -103,7 +110,8 @@
 			var $self = $(this),
 				parent = $self.parent(),
                 $tr = $self.closest("tr"),
-				wrapper = $self.parents('.domainmapping-domains-wrapper');
+				wrapper = $self.parents('.domainmapping-domains-wrapper'),
+                $dropdown_row = $(".domainmapping-front-mapping-form-row");
 
 			if (confirm(domainmapping.message.unmap)) {
 				$.get($self.attr('data-href'), {}, function(response) {
@@ -117,6 +125,10 @@
                         $tr.fadeOut(300, function() {
                             $tr.remove();
                         });
+
+                     if( $(".domainmapping-domains-list li").not(".domainmapping-form").length === 2 ){
+                         $dropdown_row.fadeOut(300);
+                     }
                     }else{
                         show_error(domainmapping.message.unmap_error);
                     }
@@ -582,20 +594,35 @@
         var $this = $(this),
             $link = $this.closest("li").length ? $this.closest("li").find(".domainmapping-mapped") : $this.closest("tr").find(".domainmapping-mapped"),
             current_link = $link.html(),
-            href = $this.data("href");
+            href = $this.data("href"),
+            $spinner = $(".spinner").first().clone().removeAttr("id").css({ visibility: "visible", marginTop: 0 });
+
         e.preventDefault();
 
+        $this.closest("li").find(".spinner").remove();
+        $link.append( $spinner.show() );
         $.ajax({
             type        : "get",
             url         : href,
             success     : function(res){
+                $spinner.remove();
                 if( res.success ){
                     current_link = current_link.replace("<del>", "");
                     current_link = current_link.replace("</del>", "");
-                    current_link =  res.data.schema === 0  ? current_link.replace("https://", "http://") : current_link.replace("http://", "https://");
+
+
+                    current_link.replace("https://", "http://");
+                    if( res.data.schema === 1 ){
+                        current_link = current_link.replace("http://", "https://");
+                    }else if( res.data.schema === 2 ){
+                        current_link = current_link.replace("https://", "http://");
+                        current_link = current_link.replace("http://", "<del>http://</del>");
+                    }
+
                     $link.toggle("highlight");
                     $link.html( current_link );
                     $link.toggle("highlight");
+
                 }
 
             }
@@ -672,12 +699,11 @@
 
 
 (function($) {
-    list = {
-
+    var list = {
         init: function() {
             var timer;
             var delay = 500;
-            $('.tablenav-pages a, .manage-column.sortable a, .manage-column.sorted a').on('click', function(e) {
+            $('.domainmapping-box .tablenav-pages a, .domainmapping-box .manage-column.sortable a, .domainmapping-box .manage-column.sorted a').on('click', function(e) {
                 e.preventDefault();
                 var query = this.search.substring( 1 );
 
@@ -726,7 +752,7 @@
             var $spinner = $("#dm_excluded_pages_search_spinner"),
                 $excluded_pages =  $("#dm_exluded_pages_hidden_field"),
                 get_excluded_pages_ids = function(){
-                    return $excluded_pages.val().replace(/ /g,'').split(",")
+                    return $excluded_pages.length ?  $excluded_pages.val().replace(/ /g,'').split(",") : [];
                 };
 
             $.ajax({
@@ -788,6 +814,6 @@
             }
             return false;
         }
-    }
+    };
     list.init();
 })(jQuery);

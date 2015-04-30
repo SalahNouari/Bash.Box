@@ -212,13 +212,18 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 			$options['map_instructions'] = current_user_can('unfiltered_html') ? filter_input( INPUT_POST, 'map_instructions' ) : wp_kses_post( filter_input( INPUT_POST, 'map_instructions' ) );
 			$options['map_disallow_subdomain'] = filter_input( INPUT_POST, 'dm_disallow_subdomain', FILTER_VALIDATE_BOOLEAN );
 			$options['map_prohibited_domains'] = filter_input( INPUT_POST, 'dm_prohibited_domains', FILTER_SANITIZE_STRING );
+			$options['map_allow_excluded_urls'] = filter_input( INPUT_POST, 'map_allow_excluded_urls', FILTER_VALIDATE_INT );
+			$options['map_allow_excluded_pages'] = filter_input( INPUT_POST, 'map_allow_excluded_pages', FILTER_VALIDATE_INT );
+			$options['map_allow_forced_urls'] = filter_input( INPUT_POST, 'map_allow_forced_urls', FILTER_VALIDATE_INT );
+			$options['map_allow_forced_pages'] = filter_input( INPUT_POST, 'map_allow_forced_pages', FILTER_VALIDATE_INT );
+			$options['map_allow_multiple'] = filter_input( INPUT_POST, 'map_allow_multiple', FILTER_VALIDATE_BOOLEAN );
 
 			// update options
 			update_site_option( 'domain_mapping', $options );
 
 			// if noheader argument is passed, then redirect back to options page
 			if ( filter_input( INPUT_GET, 'noheader', FILTER_VALIDATE_BOOLEAN ) ) {
-				wp_safe_redirect( add_query_arg( array( 'noheader' => false, 'saved' => 'true' ) ) );
+				wp_safe_redirect( esc_url_raw( add_query_arg( array( 'noheader' => false, 'saved' => 'true' ) ) ) );
 				exit;
 			}
 		}
@@ -263,7 +268,7 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 
 			// if noheader argument is passed, then redirect back to options page
 			if ( filter_input( INPUT_GET, 'noheader', FILTER_VALIDATE_BOOLEAN ) ) {
-				wp_safe_redirect( add_query_arg( array( 'noheader' => false, 'saved' => 'true' ) ) );
+				wp_safe_redirect( esc_url_raw( add_query_arg( array( 'noheader' => false, 'saved' => 'true' ) ) ) );
 				exit;
 			}
 		}
@@ -315,7 +320,7 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 				if ( wp_verify_nonce( $nonce, $nonce_action ) && !empty( $items ) ) {
 					$this->_wpdb->query( 'DELETE FROM ' . DOMAINMAP_TABLE_RESELLER_LOG . ' WHERE id IN (' . implode( ', ', $items ) . ')' );
 
-					$redirect = add_query_arg( 'deleted', 'true', $redirect );
+					$redirect = esc_url_raw( add_query_arg( 'deleted', 'true', $redirect ) );
 				}
 				break;
 		}
@@ -323,7 +328,7 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 
 		// if noheader argument is passed, then redirect back to options page
 		if ( filter_input( INPUT_GET, 'noheader', FILTER_VALIDATE_BOOLEAN ) ) {
-			wp_safe_redirect( add_query_arg( 'type', isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : false, $redirect ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'type', isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : false, $redirect ) ) );
 			exit;
 		}
 	}

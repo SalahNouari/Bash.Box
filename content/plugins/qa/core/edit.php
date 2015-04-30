@@ -54,7 +54,7 @@ class QA_Edit {
 					$url = qa_get_url( 'single', $post->post_parent );
 				} elseif ( 'question' == $post->post_type ) {
 					wp_delete_post( $post->ID );
-					$url = add_query_arg( 'qa_msg', 'deleted', qa_get_url( 'archive' ) );
+					$url = esc_url_raw(add_query_arg( 'qa_msg', 'deleted', qa_get_url( 'archive' ) ));
 				}
 			}
 		} elseif ( isset( $_POST['qa_action'] ) ) {
@@ -72,7 +72,7 @@ class QA_Edit {
 		}
 
 		if ( !$url ) {
-			$url = add_query_arg( 'qa_error', 1, qa_get_url( 'archive' ) );
+			$url = esc_url_raw(add_query_arg( 'qa_error', 1, qa_get_url( 'archive' ) ));
 		}
 
 		wp_redirect( $url );

@@ -4,6 +4,17 @@ Author: Fabio Jun, Rheinard Khorf, Philipp Stracker
 Change Log:
 ----------------------------------------------------------------------
 
+1.1.1.5
+----------------------------------------------------------------------
+- Add "autofocus" attribute to login shortcode
+- Add filter "ms_model_pages_redirect_to" to customize membership redirects
+- Add new attributes to the login shortcode to customize field labels and placeholders
+- Improve the Import Tool to handle large import files without throwing memory limit exceptions
+- Improve preview of the [ms-protected-content] shortcode for admins
+- Fix various small issues with the login shortcode HTML code
+- Fix javascript collision with ACF Pro plugin
+- Fix display of invoice status in the admin Billings section
+
 1.1.1.4
 ----------------------------------------------------------------------
 - Added new automatic email notification: Subscription Renewed
@@ -229,4 +240,4 @@ Change Log:
 - Initial version.
 
 
-133620-1430063057-au
+133620-1430434001-au

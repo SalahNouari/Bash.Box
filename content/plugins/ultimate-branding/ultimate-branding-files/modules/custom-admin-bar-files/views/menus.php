@@ -5,7 +5,7 @@
  * @var $menu UB_Admin_Bar_Menu
  * @var $sub UB_Admin_Bar_Menu
  */
-$order = 1;	   	 		 		 	   		
+$order = 1;
 foreach( UB_Admin_Bar::menus() as $menu ):
 ?>
 <div class="meta-box-sortables parent_admin_bar parent_admin_bar_prev not-sortable">

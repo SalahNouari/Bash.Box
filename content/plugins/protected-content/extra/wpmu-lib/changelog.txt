@@ -4,6 +4,11 @@ Author:      Philipp Stracker
 Change Log:
 ----------------------------------------------------------------------
 
+2.0.2
+----------------------------------------------------------------------
+- Fix javascript collision with ACF Pro plugin
+- New js element wpmuUi.progressbar()
+
 2.0.1
 ----------------------------------------------------------------------
 - Fix errors when running side by side with older version
@@ -128,4 +133,4 @@ Change Log:
 - First version.
 
 
-133620-1430063057-au
+133620-1430434001-au

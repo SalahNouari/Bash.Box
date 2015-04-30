@@ -46,6 +46,14 @@ class domain_map {
      */
     const Text_Domain = "domainmap";
 
+	/**
+	 * Options key set when rewrite rules are flushed
+	 *
+	 * @since 4.3.1
+	 * @param string FLUSHED_REWRITE_RULES
+	 */
+	const FLUSHED_REWRITE_RULES = 'domainmap-flushed-rules-';
+
 	function __construct() {
 		global $wpdb, $dm_cookie_style_printed, $dm_logout, $dm_authenticated;
 
@@ -69,6 +77,8 @@ class domain_map {
 		$this->add_domain_mapping_filters();
 		add_action('wp_ajax_update_excluded_pages_list', array($this, 'ajax_update_excluded_pages_list'));
 
+		add_action("domainmap_plugin_activated", array($this, "flush_rewrite_rules"));
+		add_action("domainmap_plugin_deactivated", array($this, "remove_rewrite_rule_flush_trace"));
 	}
 
 
@@ -134,7 +144,7 @@ class domain_map {
 				$url = str_replace( array( 'https://', 'http://' ), '', $url );
 
 				// Check if we are looking at the admin-ajax.php and if so, we want to leave the domain as mapped
-				if ( $path != 'admin-ajax.php' ) {
+				if ( $path != 'admin-ajax.php' && strpos($url, "admin-ajax.php") !== false ) {
 					// swap the mapped url with the original one
 					$admin_url = str_replace( $mapped_url, $url, $admin_url );
 				} else {
@@ -691,5 +701,39 @@ class domain_map {
 	function ajax_update_excluded_pages_list() {
 		$wp_list_table = new Domainmap_Table_ExcludedPages_Listing();
 		$wp_list_table->ajax_response();
+	}
+
+	/**
+	 * Allow multiple domain mappings
+	 * @return bool|mixed
+	 */
+	public static function allow_multiple(){
+		if( defined("DOMAINMAPPING_ALLOWMULTI") ) return (bool) DOMAINMAPPING_ALLOWMULTI;
+		return Domainmap_Plugin::instance()->get_option("map_allow_multiple", false);
+	}
+
+	/**
+	 * Flushes rewrite rules on plugin activation
+	 *
+	 * @since 4.3.1
+	 */
+	function flush_rewrite_rules(){
+		flush_rewrite_rules(true);
+	}
+
+	/**
+	 * Removes trace of rewrite rule flush from db so that later on they can be flashed when the plugin gets activated again
+	 *
+	 * @since 4.3.1
+	 */
+	function remove_rewrite_rule_flush_trace(){
+		global $wpdb;
+
+		/**
+		 * @param $wpdb WPDB
+		 */
+		$prefix = self::FLUSHED_REWRITE_RULES;
+
+		$wpdb->query("DELETE FROM $wpdb->sitemeta WHERE `meta_key` LIKE '$prefix%'");
 	}
 }

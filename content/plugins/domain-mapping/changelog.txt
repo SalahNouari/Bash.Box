@@ -1,4 +1,41 @@
 * Speed up DNS A record detection on network settings and allow disabling it via DM_SKIP_DNS_CHECK define
+
+== 4.4.0.2 ==
+* Added: More control over excluded and ssl-forced pages and urls ( for super admin )
+* Fixed: Issue with prohibited domains and disallowed subdomains
+* Fixed: Issue with php v.5.2.x and Punycode Class ( used for International Domain Names )
+* Fixed: Some js issues in mapped domain table pagination
+* Fixed: Some typos
+
+== 4.4.0.1 ==
+* Fixed: Post preview link issue
+* Fixed: Bug in eNom purchase functionality
+* Fixed: Some minor bugs
+
+== 4.4.0 ==
+* Better integration with Multi-Domains plugin
+* Revamped SSO to improve performance and solve issue with out of date token nag, now fully async
+* Added: Ability to disable single url scheme forcing and mapping exclusion
+* Added: Better UX for adding and managing mapped domains
+* Added: Ability to enable multiple mapped domains from admin of the main site
+* Added: Support for multiple currencies
+* Fixed: Bug when  going from an excluded page to the mapped domain
+* Fixed: Forcing https for admin and login
+* Fixed: Better UX for adding and managing mapped domains
+* Fixed: Punycode class compatibility when some  extensions are not installed
+* Fixed: WP add_query_var and remove_query_var vulnerability
+* Removed: DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN, the schema forcing for mapped domains as well as original domain is only possible from the setting pages
+
+== 4.3.1 ==
+* Better integration with Multi-Domains plugin
+* Revamped SSO to improve performance and solve issue with out of date token nag, now fully async
+* Added: Ability to disable single url scheme forcing and mapping exclusion
+* Added: Better UX for adding and managing mapped domains
+* Added: Ability to enable multiple mapped domains from admin of the main site
+* Fixed: Bug when  going from an excluded page to the mapped domain
+* Fixed: Forcing https for admin and login
+* Fixed: Better UX for adding and managing mapped domains
+
 == 4.3.0.4 ==
 * Fixed issue with excluded pages problem on homepage
 
@@ -123,4 +160,4 @@
 * Improved MultiDB compatibility by registering domain mapping tables as global
 
 
-133620-1426305688-au
+133620-1430433991-au

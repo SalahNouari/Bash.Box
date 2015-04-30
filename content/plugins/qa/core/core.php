@@ -70,7 +70,7 @@ class QA_Core {
 		if ( isset( $this->g_settings["report_reasons"] ) && '' != trim( $this->g_settings["report_reasons"] )
 		&& !isset( $_POST["report_reason"] ) ) {
 
-			$url = add_query_arg( array( 'no_reason' => '1' . $anchor ), get_permalink( $id ) );
+			$url = esc_url_raw(add_query_arg( array( 'no_reason' => '1' . $anchor ), get_permalink( $id ) ));
 			wp_redirect( $url );
 			die;
 		}
@@ -87,7 +87,7 @@ class QA_Core {
 			//			if ($securimage->check($_POST['captcha_code']) == false) {
 
 			if( $_SESSION['captcha_random_value'] != md5($random)) {
-				$url = add_query_arg( array( 'flag_error' => '1' . $anchor ), get_permalink( $id ) );
+				$url = esc_url_raw(add_query_arg( array( 'flag_error' => '1' . $anchor ), get_permalink( $id ) ));
 				wp_redirect( $url );
 				die;
 			}
@@ -134,7 +134,7 @@ class QA_Core {
 			wp_mail( $to, $subject, $message );
 		}
 
-		$url = add_query_arg( array( 'flag_received' => '1' . $anchor ), get_permalink( $id ) );
+		$url = esc_url_raw(add_query_arg( array( 'flag_received' => '1' . $anchor ), get_permalink( $id ) ));
 		wp_redirect( $url );
 		die;
 	}
@@ -285,7 +285,7 @@ class QA_Core {
 	function add_rewrite_rule( $regex, $args, $position = 'top' ) {
 		global $wp, $wp_rewrite;
 
-		$result = add_query_arg( $args, 'index.php' );
+		$result = esc_url_raw(add_query_arg( $args, 'index.php' ));
 		add_rewrite_rule( $regex, $result, $position );
 	}
 

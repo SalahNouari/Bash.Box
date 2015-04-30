@@ -12,7 +12,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -129,6 +129,13 @@ class MS_Controller_Shortcode extends MS_Controller {
 				MS_Helper_Shortcode::SCODE_USER,
 				array( $this, 'show_to_user' )
 			);
+
+			if ( MS_Model_Member::is_normal_admin() ) {
+				add_shortcode(
+					MS_Rule_Shortcode_Model::PROTECT_CONTENT_SHORTCODE,
+					array( 'MS_Rule_Shortcode_Model', 'debug_protect_content_shortcode')
+				);
+			}
 		} else {
 			$shortcodes = array(
 				MS_Helper_Shortcode::SCODE_REGISTER_USER,
@@ -219,7 +226,20 @@ class MS_Controller_Shortcode extends MS_Controller {
 					'last_name' => substr( trim( $_REQUEST['last_name'] ), 0, 50 ),
 					'username' => substr( trim( $_REQUEST['username'] ), 0, 50 ),
 					'email' => substr( trim( $_REQUEST['email'] ), 0, 50 ),
-					'membership_id' => $_REQUEST['membership_id'],
+					'membership_id' => trim( $_REQUEST['membership_id'] ),
+					'label_first_name' => __( 'First Name', MS_TEXT_DOMAIN ),
+					'label_last_name' => __( 'Last Name', MS_TEXT_DOMAIN ),
+					'label_username' => __( 'Choose a Username', MS_TEXT_DOMAIN ),
+					'label_email' => __( 'Email Address', MS_TEXT_DOMAIN ),
+					'label_password' => __( 'Password', MS_TEXT_DOMAIN ),
+					'label_password2' => __( 'Confirm Password', MS_TEXT_DOMAIN ),
+					'label_register' => __( 'Register My Account', MS_TEXT_DOMAIN ),
+					'hint_first_name' => '',
+					'hint_last_name' => '',
+					'hint_username' => '',
+					'hint_email' => '',
+					'hint_password' => '',
+					'hint_password2' => '',
 					'title' => __( 'Create an Account', MS_TEXT_DOMAIN ),
 					'loginlink' => true,
 					'errors' => '',
@@ -599,6 +619,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 					'show_note'       => true,   // Show the "you are not logged in" note?
 					'form'            => '',  // [login|lost|reset|logout]
 					'show_labels'     => false,
+					'autofocus'       => true,
 					'nav_pos'         => 'top', // [top|bottom]
 
 					// form="login"
@@ -633,6 +654,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 		$data['show_labels'] = lib2()->is_true( $data['show_labels'] );
 		$data['show_remember'] = lib2()->is_true( $data['show_remember'] );
 		$data['value_remember'] = lib2()->is_true( $data['value_remember'] );
+		$data['autofocus'] = lib2()->is_true( $data['autofocus'] );
 
 		$view = MS_Factory::create( 'MS_View_Shortcode_Login' );
 		$view->data = apply_filters( 'ms_view_shortcode_login_data', $data, $this );

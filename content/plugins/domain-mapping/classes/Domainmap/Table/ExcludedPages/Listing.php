@@ -48,6 +48,7 @@ class Domainmap_Table_ExcludedPages_Listing extends Domainmap_Table {
 	private $_ssl_forced_pages_array;
 
 	function __construct( $args = array()  ){
+
 		parent::__construct( array_merge( array(
 			'search_box_label' => __( 'Search pages', domain_map::Text_Domain ),
 			'single'           => 'Excluded page',
@@ -55,6 +56,8 @@ class Domainmap_Table_ExcludedPages_Listing extends Domainmap_Table {
 			'ajax'             => true,
 			'search_box'       => true
 		), $args ) );
+
+
 
 		$this->_excluded_pages_array = Domainmap_Module_Mapping::get_excluded_pages(true);
 		$this->_ssl_forced_pages_array = Domainmap_Module_Mapping::get_ssl_forced_pages(true);
@@ -75,6 +78,14 @@ class Domainmap_Table_ExcludedPages_Listing extends Domainmap_Table {
 			'title'    => __( 'Title', domain_map::Text_Domain )
 		);
 
+		if( !Domainmap_Plugin::instance()->get_option("map_allow_excluded_pages", true) ){
+			unset( $cols['exclude'] );
+		}
+
+		if( !Domainmap_Plugin::instance()->get_option("map_allow_forced_pages", true) ){
+			unset( $cols['force_ssl'] );
+		}
+
 		return $cols;
 	}
 
@@ -86,7 +97,7 @@ class Domainmap_Table_ExcludedPages_Listing extends Domainmap_Table {
 	 *
 	 * @return array
 	 */
-	protected function get_sortable_columns() {
+	public function get_sortable_columns() {
 		return array(
 			'title'=> "title"
 		);

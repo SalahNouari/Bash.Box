@@ -134,7 +134,7 @@ class Domainmap_Module_Ajax_Purchase extends Domainmap_Module_Ajax {
 				wp_set_auth_cookie( $user_id, true, true );
 
 				// redirect to https version of this page
-				wp_redirect( add_query_arg( array_map( 'urlencode', $_GET ), admin_url( 'admin-ajax.php', 'https' ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( array_map( 'urlencode', $_GET ), admin_url( 'admin-ajax.php', 'https' ) ) ) );
 				exit;
 			} else {
 				// redirect to login form
@@ -224,7 +224,7 @@ class Domainmap_Module_Ajax_Purchase extends Domainmap_Module_Ajax {
 
 		// check if mapped domains are 0 or multi domains are enabled
 		$count = $this->_wpdb->get_var( 'SELECT COUNT(*) FROM ' . DOMAINMAP_TABLE_MAP . ' WHERE blog_id = ' . $blog_id );
-		$allowmulti = defined( 'DOMAINMAPPING_ALLOWMULTI' );
+		$allowmulti = domain_map::allow_multiple();
 		if ( $count == 0 || $allowmulti ) {
 
 			// check if domain has not been mapped
@@ -266,7 +266,7 @@ class Domainmap_Module_Ajax_Purchase extends Domainmap_Module_Ajax {
 			}
 		}
 
-		wp_redirect( add_query_arg( 'page', 'domainmapping', admin_url( 'tools.php' ) ) );
+		wp_redirect( esc_url_raw( add_query_arg( 'page', 'domainmapping', admin_url( 'tools.php' ) ) ) );
 		exit;
 	}
 

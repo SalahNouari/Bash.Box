@@ -232,19 +232,10 @@ class UB_Admin_Bar {
 	 *
 	 * @param $sub_menu
 	 * @param $parent_id
-	 * @param int $order
 	 * @return int|WP_Error
 	 */
 	private function _insert_sub_menu($sub_menu, $parent_id){
 
-//        switch( $sub_menu['url_type'] ){
-//            case "site":
-//                $sub_menu['url'] = network_site_url( $sub_menu['url'] );
-//            break;
-//            case "admin":
-//                $sub_menu['url'] = network_admin_url( $sub_menu['url'] );
-//            break;
-//        }
 		$composite_id = self::_get_menu_composite_id( $parent_id );
 		$menu = unserialize( ub_get_option( $composite_id ) );
 		$links = isset(  $menu['links'] ) ? (array) $menu['links'] : array();
@@ -261,7 +252,6 @@ class UB_Admin_Bar {
 	 *
 	 * @param $id
 	 * @param $menu
-	 * @param int $main_order
 	 * @return int|WP_Error
 	 */
 	private function _update_menu($id, $menu)
@@ -618,7 +608,7 @@ UBSTYLE;
 			global $wp_admin_bar;
 			$wproles = ub_get_option("wdcab");
 
-			if( !is_user_logged_in() || ( isset( $wproles['wp_menu_roles'], $current_user ) &&  count( array_intersect( $wproles['wp_menu_roles'],  $current_user->roles) ) ) ) {
+			if( !is_user_logged_in() || !isset( $wproles['wp_menu_roles'] ) || ( isset( $wproles['wp_menu_roles'], $current_user ) && is_array( $wproles['wp_menu_roles'] ) &&  count( array_intersect( $wproles['wp_menu_roles'], (array) $current_user->roles) ) ) ) {
 				$opts = ub_get_option('wdcab');
 				$disabled = is_array($opts['disabled_menus']) ? $opts['disabled_menus'] : array();
 				foreach ($disabled as $id) {

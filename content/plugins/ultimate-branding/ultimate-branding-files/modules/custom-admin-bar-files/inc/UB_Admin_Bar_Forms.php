@@ -235,7 +235,7 @@ class UB_Admin_Bar_Forms {
 			return $opts;
 		}
 
-		return @$opts[ $key ];
+		return $opts[ $key ];
 	}
 
 	/**
@@ -307,14 +307,14 @@ class UB_Admin_Bar_Forms {
 		$roles = $wp_roles->get_names();
 
 		$opt = self::get_option( $name, $pfx );
-		$opt = is_array( $opt ) ? $opt : array();
 
+		$opt = is_array( $opt ) ? $opt : ( $opt === "" ?  array() : array_keys($roles) ) ;
 		echo "<input type='hidden' name='{$pfx}[{$name}]' value='' />";
 		foreach ( $roles as $role_value => $role_name ) {
 			$checked = in_array( $role_value, $opt ) ? 'checked="checked"' : '';
-			$curre_user_has_role = self::_current_user_has_role( $role_value );
-			$is_current_user =  $curre_user_has_role ? "ub_adminbar_is_current_user" : "";
-			$icon = $curre_user_has_role ? sprintf("<span class='dashicons dashicons-info' title='%s'></span", __("Current user has this role", "ub") ) : "";
+			$current_user_has_role = self::_current_user_has_role( $role_value );
+			$is_current_user =  $current_user_has_role ? "ub_adminbar_is_current_user" : "";
+			$icon = $current_user_has_role ? sprintf("<span class='dashicons dashicons-info' title='%s'></span", __("Current user has this role", "ub") ) : "";
 			echo "<p><input type='checkbox' name='{$pfx}[{$name}][{$role_name}]' id='{$pfx}-{$name}-{$role_value}' value='{$role_value}' {$checked}>"
 			     . "&nbsp;"
 			     . "<label class='{$is_current_user}' for='{$pfx}-{$name}-{$role_value}'>{$role_name}&nbsp;{$icon}</label></p>";
