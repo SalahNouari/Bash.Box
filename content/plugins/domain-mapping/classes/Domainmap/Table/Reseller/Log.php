@@ -246,7 +246,7 @@ class Domainmap_Table_Reseller_Log extends Domainmap_Table {
 		$type = $this->_get_type_filter();
 		$type = $type !== false ? ' AND l.type = ' . $type : '';
 
-		$valid = filter_input( INPUT_GET, 'valid', FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 0, 'max_range' => 1, 'default' => false ) ) );
+		$valid = filter_input( INPUT_GET, 'valid', FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 0, 'max_range' => 1, 'default' => false ) ) );	     	 	  	 	 			
 		$valid = $valid !== false ? ' AND l.valid = ' . $valid : '';
 
 		$this->items = $wpdb->get_results( $wpdb->prepare( "

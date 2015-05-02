@@ -210,7 +210,7 @@ function incsub_sbe_insert_subscriber( $email, $autopt = false, $args = array() 
 
 	$args = wp_parse_args( $args, $defaults );
 
-	$subscribe_user = apply_filters( 'sbe_pre_subscribe_user', true, $email, $args['note'], $args['type'], $autopt, $args['meta'] );	     	 	  			  		
+	$subscribe_user = apply_filters( 'sbe_pre_subscribe_user', true, $email, $args['note'], $args['type'], $autopt, $args['meta'] );
 	if ( ! $subscribe_user )
 		return false;
 
