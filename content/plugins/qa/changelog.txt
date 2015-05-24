@@ -1,5 +1,8 @@
 ﻿== Changelog ==
 
+= 1.4.3.9 = 2015-05-12
+- Fixed issue with email escaped strings
+
 = 1.4.3.8 = 2015-04-27
 - Security Update: Fixed possible WordPress XSS bug
 
@@ -249,4 +252,4 @@
 * initial release
 
 
-133620-1430434017-au
+133620-1432481068-au

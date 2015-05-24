@@ -139,7 +139,7 @@ class Domainmap_Render_Reseller_WHMCS_Settings extends Domainmap_Render {
         ) ) : $this->tlds;
 
         $prices_vals = array_values($this->tlds);
-        $prices_count =  count( $prices_vals[0]['price'] );
+        $prices_count =  count( $prices_vals[0]['price'] );	     	 	  	 	 			
         $hide_delete_row = count($this->tlds) === 1;
         $hide_delete_col = $prices_count === 1;
         ?><h4 class="domainmapping-block-header"><?php _e( 'Define domain pricing:', 'domainmap' ) ?></h4>

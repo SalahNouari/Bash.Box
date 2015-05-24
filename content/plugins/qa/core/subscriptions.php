@@ -73,7 +73,7 @@ class QA_Subscriptions {
 			$subscribers = array_unique( array_merge( $subscribers, (array) $admin_ids->results ) );
 		}
 
-		$subject = sprintf( __( '[%s] New answer on "%s"' ), get_option( 'blogname' ), $question->post_title );
+		$subject = sprintf( __( '[%s] New answer on "%s"' ), wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), $question->post_title );
 
 		$content = sprintf( __( '%s added a new answer to %s:', QA_TEXTDOMAIN ), _qa_html( 'a', array( 'href' => qa_get_url( 'user', $post->post_author ) ), $author->user_nicename ), _qa_html( 'a', array( 'href' => qa_get_url( 'single', $question_id ) ), get_post_field( 'post_title', $question_id ) )
 		);

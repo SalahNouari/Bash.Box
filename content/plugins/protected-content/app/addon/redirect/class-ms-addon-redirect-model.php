@@ -59,7 +59,7 @@ class MS_Addon_Redirect_Model extends MS_Model_Settings {
 	 * @param  string $value
 	 */
 	public function set( $key, $value ) {
-		return $this->set_custom_setting( self::GROUP, $key, $value );	      		 		  							
+		return $this->set_custom_setting( self::GROUP, $key, $value );
 	}
 
 }

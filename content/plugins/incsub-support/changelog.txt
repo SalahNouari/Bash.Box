@@ -2,13 +2,17 @@ Plugin Name: Support System
 Author: WPMU DEV
 Tags: support, ticket, faq
 Requires at least: 3.9
-Tested up to: 4.1
-Stable tag: 2.1.5
+Tested up to: 4.2.2
+Stable tag: 2.1.6
 
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.1.6 - 2015-05-14
+----------------------------------------------------------------------
+- Fixed: Query class remade. FAQs, Tickets and Ticket Form can now live in the same page.
 
 2.1.5 - 2015-03-30
 ----------------------------------------------------------------------
@@ -316,4 +320,4 @@ to hide tickets from users which did not opened them.
 * Initial Release.
 
 
-133620-1428098044-au
+133620-1432481070-au

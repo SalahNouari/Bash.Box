@@ -4,6 +4,15 @@ Author: Saurabh Shukla & Umesh Kumar
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+2.0.6.1 - 2015-05-20 - Umesh Kumar
+
+- Updated: Max image size set to 32Mb for Pro Version
+
+2.0.6 - 2015-05-20 - Umesh Kumar
+
+- Fixed: Conflict with various themes while editing post and page
+- Fixed: Word Count not working
+- Fixed: Notice and Warnings
 
 2.0.5 - 2015-04-17 - Aaron Edwards, Sam Najian, Umesh Kumar
 
@@ -68,4 +77,4 @@ Change Log:
 - First release
 
 
-133620-1429410417-ai
+133620-1432481080-au
