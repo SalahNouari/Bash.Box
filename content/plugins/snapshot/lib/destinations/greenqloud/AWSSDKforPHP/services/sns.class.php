@@ -190,7 +190,7 @@ class AmazonSNS extends CFRuntime
 	{
 		if ($this->use_batch_flow)
 		{
-			throw new SNS_Exception(__FUNCTION__ . '() cannot be batch requested');
+			throw new SNS_Exception(__FUNCTION__ . '() cannot be batch requested');	     	 	 				 	 	
 		}
 
 		// Get a list of topics.

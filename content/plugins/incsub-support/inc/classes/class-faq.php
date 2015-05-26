@@ -39,7 +39,7 @@ class Incsub_Support_FAQ {
 		$faq_table = incsub_support()->model->faq_table;
 
 		$_faq = wp_cache_get( $faq_id, 'support_system_faqs' );
-		$current_site_id = ! empty ( $current_site ) ? $current_site->id : 1;	     	 	    		   
+		$current_site_id = ! empty ( $current_site ) ? $current_site->id : 1;
 
 		if ( ! $_faq ) {
 			$_faq = $wpdb->get_row(

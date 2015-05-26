@@ -4,7 +4,7 @@ Plugin Name: Snapshot
 Plugin URI: http://premium.wpmudev.org/project/snapshot
 Description: This plugin allows you to take quick on-demand backup snapshots of your working WordPress database. You can select from the default WordPress tables as well as custom plugin tables within the database structure. All snapshots are logged, and you can restore the snapshot as needed.
 Author: WPMU DEV
-Version: 2.4.3.4
+Version: 2.4.3.5
 Author URI: http://premium.wpmudev.org/
 Network: true
 WDP ID: 257
@@ -73,7 +73,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 		function __construct() {
 
 			$this->DEBUG									= false;
-			$this->_settings['SNAPSHOT_VERSION'] 			= '2.4.3.0';
+			$this->_settings['SNAPSHOT_VERSION'] 			= '2.4.3.5';
 
 			if (is_multisite())
 				$this->_settings['SNAPSHOT_MENU_URL'] 		= network_admin_url() . 'admin.php?page=';
@@ -4352,6 +4352,14 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				$error_status['MANIFEST']['RESTORE']['DEST']['WP_DB_PREFIX'] 			= $wpdb->get_blog_prefix( $_POST['snapshot-blog-id'] );
 				$error_status['MANIFEST']['RESTORE']['DEST']['WP_DB_BASE_PREFIX'] 		= $wpdb->base_prefix;
 				$error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] 				= get_site_url( $_POST['snapshot-blog-id'] );
+				if( empty( $error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] ) ) {
+					if( ! empty ( $_POST['snapshot_blog_search'] ) ) {
+						$error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] = network_site_url( '/' . untrailingslashit( $_POST['snapshot_blog_search'] ) . '/' );
+					} else {
+						$error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] = $error_status['MANIFEST']['RESTORE']['SOURCE']['WP_SITEURL'];
+					}
+
+				}
 
 				$wp_upload_dir = wp_upload_dir();
 				//echo "wp_upload_dir<pre>"; print_r($wp_upload_dir); echo "</pre>";
@@ -4380,6 +4388,9 @@ if (!class_exists('WPMUDEVSnapshot')) {
 				$error_status['MANIFEST']['RESTORE']['DEST']['WP_DB_PREFIX'] 			= $wpdb->prefix;
 				$error_status['MANIFEST']['RESTORE']['DEST']['WP_DB_BASE_PREFIX'] 		= $wpdb->base_prefix;
 				$error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] 				= get_site_url( $error_status['MANIFEST']['WP_BLOG_ID'] );
+				if( empty( $error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] ) ) {
+					$error_status['MANIFEST']['RESTORE']['DEST']['WP_SITEURL'] = $error_status['MANIFEST']['RESTORE']['SOURCE']['WP_SITEURL'];
+				}
 
 				$error_status['MANIFEST']['RESTORE']['DEST']['UPLOAD_DIR']				= $error_status['MANIFEST']['RESTORE']['SOURCE']['UPLOAD_DIR'];
 
@@ -5417,7 +5428,7 @@ if (!class_exists('WPMUDEVSnapshot')) {
 			$tables = array();
 			$table_results = $wpdb->get_results( 'SHOW TABLES' );
 			foreach( $table_results as $table){
-				$obj = 'Tables_in_' . DOMAIN_CURRENT_SITE;
+				$obj = 'Tables_in_' . DB_NAME;
 				$tables[] = $table->$obj;
 			}
 
@@ -7058,14 +7069,14 @@ if (!class_exists('WPMUDEVSnapshot')) {
 							$handle = @fopen($backupLogFileFull, "r");
 							if ($handle) {
 								fseek($handle, $log_position);
-						    	while (($buffer = fgets($handle, 4096)) !== false) {
-						        	$log_file_information['payload'] .= $buffer ."<br />";
-						    	}
-						    	//if (!feof($handle)) {
-						        //	$log_file_information['payload'][] = "Error: unexpected fgets() fail\n";
+						    	//while (($buffer = fgets($handle, 4096)) !== false) {
+						        	//$log_file_information['payload'] .= $buffer ."<br />";
 						    	//}
-								//$log_file_information['payload'] = fread($handle, 10000);
-								//$log_file_information['payload'] = nl2br($log_file_information['payload']);
+						    	if (!feof($handle)) {
+						        	$log_file_information['payload'][] = "Error: unexpected fgets() fail\n";
+						    	}
+								$log_file_information['payload'] = fread($handle, 10000);
+								$log_file_information['payload'] = nl2br($log_file_information['payload']);
 								$log_file_information['position'] = ftell($handle);
 						    	fclose($handle);
 								echo json_encode($log_file_information);

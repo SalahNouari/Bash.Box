@@ -3,12 +3,21 @@ Author: WPMU DEV
 Tags: support, ticket, faq
 Requires at least: 3.9
 Tested up to: 4.2.2
-Stable tag: 2.1.6
+Stable tag: 2.1.8
 
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.1.8 - 2015-05-26
+----------------------------------------------------------------------
+- Fixed Unit tests
+- Fixed: FAQ Categories table was not created in some cases for single sites
+
+2.1.7 - 2015-05-25
+----------------------------------------------------------------------
+- Fixed: Added error messages for unsupported file uploads.
 
 2.1.6 - 2015-05-14
 ----------------------------------------------------------------------
@@ -320,4 +329,4 @@ to hide tickets from users which did not opened them.
 * Initial Release.
 
 
-133620-1432481070-au
+133620-1432664197-au

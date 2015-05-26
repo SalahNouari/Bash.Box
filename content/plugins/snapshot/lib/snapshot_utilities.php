@@ -1026,6 +1026,7 @@ function snapshot_utility_secure_folder($folder) {
 		$fp = fopen(trailingslashit($folder) .".htaccess", "w+");
 		if ($fp) {
 			fwrite($fp, "IndexIgnore *\r\n");
+			fwrite( $fp, "Options -Indexes`\r\n" );
 			fclose($fp);
 		}
 	}

@@ -89,6 +89,7 @@ class domain_map {
 
 
 	function domain_mapping_login_url( $login_url, $redirect = '' ) {
+
 		switch ( $this->options['map_logindomain'] ) {
 			case 'user':
 				break;
@@ -119,7 +120,12 @@ class domain_map {
 				break;
 		}
 
-		return $this->options['map_force_admin_ssl'] ? set_url_scheme($login_url, "https") : $login_url;
+        if( $this->is_original_domain( $login_url ) ){
+            return $this->options['map_force_admin_ssl'] ? set_url_scheme($login_url, "https") : $login_url;
+        }else{
+            $mapped_domain_scheme = self::get_mapped_domain_scheme();
+            return $mapped_domain_scheme ? set_url_scheme($login_url, $mapped_domain_scheme)  : $login_url;
+        }
 	}
 
 	function domain_mapping_admin_url( $admin_url, $path = '/', $_blog_id = false ) {
@@ -157,7 +163,6 @@ class domain_map {
 				break;
 		}
 
-
 		return $this->options['map_force_admin_ssl'] ? set_url_scheme($admin_url, "https") : $admin_url;
 	}
 
@@ -193,6 +198,7 @@ class domain_map {
 				add_filter( 'authenticate', array(&$this, 'authenticate'), 999, 3);
 			}
 		}
+
 
 	}
 
@@ -737,4 +743,116 @@ class domain_map {
 
 		$wpdb->query("DELETE FROM $wpdb->sitemeta WHERE `meta_key` LIKE '$prefix%'");
 	}
+
+
+    protected function get_original_domain( $with_www = false ){
+        $home = network_home_url( '/' );
+        $original_domain = parse_url( $home, PHP_URL_HOST );
+        return $with_www ? "www." . $original_domain : $original_domain ;
+    }
+    /**
+     * Checks if current site resides in original domain
+     *
+     * @since 4.2.0
+     *
+     * @param string $domain
+     * @return bool true if it's original domain, false if not
+     */
+    protected function is_original_domain( $domain = null ){
+        $domain = parse_url( is_null( $domain ) ? $this->_http->hostinfo : $domain  , PHP_URL_HOST );
+
+        /** MULTI DOMAINS INTEGRATION */
+        if( class_exists( 'multi_domain' ) ){
+            global $multi_dm;
+            if( is_array( $multi_dm->domains ) ){
+                foreach( $multi_dm->domains as $key => $domain_item){
+                    if( $domain === $domain_item['domain_name'] || strpos($domain, "." . $domain_item['domain_name']) ){
+                        return apply_filters("dm_is_original_domain", true, $domain);
+                    }
+                }
+            }
+        }
+
+        $is_oroginal_domain = $domain === $this->get_original_domain() || strpos($domain, "." . $this->get_original_domain());
+        return apply_filters("dm_is_original_domain", $is_oroginal_domain, $domain);
+    }
+
+    /**
+     * Checks if current site resides in mapped domain
+     *
+     * @since 4.2.0
+     *
+     * @param null $domain
+     *
+     * @return bool
+     */
+    protected function is_mapped_domain( $domain = null ){
+        return !$this->is_original_domain( $domain );
+    }
+
+    /**
+     * Checks if current page is login page
+     *
+     * @since 4.2.0
+     *
+     * @return bool
+     */
+    protected function is_login(){
+        global $pagenow;
+        $needle = isset( $pagenow ) ? $pagenow : str_replace("/", "", $this->_http->getRequestUri() );
+        $is_login = in_array( $needle, array( 'wp-login.php', 'wp-register.php' ) );
+        return apply_filters("dm_is_login", $is_login, $needle, $pagenow) ;
+    }
+
+    /**
+     * Checks to see if the passed $url is an admin url
+     *
+     * @param $url
+     *
+     * @return bool
+     */
+    protected function is_admin_url( $url ){
+        $parsed = parse_url( urldecode(  $url ) );
+
+        return isset( $parsed['path'] ) ? strpos($parsed['path'], "/wp-admin") !== false : false;
+    }
+
+    /**
+     * Checks if give domain should be forced to use https
+     *
+     * @since 4.2.0
+     *
+     * @param string $domain
+     * @return bool
+     */
+    public static function force_ssl_on_mapped_domain( $domain = "" ){
+        global $wpdb;
+        $current_domain = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
+        $domain = $domain === "" ? $current_domain  : $domain;
+        $force_ssl_on_mapped_domain = (int) $wpdb->get_var( $wpdb->prepare("SELECT `scheme` FROM `" . DOMAINMAP_TABLE_MAP . "` WHERE `domain`=%s", $domain) );
+        return apply_filters("dm_force_ssl_on_mapped_domain", $force_ssl_on_mapped_domain) ;
+    }
+
+    /**
+     * Returns the forced scheme for the mapped domain
+     *
+     * @param string $domain
+     * @return bool|string false when no scheme should be forced and https or http for the scheme
+     */
+    public static  function get_mapped_domain_scheme( $domain = "" ){
+
+        switch(  self::force_ssl_on_mapped_domain( $domain ) ){
+            case 0:
+                $scheme = "http";
+                break;
+            case 1:
+                $scheme = "https";
+                break;
+            default:
+                $scheme = false;
+                break;
+        }
+
+        return $scheme;
+    }
 }

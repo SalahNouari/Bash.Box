@@ -490,6 +490,7 @@ if ((!class_exists('SnapshotDestinationGreenQloud')) && (version_compare(phpvers
 			function display_listing_table($destinations, $edit_url, $delete_url) {
 
 				?>
+				<div style="clear:both;"><?php _e('<strong>Please note:</strong> GreenQloud will be discontinuing their sevices at the end of <strong>October 2015</strong>. Please consider switching to another destination.', SNAPSHOT_I18N_DOMAIN); ?></div>
 				<table class="widefat">
 				<thead>
 				<tr class="form-field">

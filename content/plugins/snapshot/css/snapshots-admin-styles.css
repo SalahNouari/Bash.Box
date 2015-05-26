@@ -214,6 +214,12 @@ tr.snapshot-log-item {
 
 #snapshot-memory-info div.label span.number {
 	font-weight: normal;
+}
+
+.description.snapshot-security {
+    border: 1px solid #FF881F;
+    padding: 2px;
+}
 
 
-/* 133620-1429935269-au */
+/* 133620-1432664190-au */

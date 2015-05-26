@@ -7,6 +7,13 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+2.4.3.5 2015-04-22
+----------------------------------------------------------------------
+- Fixed issue with viewing logs timing out in FireFox.
+- Added additional security prompts for Snapshot settings when backups folder can be accessed publicly.
+- Improved restoring of sites on multisite installations where sites may be empty (e.g. restoring primary site to a new network).
+- Fixed messages in translation file that were blocked from being uploaded.
+
 2.4.3.4 2015-04-22
 ----------------------------------------------------------------------
 - Fixed redirection issues.
@@ -334,4 +341,4 @@ http://premium.wpmudev.org/forums/topic/need-to-turn-off-zlib-compression-for-it
 - Initial stable release
 
 
-133620-1429935269-au
+133620-1432664190-au

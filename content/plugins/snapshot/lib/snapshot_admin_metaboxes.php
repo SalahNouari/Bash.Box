@@ -586,7 +586,7 @@ if ( !class_exists( "wpmudev_snapshot_admin_metaboxes" ) ) {
 									echo implode("\n", $item['files-ignore']);
 								}
 							?></textarea>
-							<p class="description"><?php _e('The exclude logic uses pattern matching. So instead of entering the complete server pathname for a file or directory you can simply use the filename of parent directory. For example to exclude the theme twentyten you could enter this one of many ways: twentyten,  themes/twentyten /wp-content/themes/twentyten, /var/www/wp-content/themes/twentyten. <strong>Regular Expression are not allowed at this time</strong>.', SNAPSHOT_I18N_DOMAIN); ?></p>
+							<p class="description"><?php _e('The exclude logic uses pattern matching. So instead of entering the complete server pathname for a file or directory you can simply use the filename of parent directory. For example to exclude the theme twentyten you could enter this one of many ways: twentyten,  themes/twentyten /wp-content/themes/twentyten, /www-data/wp-content/themes/twentyten. <strong>Regular Expression are not allowed at this time</strong>.', SNAPSHOT_I18N_DOMAIN); ?></p>
 						</td>
 					</tr>
 					</table>
@@ -1638,7 +1638,7 @@ if ( !class_exists( "wpmudev_snapshot_admin_metaboxes" ) ) {
 
 				<p><?php _ex("Set a destination folder for your snapshots. This folder will be created inside your site's media upload folder.", 'Snapshot page description', SNAPSHOT_I18N_DOMAIN); ?> /wp-content/uploads/snapshots</p>
 
-				<p><?php _ex("Optionally, you can attempt to set the snapshot folder to a directory outside of your web site. This may not be available depending on your hosting configuration. Check with your hosting provider. If you change the folder to be outside of your web site you will not be able to access the archive via this plugin. You will need to use FTP or some other solution provided by your hosting provider.", 'Snapshot page description', SNAPSHOT_I18N_DOMAIN); ?></p>
+				<p><?php _ex("Optionally, you can attempt to set the snapshot folder to a directory outside of your web site. This may not be available depending on your hosting configuration. Check with your hosting provider. If you change the folder to be outside of your web site you may not be able to access the archive via this plugin. You will need to use FTP or some other solution provided by your hosting provider.", 'Snapshot page description', SNAPSHOT_I18N_DOMAIN); ?></p>
 
 				<p><?php _ex("If you do change the Snapshot folder, the existing folder will be moved/renamed to the new value. <strong>The new folder must not already exist.</strong>", 'Snapshot page description', SNAPSHOT_I18N_DOMAIN); ?></p>
 
@@ -1655,6 +1655,28 @@ if ( !class_exists( "wpmudev_snapshot_admin_metaboxes" ) ) {
 
 						<p class="description"><?php _e('Current folder', SNAPSHOT_I18N_DOMAIN); ?> <code><?php
 							echo trailingslashit($wpmudev_snapshot->snapshot_get_setting('backupBaseFolderFull')); ?></code></p>
+						<?php
+						$response_object = wp_remote_get( trailingslashit( $wpmudev_snapshot->snapshot_get_setting( 'backupURLFull' ) ) );
+						if( $response_object && ! is_wp_error( $response_object ) && 200 == (int) $response_object['response']['code'] ) {
+
+							$example = untrailingslashit( get_home_path() );
+							$example = explode( '/', $example );
+							array_pop( $example ); // Attempt to jump outside of WP home path
+							// And just incase its a subdomain within htdocs, jump outside of that. Common installations, but not all.
+							if( 'htdocs' == $example[ count( $example ) -1 ] ) {
+								array_pop( $example );
+							}
+							$example = implode( '/', $example ) . '/snapshots';
+
+							echo '<p class="description snapshot-security">' .
+							     sprintf( '%s%s',
+								     __( 'Warning: Your Snapshot folder is publicly accessible. Please make sure you DO NOT use the default "snapshot" location. Although we attempt to disallow directory listing and are obscuring your backup names, having this folder public opens it up for exploitation. You may need to consult your hosting provider to move this folder outside of your website folder. Example path:', SNAPSHOT_I18N_DOMAIN ),
+								     '<code>' . $example . '</code>'
+							     ) .
+							     '</p>';
+
+						}
+						?>
 					</td>
 				</tr>
 				<tr>
@@ -2130,7 +2152,7 @@ if ( !class_exists( "wpmudev_snapshot_admin_metaboxes" ) ) {
 				<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
 				<?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
 
-				<p><?php _e('Use this setting to create global exclusions. This means the excluded files or directories will be excluded automatically from all snapshot configurations. You can also setup exclusions specific to a single snapshot via the configuration screen. The exclude logic uses pattern matching. So instead of entering the complete server pathname for a file or directory you can use simply use the filename of parent directory. For example to exclude the theme twentyten you could enter this one of many ways: twentyten,  themes/twentyten /wp-content/themes/twentyten, /var/www/wp-content/themes/twentyten. <strong>Regular Expression are not allowed at this time</strong>.', SNAPSHOT_I18N_DOMAIN); ?></p>
+				<p><?php _e('Use this setting to create global exclusions. This means the excluded files or directories will be excluded automatically from all snapshot configurations. You can also setup exclusions specific to a single snapshot via the configuration screen. The exclude logic uses pattern matching. So instead of entering the complete server pathname for a file or directory you can use simply use the filename of parent directory. For example to exclude the theme twentyten you could enter this one of many ways: twentyten,  themes/twentyten /wp-content/themes/twentyten, /www-data/wp-content/themes/twentyten. <strong>Regular Expression are not allowed at this time</strong>.', SNAPSHOT_I18N_DOMAIN); ?></p>
 
 				<table class="form-table snapshot-settings-segment-size">
 				<tr class="form-field" >
