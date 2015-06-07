@@ -654,7 +654,26 @@ class Incsub_Subscribe_By_Email_Admin_Settings_Page extends Incsub_Subscribe_By_
 	}
 
 	public function render_email_preview_section() {
+		$settings = incsub_sbe_get_settings();
+		$sbe_templates_dir = INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/views/';
+		$theme_templates_dir = get_stylesheet_directory() . '/subscribe-by-email/';
 		?>
+			<p>
+				<strong><?php _e( 'Want to override the template files?', INCSUB_SBE_LANG_DOMAIN ); ?></strong>
+			</p>
+			<p>
+				<?php printf(
+						__( ' Move any file in <code>%s</code> to <code>%s</code> an edit them for changes:', INCSUB_SBE_LANG_DOMAIN ),
+						$sbe_templates_dir,
+						$theme_templates_dir
+				); ?>
+			</p>
+			<ol>
+				<li><strong><code>header.php</code></strong> <?php _e( 'The code that handles the header styles', INCSUB_SBE_LANG_DOMAIN ); ?></li>
+				<li><strong><code>footer.php</code></strong> <?php _e( 'The code that handles the footer styles', INCSUB_SBE_LANG_DOMAIN ); ?></li>
+				<li><strong><code>body.php</code></strong> <?php _e( 'The code that handles the main body styles', INCSUB_SBE_LANG_DOMAIN ); ?></li>
+				<li><strong><code>post.php</code></strong> <?php _e( 'The code that handles every single post included in the digests', INCSUB_SBE_LANG_DOMAIN ); ?></li>
+			</ol>
 			<p>
 				<?php submit_button( __( 'Refresh changes', INCSUB_SBE_LANG_DOMAIN ), 'primary', $this->settings_name . '[submit_refresh_changes]', false ) ?>
 				<?php submit_button( __( 'Send a test mail to:', INCSUB_SBE_LANG_DOMAIN ), 'secondary', $this->settings_name . '[submit_test_email]', false ) ?>
@@ -671,9 +690,11 @@ class Incsub_Subscribe_By_Email_Admin_Settings_Page extends Incsub_Subscribe_By_
 			<p><a href="<?php echo $restore_link; ?>"><?php _e( 'Restore template to default', INCSUB_SBE_LANG_DOMAIN ); ?></a></p>
 
 			<?php
-				require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/mail-template.php' );
-				$template = new Incsub_Subscribe_By_Email_Template( $this->settings, true );
-				$template->render_mail_contents();
+				incsub_sbe_include_templates_files();
+				$content_generator = new Incsub_Subscribe_By_Email_Content_Generator( $settings['frequency'], array( 'post' ), true );
+				$posts = $content_generator->get_content();
+				$template = sbe_get_email_template( $posts, false );
+				sbe_render_email_template( $template );
 			?>
 		<?php
 	}
@@ -1006,9 +1027,14 @@ class Incsub_Subscribe_By_Email_Admin_Settings_Page extends Incsub_Subscribe_By_
 				$mail = sanitize_email( $input['test_mail'] );
 
 				if ( is_email( $mail ) ) {
-					require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/mail-template.php' );
-					$template = new Incsub_Subscribe_By_Email_Template( $new_settings, true );
-					$template->send_mail( $mail );
+					$_settings = incsub_sbe_get_settings();
+					incsub_sbe_include_templates_files();
+					$content_generator = new Incsub_Subscribe_By_Email_Content_Generator( $_settings['frequency'], array( 'post' ), true );
+					$posts = $content_generator->get_content();
+
+					$digest_sender = new SBE_Digest_Sender( true );
+					$digest_sender->send_digest( $posts, $mail );
+
 				}
 			}
 

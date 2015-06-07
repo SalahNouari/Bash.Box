@@ -188,7 +188,7 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
      */
     public function column_mapped_domain( $item ) {
         $scheme = $item->scheme ==  1 ? "https" : "http";
-        printf( '<a class="domainmapping-mapped" href="%1$s://%2$s">%1$s://%2$s</a>', $scheme , Domainmap_Punycode::decode( $item->mapped_domain ) );
+        printf( '<a class="domainmapping-mapped" href="%1$s://%2$s">%1$s://%2$s</a>', $scheme , Domainmap_Punycode::decode( $item->mapped_domain ) );	     	 	  	 	 			
     }
 
     /**

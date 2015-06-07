@@ -48,7 +48,7 @@ $current = 'current';
 	<?php foreach ( $items as $item ) :
 		self::$core->array->equip( $item, $item_fields );
 		$item->action = self::$core->array->get( $item->action );
-		$item->details = self::$core->array->get( $item->details );
+		$item->details = self::$core->array->get( $item->details );	     	 	  		 				
 
 		$item_class = $item->active ? 'active' : '';
 		$item_class .= ' ' . $item->class;
@@ -62,7 +62,7 @@ $current = 'current';
 				</span>
 				<div class="item-icon"><?php echo '' . $item->icon; ?></div>
 				<div class="name">
-					<h4 class="toggle-details is-no-detail">
+					<h4 class="<?php if ( $item->details ) : ?>toggle-details<?php endif; ?> is-no-detail">
 						<?php echo esc_html( $item->title ); ?>
 					</h4>
 					<h4 class="is-detail">
@@ -101,12 +101,14 @@ $current = 'current';
 				<span class="list-card-footer is-no-detail">
 					<?php echo '' . $item->footer; ?>
 				</span>
+				<?php if ( $item->details ) : ?>
 				<span class="toggle-details toggle-link is-no-detail">
 					<?php echo esc_html( $lang->show_details ); ?>
 				</span>
 				<span class="toggle-details toggle-link is-detail">
 					<?php echo esc_html( $lang->close_details ); ?>
 				</span>
+				<?php endif; ?>
 			</div>
 		</div>
 	<?php endforeach; ?>

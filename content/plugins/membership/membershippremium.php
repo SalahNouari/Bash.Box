@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Membership Premium
-Version: 3.5.3.2
+Version: 3.5.3.3
 Plugin URI: http://premium.wpmudev.org/project/membership
 Description: The most powerful, easy to use and flexible membership plugin for WordPress, Multisite and BuddyPress sites available. Offer downloads, posts, pages, forums and more to paid members.
 Author: WPMU DEV
@@ -252,3 +252,6 @@ function add_primary_button_color( $color ) {
 
 // Cron processing moved to the end to ensure tables exist.
 require_once( membership_dir( 'membershipincludes/classes/membershipcron.php' ) );
+
+// Update assistant for M2 plugin
+require_once( membership_dir( 'membershipincludes/classes/class-m2-migration-handler.php' ) );

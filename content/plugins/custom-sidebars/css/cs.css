@@ -468,9 +468,6 @@ body.appearance_page_customsidebars #poststuff h2 {
   opacity: .75;
   line-height: 26px;
   margin-right: 5px;
-  -webkit-transition: opacity .2s;
-  -moz-transition: opacity .2s;
-  -o-transition: opacity .2s;
   transition: opacity .2s;
 }
 
@@ -718,7 +715,7 @@ h2 .show-infos {
   margin-top: 10px;
   padding-top: 10px;
 }
-#wpbody-content .wp-list-table .inline-edit-row fieldset.cs-quickedit label span.title {							 			 	 	 		  
+#wpbody-content .wp-list-table .inline-edit-row fieldset.cs-quickedit label span.title {
   display: block;
   float: left;
   min-width: 5em;
@@ -731,4 +728,4 @@ h2 .show-infos {
 }
 
 
-/* 133620-1428332802-ai */
+/* 133620-1433686909-au */

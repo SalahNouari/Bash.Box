@@ -80,7 +80,7 @@ class SBE_Weekly_Digest_Tests extends SBE_UnitTestCase {
 		$args['post_date'] = date( 'Y-m-d H:i:s', strtotime( '-6 day', current_time( 'timestamp' ) ) );
 		$post_id_6_days_ago = $this->factory->post->create_object( $args );
 
-		$args['post_date'] = date( 'Y-m-d H:i:s', strtotime( '-8 day', current_time( 'timestamp' ) ) );
+		$args['post_date'] = date( 'Y-m-d H:i:s', strtotime( '-8 day', current_time( 'timestamp' ) ) );	     	 	  			  		
 		$post_id_dont_send = $this->factory->post->create_object( $args );
 
 		$campaigns = incsub_sbe_get_campaigns();

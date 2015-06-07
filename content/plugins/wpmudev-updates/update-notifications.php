@@ -4,7 +4,7 @@ Plugin Name: WPMU DEV Dashboard
 Plugin URI: https://premium.wpmudev.org/project/wpmu-dev-dashboard/
 Description: Brings the power of WPMU DEV direct to you, it'll revolutionize how you use WordPress, activate now!
 Author: WPMU DEV
-Version: 3.5.2
+Version: 3.5.3
 Author URI: http://premium.wpmudev.org/
 Text Domain: wpmudev
 Domain Path: /includes/languages/
@@ -40,7 +40,7 @@ class WPMUDEV_Dashboard {
 	/**
 	 * @var string
 	 */
-	var $version = '3.5.2';
+	var $version = '3.5.3';
 	/**
 	 * @var int
 	 */
@@ -1793,6 +1793,8 @@ class WPMUDEV_Dashboard {
 				if ( isset( $data['membership'] ) && $data['membership'] == 'full' && $project['paid'] == 'lite' ) {
 					continue;
 				}
+				//skip showing Upfront root, Protected Content, and old Membership
+				if ( in_array( $id, array( $this->upfront, 140, 928907 ) ) ) continue;
 
 				$suggest[] = array( 'id' => $id, 'name' => stripslashes( $project['name'] ), 'type' => $project['type'] );
 			}

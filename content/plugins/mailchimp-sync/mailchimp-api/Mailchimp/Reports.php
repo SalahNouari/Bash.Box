@@ -285,7 +285,7 @@ or campaignEmailStatsAIMAll() and generate any additional stats they require.
      */
     public function domainPerformance($cid) {
         $_params = array("cid" => $cid);
-        return $this->master->call('reports/domain-performance', $_params);	     	 	   				 	
+        return $this->master->call('reports/domain-performance', $_params);
     }
 
     /**

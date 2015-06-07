@@ -4,7 +4,7 @@ Plugin Name: Subscribe by Email
 Plugin URI: http://premium.wpmudev.org/project/subscribe-by-email
 Description: This plugin allows you and your users to offer subscriptions to email notification of new posts
 Author: WPMU DEV
-Version: 3.1.2
+Version: 3.2
 Author URI: http://premium.wpmudev.org
 WDP ID: 127
 Text Domain: subscribe-by-email
@@ -141,7 +141,7 @@ class Incsub_Subscribe_By_Email {
 	 */
 	private function set_globals() {
 		if ( ! defined( 'INCSUB_SBE_VERSION' ) )
-			define( 'INCSUB_SBE_VERSION', '3.1.2' );
+			define( 'INCSUB_SBE_VERSION', '3.2' );
 		if ( ! defined( 'INCSUB_SBE_PLUGIN_URL' ) )
 			define( 'INCSUB_SBE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		if ( ! defined( 'INCSUB_SBE_PLUGIN_DIR' ) )
@@ -379,7 +379,7 @@ class Incsub_Subscribe_By_Email {
 			$subscriber = incsub_sbe_get_subscriber_by_key( $_GET['sbe_confirm'] );
 
 			if ( ! $subscriber ) {
-				$this->sbe_subscribing_notice( __( 'Sorry, your subscription no longer exists, please subscribe again.', INCSUB_SBE_LANG_DOMAIN ), __( 'Your subscription no longer exists', INCSUB_SBE_LANG_DOMAIN ) );	     	 	  			  		
+				$this->sbe_subscribing_notice( __( 'Sorry, your subscription no longer exists, please subscribe again.', INCSUB_SBE_LANG_DOMAIN ), __( 'Your subscription no longer exists', INCSUB_SBE_LANG_DOMAIN ) );
 				wp_die();
 			}
 
@@ -544,31 +544,35 @@ class Incsub_Subscribe_By_Email {
 
 			$queue_items = incsub_sbe_get_queue_items( $args );
 
-			require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/mail-template.php' );
-			$mail_template = new Incsub_Subscribe_By_Email_Template( $settings, false );
-
 			$return = array();
-			foreach ( $queue_items['items'] as $item ) {
-				$subscriber = incsub_sbe_get_subscriber( $item->subscriber_email );
+			if ( ! empty( $queue_items['items'] ) ) {
+				incsub_sbe_include_templates_files();
+				$digest_sender = new SBE_Digest_Sender();
+				$content_generator = new Incsub_Subscribe_By_Email_Content_Generator( $settings['frequency'], $settings['post_types'] );
 
-				// In order to avoid duplicated emails we'll set temporary this email as sent
-				incsub_sbe_set_queue_item_sent_status( $item->id, 1 );
+				foreach ( $queue_items['items'] as $item ) {
+					$subscriber = incsub_sbe_get_subscriber( $item->subscriber_email );
 
-				$result = $mail_template->send_mail( $subscriber, $item );
+					// In order to avoid duplicated emails we'll set temporary this email as sent
+					incsub_sbe_set_queue_item_sent_status( $item->id, 1 );
 
-				// Now we update the status
-				incsub_sbe_set_queue_item_sent_status( $item->id, absint( $result ) );
+					incsub_sbe_increment_campaign_recipients( $item->campaign_id );
+					$result = $digest_sender->send_digest( $item->get_subscriber_posts(), $subscriber );
 
-				if ( $result === 4 ) {
-					// There have been an error in PHPMailer?
-					global $phpmailer;
-					if ( ! empty( $phpmailer->ErrorInfo ) ) {
-						incsub_sbe_set_queue_item_error_message( $item->id, $phpmailer->ErrorInfo );
+					// Now we update the status
+					incsub_sbe_set_queue_item_sent_status( $item->id, absint( $result ) );
+
+					if ( $result === 4 ) {
+						// There have been an error in PHPMailer?
+						global $phpmailer;
+						if ( ! empty( $phpmailer->ErrorInfo ) ) {
+							incsub_sbe_set_queue_item_error_message( $item->id, $phpmailer->ErrorInfo );
+						}
 					}
+
+					$return[ $item->subscriber_email ] = $result;
+
 				}
-
-				$return[ $item->subscriber_email ] = $result;
-
 			}
 
 			do_action( 'sbe_after_send_pending_emails' );

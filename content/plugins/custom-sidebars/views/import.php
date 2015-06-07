@@ -307,7 +307,7 @@ function list_sidebar_replacement( $label, $list ) {
 		list_sidebar_replacement( __( 'Date archives', CSB_LANG ), $import['options']['date'] );
 		list_sidebar_replacement( __( 'Author archives', CSB_LANG ), $import['options']['authors'] );
 		list_sidebar_replacement( __( 'Tag archives', CSB_LANG ), $import['options']['tags'] );
-		list_sidebar_replacement( __( 'Search results page', CSB_LANG ), $import['options']['search'] );
+		list_sidebar_replacement( __( 'Search results page', CSB_LANG ), $import['options']['search'] );							 			 	 	 		  
 		?>
 	</table>
 	</div>

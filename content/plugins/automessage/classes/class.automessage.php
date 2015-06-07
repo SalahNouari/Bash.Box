@@ -21,8 +21,8 @@ class automessage {
 
 		// Installation functions
 		$installed = get_automessage_option('automessage_installed', false);
-		if($installed != $this->build) {
-			$this->install();
+		if($installed < $this->build) {
+			add_action('wp_loaded', array(&$this, 'install'));
 		}
 
 		add_action( 'plugins_loaded', array(&$this, 'load_textdomain'));
@@ -84,10 +84,6 @@ class automessage {
 
 	function __destruct() {
 		return true;
-	}
-
-	function automessage() {
-		$this->__construct();
 	}
 
 	function load_textdomain() {
@@ -266,8 +262,8 @@ class automessage {
 		add_menu_page(__('Automessage','automessage'), __('Automessage','automessage'), 'edit_automessage',  'automessage', array(&$this,'handle_dash_panel'));
 
 		// Fix WP translation hook issue
-		if(isset($admin_page_hooks['automessages'])) {
-			$admin_page_hooks['automessages'] = 'automessages';
+		if(isset($admin_page_hooks['automessage'])) {
+			$admin_page_hooks['automessage'] = 'automessage';
 		}
 
 		// Add the sub menu
@@ -286,7 +282,6 @@ class automessage {
 		}
 
 		update_automessage_option('automessage_installed', $this->build);
-
 	}
 
 	function uninstall() {
@@ -629,9 +624,9 @@ class automessage {
 
 	function get_queued_for_message($id, $type = 0) {
 		$blog_id = get_current_blog_id();
-		$blog_id = ($type && $blog_id != 1) ? '_'.$blog_id : '';
+		$blog_id = ($type == 'user' && $blog_id != 1 && $blog_id != '') ? '_'.$blog_id : '';
 
-		$sql = $this->db->prepare( "SELECT count(*) FROM {$this->db->usermeta} WHERE meta_key LIKE %s AND meta_value = %s", '_automessage_on_%_action'.$blog_id, $id );
+		$sql = $this->db->prepare( "SELECT count(*) FROM {$this->db->usermeta} WHERE meta_key = %s AND meta_value = %s", '_automessage_on_'.$type.'_action'.$blog_id, $id );
 
 		return $this->db->get_var( $sql );
 	}
@@ -1416,7 +1411,7 @@ class automessage {
 		}
 
 		$blog_id = get_current_blog_id();
-		$blog_id = ($type == 'user' && $blog_id != 1) ? '_'.$blog_id : '';
+		$blog_id = ($type == 'user' && $blog_id != 1 && $blog_id != '') ? '_'.$blog_id : '';
 
 		//update_usermeta($this->ID, '_automessage_run_action', (int) $timestamp);
 		$sql = $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = %s AND meta_value <= %s", '_automessage_run_' . $type . '_action' . $blog_id, (int) $time );
@@ -1434,7 +1429,7 @@ class automessage {
 		}
 
 		$blog_id = get_current_blog_id();
-		$blog_id = ($type == 'user' && $blog_id != 1) ? '_'.$blog_id : '';
+		$blog_id = ($type == 'user' && $blog_id != 1 && $blog_id != '') ? '_'.$blog_id : '';
 
 		//update_usermeta($this->ID, '_automessage_run_action', (int) $timestamp);
 		$sql = $this->db->prepare( "SELECT user_id FROM {$this->db->usermeta} WHERE meta_key = %s AND meta_value = %s", '_automessage_on_' . $type . '_action'.$blog_id, (int) $schedule_id );
@@ -1492,6 +1487,7 @@ class automessage {
 						$theuser->clear_subscriptions( 'user' );
 					}
 				}
+				//consider deleting meta data for user
 
 			}
 		} else {
@@ -1578,7 +1574,7 @@ class automessage {
 		$users = $this->get_forced_automessage_users_to_process( $schedule_id, 'user' );
 
 		//Or processing limit
-		$timelimit = 3; // max seconds for processing
+		$timelimit = 5; // max seconds for processing
 
 		if(!empty($users)) {
 
@@ -1623,7 +1619,6 @@ class automessage {
 		if(!empty($this->errors)) {
 			//$this->record_error();
 		}
-
 	}
 
 	function force_process_blog($schedule_id) {
@@ -1668,7 +1663,7 @@ class automessage {
 						$theuser->clear_subscriptions( 'blog' );
 					}
 				}
-
+				//consider deleting meta data for user
 			}
 		} else {
 			if(isset($this->debug) && $this->debug) {

@@ -56,7 +56,7 @@ abstract class Domainmap_Render_Network extends Domainmap_Render_Tabbed {
 	 * @access protected
 	 */
 	protected function _render_header() {
-		echo '<h2>', __( 'Domain Mapping', 'domainmap' ), '</h2>';	     	 	  	 	 			
+		echo '<h2>', __( 'Domain Mapping', 'domainmap' ), '</h2>';
 	}
 
 	/**

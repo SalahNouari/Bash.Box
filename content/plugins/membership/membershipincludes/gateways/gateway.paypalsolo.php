@@ -382,7 +382,7 @@ class paypalsolo extends Membership_Gateway {
 		$form .= '<img alt="" border="0" width="1" height="1" src="https://www.paypal.com/en_US/i/scr/pixel.gif" >';
 		$form .= '</form>';
 
-		return $form;
+        return apply_filters( 'membership_'.$this->gateway.'_button_fields', $form );
 
 	}
 

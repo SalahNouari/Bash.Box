@@ -615,7 +615,7 @@ class paypalexpress extends Membership_Gateway {
 		// don't ask for a shipping address
 		$form .= '<input type="hidden" name="no_shipping" value="1" />';
 
-		return $form;
+        return apply_filters( 'membership_'.$this->gateway.'_common_button_fields', $form );
 	}
 
 	function build_subscribe_button( $subscription, $pricing, $user_id ) {

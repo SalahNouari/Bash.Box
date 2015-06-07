@@ -3,8 +3,8 @@
 Plugin Name: Automessage
 Plugin URI: http://premium.wpmudev.org/project/automatic-follow-up-emails-for-new-users
 Description: This plugin allows emails to be scheduled and sent to new users.
-Author: WPMUDEV
-Version: 2.4.1
+Author: WPMU DEV
+Version: 2.4.2
 Author URI: http://caffeinatedb.com
 WDP ID: 81
 */

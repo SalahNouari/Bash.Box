@@ -4,9 +4,15 @@ Author:      Philipp Stracker
 Change Log:
 ----------------------------------------------------------------------
 
+2.0.2
+----------------------------------------------------------------------
+- Fix javascript collision with ACF Pro plugin
+- New js element wpmuUi.progressbar()
+
 2.0.1
 ----------------------------------------------------------------------
 - Fix errors when running side by side with older version
+- Add new function handlers to the JS popup: wpmUi.popup().on() and .off()
 
 2.0.0
 ----------------------------------------------------------------------
@@ -127,4 +133,4 @@ Change Log:
 - First version.
 
 
-133620-1428332802-ai
+133620-1433686909-au

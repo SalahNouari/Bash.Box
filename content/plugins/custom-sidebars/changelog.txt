@@ -4,6 +4,15 @@ Author: Javier Marquez (Incsub), Philipp Stracker (Incsub)
 Change Log:
 ----------------------------------------------------------------------
 
+2.1.0.5
+----------------------------------------------------------------------
+- Add integration for Membership2
+
+2.1.0.4
+----------------------------------------------------------------------
+- Fix php notices/error in the Sidebar-Cloning module
+- Fix missing text-domain in translation
+
 2.1.0.3
 ----------------------------------------------------------------------
 - Add new Widget-Visibility option: Guests only
@@ -241,4 +250,4 @@ Change Log:
 - Initial release
 
 
-133620-1428332802-ai
+133620-1433686909-au

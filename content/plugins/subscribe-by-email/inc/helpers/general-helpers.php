@@ -336,3 +336,12 @@ function incsub_sbe_get_digest_posts_ids( $args ) {
 
     return $posts_ids;
 }
+
+
+
+function incsub_sbe_include_templates_files() {
+	include_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/classes/class-sbe-digest-sender.php' );
+	include_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/classes/abstract-class-sbe-template.php' );
+	include_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/classes/class-sbe-template.php' );
+	include_once( INCSUB_SBE_PLUGIN_DIR . 'inc/mail-templates/content-generator.php' );
+}

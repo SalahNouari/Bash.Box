@@ -12,7 +12,7 @@
  * @since 1.1.4
  * @example inc/class-thelib-updates.php 20 11 Demo workflow.
  */
-class TheLib_2_0_1_Updates extends TheLib_2_0_1  {
+class TheLib_2_0_2_Updates extends TheLib_2_0_2  {
 	/*
 	Example:
 
