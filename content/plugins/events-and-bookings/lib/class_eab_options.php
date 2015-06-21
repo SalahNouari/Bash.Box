@@ -38,7 +38,7 @@ class Eab_Options {
 	 * @return mixed Option value, or $default
 	 */
 	public function get_option ($name, $default=false) {
-		return isset($this->_data[$name]) ? $this->_data[$name] : $default;	     	 	 			 		 	
+		return isset($this->_data[$name]) ? $this->_data[$name] : $default;
 	}
 
 	public function set_option ($name, $value) {

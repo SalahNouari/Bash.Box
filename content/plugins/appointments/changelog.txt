@@ -1,3 +1,6 @@
+v1.4.8
+- Add integration for Membership 2
+
 v1.4.7
 - Expose removal notification message body for filtering and expand additional fields e-mail macros.
 - Fix slashes escaping in user-added CSS.
@@ -430,4 +433,4 @@ V1.0.0:
 - Initial release
 
 
-133620-1428332820-ai
+133620-1434914420-au

@@ -6,6 +6,9 @@ Contributors: Ivan Shaovchev, Andrey Shipilov
 
 == Changelog ==
 
+= 3.1.5 =
+* Added "Most popular posts(beta)" widget
+
 = 3.1.4.1 =
 * Fixed problem with profiles list not being visible after logging in on fresh GA+ install
 
@@ -152,4 +155,4 @@ Contributors: Ivan Shaovchev, Andrey Shipilov
 
 
 
-133620-1429242627-au
+133620-1434914429-au

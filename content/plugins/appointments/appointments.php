@@ -3,7 +3,7 @@
 Plugin Name: Appointments+
 Description: Lets you accept appointments from front end and manage or create them from admin side
 Plugin URI: http://premium.wpmudev.org/project/appointments-plus/
-Version: 1.4.7
+Version: 1.4.8
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
 Textdomain: appointments
@@ -32,7 +32,7 @@ if ( !class_exists( 'Appointments' ) ) {
 
 class Appointments {
 
-	var $version = "1.4.7";
+	var $version = "1.4.8";
 
 	function __construct() {
 
@@ -102,6 +102,12 @@ class Appointments {
 		// Buddypress
 		require_once($this->plugin_dir . '/includes/class_app_buddypress.php');
 		if (class_exists('App_BuddyPress')) App_BuddyPress::serve();
+
+		// Membership2 Integration
+		$m2_integration = $this->plugin_dir . '/includes/class_app_membership2.php';
+		if ( file_exists( $m2_integration ) ) {
+			require_once $m2_integration;
+		}
 
 		// Caching
 		if ( 'yes' == @$this->options['use_cache'] ) {
@@ -824,27 +830,37 @@ class Appointments {
 
 		$price = $service_obj->price + $worker_price;
 
+		/**
+		 * Filter allows other plugins or integrations to apply a discount to
+		 * the price.
+		 */
+		$price = apply_filters( 'app_get_price_prepare', $price, $paypal, $this );
+
 		// Discount
 		if ( $this->is_member() && isset( $this->options["members_discount"] ) && $this->options["members_discount"] ) {
 			// Special condition: Free for members
 			if ( 100 == $this->options["members_discount"] )
 				$price = 0;
 			else
-				$price = number_format( $price * ( 100 - $this->options["members_discount"] )/100, 2 );
+				$price = $price * ( 100 - $this->options["members_discount"] )/100;
 		}
 
 		if ( $paypal ) {
 			// Deposit
 			if ( isset( $this->options["percent_deposit"] ) && $this->options["percent_deposit"] )
-				$price = number_format( $price * $this->options["percent_deposit"] / 100, 2 );
+				$price = $price * $this->options["percent_deposit"] / 100;
 			if ( isset( $this->options["fixed_deposit"] ) && $this->options["fixed_deposit"] )
 				$price = $this->options["fixed_deposit"];
 
 			// It is possible to ask special amounts to be paid
-			return apply_filters( 'app_paypal_amount', $price, $this->service, $this->worker, $current_user->ID );
+			$price = apply_filters( 'app_paypal_amount', $price, $this->service, $this->worker, $current_user->ID );
+		} else {
+			$price = apply_filters( 'app_get_price', $price, $this->service, $this->worker, $current_user->ID );
 		}
 
-		return apply_filters( 'app_get_price', $price, $this->service, $this->worker, $current_user->ID );
+		// Use number_format right at the end, cause it converts the number to a string.
+		$price = number_format( $price, 2 );
+		return $price;
 	}
 
 	/**
@@ -5422,9 +5438,17 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 			$this->options["payment_required"]			= $_POST["payment_required"];
 			$this->options["percent_deposit"]			= trim( str_replace( '%', '', $_POST["percent_deposit"] ) );
 			$this->options["fixed_deposit"]				= trim( str_replace( $this->options["currency"], '', $_POST["fixed_deposit"] ) );
-			$this->options['members_no_payment'] 		= isset( $_POST['members_no_payment'] );
-			$this->options['members_discount'] 			= trim( str_replace( '%', '', $_POST['members_discount'] ) );
-			$this->options["members"]					= maybe_serialize( @$_POST["members"] );
+
+			/*
+			 * Membership plugin is replaced by Membership2. Old options are
+			 * only saved when the depreacted Membership plugin is still active.
+			 */
+			if ( class_exists( 'M_Membership' ) ) {
+				$this->options['members_no_payment']	= isset( $_POST['members_no_payment'] ); // not used??
+				$this->options['members_discount']		= trim( str_replace( '%', '', $_POST['members_discount'] ) );
+				$this->options['members']				= maybe_serialize( @$_POST["members"] );
+			}
+
 			$this->options['currency'] 					= $_POST['currency'];
 			$this->options['mode'] 						= $_POST['mode'];
 			$this->options['merchant_email'] 			= trim( $_POST['merchant_email'] );

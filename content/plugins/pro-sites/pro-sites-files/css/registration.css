@@ -26,10 +26,10 @@
 
 /* Remove 'Gimme a site!' options. */
 #signupblog, #signupuser,
-#signupblog + label, #signupuser + label {	     	 	   	  	 	
+#signupblog + label, #signupuser + label {
     display: none;
 }
 
 
 
-/* 133620-1433686943-au */
+/* 133620-1435760142-au */

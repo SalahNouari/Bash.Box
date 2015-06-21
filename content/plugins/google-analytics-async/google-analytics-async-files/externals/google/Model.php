@@ -72,7 +72,7 @@ class Google_Model implements ArrayAccess
                 $this->createObjectFromName($keyTypeName, $arrayItem);
           }
         } else {
-          $this->modelData[$key] = $this->createObjectFromName($keyTypeName, $val);
+          $this->modelData[$key] = $this->createObjectFromName($keyTypeName, $val);	     	 	   	  			
         }
       } else if (is_array($val)) {
         $arrayObject = array();

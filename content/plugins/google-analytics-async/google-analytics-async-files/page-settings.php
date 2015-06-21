@@ -21,12 +21,12 @@
                     if(!isset($accounts)) {
                         ?>
                             <p><?php echo __( 'Get access to google analytics account to automatically get tracking code for this website and enable access to network statistics inside WordPress Admin Dashboard.', $this->text_domain ).' '.__( 'You can do it in two ways:', $this->text_domain ); ?></p>
-                            <p style="display: none;"><a href="<?php echo add_query_arg('google_login', 1); ?>" class="button button-secondary"><?php _e( 'Login with Google account', $this->text_domain ); ?></a></p>
+                            <p style="display: none;"><a href="<?php echo esc_url(add_query_arg('google_login', 1)); ?>" class="button button-secondary"><?php _e( 'Login with Google account', $this->text_domain ); ?></a></p>
                             <p class="button-holder"><?php _e( 'Easily <button class="button button-secondary open-module-options" data-module="code">get access code</button> or <button class="button button-secondary open-module-options" data-module="api_project">set up Google API project</button>', $this->text_domain ); ?></p>
                         <?php
                     }
                     else {
-                        echo '<p><a href="'.add_query_arg('google_logout', 1).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
+                        echo '<p><a href="'.esc_url(add_query_arg('google_logout', 1)).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
 
                         if($google_analytics_async_dashboard->google_login['logged_in'] == '1') {
                             ?>
@@ -261,21 +261,21 @@
                     if(!isset($accounts)) {
                         ?>
                             <p><?php echo __( 'Get access to google analytics account to automatically get tracking code for this website and enable access to network statistics inside WordPress Admin Dashboard.', $this->text_domain ); ?></p>
-                            <p style="display: none;"><a href="<?php echo add_query_arg('google_login', 1); ?>" class="button button-secondary"><?php _e( 'Login with Google account', $this->text_domain ); ?></a></p>
+                            <p style="display: none;"><a href="<?php echo esc_url(add_query_arg('google_login', 1)); ?>" class="button button-secondary"><?php _e( 'Login with Google account', $this->text_domain ); ?></a></p>
                             <?php if(isset($google_api['verified']) && $google_api['verified'] == true ) { ?>
-                                <p><a href="<?php echo add_query_arg('google_login', 2);?>" class="button button-secondary"><?php _e( 'Login with google account', $this->text_domain ); ?></a></p>
+                                <p><a href="<?php echo esc_url(add_query_arg('google_login', 2));?>" class="button button-secondary"><?php _e( 'Login with google account', $this->text_domain ); ?></a></p>
                             <?php } else { ?>
                                 <p class="button-holder"><button class="button button-secondary open-module-options" data-module="code"><?php _e( 'Login with google account', $this->text_domain ); ?> <?php _e( 'and get access code', $this->text_domain ); ?></button></p>
                             <?php } ?>
                         <?php
                     }
                     else {
-                        echo '<p><a href="'.add_query_arg('google_logout', 1).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
+                        echo '<p><a href="'.esc_url(add_query_arg('google_logout', 1)).'" class="button button-secondary">'.__( 'Logout from Google account', $this->text_domain ).'</a></p>';
 
                         if(isset($this->settings['google_login']['logged_in']) && $this->settings['google_login']['logged_in'] == '1') {
                             if(isset($google_api['verified']) && $google_api['verified'] == true ) {
                                 ?>
-                                <p><a href="<?php echo add_query_arg('google_login', 2);?>" class="button button-primary"><?php _e( 'Reauthenticate', $this->text_domain ); ?></a> <?php _e( 'Google is changing login method. Reauthentication is needed.', $this->text_domain ) ?></p>
+                                <p><a href="<?php echo esc_url(add_query_arg('google_login', 2));?>" class="button button-primary"><?php _e( 'Reauthenticate', $this->text_domain ); ?></a> <?php _e( 'Google is changing login method. Reauthentication is needed.', $this->text_domain ) ?></p>
                             <?php
                             } else {
                             ?>

@@ -62,6 +62,7 @@ class Email_Newsletter_Builder  {
 			add_action( 'customize_register', array( &$this, 'init_newsletter_builder'),9999 );
 			add_action( 'setup_theme' , array( &$this, 'setup_builder_header_footer' ), 999 );
 			add_filter( 'wp_default_editor', array( &$this, 'force_default_editor' ) );
+			add_filter( 'user_can_richedit', array( &$this, 'force_richedit' ) );
 
 			//fix for tinymce load problem on wp 4.1 and up?
 			add_action( 'admin_head', array( &$this, 'prepare_tinymce' ), 1 );
@@ -311,6 +312,10 @@ class Email_Newsletter_Builder  {
 
 	function force_default_editor() {
     	return 'tinymce';
+	}
+
+	function force_richedit() {
+    	return true;
 	}
 
 	function get_builder_email_id() {

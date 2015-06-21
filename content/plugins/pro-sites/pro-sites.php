@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Pro Sites (Formerly Supporter)
+Plugin Name: Pro Sites
 Plugin URI: http://premium.wpmudev.org/project/pro-sites/
 Description: The ultimate multisite site upgrade plugin, turn regular sites into multiple pro site subscription levels selling access to storage space, premium themes, premium plugins and much more!
 Author: WPMU DEV
-Version: 3.5.0.1
+Version: 3.5.0.4
 Author URI: http://premium.wpmudev.org/
 Text Domain: psts
 Domain Path: /pro-sites-files/languages/
@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ProSites {
 
-	var $version = '3.5.0.1';
+	var $version = '3.5.0.4';
 	var $location;
 	var $language;
 	var $plugin_dir = '';
@@ -49,9 +49,6 @@ class ProSites {
 	public static $plugin_file = __FILE__;
 
 	function __construct() {
-
-		// @todo get rid of this line
-		//$this->update_setting( 'version', '3.5.0.1' );
 
 		// Creates the class autoloader.
 		spl_autoload_register( array( $this, 'class_loader' ) );
@@ -90,6 +87,9 @@ class ProSites {
 
 		// TAX integration
 		ProSites_Helper_Tax::init_tax();
+
+		// Other integrations
+		ProSites_Helper_Integration::init();
 
 		/**
 		 * Temporary loading for modules
@@ -181,15 +181,7 @@ class ProSites {
 		//Disable Blog Activation Email, as of Pay before blog creation
 		add_filter( 'wpmu_signup_blog_notification', array( $this, 'disable_user_activation_mail' ), 10 );
 
-		//Buddypress Activation emails
-		//If pay before blog is disabled, allow blog activation through email
-		$show_signup = $this->get_setting( 'show_signup' );
 
-		if ( 1 == $show_signup ) {
-			remove_filter( 'wpmu_signup_blog_notification', 'bp_core_activation_signup_blog_notification', 1, 7 );
-		}
-		add_filter( 'bp_registration_needs_activation', array( $this, 'disable_user_activation_mail' ), 10 );
-		add_filter( 'bp_core_signup_send_activation_key', array( $this, 'disable_user_activation_mail' ), 10 );
 
 		//Redirect to checkout page after signup
 //		add_action( 'signup_finished', array( $this, 'signup_redirect_checkout' ) );
@@ -603,6 +595,7 @@ Thanks!", 'psts' ),
 		$settings = get_site_option( 'psts_settings' );
 		$setting  = isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
 
+		$setting = !is_array( $setting ) ? trim( $setting ) : $setting;
 		/**
 		 * Filter the specific setting, $key parameter value
 		 *
@@ -1214,6 +1207,18 @@ Thanks!", 'psts' ),
 		if ( ! current_theme_supports( 'psts_style' ) ) {
 			wp_enqueue_style( 'psts-checkout', $this->plugin_url . 'css/checkout.css', false, $this->version );
 			wp_enqueue_style( 'dashicons' ); // in case it hasn't been loaded yet
+
+			/* Checkout layout */
+			$layout_option = $this->get_setting( 'pricing_table_layout', 'option1' );
+			$checkout_layout = apply_filters( 'prosites_checkout_css', $this->plugin_url . 'css/pricing-tables/' . $layout_option . '.css' );
+			wp_enqueue_style( 'psts-checkout-layout', $checkout_layout, false, $this->version );
+
+			/* Apply styles from options */
+			$checkout_style = ProSites_View_Pricing_Styling::get_styles_from_options();
+			if( ! empty( $checkout_style ) ) {
+				wp_add_inline_style( 'psts-checkout-layout', $checkout_style );
+			};
+
 		}
 		if ( $this->get_setting( 'plans_table_enabled' ) || $this->get_setting( 'comparison_table_enabled' ) ) {
 			wp_enqueue_style( 'psts-plans-pricing', $this->plugin_url . 'css/plans-pricing.css', false, $this->version );
@@ -1560,6 +1565,7 @@ Thanks!", 'psts' ),
 		// Get current plan
 		$level_list = get_site_option( 'psts_levels' );
 		$level_name = $level_list[ $transaction->level ]['name'];
+		$level_name = ! empty( $level_name ) ? $level_name : $level_list[ $psts->get_level( $transaction->blog_id ) ]['name'];
 		$gateway    = ProSites_Helper_Gateway::get_nice_name_from_class( $transaction->gateway );
 		$result     = $wpdb->get_row( $wpdb->prepare( "SELECT term FROM {$wpdb->base_prefix}pro_sites WHERE blog_ID = %d", $transaction->blog_id ) );
 		$term       = $result->term;
@@ -2483,12 +2489,12 @@ Thanks!", 'psts' ),
 		foreach ( $levels as $level => $value ) {
 			$html .= '<option value="' . $level . '"' . selected( $selected, $level, false ) . '>' . $level . ': ' . esc_attr( $value['name'] ) . '</option>';
 		}
-		$html = '</select>';
+		$html .= '</select>';
 
 		if ( $echo ) {
-			echo $echo;
+			echo $html;
 		} else {
-			return $echo;
+			return $html;
 		}
 	}
 
@@ -3541,6 +3547,8 @@ function admin_levels() {
 			unset( $levels[0]);
 
 			update_site_option( 'psts_levels', $levels );
+			//Update Pricing level order
+			ProSites_Helper_ProSite::update_level_order( $levels );
 
 			//display message confirmation
 			echo '<div class="updated fade"><p>' . sprintf( __( 'Level %s successfully deleted.', 'psts' ), number_format_i18n( $level_num ) ) . '</p></div>';
@@ -5422,6 +5430,12 @@ function admin_levels() {
 		}
 
 		return $url;
+	}
+
+	function redirect_buddypress_signup( $location ) {
+		$location = '';
+		$location = bp_get_root_domain() . '/wp-signup.php';
+		return $location;
 	}
 
 }

@@ -70,10 +70,17 @@ class Google_Analytics_Async_Dashboard {
             add_action('admin_init', array($this, 'admin_init'));
             add_action('admin_menu', array($this, 'admin_menu'));
             add_action('network_admin_menu', array($this, 'network_admin_menu'));
+
+            add_action('init', array($this, 'init'));
+
+            add_action('plugins_loaded', array($this, 'init_widgets'));
         }
 
         add_action('admin_notices', array($this,'reauthenticate_notice'));
         add_action('network_admin_notices', array($this,'reauthenticate_notice'));
+
+        add_action('wp_ajax_load_google_analytics', array(&$this, 'load_google_analytics'));
+        add_action('wp_ajax_nopriv_load_google_analytics', array(&$this, 'load_google_analytics'));
     }
 
 
@@ -101,8 +108,22 @@ class Google_Analytics_Async_Dashboard {
         }
     }
 
+    function init_widgets() {
+        global $google_analytics_async;
+        if (
+            !empty( $google_analytics_async->network_settings['track_settings']['supporter_only'] )
+            && function_exists('is_pro_site')
+            && !is_pro_site(get_current_blog_id(), $google_analytics_async->network_settings['track_settings']['supporter_only'])
+            && apply_filters('ga_allow_checks', true)
+        )
+            return;
+
+        include_once 'class-widget-ga-most-popular-content.php';
+        add_action( 'widgets_init', create_function( '', 'return register_widget("Google_Analytics_Async_Frontend_Widget");' ) );
+    }
+
     function admin_init() {
-        global $google_analytics_async, $pagenow;
+        global $pagenow;
 
         //load only for: dashboard, post type page and correct ajax call
          if(
@@ -115,102 +136,12 @@ class Google_Analytics_Async_Dashboard {
                 (isset($_POST['action']) && $_POST['action'] == 'load_google_analytics')
             )
         ) {
-            //filter variables
-            $this->cache_timeout = apply_filters('ga_cache_timeout', $this->cache_timeout);
-            $this->cache_timeout_personal = apply_filters('ga_cache_timeout_personal', $this->cache_timeout);
-
-            //setup correct google analytics profile id
-            if($this->stats_source == 'site') {
-                $this->profile_id = $google_analytics_async->settings['track_settings']['google_analytics_account_id'];
-
-                $this->oauth_token = $google_analytics_async->settings['google_login']['token'];
-                $this->oauth_secret = $google_analytics_async->settings['google_login']['token_secret'];
-
-                $this->google_login = $google_analytics_async->settings['google_login'];
-
-                //change cache timeout for site based stats
-                $this->cache_timeout = $this->cache_timeout_personal;
-            }
-            elseif($this->stats_source == 'network') {
-                $this->profile_id = $google_analytics_async->network_settings['track_settings']['google_analytics_account_id'];
-
-                $this->oauth_token = $google_analytics_async->network_settings['google_login']['token'];
-                $this->oauth_secret = $google_analytics_async->network_settings['google_login']['token_secret'];
-
-                $this->google_login = $google_analytics_async->network_settings['google_login'];
-            }
-
-            //set up filters to show correct stats for current site
-            if($this->stats_source == 'network'&& !$this->is_network_admin) {
-                global $dm_map;
-
-                $url = method_exists($dm_map, 'domain_mapping_siteurl') ? $dm_map->domain_mapping_siteurl(home_url()) : home_url();
-
-                $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', $url)));
-                if(!$site_url_parts)
-                    $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', site_url())));
-
-                $this->filter[] = 'ga:hostname=='.$site_url_parts[0];
-
-                //if its in subdirectory mode, then set correct beggining for page path
-                if(count($site_url_parts) > 1) {
-                    unset($site_url_parts[0]);
-                    $pagepath = implode('/', $site_url_parts);
-
-                    $this->filter[] = 'ga:pagePath=~^/'.$pagepath.'/.*';
-                }
-            }
-
-            if($this->profile_id && $this->oauth_token && $this->oauth_secret) {
-                //set up date related variables needed to get data
-                $this->date_range =
-                (isset($_GET['date_range']) && ($_GET['date_range'] == 3 || $_GET['date_range'] == 12)) ? $_GET['date_range'] :
-                ((isset($_POST['date_range']) && ($_POST['date_range'] == 3 || $_POST['date_range'] == 12)) ? $_POST['date_range'] : 1);
-
-                $start_date = time() - (60 * 60 * 24 * 30 * $this->date_range);
-                $this->start_date = date('Y-m-d', $start_date);
-                $this->end_date = date('Y-m-d');
-
-                //configure filter for posts to display proper data
-                $this->post = (isset($_GET['post']) && $_GET['post']) ? $_GET['post'] : ((isset($_POST['post']) && $_POST['post']) ? $_POST['post'] : 0);
-                if($this->post)
-                    $this->filter[] = 'ga:pagePath=~/'.basename(get_permalink($this->post)).'/$';
-
-                //exclude stuff we dont want
-                $this->filter[] = 'ga:pagePath!@preview=true';
-
-                //configure type to know what kind of data should be loaded
-                if(isset($_POST['action']) && $_POST['action'] == 'load_google_analytics' && isset($_POST['type']))
-                    $this->type = $_POST['type'];
-                elseif($pagenow == 'index.php' && !isset($_GET['page']))
-                    $this->type = 'widget';
-                elseif($pagenow == 'index.php' && isset($_GET['page']) && $_GET['page'] == 'google-analytics-statistics')
-                    $this->type = 'statistics_page';
-                elseif($this->post)
-                    $this->type = 'post';
-
-                //set up correct/unique for stats cache name
-                $this->cache_name = 'gac32_'.$this->profile_id.get_current_blog_id().$this->is_network_admin.$this->start_date.$this->end_date.$this->post;
-
-                //if its a ajax call, we dont want cached version
-                if(!defined('DOING_AJAX'))
-                    $this->cache = get_transient($this->cache_name);
-
-                //unset cache if it needs to get more data
-                if($this->type != 'widget' && count($this->cache) == 1)
-                    $this->cache = 0;
-
-                add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
-
-                //add all the widgets for dashboards and posts
-                add_action('wp_dashboard_setup', array(&$this, 'register_google_analytics_dashboard_widget'));
-                add_action('wp_network_dashboard_setup', array(&$this, 'register_google_analytics_dashboard_widget'));
-                add_action('add_meta_boxes', array(&$this, 'register_google_analytics_post_widget'));
-
-                //ajax is needed only if there is no cached version
-                add_action('wp_ajax_load_google_analytics', array(&$this, 'load_google_analytics'));
+            $this->set_up_ga_data();
             }
         }
+    function init() {
+        if( defined( 'DOING_AJAX' ) && DOING_AJAX && (isset($_POST['action']) && $_POST['action'] == 'load_google_analytics') )
+            $this->set_up_ga_data();
     }
 
     function admin_enqueue_scripts($hook) {
@@ -220,9 +151,15 @@ class Google_Analytics_Async_Dashboard {
         wp_register_script('google_analytics_async', $this->plugin_url . 'google-analytics-async-files/ga-async.js', array('jquery','sack', 'google_charts_api'), 330);
         wp_enqueue_script('google_analytics_async');
         //configure parameters for JS
+        $this->setup_script_variables('google_analytics_async');
+
+        wp_register_style( 'GoogleAnalyticsAsyncStyle', $this->plugin_url . 'google-analytics-async-files/ga-async.css', array(), 39);
+        wp_enqueue_style( 'GoogleAnalyticsAsyncStyle' );
+    }
+
+    function setup_script_variables($script_name) {
         $params = array();
-        if(is_network_admin())
-            $params['network_admin'] = 1;
+
         if($this->post)
             $params['post'] = $this->post;
         if(isset($this->cache['chart_visitors']))
@@ -233,10 +170,16 @@ class Google_Analytics_Async_Dashboard {
         $params['date_range'] = $this->date_range;
         $params['chart_visitors_title'] = ($this->date_range == 12) ? __('Month', $this->text_domain) : (($this->date_range == 3) ? __('Week', $this->text_domain) : __('Day', $this->text_domain));
         $params['load_mode'] = $this->load_mode;
-        wp_localize_script( 'google_analytics_async', 'ga', $params );
 
-        wp_register_style( 'GoogleAnalyticsAsyncStyle', $this->plugin_url . 'google-analytics-async-files/ga-async.css', array(), 39);
-        wp_enqueue_style( 'GoogleAnalyticsAsyncStyle' );
+
+        if(!is_admin()) {
+            $params['ajax_url'] = admin_url('admin-ajax.php');
+            $params['problem_loading_data'] = __('Problem loading data', $this->text_domain);
+        }
+        elseif(is_network_admin())
+            $params['network_admin'] = 1;
+
+        wp_localize_script( $script_name, 'ga', $params );
     }
 
     function admin_menu() {
@@ -321,7 +264,7 @@ class Google_Analytics_Async_Dashboard {
                 $this->oauth_secret = $google_analytics_async->current_settings['google_login']['token_secret'];
             }
 
-            $this->google_login = $google_analytics_async->current_settings['google_login'];
+            $this->google_login = isset($google_analytics_async->current_settings['google_login']) ? $google_analytics_async->current_settings['google_login'] : array();
 
             $this->setting_page = is_network_admin() ? 'network' : 'site';
         }
@@ -679,9 +622,114 @@ class Google_Analytics_Async_Dashboard {
         }
     }
 
+    function set_up_ga_data() {
+        global $google_analytics_async, $pagenow;
+
+        //filter variables
+        $this->cache_timeout = apply_filters('ga_cache_timeout', $this->cache_timeout);
+        $this->cache_timeout_personal = apply_filters('ga_cache_timeout_personal', $this->cache_timeout);
+
+        //setup correct google analytics profile id
+        if($this->stats_source == 'site') {
+            $this->profile_id = $google_analytics_async->settings['track_settings']['google_analytics_account_id'];
+
+            $this->oauth_token = $google_analytics_async->settings['google_login']['token'];
+            $this->oauth_secret = $google_analytics_async->settings['google_login']['token_secret'];
+
+                $this->google_login = $google_analytics_async->settings['google_login'];
+
+            //change cache timeout for site based stats
+            $this->cache_timeout = $this->cache_timeout_personal;
+        }
+        elseif($this->stats_source == 'network') {
+            $this->profile_id = $google_analytics_async->network_settings['track_settings']['google_analytics_account_id'];
+
+            $this->oauth_token = $google_analytics_async->network_settings['google_login']['token'];
+            $this->oauth_secret = $google_analytics_async->network_settings['google_login']['token_secret'];
+
+                $this->google_login = $google_analytics_async->network_settings['google_login'];
+            }
+
+            //set up filters to show correct stats for current site
+            if($this->stats_source == 'network'&& !$this->is_network_admin) {
+                global $dm_map;
+
+                $url = method_exists($dm_map, 'domain_mapping_siteurl') ? $dm_map->domain_mapping_siteurl(home_url()) : home_url();
+
+                $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', $url)));
+                if(!$site_url_parts)
+                    $site_url_parts = explode('/', str_replace('http://', '', str_replace('https://', '', site_url())));
+
+                $this->filter[] = 'ga:hostname=='.$site_url_parts[0];
+
+                //if its in subdirectory mode, then set correct beggining for page path
+                if(count($site_url_parts) > 1) {
+                    unset($site_url_parts[0]);
+                    $pagepath = implode('/', $site_url_parts);
+
+                    $this->filter[] = 'ga:pagePath=~^/'.$pagepath.'/.*';
+                }
+        }
+
+        if($this->profile_id && $this->oauth_token && $this->oauth_secret) {
+            //set up date related variables needed to get data
+            $this->date_range =
+            (isset($_GET['date_range']) && ($_GET['date_range'] == 3 || $_GET['date_range'] == 12)) ? $_GET['date_range'] :
+            ((isset($_POST['date_range']) && ($_POST['date_range'] == 3 || $_POST['date_range'] == 12)) ? $_POST['date_range'] : 1);
+
+            $start_date = time() - (60 * 60 * 24 * 30 * $this->date_range);
+            $this->start_date = date('Y-m-d', $start_date);
+            $this->end_date = date('Y-m-d');
+
+            //configure filter for posts to display proper data
+            $this->post = ($pagenow == 'post.php' && isset($_GET['post']) && $_GET['post']) ? $_GET['post'] : ((isset($_POST['post']) && $_POST['post']) ? $_POST['post'] : 0);
+            if($this->post)
+                $this->filter[] = 'ga:pagePath=~/'.basename(get_permalink($this->post)).'/$';
+
+            //exclude stuff we dont want
+            $this->filter[] = 'ga:pagePath!@preview=true';
+
+            //configure type to know what kind of data should be loaded
+            if(is_admin()) {
+                if(isset($_POST['action']) && $_POST['action'] == 'load_google_analytics' && isset($_POST['type']))
+                    $this->type = $_POST['type'];
+                elseif($pagenow == 'index.php' && !isset($_GET['page']))
+                    $this->type = 'widget';
+                elseif($pagenow == 'index.php' && isset($_GET['page']) && $_GET['page'] == 'google-analytics-statistics')
+                    $this->type = 'statistics_page';
+                elseif($this->post)
+                    $this->type = 'post';
+                else
+                    $this->type = 'unknown';
+            }
+            else
+                $this->type = 'frontend_widget';
+
+            //set up correct/unique for stats cache name
+            $this->cache_name = 'gac32_'.$this->profile_id.get_current_blog_id().$this->is_network_admin.$this->start_date.$this->end_date.$this->post;
+
+            //if its a ajax call, we dont want cached version
+            if(!defined('DOING_AJAX'))
+                $this->cache = get_transient($this->cache_name);
+
+            //unset cache if it needs to get more data
+            if($this->type != 'widget' && count($this->cache) == 1)
+                $this->cache = 0;
+
+            if($this->type != 'frontend_widget') {
+                add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
+
+                //add all the widgets for dashboards and posts
+                add_action('wp_dashboard_setup', array(&$this, 'register_google_analytics_dashboard_widget'));
+                add_action('wp_network_dashboard_setup', array(&$this, 'register_google_analytics_dashboard_widget'));
+                add_action('add_meta_boxes', array(&$this, 'register_google_analytics_post_widget'));
+            }
+        }
+    }
+
     //load correct data and prepare to display
-    function load_google_analytics() {
-        if(!current_user_can( $this->required_capability ))
+    function load_google_analytics($args = array()) {
+        if($this->type != 'frontend_widget' && !current_user_can( $this->required_capability ))
             die(__('Cheatin&#8217; uh?'));
 
         //if no cache, data will be requested by ajax
@@ -696,7 +744,7 @@ class Google_Analytics_Async_Dashboard {
 
             $dates_data = $this->request('simple', '', $date_details['dimension'], 'ga:visits,ga:pageviews,ga:newVisits');
             //Load advanced statistics
-            if($this->type == 'statistics_page' || $this->type == 'post') {
+            if($this->type == 'statistics_page' || $this->type == 'post' || $this->type == 'frontend_widget') {
                 if(!$this->error)
                     $summary_data = $this->request('simple', '', '','ga:visits,ga:pageviews,ga:newVisits,ga:percentNewVisits,ga:visitBounceRate,ga:avgTimeOnSite,ga:pageviewsPerVisit,ga:percentNewVisits');
                 if(!$this->error)
@@ -704,9 +752,9 @@ class Google_Analytics_Async_Dashboard {
                 if(!$this->error)
                     $sources_data = $this->request('simple', 7, 'ga:source', 'ga:visits', '-ga:visits');
                 //Load statistics for statistics page
-                if($this->type == 'statistics_page') {
+                if($this->type == 'statistics_page' || $this->type == 'frontend_widget') {
                     if(!$this->error && !$this->post)
-                        $pages_data = $this->request('advanced', 15, 'ga:hostname,ga:pageTitle,ga:pagePath', 'ga:pageviews,ga:visits,ga:newVisits', '-ga:visits');
+                        $pages_data = $this->request('advanced', 20, 'ga:hostname,ga:pageTitle,ga:pagePath', 'ga:pageviews,ga:visits,ga:newVisits', '-ga:visits');
                     if(!$this->error)
                         $countries_data = $this->request('simple', 15, 'ga:country', 'ga:visits', '-ga:visits');
                 }
@@ -757,7 +805,7 @@ class Google_Analytics_Async_Dashboard {
                 $return['chart_visitors'] = $stats['chart_visitors'];
 
                 //setup advanced statistics
-                if($this->type == 'statistics_page' || $this->type == 'post') {
+                if($this->type == 'statistics_page' || $this->type == 'post' || $this->type == 'frontend_widget') {
                     $stats['top_posts'] = $top_searches = $top_referers = array();
 
                     $stats['visits'] = isset($summary_data['value']['ga:visits']) ? number_format($summary_data['value']['ga:visits']) : '-';
@@ -777,7 +825,7 @@ class Google_Analytics_Async_Dashboard {
                             $stats['top_referers'][] = array('source' => $source, 'stat' => $stat);
 
                     //setup statistics for statistics page
-                    if($this->type == 'statistics_page') {
+                    if($this->type == 'statistics_page' || $this->type == 'frontend_widget') {
                         if(isset($pages_data))
                             foreach($pages_data as $page) {
                                 $url = $page['value'];
@@ -801,12 +849,16 @@ class Google_Analytics_Async_Dashboard {
                 set_transient($this->cache_name, $stats, $this->cache_timeout);
 
                 //prepare correct data for ajax return
-                if($this->type == 'post')
-                    $return['html'] = $this->google_analytics_widget_extended_html($stats);
+                if($this->type == 'frontend_widget')
+                    $return['html'] = $this->google_analytics_frontend_widget_html($stats, $args);
+                elseif($this->type == 'post')
+                    $return['html'] = $this->google_analytics_widget_extended_html($stats, $args);
                 elseif($this->type == 'statistics_page')
-                    $return['html'] = $this->google_analytics_statistics_page_html($stats);
+                    $return['html'] = $this->google_analytics_statistics_page_html($stats, $args);
                 else
-                    $return['html'] = $this->google_analytics_widget_html($stats);
+                    $return['html'] = $this->google_analytics_widget_html($stats, $args);
+
+                $return['stats'] = $stats;
             }
 
             echo json_encode($return);
@@ -814,12 +866,14 @@ class Google_Analytics_Async_Dashboard {
         }
         else
             //prepare correct data cache based return
-            if($this->type == 'post')
-                return $this->google_analytics_widget_extended_html($this->cache);
+            if($this->type == 'frontend_widget')
+                return $this->google_analytics_frontend_widget_html($this->cache, $args);
+            elseif($this->type == 'post')
+                return $this->google_analytics_widget_extended_html($this->cache, $args);
             elseif($this->type == 'statistics_page')
-                return $this->google_analytics_statistics_page_html($this->cache);
+                return $this->google_analytics_statistics_page_html($this->cache, $args);
             else
-                return $this->google_analytics_widget_html($this->cache);
+                return $this->google_analytics_widget_html($this->cache, $args);
     }
 
     function google_analytics_widget() {
@@ -1069,12 +1123,7 @@ class Google_Analytics_Async_Dashboard {
                                             //fixes for top pages to generate correct URL and merge data
                                             $pages_ready = array();
                                             foreach ($stats['top_pages'] as $key => $data) {
-                                                if (strpos(substr($data['url'], 1), $data['host']) === 0)
-                                                    $url = substr($data['url'], 1);
-                                                elseif(strpos($data['url'], $data['host']) === 0)
-                                                    $url = $data['url'];
-                                                else
-                                                    $url = $data['host'].$data['url'];
+                                                $url = $this->get_url_from_google_data($data);
 
                                                 if(!array_key_exists($url, $pages_ready))
                                                     $pages_ready[$url] = $data;
@@ -1107,6 +1156,60 @@ class Google_Analytics_Async_Dashboard {
         ';
 
         return $return;
+    }
+
+    function google_analytics_frontend_widget_html($stats, $args = array()) {
+        global $google_analytics_frontend_widget_count, $dm_map;
+
+        $return = '';
+        $count = 0;
+        foreach ($stats['top_pages'] as $key => $data) {
+            $url = $this->get_url_from_google_data($data);
+            if(method_exists($dm_map, 'domain_mapping_siteurl')) {
+                $mapped_url = str_replace(array('http://', 'https://'), '', $dm_map->domain_mapping_siteurl(home_url()));
+                $home_url = str_replace(array('http://', 'https://'), '', home_url());
+                $url = str_replace($mapped_url, $home_url, $url);
+            }
+            $postid = url_to_postid( (is_ssl() ? 'https://' : 'http://').$url );
+            if(!$postid)
+                continue;
+
+            $post = get_post($postid);
+
+            if($post->post_type != 'post')
+                continue;
+
+            $count ++;
+            $return .= '<li><a href="'.(is_ssl() ? 'https://' : 'http://').$url.'">'.$post->post_title.'</a></li>';
+
+            if(isset($args['number']) && $count == $args['number'])
+                break;
+        }
+
+        if(!$count)
+            $return .= '<li>'.__( 'No data yet', $this->text_domain ).'</li>';
+
+        $google_analytics_frontend_widget_count = $count;
+
+        return $return;
+    }
+
+    function google_analytics_frontend_widget($args = array()) {
+        if(!$this->cache)
+            echo '<ul class="google-analytics-frontend-widget"><li>'.__( 'Loading...', $this->text_domain ).'</li></ul>';
+        else
+            echo '<ul class="google-analytics-frontend-widget">'.$this->load_google_analytics($args).'</ul>';
+    }
+
+    function get_url_from_google_data($data) {
+        if (strpos(substr($data['url'], 1), $data['host']) === 0)
+            $url = substr($data['url'], 1);
+        elseif(strpos($data['url'], $data['host']) === 0)
+            $url = $data['url'];
+        else
+            $url = $data['host'].$data['url'];
+
+        return $url;
     }
 
     function request($type, $max_results = '', $dimensions = '', $metrics = '', $sort = '') {

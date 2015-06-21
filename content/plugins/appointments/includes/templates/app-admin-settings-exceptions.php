@@ -6,7 +6,7 @@
 <?php
 $result = array();
 foreach ( array( 'open', 'closed' ) as $stat ) {
-	$result[$stat] = $wpdb->get_var($wpdb->prepare("SELECT days FROM {$appointments->exceptions_table} WHERE status=%s AND worker=%d", $stat, $appointments->worker));		   		 	  		  	 	 	
+	$result[$stat] = $wpdb->get_var($wpdb->prepare("SELECT days FROM {$appointments->exceptions_table} WHERE status=%s AND worker=%d", $stat, $appointments->worker));
 }
 $workers = $appointments->get_workers();
 ?>

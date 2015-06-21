@@ -170,14 +170,32 @@ input[name="coupon_code"] {
 .pay-for-signup {
     position: relative;
 }
-.multiple-signup .psts-help-text-wrapper,
+.free-signup .help_tip {
+    position: absolute;
+    top: 23px;
+}
+.multiple-signup .help_tip {
+    position: absolute;
+    top: 22px;
+    right: 54px;
+}
+
 .free-signup .psts-help-text-wrapper {
-    left: 48px;
-    top: 52px;
+    left: 53px;
+    top: 36px;
+}
+.multiple-signup .psts-help-text-wrapper {
+    left: 68px;
+    top: 36px;
+}
+.pay-for-signup .help_tip {
+    position: absolute;
+    top: 21px;
+    right: 56px;
 }
 .pay-for-signup .psts-help-text-wrapper {
-    left: 62px;
-    top: 52px;
+    left: 39px;
+    top: 35px;
 }
 
 .psts-free-trial .psts-help-text-wrapper {
@@ -1096,5 +1114,79 @@ table.widefat.prosites-premium-plugins tbody tr th p {
     position:relative;
 }
 
+/** Pricing Tables > Styling */
+.table-layout label > input{ /* HIDE RADIO */
+    display:none;
+}
+.table-layout label > input + .layout-img{ /* IMAGE STYLES */
+    cursor:pointer;
+    border:2px solid transparent;
+}
 
-/* 133620-1433686943-au */
+.table-layout .layout-img {
+    width: 85px;
+    height: 51px;
+    background: url(../images/pricing-tables.svg) no-repeat 0 0;
+    background-size: 300%;
+    margin:10px;
+    border: 1px solid red;
+    float: left;
+}
+.table-layout .layout-img.option1 {
+    background-position: -2px -2px;
+}
+.table-layout .layout-img.option2 {
+    background-position: -2px -103px;
+}
+.table-layout .layout-img.option3 {
+    background-position: -2px -205px;
+}
+.table-layout .layout-img.option4 {
+    background-position: -2px -307px;
+}
+.table-layout .layout-img.option5 {
+    background-position: -2px -409px;
+}
+.table-layout label > input:checked + .layout-img.option1 {
+    background-position: -169px -2px;
+}
+.table-layout label > input:checked + .layout-img.option2 {
+    background-position: -169px -103px;
+}
+.table-layout label > input:checked + .layout-img.option3 {
+    background-position: -169px -205px;
+}
+.table-layout label > input:checked + .layout-img.option4 {
+    background-position: -169px -307px;
+}
+.table-layout label > input:checked + .layout-img.option5 {
+    background-position: -169px -409px;
+}
+.pricing-styles h3 {
+    clear: both;
+}
+.pricing-styles .form-table th,
+.pricing-styles .form-table td {
+    padding-top: 10px;
+}
+
+.pricing-styles .form-table td table {
+    position: relative;
+    top: -8px;
+}
+.pricing-styles .form-table td table td {
+    margin:0;
+    padding: 0 10px 0 0;
+}
+
+.pricing-styles .form-table input.narrow {
+    width: 4em;
+}
+
+.pricing-styles .custom-css {
+    width: 100%;
+    height: 200px;
+}
+
+
+/* 133620-1435760142-au */

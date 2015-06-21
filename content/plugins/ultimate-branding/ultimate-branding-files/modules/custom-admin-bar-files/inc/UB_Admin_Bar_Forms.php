@@ -252,10 +252,10 @@ class UB_Admin_Bar_Forms {
 
 		return
 			"<input type='radio' name='{$pfx}[{$name}]' id='{$name}-yes' value='1' " . ( (int) $value ? 'checked="checked" ' : '' ) . " /> " .
-			"<label for='{$name}-yes'>" . __( 'Yes', 'wdcab' ) . "</label>" .
+			"<label for='{$name}-yes'>" . __( 'Yes', 'ub' ) . "</label>" .
 			'&nbsp;' .
 			"<input type='radio' name='{$pfx}[{$name}]' id='{$name}-no' value='0' " . ( ! (int) $value ? 'checked="checked" ' : '' ) . " /> " .
-			"<label for='{$name}-no'>" . __( 'No', 'wdcab' ) . "</label>" .
+			"<label for='{$name}-no'>" . __( 'No', 'ub' ) . "</label>" .
 			"";
 	}
 

@@ -6,6 +6,8 @@ Plugin URI: http://premium.wpmudev.org/project/events-and-booking
 Version: 0.3
 Author: WPMU DEV
 AddonType: Integration
+Deprecated: yes
+Required Class: M_Membership
 */
 
 /*
@@ -40,6 +42,13 @@ class Eab_Events_MembershipIntegration {
 	 *
 	 */
 	private function _add_hooks () {
+		/*
+		 * Membership plugin is replaced by Membership2 plugin. So this add-on
+		 * is deprecated - we only set up the add-on when the old Membership
+		 * plugin actually is activated.
+		 */
+		if ( ! class_exists( 'M_Membership' ) ) { return; }
+
 		add_action('admin_enqueue_scripts', array( $this, 'load_scripts'));
 		add_action('plugins_loaded', array( $this, 'check_membership_plugin'));
 		add_action('admin_notices', array($this, 'show_nags'));
@@ -287,4 +296,4 @@ class Eab_Events_MembershipIntegration {
 	}
 }
 
-Eab_Events_MembershipIntegration::serve();
+add_action( 'plugins_loaded', array( 'Eab_Events_MembershipIntegration', 'serve' ) );

@@ -383,9 +383,10 @@ class UB_Admin_Bar {
 }
 UBSTYLE;
 
-		$save_style = ub_get_option(self::STYLE);
+		$save_style = stripslashes( ub_get_option(self::STYLE) );
+
 		if( $editor ){
-			return  $save_style;
+			return $save_style;
 		}
 
 		$styles = empty( $save_style ) ? $style : $save_style;

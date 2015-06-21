@@ -148,6 +148,8 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
 
 		$this->_add_action( 'login_redirect', 'set_proper_login_redirect', 10, 3 );
 		$this->_add_action( 'site_url', 'set_login_form_action', 20, 4);
+
+        $this->_add_action("dm_toggle_mapping", "toggle_mapping", 10, 3);
 	}
 
 	/**
@@ -1243,5 +1245,31 @@ class Domainmap_Module_Mapping extends Domainmap_Module {
     function allow_crosslogin(){
         if( isset( $_POST['testcookie'] ) &&  empty( $_COOKIE[ TEST_COOKIE ] ) )
             unset( $_POST['testcookie'] );
+    }
+
+
+    /**
+     * Toggles mapping to $toggle_value based on the provided $blog_id or $domain
+     *
+     * @uses dm_toggle_mapping
+     *
+     * @param int $blog_id
+     * @param string $domain
+     * @param int $toggle_value 1|0
+     * @return false|int
+     *
+     * @since 4.4.0.8
+     */
+    function toggle_mapping($toggle_value = 0, $blog_id = null, $domain = null ){
+
+        if( !empty( $blog_id ) ){
+            return $this->_wpdb->update( DOMAINMAP_TABLE_MAP, array( "active" => $toggle_value ), array( "blog_id" => $blog_id ) );
+        }
+
+        if( !empty( $blog_id ) ){
+            return $this->_wpdb->update( DOMAINMAP_TABLE_MAP, array( "active" => $toggle_value ), array( "domain" => $domain ) );
+        }
+
+        return false;
     }
 }

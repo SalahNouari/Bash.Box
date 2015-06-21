@@ -1,5 +1,14 @@
 ==Pay per View==
 
+1.4.2 - 2015-06-15 - Umesh Kumar
+----------------------------------------------------------------------
+
+- New:     Integrated PDT (Payment Data Transfer) which allows instant payment notification for periodic pass
+- Fixed:   Show social login, only if API settings are available
+- Fixed:   User Profile : Expire field not working
+- Updated: Google OAuth integrated
+- Updated: Social Login - Enable selected login out of Facebook, Twitter, Google
+
 V1.4.1.9:
 - Add day, month, year choices to Daily Pass. Changed name to Period Pass
 - Add day, month, year choices to Subscriptions.
@@ -73,4 +82,4 @@ V1.0.0:
 - Initial release
 
 
-133620-1428333061-ai
+133620-1434914431-au

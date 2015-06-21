@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/google-analytics-for-wordpress-mu
 Description: Enables Google Analytics for your site with statistics inside WordPress admin panel. Single and multi site compatible!
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
-Version: 3.1.4.1
+Version: 3.1.5
 WDP ID: 51
 License: GNU General Public License (Version 2 - GPLv2)
 */
@@ -62,9 +62,11 @@ class Google_Analytics_Async {
      */
     function __construct() {
         //Loads WPMUDEV dashboard
-        global $wpmudev_notices;
-        $wpmudev_notices[] = array( 'id'=> 51, 'name'=> 'Google Analytics', 'screens' => array( 'settings_page_google-analytics-network', 'settings_page_google-analytics' ) );
-        include_once(GOOLGEANALYTICS_PLUGIN_DIR.'google-analytics-async-files/externals/dash-notice/wpmudev-dash-notification.php');
+        if(file_exists(GOOLGEANALYTICS_PLUGIN_DIR.'google-analytics-async-files/externals/dash-notice/wpmudev-dash-notification.php')) {
+            global $wpmudev_notices;
+            $wpmudev_notices[] = array( 'id'=> 51, 'name'=> 'Google Analytics', 'screens' => array( 'settings_page_google-analytics-network', 'settings_page_google-analytics' ) );
+            include_once(GOOLGEANALYTICS_PLUGIN_DIR.'google-analytics-async-files/externals/dash-notice/wpmudev-dash-notification.php');
+        }
 
         $this->init_vars();
 		$this->init();
@@ -146,11 +148,11 @@ class Google_Analytics_Async {
             && !empty( $this->network_settings['track_settings']['supporter_only'] )
             && function_exists('is_pro_site')
             && !is_pro_site(get_current_blog_id(), $this->network_settings['track_settings']['supporter_only'])
-        ) {
+            && apply_filters('ga_additional_block', true)
+        )
             return;
-        } else {
-            add_submenu_page( 'options-general.php', 'Google Analytics', 'Google Analytics', 'manage_options', 'google-analytics', array( &$this, 'output_site_settings_page' ) );
-        }
+
+        add_submenu_page( 'options-general.php', 'Google Analytics', 'Google Analytics', 'manage_options', 'google-analytics', array( &$this, 'output_site_settings_page' ) );
     }
 
 	/**
@@ -301,14 +303,14 @@ class Google_Analytics_Async {
     function handle_page_requests() {
         if ( isset( $_POST['submit'] ) ) {
 
-			if ( wp_verify_nonce( $_POST['_wpnonce'], 'submit_settings_network' ) ) {
+			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'submit_settings_network' ) ) {
             //save network settings
                 $this->save_options( array('track_settings' => $_POST), 'network' );
 
                 wp_redirect( add_query_arg( array( 'page' => 'google-analytics', 'dmsg' => urlencode( __( 'Changes were saved!', $this->text_domain ) ) ), 'settings.php' ) );
                 exit;
 			}
-			elseif ( wp_verify_nonce( $_POST['_wpnonce'], 'submit_settings' ) ) {
+			elseif ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'submit_settings' ) ) {
             //save settings
 
                 $this->save_options( array('track_settings' => $_POST) );
@@ -386,6 +388,8 @@ class Google_Analytics_Async {
             $options = get_option( $this->options_name );
         else
             $options = get_site_option( $this->options_name );
+
+        $options = apply_filters('ga_get_options', $options, $network, $this->options_name);
 
         /* Check if specific plugin option is requested and return it */
         if ( isset( $key ) && array_key_exists( $key, $options ) )

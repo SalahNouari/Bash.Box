@@ -48,7 +48,7 @@ $current = 'current';
 	<?php foreach ( $items as $item ) :
 		self::$core->array->equip( $item, $item_fields );
 		$item->action = self::$core->array->get( $item->action );
-		$item->details = self::$core->array->get( $item->details );	     	 	  		 				
+		$item->details = self::$core->array->get( $item->details );
 
 		$item_class = $item->active ? 'active' : '';
 		$item_class .= ' ' . $item->class;
