@@ -6,6 +6,9 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.2 =
+* Added WP mail sending method that can be used for integration with other email sending plugins
+
 = 2.7.1.8 =
 * Fixed TinyMCE not loading for newsletter editor when "Disable the visual editor when writing" is enabled
 
@@ -423,4 +426,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1434914426-au
+133620-1435659490-au

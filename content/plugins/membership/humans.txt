@@ -1,28 +1,18 @@
 /* TEAM */
-	Developer: Cole
+	Developer: Fabio Jun
 	Contact:
 	Twitter:
 	Location:
 
-	Developer: Barry
+	Developer: Rheinard Khorf
 	Contact:
-	Twitter: @caffeinatedwp
+	Twitter:
 	Location:
 
-	Developer: Marko Miljus
-	Location: Novi Sad, Serbia
-	Contact: marko [at] incsub [dot] com
-	Twitter: @markomiljus
-
-	Developer: Eugene Manuilov
-	Location: Kiev, Ukraine
-	Contact: eugene [at] incsub [dot] com
-	Twitter: @eugene_manuilov
-	
-	Developer: Fabio Jun
-	Location: Sao Paulo, Brazil
-	Contact: fabio [at] incsub [dot] com
-	Twitter: @eugene_manuilov
+	Developer: Philipp Stracker
+	Contact:
+	Twitter:
+	Location:
 
 
-133620-1433686918-au
+133620-1435538041-au

@@ -1,314 +1,317 @@
-== 3.5.3.3 ==
-* Prepare plugin for update to Membership2.
-== 3.5.3.2 ==
-* Fixed compatibility issue with WP 4.2.
-== 3.5.3.1 ==
-* Fixed redirection issues.
-== 3.5.3.0 ==
-* Security Update: Fixing possible WordPress XSS bug.
-* Fixed issue with WPML and Protected Content page.
-* Added filter to shortcode color.
-* Fixed issue where `pre_get_posts` hooks were causing an endless loop.
-* Fixed up conflict with *Category* and *Post* rules. Rules now merge properly when both used as positive or negative rule. Negative rule wins over positive rule when using an advanced rule.
-* Fixed issue with recent posts listing non-accessible posts.
-* Previous/next post links are removed for posts that user does not have access to.
-* Fixed issue with access level 'leave' ping not firing when the subscription expires.
-* Fixed new lines converted to br tags in checkout form
-* Fixed wrong transaction amount for non-recurring payments.
+Plugin Name: Membership 2
+Author: Fabio Jun, Rheinard Khorf, Philipp Stracker
 
-== 3.5.2.9 ==
-* Fixed popup window issue when using 100% discount coupon code.
-* Fixed issue with duplicate coupon names. Duplicate names are not allowed.
-* Fixed issue where 100% discount did not honour subscription restrictions.
+Change Log:
+----------------------------------------------------------------------
 
-== 3.5.2.8 ==
-* Fixing Authorize.Net to capture and settle transactions properly.
+1.0.0.7
+----------------------------------------------------------------------
+- Improve Transaction logs to also log inactice or invalid gateway calls
+- Fix issue that did not display any "Page" rules in the Membership Overview screen
+- Fix a critical bug that caused protection rules to be reset on plugin activation
+- Fix the bulk actions in the Protecion Rules page
+- Fix wrong WordPress action that was called in the user-registration form
+- Fix rare error that happened when dripped content had no/invalid date settings
+- Fix Members/Billings list to keep search filter when changing the sort option
+- Fix Billings search logic to find all users that contain the search word (no exact username required anymore)
+- Fix PHP warnings caused by the Taxamo Add-on
+- Hide the Guest and Default memberships in the Members list, as they are useless there
 
-== 3.5.2.7 ==
-* Fixed issue where protection is not working for new subscribers (protecting everything). 
-* Fixed issue where menus are not appearing when they should be for subscribers.  
+1.0.0.6
+----------------------------------------------------------------------
+- Add logging for payment gateway transactions, can be viewed via "Billings > View Transaction logs"
+- Fix subscription details when changing the membership payment_type (within 6 hours after membership update)
+- Fix follow-up issue in recent Mailchimp bug fix
 
-== 3.5.2.6 ==
-* Fixed issue with Authorize.Net gateway charging an Authorize Only transaction for serial subscriptions.
+1.0.0.5
+----------------------------------------------------------------------
+- Add possibility to change payment options even when membership has active subscribers!
+- Add link to Members-List from the Membership list (click on the member-count value)
+- Hide inactive memberships in the Members and Protection Rules pages
+- Fix compatibility issue with the wp-recaptcha plugin
+- Fix several php notices and warnings ("invalid argument", "undefined index", etc.)
+- Fix protection of the Private Message feature in the BuddyPress Add-on
+- Fix Mailchimp Add-on to fetch all lists from Mailchimp, not only 25
+- Add new hook to observe status change of subscriptions: "ms_subscription_status-<status>"
 
-== 3.5.2.5 ==
-* Added explicit option to apply rules to front page: Membership > Options > Configuration > 'Apply rules to site home/front page'.
-* By default Membership will not apply rules to your site front page unless this option is set.
-* Fixed issue where large amounts of categories returned limited posts (sometimes zero posts) when using category rules.
+1.0.0.4
+----------------------------------------------------------------------
+- Fix the import tool to import data from old Membership plugin correctly (recurring payments, subscription status and end date)
+- Fix the i18n support, the plugin is translated correctly again
+- Fix error message that was displayed when dates of dripped memberships were saved
 
-== 3.5.2.4 ==
-* Fixed issue where Menu rules were improperly saved causing menus to disappear or unwantedly blocking members.
-* Upgrades Posts, Pages, Menu and Category rules from previous structure (3.5.1.8) to new structure. (Backing up before upgrade recommended.)
-* Category rule upgrades should resolves some issues experienced with categories since version 3.5.2.1.
+1.0.0.3
+----------------------------------------------------------------------
+- Add better error handling to the upgrade routine
+- Fix a major bug in the automatic import wizard that prevented the plugin from importing old Membership data
+- Fix wrong redirect during setup wizard that ended in "Not allowed to view page" errors
+- Fix some typos in admin pages
+- Fix the protection rule for "Friendship Request" in the BuddyPress Add-on
+- Fix a bug in the Coupons Add-on that discarded changes instead of saving them
+- Rename page "Protected Content" to "Protection Rules"
 
-== 3.5.2.3 == 
-Critical Updates
-* Fixed database issue with membership newsfeed.
-* Fixed database warnings on plugin activation. 
-* Fixed issue with positive page rules removing special pages like 'Account' and 'Register'.
-* Fixed issue with negative post and category rules blocking unprotected content.  
-* Fixed issue with default value for cascading page rules not working until re-saved. 
+1.0.0.2
+----------------------------------------------------------------------
+- Fix compatibility issues with PHP 5.2.4 - note that you still need PHP 5.3 to use the Stripe Gateways
 
-== 3.5.2.2 ==  
-* Fixed critical bug when using Categories as negative rules.
+1.0.0.1
+----------------------------------------------------------------------
+- Fix some PHP notices and warnings that did happen during first setup
 
-== 3.5.2.1 ==  
-* Fixed issue on negative rule breaking site access when used.  
-* Fixed front page now show for all users/visitors/subscribers (use shortcode to block content if desired).  
-* Fixed issue with menu caused by WP 4.0 upgrade and filters use (setup menu using Appearance->Menus, menu item access can be set using access level rules).
+Membership2 1.0.0.0
+----------------------------------------------------------------------
+- Plugin name changed from Protected Content to Membership2
+- New network-wide protection mode added (see Membership2 > Help page)
+- New official plugin API added (see Membership2 > Help page)
+- New Payment gateway added: Stripe Subscriptions
+- New option in Membership Payment settings to disable individual payment gateways.
+- Improved payment settings page to use number-input fields instead of text-fields
+- Fix issue where Simulation (Test) mode added HTML code to all Ajax responses
+- Fix blank screen after submitting the password reset form
+- Minor improvements all over the place
 
-== 3.5.2 ==
-* New: Dripped content settings for Page rules. 
-* New: Dripped content settings for Post rules. 
-* New: Dripped content settings for Category rules. 
-* New: Dripped content settings for Menu rules. 
-* Fixed: Issue with menu's disappearing when using menu rules.  
-* Fixed: Membership Text/Subscription widgets not showing for administrators.
+1.1.1.6
+----------------------------------------------------------------------
+- Add wp-config option MS_NO_SHORTCODE_PREVIEW (details on the Help > Advanced Settings page)
+- Improve shortcode logic to not show duplicate login forms in rare, theme-specific cases
+- Fix bug that caused missing expiration date for admin-assigned memberships
+- Fix a rare error 'float expected but string found' in billings module
+- Fix minor issue with wrong filter parameter 
 
-== 3.5.1.8 ==
-* Fixed: Critical issue preventing stacked 'finite' levels in PayPal Express gateway.
+1.1.1.5
+----------------------------------------------------------------------
+- Add "autofocus" attribute to login shortcode
+- Add filter "ms_model_pages_redirect_to" to customize membership redirects
+- Add new attributes to the login shortcode to customize field labels and placeholders
+- Improve the Import Tool to handle large import files without throwing memory limit exceptions
+- Improve preview of the [ms-protected-content] shortcode for admins
+- Fix various small issues with the login shortcode HTML code
+- Fix javascript collision with ACF Pro plugin
+- Fix display of invoice status in the admin Billings section
 
-== 3.5.1.7 ==
-* Fixed: Issue where upgrade purchase redirects to subscription form.  
-* Fixed: Issue with 2Checkout and cancellation of recurring subscriptions.  
-* Fixed: Issue where some columns were not aligning in 'All Members' view.
-* Changed: Simple 'finite' and 'indefinite' payments are now treated as one-off PayPal payments.  
-* Fixed: PopUp registration showed unfriendly error message when user existed.  
-* Changed: Removed specific button styles in favour of 'button button-primary' classes. (Example hook for old buttons can be found at the bottom of the primary plugin file)  
-* Updates: Some updates to Authorize.net gateway.  
-* New: Advanced option, "Run Communications", to manually run the communication functions without waiting for cron.  
-* Changed: Communications now processes more members per execution.  
-* New: Explicit option to allow child parent to inherit the access rule of their parent. Can be changed in Options->Configuration.  
-* Fixed: Issue with using [subscriptionform] shortcode not getting processed. 
+1.1.1.4
+----------------------------------------------------------------------
+- Added new automatic email notification: Subscription Renewed
+- Improved descriptions of automatic email notification settings
+- Improved i18n integration in the Billings module, Invoice display and in the Account page
+- Improved the invoice and subscription workflow with Trial Memberships
+- Improved media protection to protect whole HTML output instead of post-content only
+- Improved Mailchimp integration: Firstname/Lastname are now also transfered to Mailchimp
+- Improved lots of front-end pages by adding new CSS classes that can be used to customize the layout
+- Fixed XSS vulnerability (add_query_arg/remove_query_arg)
+- Fixed bug with Stripe gateway that striped the cent amount from the charged amount
+- Fixed the Protection meta-box in post and page editor
+- Fixed the protection shortcode for Guest/Default memberships
+- Fixed bug that created duplicate invoices when processing automatic email notifications
+- Fixed bug that prevented the Signup Email notification from being sent to members
+- Fixed issues with assigning correct subscription status right after first signup
+- Fixed missing pagination in Media Protection list
+- Fixed the Auto-Opt-In option in Mailchimp integration
+- Fixed conflict with WooCommerce where category list did not show any products
+- Fixed bug in Registration workflow that allowed guests to subscribe to memberships
+- Fixed some attributes in the [ms-membership-login] shortcode, e.g. "label_" values
+- Fixed some issues in the Custom Post Type protection pages
+- Fixed bug in the Page protection page that did not display all pages in some cases
+- Fix some issues and plugin conflicts with the Member-Capability Add-on
 
-== 3.5.1.6 ==
-* Added: Denmark (DK) added to PayPal solo gateway.
-* Updated: Removed assigning return values by reference.
-* Fixed: Fixed issue where users were not upgraded after successful PayPal payments.
-* Fixed: Fixed a bug where the incorrect date was calculated for Membership renewals.
-* Fixed: Bug fix for popup registration.
-* Fixed: Issue where users did not properly downgrade.
-* Fixed: Redirect bug.
-* Fixed: Fixed issue where users were not assigned the "stranger" level.
-* Fixed: Bug with Authorize.net and finite only subscriptions.
-* Fixed: PayPal Express now treats subscriptions with multiple stacked "finite" levels as set recurring payments (only if price and duration of each level match).
-		E.g. Four finite levels set to '30 days' with price of '10.00' will create a recurring PayPal subscription that will charge users 10.00 every 30 days, with 4 payments total.
-* Note: When adding "finite" levels before "indefinite" or "serial", PayPal will accept the first two "finite" levels as "Trial Period" and "Trial Period 2" (on PayPal's side). PayPal API will not allow more than 2 finite levels before another level type.
-* Added: New warnings when creating subscriptions.
-* Added: Warning when using 2CheckOut and attempting to create a trial period.
-* Update: Subscription builder UI updated to alert users of invalid level type combinations.
-* Fixed: Bug with RegEx and URL Groups not working properly. Now checks for magic quotes. (user contributed fix, thanks!)
-* Fixed: Posts form protected categories will no longer show up on home page, in searches or in archives.
+1.1.1.3
+----------------------------------------------------------------------
+- Fix wrong redirection in the [ms-register-user] shortcode
+- Fix error that preveted 100% discounted invoices from being marked as paid
+- Add a lot of options to the [ms-membership-account] shortcode (details in "Help > Shortcodes")
+- Add a timeout to refresh the price of unpaid invoices after 7 days
 
-== 3.5.1.5 ==
-* Added: 'Communications' now has explicit options for 'Immediately on signup' and 'Day subscription expires.'
-* Changed: Communication table now has descriptive time periods.
-		   E.g. 1 Day(s) before a subscription expired 
-		   E.g. 3 Day(s) after a subscription is paid/activated. 
-* Fixed: 0 day time periods will now change to sign up or expiry message depending on the option selected.
-* Fixed: Redirect 'Welcome' page for non-registered users and users without a subscription.
-* Fixed: Coupon now adds trial occurrences to total occurrences - solves "Trial Occurrences must be less than total occurrences." bug.
-* Fixed: 2CO forms now strip tags from subscription descriptions in input boxes. HTML was causing some unexpected behaviour.
-* Fixed: Forced access level only applied with new user registration (or 3rd party scripts). Does not apply to users using the "Signup" links.
-* Fixed: 2CO redirects to "Registration completed page"/"Welcome" if it exists else redirects to home.
-* Notice: Potential conflict with Gantry framework when using Gantry widgets on Membership special pages. Flagged as known bug to be addressed in future release.
-* Changed: New behaviour for BuddyPress Extended Profiles. Extended Profile Fields are now visible and editable on the 'Accounts Page'.
-* Added: CSS classes added to each xprofile field for more styling options.
-* Changed: Account form no longer hidden with 'edit' toggle on Accounts Page. Account form only hidden when using [accountform] shortcode.
-* Changed: Creating pings now better supports arrays in query strings. E.g. using merge_vars[] with MailChimp pings.
-		
-== 3.5.1.4 ==
-* Added: New option for default subscriptions. Explicitly assign default subscription to new users - for creating dripped access levels. Dev note: Implemented via Factory class.
-* Fixed: Expiry date now assigned at user creation (where option is enabled in options). Note, user has to be created using standard WordPress function, wp_create_user(). Will not work for direct SQL entries.
+1.1.1.2
+----------------------------------------------------------------------
+- Add compatiblity for new  Stripe Gateway API (update from 2015-02-18)
+- Add new Media Protection option to manually protect files in the Protected Content page
+- Fix the Media Protection rule, some configurations did protect too many files
+- Fix error when paying with the Authorize.net payment gateway
+- Fix an issue where a static blog-page would not display any posts
+- Fix an issue with the protection shortcode so it works for users with multiple memberships
+- Fix comment protection rules
+- Improve layout of the Registration form and validation notes
+- Add a filter to customize redirection after login: apply_filter('ms-ajax-login-redirect')
 
-== 3.5.1.3 ==
-* Fixed: Including publicform.css and button.css when subscription button shortcode is used. 
-* Fixed: References to 'global $member' where object may not exist. Membership_Plugin::currrent_member() now sets 'global $member'.
-* Fixed: Blocking of $_GET['file'] when media protection is not 'hybrid' causing conflict with other plugins.
-* Fixed: Mixed column bug on Membership listing.
-* Fixed: Restored all Membership table functionality to reflect Membership 3.4 behaviour.
-* Change: ?file= parameter replaced with ?ms_file= to avoid potential conflicts.
+1.1.1.1
+----------------------------------------------------------------------
+- Make Membership2 compatible with WangGuard plugin
+- Add some registration hooks for compatiblity with WordPress code
 
-== 3.5.1.2 ==
-* Fixed: 'All Members' page no longer displays empty levels and subscriptions.
-* Fixed: Repair tables will now clean up empty subscription and level assignment (e.g. where id's are 0).
-* Fixed: Deleting subscriptions and levels already assigned to users no longer creates empty entries.
-* Fixed: Shortcode bug preventing admin from seeing content.  New behaviour, administrator will see all shortcode content. To test restricted content use "View site as:"
-* Fixed: Associated role are now 'sticky'. Where roles are not explicitly defined they will revert to site default role.
-* Updates: Updated Member model, Level model and removed legacy code where redundant.
-* Fixed: Communications were using levels expire date instead of the subscription expire date 
-* Added: Russian Ruble to currency options and PayPal solo
-* Fixed: in the "all members" screen some times the subscription/level columns weren’t showing any data
+1.1.1.0
+----------------------------------------------------------------------
+- Fix simulation of dripped content
+- Fix Protected Content section for Advanced Menu Protection rules
+- Fix the User selection when manually creating a new invoice
+- Fix More-Tag protection to correctly display the protection message
+- Fix Media Protection settings [you might need to resave permalinks]
 
-== 3.5.1.1 ==
+1.1.0.9
+----------------------------------------------------------------------
+- Fix bug that did not allow users to enter a limited Coupon code
+- Fix simulation mode for memberships with recurring payments
+- Fix small glitch in the Admin UI when Category Add-on is disabled
+- Fix the "Insert Variables" dropdown in Automated Email Settings
+- Fix the "More Tag" and "Comment" protection rules
+- Fix an error caused by manually creating invoices
+- Fix protection bug that caused protected posts to show in post-list
+- Improve some descriptions in Admin Settings
 
-* Fixed: when using PayPal Single Payments the member's existing subscription is not being dropped after upgrading
-* Fixed: stranger access level some times isn't being determined correctly
-* Fixed: subscriptions are not being dropped after member cancels their subscription with PayPal
-* Fixed: on subscription screen the member's subscription expiration date is always the current date
-* Added: IPN setup instructions on PayPal gateways settings screens
-* Added: ability to add/move/drop access levels. NOTE: this feature will only be available when there are no subscriptions in the system
+1.1.0.8
+----------------------------------------------------------------------
+- Fix critical bug that deactivated all subscriptions for some sites
+- Fix the Member Capabilities rules
+- New Add-on "Category Protection" allows disabling the Category rules
 
-== 3.5.1 ==
+1.1.0.7
+----------------------------------------------------------------------
+- Fix bug in dripped memberships that prevented content-revealing
+- Fix bug where multiple memberships would protect each others posts
 
-* Fixed: pings don't send when using "Default subscription for registered users" setting
-* Fixed: default membership is not truly added as a subscription http://wp.mu/94f
-* Fixed: date format in settings not being used on subscriptions page
-* Fixed: streamlined PayPal checkout process (will no longer request shipping address or notes)
-* Fixed: PHP warning in free subscription gateway
-* Fixed: when using PayPal Single Payments the member's existing subscription is not being dropped after upgrading
+1.1.0.6
+----------------------------------------------------------------------
+- Fix issue with translated version of plugin
+- Fix problems with php versions older than 5.3.0
 
-== 3.5.0.9 ==
+1.1.0.5
+----------------------------------------------------------------------
+- Add plugin modifiers (details in Membership2 > Help > Advanced)
+- Fix import process to not send out emails
+- Fix the IPN URL displayed in the PayPal-Standard settings
+- Restore Payment Gateway settings if lost during 1.0 to 1.1 update
 
-*	Fixed: super admins and admins not able to view all content
-*	Fixed: "view site as" not working when on front-end pages
-*	Fixed: if using admin gateway and member clicks unsubscribe their subscription is instantly dropped instead of being flagged to expire at the subscription end period NOTE: if admin drops a member’s subscription from within wp-admin this will still instantly drop the member’s subscription.
+1.1.0.4
+----------------------------------------------------------------------
+- Fix problems in upgrade logic of dripped memberships from 1.0 to 1.1
+- Category Protection is not deactivated by "Individual Posts" Add-on
 
-== 3.5.0.8 ==
+1.1.0.3
+----------------------------------------------------------------------
+- Write an update log that logs any changes made to the DB
+- Improve the Member-Details popup with infos on subscription/payments
 
-* Fixed: BuddyPress bug where first name and last name weren't saved correctly
-* Fixed: CSS styling on renew form when using [renewform] shortcode
-* Fixed: bug with category rules hiding some member's menus
-* Fixed: call to undefined method Membership_Render_Page_Subscription_Renew::get_subscriptions() on renew form
-* Fixed: BuddyPress compatability issues
-* Fixed: bug with membership blocking Classifieds plugin virtual pages
+1.1.0.2
+----------------------------------------------------------------------
+- Fix Add-ons "Individual Custom Posts" and "Individual Posts"
+- Create a DB snapshot before upgrading
 
-== 3.5.0.7 ==
+1.1.0.1
+----------------------------------------------------------------------
+- Fix problem where Protection-Shortcode was not working in 1.1
+- Fix a PHP warning that happened during upgrade to 1.1
+- Fix glitch in Add-ons page where some settings were disabled
 
-* Fixed: tables with mediumtext columns data type modified to text data type 
+1.1
+----------------------------------------------------------------------
+- Improved and much simpler UI!
+- Better and shorter Setup wizard!
+- Membership types dropped: Tiered, Content-Type (converted to Standard)
+- New Import Tool to create export files and import data
+- New Import-From-Memberships interface
+- New Add-on: Admin Side Protection
+- New Add-on: Member Capabilities
+- New Add-on: User-Role Memberships
+- New Add-on: Taxamo (addresses EU VAT regulations)
+- New layout of the Add-on page
+- Many small bugfixes, layout improvements and much more...
 
-== 3.5.0.6 ==
+1.0.4.9
+----------------------------------------------------------------------
+- Fix an JavaScript error in the page front-end
+- Fix Manual gateway Purchase button to correctly display images (URL)
 
-* Fixed: disappearing menu bug
+1.0.4.8
+----------------------------------------------------------------------
+- Fix 100 % discount logic; payment gateway is skipped now
+- Fix incompatibility with E-Newsletter plugin
+- Fix incompatibility with PopUp Pro and Google Maps
+- Fix PHP warning displayed to some users when signing up to Membership
+- Some other small improvements and fixes
 
-== 3.5.0.5 ==
+1.0.4.7
+----------------------------------------------------------------------
+- Fix rewrite rules on plugin update/activation (solves payment-issues)
+- Fix PayPal Single settings did not save email address in rare cases
+- Fix duplicate display of BuddyPress/bbPress rules in overview
+- Fix coupons with 100% reduction are working correctly now
+- Improve the [ms-memberhship-buy] shortcode to also work for guests
+- Improve subscription to free memberships: payment screen is skipped
 
-* Fixed: rules in inactive access levels were still being applied
+1.0.4.6
+----------------------------------------------------------------------
+- Fix problems with plugin settings after upgrading
+- Fix issue where Front-End pages were not working (e.g. with Jetpack)
 
-== 3.5.0.4 ==
+1.0.4.5
+----------------------------------------------------------------------
+- Add new Help section with documentation of shortcodes
+- Fix: Membership Pages use default WordPress posts instead of URL
+- Fix: Menu items are correctly generated when a Membership is created
+- Memberships with pending payments can be cancelled by the member
+- A ton of small bugfixes and minor improvements
 
-* Additional fixes for category rules
- 
-== 3.5.0.3 ==
+1.0.4.4
+----------------------------------------------------------------------
+- Add individual URL group permissions on membership level
+- Add column with gateway status to the payment settings
+- Fix bug where registration did not work directly after initial setup
+- Fix caption of the "Login" button in the login page
+- Fix a lot of small issues in the Members page
+- Fix bugs with Comment protection
+- Fix BuddyPress permissions (Add-on)
+- Many small improvements and bugfixes all over the place
 
-* Fixed: notices/warnings in menu
+1.0.4.3
+----------------------------------------------------------------------
+- Add new Member-Filter that displays users with pending payments
+- Fix protection of menu-items when user has multiple memberships
+- Fix permission issues with protection shortcode
+- Fix small bugs with several shortcodes
+- Remove access to registration page while plugin is disabled
 
-== 3.5.0.2 ==
+1.0.4.2
+----------------------------------------------------------------------
+- Add new Add-on to replace whole menus per membership-level
+- Some small bugfixes
 
-* Fixed: category rules would apply to custom post types (e.g. menu items, etc) causing those elements to not show up
-* Fixed: authorize.net errors when using a dripped content setup http://wp.mu/92g
-* Fixed: remove old subscription when updating http://wp.mu/92h
-* Fixed: membership menu would some times not show up in wp-admin
- 
-== 3.5.0.1 ==
+1.0.4.1
+----------------------------------------------------------------------
+- Fix error when testing memberships
+- Fix PHP notices
 
-* Fixed bug with Chinese characters in form fields not saving/rendering properly http://wp.mu/925
+1.0.4
+----------------------------------------------------------------------
+- Add new Add-on that allows to disable Multiple-Membership mode
+- Add new Add-on to change protection of special pages (e.g. search results)
+- Add Simulation Infos to explain which rule protected a certain page
+- Fix default protection of special pages
+- Fix assignment of private memberships via members-list
+- Fix membership status-flag in database
+- Fix access to unprotected pages is now possible
 
-== 3.5 ==
+1.0.3
+----------------------------------------------------------------------
+- Fix member model fields not persisting
 
-* Fixed network/super admin permissions
-* Fixed bugs with global cart
-* Fixed admin menu protection rules
-* Fixed BuddyPress private messages protection rule
-* Fixed issue with showing posts from protected categories
-* Fixed popup complete message links rendering issue
-* Fixed warning message which appear for subscriptions without access levels
-* Fixed members pagination issue when filter becomes reset after going to the next page
-* Fixed coupons start date issue
-* Fixed coupons timezones issue
-* Fixed multiple levels compatibility issue
-* Fixed infinite transition issue for indefinite subscriptions when period set improperly
-* Fixed &USD; rendering issue
-* Fixed issue which allows deactivated users to have access to a site
-* Fixed admin bar issue which appear when global tables are used
-* Fixed account page submission issue.
-* Fixed login widget redirect issue
-* Fixed PayPal Standard Payment gateway transactions date issue
-* Fixed PayPal subscription suspended issue due to max fails limit settings
-* Fixed category protection issue
-* Fixed internal issue with actions collision
-* Fixed network wide protection issue when global installation is used
-* Fixed database table verification and repairing processes
-* Fixed rule counts settings issue
-* Fixed [renewform] shortcode styling issue
-* Fixed protection issue, when protection is disabled
-* Fixed leaving ping issue for expired subscriptions
-* Fixed Terms Of Service plugin compatibility
-* Fixed deleted ping warnings
-* Fixed warning which appears after coupon deletion from admin dashboard
-* Fixed free subscription gateway doubling buttons issue
-* Fixed members pagination issue
-* Fixed issue with not loaded coupon forms
-* Fixed communication issue when all subscription is selected
-* Fixed user display name and level name issues for ping data
-* Fixed protection issue for BuddyPress group creation rule
-* Fixed BuddyPress account editing issue
-* Fixed reverting roles issue for expired subscription
-* Fixed Paypal gateway issue with post transaction not being verified and therefore not activating the subscription paid
-* Added ability to use array variables when setting up ping data
-* Added response column to ping history screen - useful for debugging
-* Implemented new Authorize.net gateway which changes Authorize ARB and AIM gateways
-* Implemented membership access level meta box for posts and pages editing form
-* Implemented functionality which hides inactive members from BuddyPress members list
-* Implemented ability to upgrade subscription for admin gateway
-* Implemented redirect back to a secure page when an user logins on protected page
-* Implemented ability to search members by ID, login, email, url, nice name and display name
-* Implemented ability to edit BuddyPress xprofile fields visibility settings
-* Implemented ability to send HTML content in communication messages
-* Implemented HTML editor for communication message at communication edit page
-* Implemented ability to send test communication message to myself
-* Implemented ability to use user display name, first and last name in a communication message
-* Implemented ability to use first and last name in a ping
-* Implemented ability to enter first and last name during registration
-* Implemented BuddyPress friendship protection rule
-* Improved compatibility with WP Better Email plugin
-* Improved rendering gateway information at the members list table
-* Improved ping argument processing
-* Improved 100% coupon gateway setup
-* Improved BuddyPress registration form compatibility
-* Improved Fancybox styles
-* Improved popup registration form styles to look better on mobile devices
-* Reworked purchase free subscription process
-* Reworked default subscription setup for users without subscriptions
-* Removed ability to deactivate user on registration
-* Removed ability to move member level (this is the same as moving to the same subscription, but a new level)
+1.0.2
+----------------------------------------------------------------------
+- Add class to page body to indentify membership of the current user
+- Add option to send different email when registering for a free membership
+- Fix image-url of loading animation in one css file
+- Fix logout word showing in protected-content page
+- Fix undefined variable in members model
+- Fix credit card info text
 
-== 3.4.6 ==
+1.0.1
+----------------------------------------------------------------------
+- Fix slow Ajax Login
+- Add handler for password reset
+- Fix orphan children when deleting parent membership
+- Refactories
 
-* Fixed BuddyPress pages protection issue
-* Fixed upgrade and initial installation issues
-* Fixed communication emails sending issue
-* Fixed communication message subscription plan selection
-* Fixed unexpected URL exclusion which leads to unexpected issues
-* Fixed issue with not loaded custom templates for membership pages
-* Fixed bug with wrongly added memberhsip pages to a query
-* Fixed ability to access account page by unlogged users
-* Fixed issue with left user information in the membership relationships table after user has been deleted
-* Fixed issue with popup registration form when email address was not determined
-* Fixed issue with not required invite code at BuddyPress registration page
-* Fixed issue with invite codes which appears after each BuddyPress fields
-* Fixed issue with not redirected page after 100% discount coupon was applied
-* Fixed issue with empty page appeared after redirection to protected page
-* Fixed issue with coupon used count incrementation when 100% discount coupon is used
-* Fixed issue with broken subscription URLs at registration form when ?id= permalink is used
-* Implemented ability to test rules in an URL group
-* Implemented ability to sort subscription plans at front end
-* Implemented deletion of the "user registration" subscription after first regular subscription is selected
-* Implemented ability to grant user capability to view all content pages
-* Reworked protection rules
-* Reworked BuddyPress protection rules
-
-== 3.4.5 ==
-
-* Fixed URL Groups match issues
-* Fixed issue with not removed invite codes when an option "Remove Code once used" is set to yes
-* Fixed issue with broken links to levels and plans at membership dashboard (network wide)
-* Fixed warnings and notices in level and subscription text widgets
-* Fixed warnings and notices in login widget
-* Fixed rendering issue with login widget and made it rendering as widget
-* Fixed bug with infinite loop which appears if subscription period is set inappropriate
-* Fixed issue with invalid redirect after enter a coupon code
-* Implemented ability to add a title and "lost password" link to the login widget
+1.0.0
+----------------------------------------------------------------------
+- Initial version.
 
 
-133620-1433686918-au
+133620-1435538041-au
