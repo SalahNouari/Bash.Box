@@ -48,7 +48,7 @@ class MS_Model_Communication_Before_Trial_Finishes extends MS_Model_Communicatio
 	 */
 	public function set_period_name( $field ) {
 		$field['title'] = __( 'Notice Period', MS_TEXT_DOMAIN );
-		$field['desc'] = __( 'Define, how many days in advance the user should be notified.', MS_TEXT_DOMAIN );	   	 	 		 	  					  
+		$field['desc'] = __( 'Define, how many days in advance the user should be notified.', MS_TEXT_DOMAIN );
 
 		return $field;
 	}
