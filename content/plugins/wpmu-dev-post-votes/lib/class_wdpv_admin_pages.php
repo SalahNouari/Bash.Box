@@ -14,9 +14,14 @@ class Wdpv_AdminPages {
 			'settings' => __( 'Settings', 'wdpv' ),
 			'shortcodes' => __( 'Shortcodes', 'wdpv' ),
 		);
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 	function Wdpv_AdminPages () { $this->__construct(); }
 
+	function enqueue_scripts() {
+		wdpv_enqueue_icomoon_fonts();
+	}
 	/**
 	 * Main entry point.
 	 *
@@ -60,7 +65,7 @@ class Wdpv_AdminPages {
 		add_settings_field('wdpv_voting_positive', __('Prevent negative voting', 'wdpv'), array($form, 'create_voting_positive_box'), 'wdpv_options_page', 'wdpv_voting');
 		add_settings_field('wdpv_front_page_voting', __('Voting on Front Page', 'wdpv'), array($form, 'create_front_page_voting_box'), 'wdpv_options_page', 'wdpv_voting');
 		if (is_network_admin()) {
-			add_settings_field('wdpv_disable_siteadmin_changes', __('Prevent Site Admins from making changes?', 'wdpv'), array($form, 'create_disable_siteadmin_changes_box'), 'wdpv_options_page', 'wdpv_voting');	     	 	 		 		 		
+			add_settings_field('wdpv_disable_siteadmin_changes', __('Prevent Site Admins from making changes?', 'wdpv'), array($form, 'create_disable_siteadmin_changes_box'), 'wdpv_options_page', 'wdpv_voting');
 		}
 
 		// BuddyPress integration

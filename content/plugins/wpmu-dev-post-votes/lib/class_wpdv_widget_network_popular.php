@@ -10,6 +10,13 @@ class Wdpv_WidgetNetworkPopular extends WP_Widget {
 	}
 
 	function form ($instance) {
+        $defaults = array(
+            'title' => '',
+            'limit' => 5,
+            'voted_timeframe' => 'this_week'
+        );
+
+        $instance = wp_parse_args( $instance, $defaults );
 		$title = esc_attr($instance['title']);
 		$limit = esc_attr($instance['limit']);
 		$voted_timeframe = esc_attr($instance['voted_timeframe']);
@@ -75,8 +82,9 @@ class Wdpv_WidgetNetworkPopular extends WP_Widget {
 				echo "<ul class='wdpv_popular_posts wdpv_network_popular'>";
 				foreach ($posts as $post) {
 					$data = get_blog_post($post['blog_id'], $post['post_id']);
+                    $permalink = apply_filters( 'post_voting_network_widget_popular_post_permalink', get_blog_permalink( $post['blog_id'], $post['post_id'] ), $data, $post['blog_id'] );
 					echo "<li>";
-					echo '<a href="' . get_blog_permalink($post['blog_id'], $post['post_id']) . '">' . apply_filters('the_title', $data->post_title) . '</a> ';
+					echo '<a href="' . esc_url( $permalink ) . '">' . apply_filters('the_title', $data->post_title) . '</a> ';
 					printf(__('<span class="wdpv_vote_count">(%s votes)</span>', 'wdpv'), $post['total']);
 					echo "</li>";
 				}

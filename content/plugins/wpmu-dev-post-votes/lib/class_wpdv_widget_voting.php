@@ -10,6 +10,15 @@ class Wdpv_WidgetVoting extends WP_Widget {
 	}
 
 	function form($instance) {
+        $defaults = array(
+            'title' => '',
+            'show_vote_up' => false,
+            'show_vote_down' => false,
+            'show_vote_result' => false
+        );
+
+        $instance = wp_parse_args( $instance, $defaults );
+
 		$title = esc_attr($instance['title']);
 		$show_vote_up = esc_attr($instance['show_vote_up']);
 		$show_vote_down = esc_attr($instance['show_vote_down']);
@@ -35,7 +44,7 @@ class Wdpv_WidgetVoting extends WP_Widget {
 
 		$html .= '<p>';
 		$html .= '<label for="' . $this->get_field_id('show_vote_result') . '">' . __('Show voting results:', 'wdpv') . '</label>';
-		$html .= '<input type="checkbox" name="' . $this->get_field_name('show_vote_result') . '" id="' . $this->get_field_id('show_vote_result') . '" value="1" ' . ($show_vote_result ? 'checked="checked"' : '') . ' />';
+		$html .= '<input type="checkbox" name="' . $this->get_field_name('show_vote_result') . '" id="' . $this->get_field_id('show_vote_result') . '" value="1" ' . ($show_vote_result ? 'checked="checked"' : '') . ' />';	     	 	 		 		 		
 		$html .= '</p>';
 
 		echo $html;

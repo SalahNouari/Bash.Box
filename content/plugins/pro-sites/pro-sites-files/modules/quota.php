@@ -275,7 +275,7 @@ class ProSites_Module_Quota {
 		if ( empty( $levels [ $level ] ) ) {
 			return;
 		}
-		$format_limit = ! empty( $levels[ $level ]['quota'] ) && $levels[ $level ]['quota'] > 1024 ? number_format_i18n( $levels[ $level ]['quota'] ) / 1024 . ' GB' : number_format_i18n( $levels[ $level ]['quota'] ) . ' MB';	     	 	   	  	 	
+		$format_limit = ! empty( $levels[ $level ]['quota'] ) && $levels[ $level ]['quota'] > 1024 ? number_format_i18n( $levels[ $level ]['quota'] ) / 1024 . ' GB' : number_format_i18n( $levels[ $level ]['quota'] ) . ' MB';
 
 		//Return upload quota
 		return __( 'Upload data upto ', 'psts' ) . $format_limit;

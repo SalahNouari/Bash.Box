@@ -5,6 +5,11 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+2.2.3 - 2015-07-02
+----------------------------------------------------------------------
+- Added filter in Network widget to change posts permalinks
+- Fixed several warnings on widget screen
+
 2.2.2 - 2014-08-25
 ----------------------------------------------------------------------
 - Fixed: Added missing translated strings.
@@ -90,4 +95,4 @@ Change Log:
 - Fix for conflict with Formidable Pro
 
 
-133620-1428333050-ai
+133620-1435834676-au
