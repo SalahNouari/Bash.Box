@@ -1,5 +1,5 @@
 <?php
-require_once( WDF_PLUGIN_BASE_DIR . '/lib/external/class.pointers_tutorial.php' );	     	 	 				 			
+require_once( WDF_PLUGIN_BASE_DIR . '/lib/external/class.pointers_tutorial.php' );
 
 $tutorial = new Pointer_Tutorial('wdf_tutorial', true, false);
 

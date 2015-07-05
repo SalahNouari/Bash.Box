@@ -219,7 +219,7 @@ function bp_wdf_screen_two() {
 		<h4><?php _e( 'Recieved Donations', 'wdf' ) ?></h4>
 
 		<?php
-			$accept_link = '<a href="' . wp_nonce_url( $bp->loggedin_user->domain . $bp->wdf->slug . '/screen-two/accept', 'bp_wdf_accept_terms' ) . '">' . __( 'Accept', 'wdf' ) . '</a>';
+			$accept_link = '<a href="' . wp_nonce_url( $bp->loggedin_user->domain . $bp->wdf->slug . '/screen-two/accept', 'bp_wdf_accept_terms' ) . '">' . __( 'Accept', 'wdf' ) . '</a>';	     	 	 				 			
 			$reject_link = '<a href="' . wp_nonce_url( $bp->loggedin_user->domain . $bp->wdf->slug . '/screen-two/reject', 'bp_wdf_reject_terms' ) . '">' . __( 'Reject', 'wdf' ) . '</a>';
 		?>
 

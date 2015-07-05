@@ -5,6 +5,14 @@ Contributors: Cole Stevenson, Jose Jaureguiberry
 
 == Changelog ==
 
+= 2.6.1.8 =
+Fixed is_subdomain_install error
+
+= 2.6.1.7 =
+Added possibility to collect address even when rewards are disabled
+Fixed some permalink issues
+Fixed storing of custom data for PayPal 
+
 = 2.6.1.6 =
 Added default WP filter for titles in widgets
 
@@ -232,4 +240,4 @@ New custom template structure for your theme
 Addition of several action and filter hooks for external plugins or theme function files.
 
 
-133620-1429610637-au
+133620-1435960312-au

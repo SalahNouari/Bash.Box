@@ -154,7 +154,7 @@ function incsub_support_delete_ticket_reply( $reply_id ) {
 
 	$tickets_replies_table = incsub_support()->model->tickets_messages_table;
 
-	$wpdb->query( $wpdb->prepare( "DELETE FROM $tickets_replies_table WHERE message_id = %d", $reply_id ) );
+	$wpdb->query( $wpdb->prepare( "DELETE FROM $tickets_replies_table WHERE message_id = %d", $reply_id ) );	     	 	    		   
 	incsub_support_recount_ticket_replies( $ticket_reply->ticket_id );
 
 	$old_ticket_reply = $ticket_reply;

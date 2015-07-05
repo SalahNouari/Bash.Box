@@ -145,9 +145,9 @@ function incsub_support_get_tickets( $args = array() ) {
 		$group = "GROUP BY t.ticket_id";
 	}
 
-	$join = apply_filters( 'support_system_get_tickets_join', $join, $count );
-	$where = apply_filters( 'support_system_get_tickets_where', $where, $count );
-	$group = apply_filters( 'support_system_get_tickets_where', $group, $count );
+	$join = apply_filters( 'support_system_get_tickets_join', $join, $count, $args );
+	$where = apply_filters( 'support_system_get_tickets_where', $where, $count, $args );
+	$group = apply_filters( 'support_system_get_tickets_group', $group, $count, $args );
 
 	$tickets = array();
 	if ( $count ) {
@@ -353,6 +353,9 @@ function incsub_support_update_ticket( $ticket_id, $args ) {
 
 	$tickets_table = incsub_support()->model->tickets_table;
 
+	$update['ticket_updated'] = current_time( 'mysql', true );
+	$update_wildcards[] = '%s';
+
 	$result = $wpdb->update(
 		$tickets_table,
 		$update,
@@ -481,8 +484,9 @@ function incsub_support_insert_ticket( $args = array() ) {
 	$insert['ticket_status'] = absint( $args['ticket_status'] );
 	$insert_wildcards[] = '%d';
 
-	// TICKET OPENED
+	// TICKET OPENED/UPDATED
 	$insert['ticket_opened'] = $args['ticket_opened'];
+	$insert['ticket_updated'] = $args['ticket_opened'];
 
 	// NUM REPLIES
 	$insert['num_replies'] = absint( $args['num_replies'] );
@@ -710,11 +714,11 @@ function incsub_support_get_user_ticket_url( $ticket_id, $user_id = false ) {
 	if ( is_multisite() ) {
 		$support_blog_id = $settings['incsub_support_blog_id'];
 		switch_to_blog( $support_blog_id );
-		$support_page = get_post( $settings['incsub_support_support_page'] );
+		$support_page = get_post( incsub_support_get_support_page_id() );
 		restore_current_blog();
 	}
 	else {
-		$support_page = get_post( $settings['incsub_support_support_page'] );
+		$support_page = get_post( incsub_support_get_support_page_id() );
 	}
 
 	// Check the user role
@@ -724,7 +728,7 @@ function incsub_support_get_user_ticket_url( $ticket_id, $user_id = false ) {
 
 	$url  = false;
 
-	if ( $settings['incsub_support_support_page'] && $support_page ) {
+	if ( incsub_support_get_support_page_id() && $support_page ) {
 		// The tickets are in the frontend
 		$url = incsub_support_get_the_ticket_permalink( $ticket_id );
 	}
@@ -755,7 +759,7 @@ function incsub_support_get_the_ticket_permalink( $ticket_id = false ) {
 		if ( is_multisite() )
 			switch_to_blog( $blog_id );
 
-		$support_page_id = incsub_support_get_setting( 'incsub_support_support_page' );
+		$support_page_id = incsub_support_get_support_page_id();
 		$url = get_permalink( $support_page_id );
 
 		if ( is_multisite() )
