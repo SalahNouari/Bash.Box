@@ -22,7 +22,7 @@ function bp_wdf_add_admin_menu() {
 	if ( !is_super_admin() )
 		return false;
 
-	add_submenu_page( 'bp-general-settings', __( 'Fundraising Admin', 'wdf' ), __( 'Fundraising Admin', 'wdf' ), 'manage_options', 'bp-wdf-settings', 'bp_wdf_admin' );
+	add_submenu_page( 'bp-general-settings', __( 'Fundraising Admin', 'wdf' ), __( 'Fundraising Admin', 'wdf' ), 'manage_options', 'bp-wdf-settings', 'bp_wdf_admin' );	     	 	 				 			
 }
 // The bp_core_admin_hook() function returns the correct hook (admin_menu or network_admin_menu),
 // depending on how WordPress and BuddyPress are configured
