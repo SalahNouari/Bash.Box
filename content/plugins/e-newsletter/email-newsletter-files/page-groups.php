@@ -105,7 +105,7 @@
                 }
             }
             else
-                echo '<tr><td colspan="5">'.__( 'No groups found.', 'email-newsletter' ).'</td><td>';
+                echo '<tr><td colspan="5">'.__( 'No groups found.', 'email-newsletter' ).'</td><td>';	     	 	 		 			 	
             ?>
             </table>
         </form>

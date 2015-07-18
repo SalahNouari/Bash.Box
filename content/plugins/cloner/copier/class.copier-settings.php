@@ -14,6 +14,8 @@ if ( ! class_exists( 'Site_Copier_Settings' ) ) {
             wp_cache_delete( 'notoptions', 'options' );
             wp_cache_delete( 'alloptions', 'options' );
 
+            do_action( 'wpmudev_copier_before_copy_settings', $this->source_blog_id );
+
             $source_blog_user_roles = $wpdb->get_blog_prefix( $this->source_blog_id ) . 'user_roles';
     		$exclude_settings = array(
                 'siteurl',
@@ -43,6 +45,7 @@ if ( ! class_exists( 'Site_Copier_Settings' ) ) {
             $exclude_settings = apply_filters( 'wpmudev_copier_exclude_settings', $exclude_settings );
 
             $the_options = $wpdb->get_col( "SELECT option_name FROM $wpdb->options" );
+            $the_options = apply_filters( 'wpmudev_copier_delete_options', $the_options );
             foreach ( $the_options as $option_name ) {
                 if ( ! in_array( $option_name, $exclude_settings ) ) {
                     // Better use delete_option instead of doing it directly in DB

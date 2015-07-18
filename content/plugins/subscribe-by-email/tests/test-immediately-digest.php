@@ -29,6 +29,7 @@ class SBE_Immediately_Digest_Tests extends SBE_UnitTestCase {
 			$this->factory->post->generate_args()
 		);
 
+
 		$campaigns = incsub_sbe_get_campaigns();
 		$this->assertEquals( 1, $campaigns['count'] );
 

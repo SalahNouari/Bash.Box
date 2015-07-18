@@ -115,6 +115,7 @@ if ( $_POST['function'] !== "chat_messages_update" ) {
 
 // Now load out plugin code. Using as a library here.
 include_once( dirname( __FILE__ ) . '/wordpress-chat.php' );
+global $wpmudev_chat;
 $wpmudev_chat->init();
 $wpmudev_chat->process_chat_actions();
 

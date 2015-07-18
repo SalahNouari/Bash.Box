@@ -11,7 +11,12 @@ function incsub_sbe_get_model() {
 function incsub_sbe_get_settings() {
 	$settings_handler = Incsub_Subscribe_By_Email_Settings_Handler::get_instance();
 	$default = incsub_sbe_get_default_settings();
-	return wp_parse_args( $settings_handler->get_settings(), $default );
+	return apply_filters( 'sbe_get_settings', wp_parse_args( $settings_handler->get_settings(), $default ) );
+}
+
+function incsub_sbe_sanitize_template_settings( $new_settings ) {
+	$settings_handler = Incsub_Subscribe_By_Email_Settings_Handler::get_instance();
+	return $settings_handler->sanitize_template_settings( $new_settings );
 }
 
 function incsub_sbe_get_network_settings() {
@@ -157,7 +162,7 @@ function sbe_terms_checklist( $post_id = 0, $args = array() ) {
 	if ( is_array( $popular_cats ) )
 		$args['popular_cats'] = $popular_cats;
 	else
-		$args['popular_cats'] = get_terms( $taxonomy, array( 'fields' => 'ids', 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );	     	 	  			  		
+		$args['popular_cats'] = get_terms( $taxonomy, array( 'fields' => 'ids', 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
 
 	if ( $descendants_and_self ) {
 		$categories = (array) get_terms($taxonomy, array( 'child_of' => $descendants_and_self, 'hierarchical' => 0, 'hide_empty' => 0 ) );
@@ -252,7 +257,7 @@ function incsub_sbe_is_user_allowed_send_batch() {
 	if ( is_multisite() && is_super_admin() )
 		return true;
 
-	if ( ! is_multisite() && current_user_can( 'manage_options' ) )
+	if ( ! is_multisite() && current_user_can( 'manage_subscribe_by_email' ) )
 		return true;
 
 	return false;

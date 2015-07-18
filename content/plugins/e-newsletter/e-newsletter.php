@@ -3,7 +3,7 @@
 Plugin Name: E-Newsletter
 Plugin URI: http://premium.wpmudev.org/project/e-newsletter
 Description: The ultimate WordPress email newsletter plugin for WordPress
-Version: 2.7.2
+Version: 2.7.2.1
 Text Domain: email-newsletter
 Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
@@ -291,7 +291,7 @@ class Email_Newsletter extends Email_Newsletter_functions {
             else
                 update_option('email_newsletter_version', $this->plugin_ver);
         }
-        if(!$upgraded_cron) {
+        if(!$upgraded_cron && !wp_next_scheduled('email_newsletter_upgrade_cron')) {
             wp_schedule_single_event(time(), 'email_newsletter_upgrade_cron');
         }
     }
@@ -1531,6 +1531,17 @@ class Email_Newsletter extends Email_Newsletter_functions {
                     $members_id = array_merge ( $members_id,  $this->get_members_of_group( $group_id, '', 1 ) );
                 }
 
+            //Get ids for Membership 2 subscribers
+            if ( isset( $_REQUEST["target"]["m2"] ) && is_array($_REQUEST["target"]["m2"]) ) {
+                foreach ( $_REQUEST["target"]["m2"] as $membership_id ) {
+                    $members = $this->get_members_of_membership2($membership_id);
+                    foreach ( $members as $member ) {
+                        $members_id[] = $member['member_id'];
+                    }
+                }
+            }
+
+            // Deprecated: Membership plugin was replaced by M2 (above)
             //Get ids for Membership levels being subscribed eNewsletter members
             if ( isset( $_REQUEST["target"]["membership_levels"] ) && is_array($_REQUEST["target"]["membership_levels"]) )
                 foreach ( $_REQUEST["target"]["membership_levels"] as $membership_level ) {
@@ -2158,7 +2169,9 @@ class Email_Newsletter extends Email_Newsletter_functions {
             if( file_exists($this->plugin_dir . 'email-newsletter-files/emails/double_optin-'.$locale.'.html') ) {
                 $email_contents     = file_get_contents( $this->plugin_dir . 'email-newsletter-files/emails/double_optin-'.$locale.'.html' );
             } else {
-                $email_contents     = file_get_contents( $this->plugin_dir . "email-newsletter-files/emails/double_optin.html" );
+                ob_start();
+                include($this->plugin_dir . "email-newsletter-files/emails/double_optin.php");
+                $email_contents = ob_get_clean();
             }
 
             $replace = array(

@@ -15,7 +15,6 @@ if ( ! class_exists( 'Site_Copier_Menus' ) ) {
         }
 
         public function copy() {
-            global $wpdb;
 
             if ( $this->args['menu_id'] === false )
                 return new WP_Error( 'wrong_menu', __( 'No Menus to Copy', WPMUDEV_COPIER_LANG_DOMAIN ) );
@@ -33,7 +32,6 @@ if ( ! class_exists( 'Site_Copier_Menus' ) ) {
             do_action( 'wpmudev_copier-copying_menu', $this->source_blog_id, get_current_blog_id(), $this->args['menu_id'] );
 
             // Get the source menus and their menu items
-            $error = false;
             switch_to_blog( $this->source_blog_id );
             $source_menus = wp_get_nav_menus();
 
@@ -52,7 +50,6 @@ if ( ! class_exists( 'Site_Copier_Menus' ) ) {
                 return new WP_Error( 'wrong_menu', sprintf( __( 'There was an error trying to copy the menu. ID: ', WPMUDEV_COPIER_LANG_DOMAIN ), $this->args['menu_id'] ) );
 
             // Array that saves relationships to remap parents later
-            $menu_remap = array();
             $menu_items_remap = array();
 
             // Now copy the menu
@@ -85,6 +82,9 @@ if ( ! class_exists( 'Site_Copier_Menus' ) ) {
                     'menu-item-status' => $menu_item->post_status,
                     'menu-item-url' => $menu_item->url
                 );
+
+                if ( is_array( $new_item_args['menu-item-classes'] ) )
+                    $new_item_args['menu-item-classes'] = implode( ' ', $new_item_args['menu-item-classes'] );
 
 
                 if ( 'custom' != $menu_item->type ) {
@@ -185,7 +185,7 @@ if ( ! class_exists( 'Site_Copier_Menus' ) ) {
                     }
                 }
 
-                $updated = update_option( 'widget_nav_menu', $new_widget_menu_settings );
+                update_option( 'widget_nav_menu', $new_widget_menu_settings );
             }
 
 

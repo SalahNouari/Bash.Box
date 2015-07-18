@@ -97,7 +97,7 @@ if ( ! function_exists( 'copier_set_copier_args' ) ) {
                 $to_copy_args = array();
 
                 if ( $value === 'posts' ) {
-                    $to_copy_args['categories'] = isset( $args['post_category'] ) && in_array( 'all-categories', $args['post_category'] ) ? 'all' : $args['post_category'];
+                    $to_copy_args['categories'] = isset( $args['post_category'] ) && in_array( 'all-categories', $args['post_category'] ) ? 'all' : $args['post_category'];							 					 	 	  	
                     $to_copy_args['update_date'] = isset( $args['update_dates'] ) && $args['update_dates'] === true ? true : false;
                 }
                 elseif ( $value === 'pages' ) {
@@ -114,7 +114,7 @@ if ( ! function_exists( 'copier_set_copier_args' ) ) {
 
                 $option['to_copy'][ $value ] = $to_copy_args;
 
-                if ( $value === 'posts' && ( ! isset( $args['post_category'] ) || ! in_array( 'all-categories', $args['post_category'] ) ) ) {
+                if ( $value === 'posts' && isset( $args['post_category'] ) && in_array( 'all-categories', $args['post_category'] ) ) {
                     $option['to_copy'][ 'cpts' ] = $to_copy_args;
                 }
             }
@@ -589,6 +589,12 @@ if ( ! function_exists( 'copier_maybe_copy' ) ) {
 
         extract( $option );
 
+        if ( ! is_admin() ) {
+            // We'll try to avoid problems with AJAX this way
+            wp_redirect( admin_url() );
+            exit;
+        }
+
         if ( isset( $_REQUEST['copier_step'] ) ) {
             $result = copier_process_copy( $option );
             $message = $result['message'];
@@ -622,6 +628,8 @@ if ( ! function_exists( 'copier_maybe_copy' ) ) {
             // If warnings, errors... are not displayed then the process will use JS
             $js_process = ! $is_debugging && ! $is_xdebug_activated;
         }
+
+        do_action( 'copier_init_maybe_copy' );
 
         nocache_headers();
         @header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
@@ -829,10 +837,14 @@ if ( ! function_exists( 'copier_set_correct_wp_upload_dir' ) ) {
 if ( ! function_exists( 'copier_set_correct_wp_get_attachment_url' ) ) {
     function copier_set_correct_wp_get_attachment_url( $url ) {
         if ( defined( 'UPLOADS' ) && defined( 'UPLOADBLOGSDIR' ) ) {
+            // Old uploads folder
             $wrong_UPLOADS = UPLOADS;
             $UPLOADS = apply_filters( 'wpmudev_copier_UPLOADS_const', UPLOADBLOGSDIR . "/" . get_current_blog_id() . "/files/" );
 
             return str_replace( $wrong_UPLOADS, $UPLOADS, $url );
+        }
+        else {
+
         }
 
         return $url;

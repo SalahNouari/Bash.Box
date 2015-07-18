@@ -20,7 +20,8 @@ $files_list = apply_filters( 'copier_integration_files', array(
 	'membership',
 	'popover',
 	'shortcodes-ultimate',
-	'wp-https'
+	'wp-https',
+	'wpmu-dev-seo'
 ) );
 
 foreach ( $files_list as $file ) {

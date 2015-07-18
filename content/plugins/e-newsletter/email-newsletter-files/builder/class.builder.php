@@ -233,9 +233,13 @@ class Email_Newsletter_Builder  {
 						jQuery('[data-customize-setting-link="template"]').val(new_theme);
 						jQuery('[data-customize-setting-link="template"]').trigger('change');
 
+						console.log(jQuery('[data-customize-setting-link="template"]').val(), 1);
+
 						//make sure it is set
 						var set_val = setInterval(function () {
+							console.log(jQuery('[data-customize-setting-link="template"]').val(), new_theme, 2);
 							if(jQuery('[data-customize-setting-link="template"]').val() == new_theme) {
+								console.log(jQuery('[data-customize-setting-link="template"]').val(), new_theme, 3);
 					        	jQuery("#save").click();
 					        	clearInterval(set_val);
 					        }
@@ -244,6 +248,7 @@ class Email_Newsletter_Builder  {
 				});
 
 				wp.customize.bind( 'saved', function() {
+					console.log(jQuery('[data-customize-setting-link="template"]').val(), new_theme, 4);
 					var new_theme = jQuery('[data-customize-setting-link="template"]').val();
 					if(current_theme != new_theme)
 						window.location.href = window.location.href.replace('theme='+current_theme,'theme='+new_theme);

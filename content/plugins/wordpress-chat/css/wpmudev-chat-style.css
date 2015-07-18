@@ -95,6 +95,7 @@ div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-m
 }
 
 div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list li {
+    float: left;
     line-height: 12px;
 }
 
@@ -105,8 +106,9 @@ div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-m
 
 div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list {
     /*	display: block; */
+    font-size: 1.6em;
     width: 150px;
-    height: 55px;
+    height: 110px;
     position: absolute;
     bottom: 20px;
     left: 0;
@@ -116,7 +118,7 @@ div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-m
 }
 
 div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list li {
-    margin: 1px 3px;
+    margin: 2px 3px;
     padding: 0;
 }
 
@@ -871,4 +873,4 @@ select.wpmudev-chat-status-widget option.available {
 }
 
 
-/* 133620-1429710388-au */
+/* 133620-1437262963-au */

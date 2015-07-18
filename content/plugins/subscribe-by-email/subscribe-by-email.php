@@ -4,7 +4,7 @@ Plugin Name: Subscribe by Email
 Plugin URI: http://premium.wpmudev.org/project/subscribe-by-email
 Description: This plugin allows you and your users to offer subscriptions to email notification of new posts
 Author: WPMU DEV
-Version: 3.2.1
+Version: 3.4
 Author URI: http://premium.wpmudev.org
 WDP ID: 127
 Text Domain: subscribe-by-email
@@ -141,7 +141,7 @@ class Incsub_Subscribe_By_Email {
 	 */
 	private function set_globals() {
 		if ( ! defined( 'INCSUB_SBE_VERSION' ) )
-			define( 'INCSUB_SBE_VERSION', '3.2.1' );
+			define( 'INCSUB_SBE_VERSION', '3.4' );
 		if ( ! defined( 'INCSUB_SBE_PLUGIN_URL' ) )
 			define( 'INCSUB_SBE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		if ( ! defined( 'INCSUB_SBE_PLUGIN_DIR' ) )
@@ -171,6 +171,7 @@ class Incsub_Subscribe_By_Email {
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'admin/pages/admin-subscribers-page.php' );
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'admin/pages/admin-add-subscribers-page.php' );
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'admin/pages/admin-sent-emails-page.php' );
+		require_once( INCSUB_SBE_PLUGIN_DIR . 'admin/meta-boxes/do-not-send-meta-box.php' );
 
 		// Settings handler
 		require_once( INCSUB_SBE_PLUGIN_DIR . 'inc/settings.php' );
@@ -220,6 +221,9 @@ class Incsub_Subscribe_By_Email {
 		$model->create_network_squema();
 		$this->register_taxonomies();
 		flush_rewrite_rules();
+
+        $this->add_capabilities();
+
 		update_option( 'incsub_sbe_version', INCSUB_SBE_VERSION );
 		update_site_option( 'incsub_sbe_network_version', INCSUB_SBE_VERSION );
 
@@ -228,6 +232,11 @@ class Incsub_Subscribe_By_Email {
 	}
 
 	public function deactivate() {}
+
+    public function add_capabilities() {
+        $role = get_role( 'administrator' );
+        $role->add_cap( 'manage_subscribe_by_email' );
+    }
 
 	public function register_taxonomies() {
 		// Register the Subscriber Post Type
@@ -247,13 +256,13 @@ class Incsub_Subscribe_By_Email {
 			'not_found_in_trash'  => __( 'Not found in Trash', 'subscribe-by-email' ),
 		);
 		$capabilities = array(
-			'edit_post'           => 'manage_options',
-			'read_post'           => 'manage_options',
-			'delete_post'         => 'manage_options',
-			'edit_posts'          => 'manage_options',
-			'edit_others_posts'   => 'manage_options',
-			'publish_posts'       => 'manage_options',
-			'read_private_posts'  => 'manage_options',
+			'edit_post'           => 'manage_subscribe_by_email',
+			'read_post'           => 'manage_subscribe_by_email',
+			'delete_post'         => 'manage_subscribe_by_email',
+			'edit_posts'          => 'manage_subscribe_by_email',
+			'edit_others_posts'   => 'manage_subscribe_by_email',
+			'publish_posts'       => 'manage_subscribe_by_email',
+			'read_private_posts'  => 'manage_subscribe_by_email',
 		);
 		$args = array(
 			'label'               => __( 'Subscriber', 'subscribe-by-email' ),
@@ -598,7 +607,8 @@ class Incsub_Subscribe_By_Email {
 		// Check if the post has been already sent
 		foreach ( $posts_ids as $post_id ) {
 			$is_sent = get_post_meta( $post_id, 'sbe_sent', true );
-			if ( ! $is_sent )
+			$do_not_send = get_post_meta( $post_id, '_sbe_do_not_send', true );
+			if ( ! $is_sent && ! $do_not_send )
 				$args['posts_ids'][] = $post_id;
 		}
 
@@ -644,11 +654,12 @@ class Incsub_Subscribe_By_Email {
 				unset( $args['posts_ids'][ $key ] );
 		}
 
+		$args = apply_filters( 'sbe_enqueue_emails_campaign_args', $args );
+
 		if ( empty( $args['posts_ids'] ) )
 			return;
 
 		$campaign_id = incsub_sbe_insert_campaign( '', $args );
-		$campaign = incsub_sbe_get_campaign( $campaign_id );
 
 		$result = incsub_sbe_insert_queue_items( $campaign_id );
 		if ( ! $result )

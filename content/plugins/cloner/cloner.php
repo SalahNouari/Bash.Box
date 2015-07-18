@@ -5,7 +5,7 @@ Plugin URI: https://premium.wpmudev.org/project/cloner
 Description: Clone sites in a network installation
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
-Version: 1.6
+Version: 1.6.2
 Network: true
 Text Domain: wpmudev-cloner
 Domain Path: lang
@@ -87,12 +87,14 @@ class WPMUDEV_Cloner {
 			define( 'WPMUDEV_COPIER_LANG_DOMAIN', 'wpmudev-cloner' );
 
 		if ( ! defined( 'WPMUDEV_CLONER_VERSION' ) )
-			define( 'WPMUDEV_CLONER_VERSION', '1.6' );
+			define( 'WPMUDEV_CLONER_VERSION', '1.6.2' );
 	}
 
 	private function includes() {
+		include_once( WPMUDEV_CLONER_PLUGIN_DIR . 'integration/integration.php' );
 		include_once( WPMUDEV_CLONER_PLUGIN_DIR . 'copier/copier.php' );
 		include_once( WPMUDEV_CLONER_PLUGIN_DIR . 'copier-filters.php' );
+		include_once( WPMUDEV_CLONER_PLUGIN_DIR . 'helpers/general.php' );
 		include_once( WPMUDEV_CLONER_PLUGIN_DIR . 'helpers/settings.php' );
 
 		//load dashboard notice
@@ -115,6 +117,7 @@ class WPMUDEV_Cloner {
 	}
 
 	public function display_installation_admin_notice() {
+
 		if ( is_super_admin() && ! get_site_option( 'wpmudev_cloner_installation_notice_done' ) ) {
 			$dismiss_url = add_query_arg( 'cloner_dismiss_install_notice', 'true' );
 			?>
@@ -156,7 +159,7 @@ class WPMUDEV_Cloner {
 	public function maybe_upgrade() {
 		$current_version_saved = get_site_option( 'wpmudev_cloner_version', '1.1' );
 
-		if ( $current_version_saved === WPMUDEV_CLONER_VERSION )
+		if ( WPMUDEV_CLONER_VERSION === $current_version_saved)
 			return;
 
 		if ( version_compare( $current_version_saved, '1.2', '<' ) ) {
@@ -178,6 +181,9 @@ class WPMUDEV_Cloner {
 			return;
 
 		if ( is_network_admin() )
+			return;
+
+		if ( ! cloner_is_blog_clonable( get_current_blog_id() ) )
 			return;
 
 		$url = network_admin_url( 'index.php' );
@@ -204,3 +210,4 @@ function wpmudev_cloner() {
 }
 
 wpmudev_cloner();
+

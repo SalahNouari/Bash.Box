@@ -196,7 +196,7 @@ class Incsub_Subscribe_By_Email_Template {
 		$table_style = 'style="width: 100%;"';
 		$column_style = 'style="display: block!important; max-width: 600px!important; margin: 0 auto!important; clear: both!important;"';
 		$column_wrap_style = 'style="padding: 15px; max-width: 600px; margin: 0 auto; display: block;"';
-		$blogname_style = 'style="text-decoration:none !important; margin: 0!important; padding:0;font-weight: 900; font-size: 14px; text-transform: uppercase; color: ' . $this->settings['header_text_color'] . ' !important;"';
+		$blogname_style = 'style="text-decoration:none !important; margin: 0!important; padding:0;font-weight: 900; font-size: 14px; text-transform: uppercase; color: ' . $this->settings['header_text_color'] . ' !important;"';	     	 	  			  		
 		$subject_style = 'style="font-weight: 500; font-size: 27px;line-height: 1.1; margin-bottom: 15px; color: #000 !important;"';
 		$lead_style = 'style="font-size: 17px;margin-bottom: 10px; font-weight: normal; font-size: 14px; line-height: 1.6;"';
 		$footer_style = 'style="font-size:11px;color:#666 !important;"';

@@ -362,7 +362,7 @@ var wpmudev_chat = jQuery.extend(wpmudev_chat || {}, {
 										continue;
 
 									//If there is a error for the chat session
-									if ( reply_data['sessions'][chat_id]['errorStatus'] ) {
+									if (reply_data['sessions'][chat_id]['errorStatus']) {
 										jQuery('#wpmudev-chat-box-' + chat_id + ' .wpmudev-chat-session-user-status-message p').html(reply_data['sessions'][chat_id]['errorText']);
 										jQuery('#wpmudev-chat-box-' + chat_id + ' .wpmudev-chat-session-user-status-message').show();
 									}
@@ -2167,7 +2167,7 @@ var wpmudev_chat = jQuery.extend(wpmudev_chat || {}, {
 			jQuery('ul.wpmudev-chat-emoticons-list', this).slideToggle(400);
 		});
 		// Emoticons child item. When clicked will close the parent UL
-		jQuery('div#wpmudev-chat-box-' + chat_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list li img').click(function (event) {
+		jQuery('div#wpmudev-chat-box-' + chat_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list li').click(function (event) {
 			event.preventDefault();
 			event.stopPropagation();
 			jQuery('div#wpmudev-chat-box-' + chat_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list').css({display: "none"});
@@ -2435,11 +2435,11 @@ var wpmudev_chat = jQuery.extend(wpmudev_chat || {}, {
 		});
 
 		//jQuery('div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta ul.wpmudev-chat-emoticons-list img').unbind('click');
-		jQuery('div#wpmudev-chat-box-' + chat_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta ul.wpmudev-chat-emoticons-list img').click(function (event) {
+		jQuery('div#wpmudev-chat-box-' + chat_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta ul.wpmudev-chat-emoticons-list li').click(function (event) {
 			var chat_box_id = jQuery(this).parents('.wpmudev-chat-box').attr('id');
 			//var chat_id 		= chat_box_id.replace('wpmudev-chat-box-', '');
 			//jQuery('#'+chat_box_id+'.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta ul.wpmudev-chat-emoticons-list').css('display', 'none');
-			jQuery('#' + chat_box_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area textarea.wpmudev-chat-send').val(jQuery('#' + chat_box_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area textarea.wpmudev-chat-send').val() + ' ' + jQuery(this).attr('alt'));
+			jQuery('#' + chat_box_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area textarea.wpmudev-chat-send').val(jQuery('#' + chat_box_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area textarea.wpmudev-chat-send').val() + ' ' + jQuery(this).find('img').attr('alt'));
 			jQuery('#' + chat_box_id + '.wpmudev-chat-box div.wpmudev-chat-module-message-area textarea.wpmudev-chat-send').focus();
 //			event.preventDefault();
 			return false;

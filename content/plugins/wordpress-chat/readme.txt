@@ -3,7 +3,7 @@ Contributors: wpmudev, Paul Menard, UmeshSingla
 Tags: chat, twitter, facebook, google, shortcode, BuddyPress, widget, chat widget, buddypress group, buddypress friend
 Requires at least: 3.7
 Stable tag: trunk
-Tested up to: 4.0
+Tested up to: 4.2.2
 
 Allow your readers to chat with you
 
@@ -17,6 +17,10 @@ Add a chat to your blog and allow your readers to chat with you.
 2. Chat widget
 
 == ChangeLog ==
+
+= 2.0.9.3 = Umesh Kumar =
+
+* Fixed:  Emoticons not appearing in messages
 
 = 2.0.9.2 = Umesh Kumar =
 
@@ -431,4 +435,4 @@ Add a chat to your blog and allow your readers to chat with you.
 * Initial release
 
 
-133620-1429710388-au
+133620-1437262963-au

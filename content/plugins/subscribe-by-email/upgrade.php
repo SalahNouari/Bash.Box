@@ -312,3 +312,7 @@ if ( version_compare( $current_version, '2.9', '<' ) ) {
         }
     }
 }
+
+if ( version_compare( $current_version, '3.4', '<' ) ) {
+    subscribe_by_email()->add_capabilities();
+}

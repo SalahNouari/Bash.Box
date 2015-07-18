@@ -62,6 +62,7 @@
 	box-sizing: border-box;
 	padding:8px;
 	margin-bottom:20px;
+	display:block;
 }
 .sbe-widget-form-field:focus {}
 
@@ -82,4 +83,4 @@
 }
 
 
-/* 133620-1434914439-au */
+/* 133620-1437262950-au */

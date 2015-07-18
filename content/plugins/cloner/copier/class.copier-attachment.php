@@ -211,7 +211,14 @@ if ( ! class_exists( 'Site_Copier_Attachment' ) ) {
                         remove_filter( 'wp_get_attachment_url', 'copier_set_correct_wp_get_attachment_url' );
                         restore_current_blog();
 
+                        // Switching between blogs gives us back a wrong uploads dir in many cases, let's fix it
+                        $source_src[0] = preg_replace( '/^https?\:\/\//', '', $source_src[0] );
+                        $source_blog_url = preg_replace( '/^https?\:\/\//', '', get_site_url( $this->source_blog_id ) );
+                        $destination_blog_url = preg_replace( '/^https?\:\/\//', '', get_site_url( get_current_blog_id() ) );
+                        $source_src[0] = str_replace( $destination_blog_url, $source_blog_url, $source_src[0] );
+
                         $dest_src = wp_get_attachment_image_src( $new_attachment_id, $size );
+                        $dest_src[0] = preg_replace( '/^https?\:\/\//', '', $source_src[0] );
 
                         if (
                             $source_src
@@ -226,6 +233,7 @@ if ( ! class_exists( 'Site_Copier_Attachment' ) ) {
                     if ( ! empty( $srcs ) ) {
                         // Replace the SRCs in database
                         foreach ( $srcs as $source_src => $dest_src ) {
+
                             $posts = get_posts(
                                 array(
                                     'posts_per_page' => -1,

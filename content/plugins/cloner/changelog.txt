@@ -3,12 +3,20 @@ Author: WPMU DEV
 Tags: multisite plugin, wordpress plugin, wordpress multisite, multisite, new blogs and users
 Requires at least: 3.8
 Tested up to: 4.1
-Stable tag: 1.6
 
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+1.6.2 - 2015-07-16
+----------------------------------------------------------------------
+- Fixed: Redirecting issue in subfolders installations
+
+1.6.1 - 2015-07-13
+----------------------------------------------------------------------
+- New: Added Multi Domains Plugin integration
+- Fixed: Menus copier was not copying CSS classes
 
 1.6 - 2014-12-01
 ----------------------------------------------------------------------
@@ -82,4 +90,4 @@ Change Log:
 - First release
 
 
-133620-1422153853-au
+133620-1437262924-au
