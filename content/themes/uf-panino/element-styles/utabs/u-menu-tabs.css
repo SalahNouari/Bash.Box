@@ -1,0 +1,58 @@
+#page .u-menu-tabs .upfront-tabs-container {
+    background: url("UPFRONT_THEME_BASE/ui/brown-pattern_bg.png") repeat;
+    -moz-box-shadow: 5px 20px 50px -15px #ufc3;
+    -webkit-box-shadow: 5px 20px 50px -15px #ufc3;
+    box-shadow: 5px 20px 50px -15px #ufc3;
+    padding: 30px;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-menu-wrapper {
+    background: transparent;
+    border: none;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-menu:before {
+    background: #ufc0;
+    border-radius: 50%;
+    color: #ufc1;
+    content: "MeNU";
+    font-family: 'Lato', Arial, sans-serif;
+    font-size: 14px;
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    margin: auto auto 30px;
+    position: relative;
+    text-align: center;
+    width: 50px;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-tab {
+    background: transparent;
+    border: 2px solid transparent;
+    font-family: 'Special Elite', Arial, sans-serif;
+    font-size: 18px;
+    margin: 0 0 15px 15px;
+    padding: 0 15px;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-tab .inner-box {
+    padding: 0;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-tab-active {
+    background: transparent;
+    border-color: #ufc4;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-content {
+    background: transparent;
+    border: none;
+    border-top: 2px solid #ufc4;
+    margin: 0 15px;
+    padding: 15px 0 0;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-content, #page .u-menu-tabs .upfront-tabs-container .tabs-content p {
+    color: #ufc1;
+    font-size: 14px;
+}
+#page .u-menu-tabs .upfront-tabs-container .tabs-content p {
+    margin-bottom: 15px;
+}
+
+
+/* 133620-1437265422-ai */

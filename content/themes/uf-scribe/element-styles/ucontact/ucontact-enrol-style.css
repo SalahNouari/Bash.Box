@@ -1,0 +1,39 @@
+#page .ucontact-enrol-style .ucontact-input {
+    width: 100%;
+    border: 1px solid #ufc0;
+    background: #F9F9F9;
+    margin-bottom: 20px;
+    padding: 10px;
+    padding-left: 8px;
+    font-size: 16px;
+    font-family: Lato;
+}
+#page .ucontact-enrol-style .textarea-field {
+    resize: none;
+    height: 130px;
+}
+#page .ucontact-enrol-style .submit-field {
+    display: block;
+    float: right;
+    font-family: Lato;
+    font-size: 16px;
+    color: #ffffff;
+    background: #DEC897;
+    border-top: 3px solid #DEC897;
+    border-bottom: 3px solid #CBB992;
+    box-sizing: border-box;
+    padding-top: 8px;
+    padding-bottom: 15px;
+    height: 35px;
+    width: 340px;
+    max-width: 100%;
+    line-height: 1;
+}
+#page .ucontact-enrol-style .submit-field:hover {
+    background: #CBB992;
+    border-top: 3px solid #CBB992;
+    border-bottom: 3px solid #DEC897;
+}
+
+
+/* 133620-1437265398-ai */

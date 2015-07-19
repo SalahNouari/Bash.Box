@@ -1,0 +1,94 @@
+#page .unewnavigation-top-nav-style ul.menu > li.menu-item:before {
+    content: "/";
+    color: #ffffff;
+}
+#page .unewnavigation-top-nav-style ul.menu > li.menu-item:first-child:before {
+    content: "";
+}
+#page .unewnavigation-top-nav-style ul.menu > li.menu-item > a {
+    font: 15px Cantana One;
+    display: inline-block;
+    color: #ffffff;
+}
+#page .unewnavigation-top-nav-style ul.menu > li.menu-item > a:hover {
+    color: #ufc0;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu {
+    background: rgba(29,29,29,0.8);
+    border: 1px solid rgba(192, 149, 51, 0.7);
+    margin-top: 15px;
+    margin-left: -90px;
+    left: 50%;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu:before {
+    content: "";
+    display: block;
+    height: 15px;
+    margin-top: -15px;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu > li.menu-item {
+    width: 180px;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu > li.menu-item > a {
+    font: 15px Cantana One;
+    text-align: center;
+    background: none;
+    color: #ffffff;
+    border-bottom: none;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu > li.menu-item > a:after {
+    content: "";
+    display: block;
+    height: 0;
+    margin: 0 5px -1px;
+    border-bottom: 1px dotted #c09533;
+    position: relative;
+    top: 6px;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu > li.menu-item:last-child > a:after {
+    content: none;
+}
+#page .unewnavigation-top-nav-style ul.sub-menu > li.menu-item > a:hover {
+    color: #c09533;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.menu {
+    background: #4a4a4a;
+    border-left: 1px solid #c09533;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.menu > li.menu-item {
+    padding: 0 20px;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.menu > li.menu-item > a {
+     background: none;
+     display: block;
+    border-bottom: 1px dotted #c09533;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.menu > li.menu-item:before {
+     content: none;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.menu > li.menu-item-has-children > a:after {
+    content: none;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.sub-menu {
+    background: none;
+    border: none;
+    left: 0;
+    margin-top: 0;
+    margin-left: 0;
+    border-bottom: 1px dotted #c09533;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.sub-menu:before {
+    content: none;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.sub-menu > li.menu-item {
+    width: auto;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.sub-menu > li.menu-item > a {
+    text-align: inherit;
+}
+#page .unewnavigation-top-nav-style div[data-style='burger'] ul.sub-menu > li.menu-item > a:after {
+    content: none;
+}
+
+
+/* 133620-1437265398-ai */

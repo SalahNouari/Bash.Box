@@ -1,0 +1,34 @@
+#page .plaintxt-coupon-style.upfront-plain_txt {
+    border: 1px dashed #000000;
+    padding: 70px 55px;
+}
+#page .plaintxt-coupon-style.upfront-plain_txt:before {
+    background: url("/scribe/wp-content/themes/uf-scribe/ui/scissors.png");
+    top: -28px;
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 55px;
+    right: 50px;
+}
+#page .plaintxt-coupon-style a {
+    display: inline-block;
+    font-family: Lato;
+    font-size: 16px;
+    color: #ffffff;
+    background: #c09533;
+    border-top: 3px solid #c09533;
+    border-bottom: 3px solid #9a7729;
+    box-sizing: border-box;
+    padding-top: 8px;
+    padding-bottom: 15px;
+    height: 35px;
+    padding-left: 100px;
+    padding-right: 100px;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+
+/* 133620-1437265398-ai */

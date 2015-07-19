@@ -1,0 +1,18 @@
+#page .plaintxt-list-w-separator-style.upfront-plain_txt p {
+    text-align: center;
+}
+#page .plaintxt-list-w-separator-style.upfront-plain_txt p:after {
+    width: 70%;
+    height: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 15%;
+    display:block;
+    content: "";
+    border-bottom: 1px dotted #c09533;
+}
+#page .plaintxt-list-w-separator-style.upfront-plain_txt p:last-child:after {
+    display: none;
+}
+
+
+/* 133620-1437265398-ai */

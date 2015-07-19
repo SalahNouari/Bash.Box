@@ -1,0 +1,397 @@
+.upfront-postpart-date {
+    display: block;
+    max-width: 113px;
+    padding: 0 10px 0 15px;
+}
+.upfront-postpart-date .post_date {
+    background: #ufc0;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    color: #ufc5;
+    display: block;
+    font-family: 'Special Elite', Arial, sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    height: 88px;
+    text-align: center;
+    width: 88px;
+}
+.upfront-postpart-date .post_date .date_part_0 {
+    display: block;
+    font-size: 40px;
+    padding-top: 15px;
+}
+.upfront-postpart-date .post_date .date_part_1 {
+    display: block;
+    font-size: 22px;
+    text-transform: uppercase;
+}
+.upfront-postpart-author_gravatar {
+    display: block;
+    margin-left: -22px;
+    max-width: 113px;
+    padding: 0 15px 0 10px;
+}
+ .upfront-postpart-author_gravatar > .auhor_gravatar {
+    height: 88px;
+    width: 88px;
+}
+.upfront-postpart-title .post_title {
+    margin-bottom: 15px;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+}
+ .upfront-postpart-contents .post_content p,  .upfront-postpart-contents .post_content blockquote,  .upfront-postpart-contents .post_content > ul,  .upfront-postpart-contents .post_content > ol {
+    margin-bottom: 30px;
+}
+ .upfront-postpart-contents .post_content blockquote p {
+    margin-bottom: 5px;
+}
+ .upfront-postpart-contents .post_content p {
+    text-align: justify;
+    word-break: break-word;
+}
+ .upfront-postpart-contents .post_content img,  .upfront-postpart-contents .post_content .wp-caption {
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+ .upfront-postpart-contents .post_content .alignleft {
+    float: left;
+    margin: 0 15px 0 5px;
+}
+ .upfront-postpart-contents .post_content .alignright {
+    float: right;
+    margin: 0 5px 0 15px;
+}
+ .upfront-postpart-contents .post_content .wp-caption-text {
+    color: #ufc3;
+    font-size: 15px;
+    margin-bottom: 0;
+}
+ .upfront-postpart-contents .post_content dl {
+    font-family: 'Special Elite', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    font-style: normal;
+}
+ .upfront-postpart-contents .post_content dt {
+    line-height: 2.2em;
+    text-decoration: underline;
+}
+ .upfront-postpart-contents .post_content dd {
+    color: #ufc3;
+    line-height: 2.2em;
+    margin: 0;
+    padding: 0 0 0 15px;
+}
+ .upfront-postpart-contents .post_content pre {
+    background: #ufc3;
+    padding: 15px !important;
+    white-space: pre-wrap;
+}
+ .upfront-postpart-contents .post_content address {
+    color: #ufc3;
+    font-family: 'Special Elite', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+ .upfront-postpart-contents .post_content table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    max-width: 100%;
+    width: 100%;
+}
+ .upfront-postpart-contents .post_content table > tbody > tr > td,  .upfront-postpart-contents .post_content table > tbody > tr > th,  .upfront-postpart-contents .post_content table > tfoot > tr > td,  .upfront-postpart-contents .post_content table > tfoot > tr > th,  .upfront-postpart-contents .post_content table > thead > tr > td,  .upfront-postpart-contents .post_content table > thead > tr > th {
+    border-top: 1px solid #cacbcb;
+    color: #ufc3;
+    font-family: 'Special Elite', Arial, sans-serif;
+    line-height: 1.4em;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+ .upfront-postpart-contents .post_content table > thead > tr > th {
+    border-bottom: 2px solid #cacbcb;
+    color: #ufc1;
+    font-size: 18px;
+    vertical-align: bottom;
+}
+ .upfront-postpart-contents .post_content table thead > tr:first-child > td,  .upfront-postpart-contents .post_content table thead > tr:first-child > th,  .upfront-postpart-contents .post_content table thead > tr:first-child > td,  .upfront-postpart-contents .post_content table thead > tr:first-child > th,  .upfront-postpart-contents .post_content table > thead:first-child > tr:first-child > td,  .upfront-postpart-contents .post_content table > thead:first-child > tr:first-child > th {
+    border-top: 0;
+}
+ .upfront-postpart-contents .post_content .post-password-form input[type="password"] {
+    background: #ufc2;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #ufc3;
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 13px;
+    padding: 15px;
+    width: 100%;
+}
+ .upfront-postpart-contents .post_content .post-password-form input[type="submit"] {
+    background: #ufc0;
+    color: #ufc5;
+    font-size: 16px;
+    margin-top: 15px;
+    padding: 10px 20px;
+}
+ .upfront-postpart-contents .post_content iframe,  .upfront-postpart-contents .post_content embed {
+    display: block;
+    max-width: 100%;
+}
+ .upfront-postpart-contents .post_content blockquote cite {
+    color: #ufc3;
+    display: block;
+    font-size: 20px;
+    text-transform: none;
+}
+ .upfront-postpart-contents .post_content blockquote cite:before {
+    content: '-';
+    display: inline-block;
+    margin-right: 15px;
+}
+ .upfront-postpart-contents .post_content blockquote cite a {
+    text-decoration: none;
+}
+ .upfront-postpart-contents .post_content .gallery-icon img {
+    width: 100%;
+}
+ .upfront-postpart-contents .post_content .gallery-caption {
+    padding: 0;
+}
+ /* Comments */
+.upfront-output-ucomment .upfront-comment ol,  .upfront-ucomment .upfront-comment ol {
+    list-style: none;
+    margin: 0;
+}
+ .upfront-output-ucomment .upfront-comment ol.children,  .upfront-ucomment .upfront-comment ol.children {
+    margin-top: 30px;
+    margin-left: 60px;
+}
+ .upfront-output-ucomment .comment,  .upfront-ucomment .comment {
+    margin-top: 30px;
+    overflow: hidden;
+}
+ .upfront-output-ucomment .comment:first-child,  .upfront-ucomment .comment:first-child {
+    margin-top: 0;
+}
+ .upfront-output-ucomment .comment-meta,  .upfront-ucomment .comment-meta {
+    line-height: 50px;
+    overflow: hidden;
+}
+ .upfront-output-ucomment .avatar,  .upfront-ucomment .avatar {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    float: left;
+    margin-right: 15px;
+}
+ .upfront-output-ucomment cite.fn,  .upfront-ucomment cite.fn {
+    color: #ufc0;
+    float: left;
+    line-height: 1.4em;
+    text-transform: capitalize;
+    width: 50%;
+}
+ .upfront-output-ucomment cite.fn a,  .upfront-ucomment cite.fn a {
+    color: #ufc0;
+    text-decoration: none;
+}
+ .upfront-output-ucomment .comment-time,  .upfront-ucomment .comment-time {
+    float: left;
+    font-family: 'Lato', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4em;
+    text-decoration: none;
+    width: 50%;
+}
+ .upfront-output-ucomment .comment-time:hover,  .upfront-ucomment .comment-time:hover {
+    font-family: 'Lato', Arial, sans-serif;
+    font-size: 14px;
+}
+ .upfront-output-ucomment .comment-content,  .upfront-ucomment .comment-content {
+    margin-left: 65px;
+}
+ .upfront-output-ucomment .comment-content p,  .upfront-ucomment .comment-content p {
+    font-size: 14px;
+}
+ .upfront-output-ucomment .comment-content blockquote {
+    margin-bottom: 30px;
+}
+ .upfront-output-ucomment .comment-content blockquote cite {
+    color: #ufc3;
+    display: block;
+    font-size: 20px;
+    margin-top: 15px;
+    text-transform: none;
+}
+ .upfront-output-ucomment .comment-content blockquote cite:before {
+    content: '-';
+    display: inline-block;
+    margin-right: 15px;
+}
+ .upfront-output-ucomment .comment-content blockquote cite a {
+    text-decoration: none;
+}
+ .upfront-output-ucomment .comment-content table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    max-width: 100%;
+    width: 100%;
+}
+ .upfront-output-ucomment .comment-content table > tbody > tr > td,  .upfront-output-ucomment .comment-content table > tbody > tr > th,  .upfront-output-ucomment .comment-content table > tfoot > tr > td,  .upfront-output-ucomment .comment-content table > tfoot > tr > th,  .upfront-output-ucomment .comment-content table > thead > tr > td,  .upfront-output-ucomment .comment-content table > thead > tr > th {
+    border-top: 1px solid #cacbcb;
+    color: #ufc3;
+    font-family: 'Special Elite', Arial, sans-serif;
+    line-height: 1.4em;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+ .upfront-output-ucomment .comment-content table > thead > tr > th {
+    border-bottom: 2px solid #cacbcb;
+    color: #ufc1;
+    font-size: 18px;
+    vertical-align: bottom;
+}
+ .upfront-output-ucomment .comment-content table thead > tr:first-child > td,  .upfront-output-ucomment .comment-content table thead > tr:first-child > th,  .upfront-output-ucomment .comment-content table thead > tr:first-child > td,  .upfront-output-ucomment .comment-content table thead > tr:first-child > th,  .upfront-output-ucomment .comment-content table > thead:first-child > tr:first-child > td,  .upfront-output-ucomment .comment-content table > thead:first-child > tr:first-child > th {
+    border-top: 0;
+}
+ .upfront-output-ucomment .comment-content dl {
+    font-family: 'Special Elite', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    font-style: normal;
+}
+ .upfront-output-ucomment .comment-content dt {
+    color: #ufc1;
+    line-height: 2.2em;
+    text-decoration: underline;
+}
+ .upfront-output-ucomment .comment-content dd {
+    color: #ufc3;
+    line-height: 2.2em;
+    margin: 0;
+    padding: 0 0 0 15px;
+}
+ .upfront-output-ucomment .comment-content pre {
+    background: #ufc3;
+    color: #ufc1;
+    padding: 15px;
+    white-space: pre-wrap;
+}
+ .upfront-output-ucomment .comment-content ol {
+    list-style: decimal;
+    margin-left: 1.5em;
+}
+ .upfront-output-ucomment .comment-content address {
+    color: #ufc3;
+    font-family: 'Special Elite', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+ .upfront-output-ucomment .reply,  .upfront-ucomment .reply {
+    float: right;
+}
+ .upfront-output-ucomment .comment-reply-link,  .upfront-ucomment .comment-reply-link {
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #ufc3;
+    font-size: 12px;
+    font-family: 'Lato', Arial, sans-serif;
+    color: #ufc5;
+    padding: 5px 10px;
+    text-decoration: none;
+    text-transform: uppercase;
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+}
+ .upfront-output-ucomment .comment-reply-link:hover,  .upfront-ucomment .comment-reply-link:hover {
+    background: #ufc0;
+    color: #ufc5;
+    font-family: 'Lato', Arial, sans-serif;
+}
+ .upfront-output-ucomment .reply span,  .upfront-ucomment .reply span {
+    display: none;
+}
+ .upfront-output-ucomment .comment-awaiting-moderation,  .upfront-ucomment .comment-awaiting-moderation {
+    background: #ufc3;
+    color: #ufc5;
+    font-size: 14px;
+    margin: 15px 0 15px 65px;
+    padding: 5px;
+    text-align: center;
+}
+ /* Respond Form */
+.upfront-output-ucomment .comment-reply-title,  .upfront-ucomment .comment-reply-title {
+    background: transparent;
+    color: #ufc1;
+    display: table;
+    font-family: "Special Elite", Arial, sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 42px;
+    line-height: 1.4em;
+    margin: 30px auto;
+    white-space: normal;
+}
+ .upfront-output-ucomment .comment-reply-title:after,  .upfront-ucomment .comment-reply-title:after {
+    background: #ufc1;
+    content: "";
+    display: block;
+    height: 2px;
+}
+ .upfront-output-ucomment input[type="text"],  .upfront-output-ucomment textarea,  .upfront-ucomment input[type="text"],  .upfront-ucomment textarea {
+    background: #ufc2;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #ufc3;
+    display: block;
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 13px;
+    /*max-width: 555px;*/
+    padding: 15px;
+    width: 70%;
+}
+ .upfront-output-ucomment textarea,  .upfront-ucomment textarea {
+    margin-bottom: 15px;
+    width: 100%;
+}
+ .upfront-output-ucomment label,  .upfront-ucomment label {
+    color: #ufc3;
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+ .upfront-output-ucomment .logged-in-as,  .upfront-ucomment .logged-in-as,  .upfront-output-ucomment .comment-notes,  .upfront-ucomment .comment-notes {
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+}
+ .upfront-output-ucomment .form-allowed-tags,  .upfront-ucomment .form-allowed-tags {
+    display: none;
+}
+ .upfront-output-ucomment .form-submit .submit,  .upfront-ucomment .form-submit .submit {
+    background: #ufc0;
+    color: #ufc5;
+    float: right;
+    font-size: 16px;
+    padding: 10px 20px;
+}
+ .upfront-output-ucomment .form-submit .submit:hover,  .upfront-ucomment .form-submit .submit:hover {
+    background: #ufc3;
+}
+
+
+/* 133620-1437265422-ai */
