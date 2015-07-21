@@ -108,6 +108,7 @@ if ( ! class_exists( 'Site_Copier_Terms' ) ) {
 				);
 
 				$new_term = $this->wp_insert_term( $term->name, $term->taxonomy, $term_args );
+				do_action( 'wpmudev_copier_insert_term', $new_term, $term );
 
 				if ( is_wp_error( $new_term ) ) {
 					// Usually Uncategorized cannot be deleted, we need to check if it's already in the destination blog and map it
@@ -137,7 +138,7 @@ if ( ! class_exists( 'Site_Copier_Terms' ) ) {
 					wp_update_term( $mapped_terms[ $term->term_id ], $term->taxonomy, array( 'parent' => $mapped_terms[ $term->parent ] ) );
 
 			// Deprecated
-			do_action( 'blog_templates-copy-terms', $this->template, get_current_blog_id(), $this->user_id );
+			do_action( 'blog_templates-copy-terms', $this->template, get_current_blog_id(), $this->user_id, $mapped_terms );
 
 			// Update posts term relationships
 			if ( $this->args['update_relationships'] ) {
@@ -177,8 +178,9 @@ if ( ! class_exists( 'Site_Copier_Terms' ) ) {
              * @param Integer $user_id Blog Administrator ID.
              * @param Integer $source_blog_id Source Blog ID from where we are copying the terms.
              * @param Array $template Only applies when using New Blog Templates. Includes the template attributes.
+			 * @param Array $mapped_terms Relationship between source term IDs and new term IDs
              */
-			do_action( 'wpmudev_copier-copy-terms', $this->user_id, $this->source_blog_id, $this->template );
+			do_action( 'wpmudev_copier-copy-terms', $this->user_id, $this->source_blog_id, $this->template, $mapped_terms );
 
 			// If there's a links widget in the sidebar we may need to set the new category ID
 	        $widget_links_settings = get_blog_option( $this->source_blog_id, 'widget_links' );

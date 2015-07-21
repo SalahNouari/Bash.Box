@@ -97,7 +97,7 @@ if ( ! function_exists( 'copier_set_copier_args' ) ) {
                 $to_copy_args = array();
 
                 if ( $value === 'posts' ) {
-                    $to_copy_args['categories'] = isset( $args['post_category'] ) && in_array( 'all-categories', $args['post_category'] ) ? 'all' : $args['post_category'];							 					 	 	  	
+                    $to_copy_args['categories'] = isset( $args['post_category'] ) && in_array( 'all-categories', $args['post_category'] ) ? 'all' : $args['post_category'];
                     $to_copy_args['update_date'] = isset( $args['update_dates'] ) && $args['update_dates'] === true ? true : false;
                 }
                 elseif ( $value === 'pages' ) {

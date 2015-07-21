@@ -117,7 +117,7 @@ function wdfb_get_login_redirect( $force_admin_redirect = false ) {
 					// Set to permalink for current item, if possible
 					$redirect_url = apply_filters( 'wdfb-login-redirect_url-item_url', get_permalink( $post->ID ) );
 				}
-				$fallback_url = ( defined( 'WDFB_EXACT_REDIRECT_URL_FALLBACK' ) && WDFB_EXACT_REDIRECT_URL_FALLBACK ) ? site_url( $wp->request ) : home_url();	     	 	 		 		   
+				$fallback_url = ( defined( 'WDFB_EXACT_REDIRECT_URL_FALLBACK' ) && WDFB_EXACT_REDIRECT_URL_FALLBACK ) ? site_url( $wp->request ) : home_url();
 				// Default to home URL otherwise
 				$redirect_url = $redirect_url ? $redirect_url : $fallback_url;
 			}
@@ -348,12 +348,7 @@ function wdfb_get_fb_plugin_markup_html5( $type, $args ) {
 			break;
 
 		case "login-button":
-			$markup = '<div class="fb-login-button" data-scope="' .
-			          $args['scope'] .
-			          '" data-redirect-url="' .
-			          $args['redirect-url'] . '"  data-onlogin="_wdfb_notifyAndRedirect();">' .
-			          $args['content'] .
-			          '</div>';
+			$markup = '<div class="fb-login-button" data-scope="' . $args['scope'] . '" data-redirect-url="' . $args['redirect-url'] . '"  data-onlogin="_wdfb_notifyAndRedirect();">' . $args['content'] . '</div>';
 			break;
 
 		case "comments":
@@ -405,9 +400,7 @@ function wdfb_get_fb_plugin_markup( $type, $args, $forced_format = false ) {
 		$is_html5 = defined( 'WDFB_USE_HTML5_TAGS' ) && WDFB_USE_HTML5_TAGS;
 	}
 
-	return apply_filters( 'wdfb-tags-use_html5', $is_html5 )
-		? wdfb_get_fb_plugin_markup_html5( $type, $args )
-		: wdfb_get_fb_plugin_markup_xfbml( $type, $args );
+	return apply_filters( 'wdfb-tags-use_html5', $is_html5 ) ? wdfb_get_fb_plugin_markup_html5( $type, $args ) : wdfb_get_fb_plugin_markup_xfbml( $type, $args );
 }
 
 /**

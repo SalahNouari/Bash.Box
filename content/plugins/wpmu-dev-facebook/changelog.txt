@@ -6,6 +6,16 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+2.7.9.6 - 2015-07-22 - Umesh Kumar
+- Fixed: Permissions issue for new APP
+- Fixed: Album selector not working
+- Fixed: Crop Image, if enabled in album widget/shortcode
+- Added: One CLick Registration to signup
+- Removed: Facebook Recommendation, FacePile, Activity Feed (Discontinued by Facebook)
+
+2.7.9.5 - 2015-04-24 - Umesh Kumar
+- Fixed: Settings for like and send button on home page and archive pages
+
 2.7.9.4 - 2015-04-23 - Umesh Kumar
 - Fixed: Updated permissions required for Auto Posting
 
@@ -438,4 +448,4 @@ Change Log:
 - Added date threshold parameter for Facebook Events widget.
 
 
-133620-1429935280-au
+133620-1437694578-au

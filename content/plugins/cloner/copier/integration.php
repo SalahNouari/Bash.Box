@@ -21,7 +21,8 @@ $files_list = apply_filters( 'copier_integration_files', array(
 	'popover',
 	'shortcodes-ultimate',
 	'wp-https',
-	'wpmu-dev-seo'
+	'wpmu-dev-seo',
+	'woocommerce'
 ) );
 
 foreach ( $files_list as $file ) {
