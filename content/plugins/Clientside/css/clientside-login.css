@@ -1,0 +1,282 @@
+/*!
+ * This file is part of: Clientside
+ * Author: Berend de Jong
+ * Author URI: http://frique.me/
+ * Version: 1.1.7 (2015-06-22 15:10)
+ */
+
+#login #wp-submit, .alert-blue p.submit .button-primary, .message p.submit .button-primary, .notice-warning p.submit .button-primary, .notice-info p.submit .button-primary, .update-nag p.submit .button-primary, #login_error p.submit .button-primary, div.error p.submit .button-primary, .notice-error p.submit .button-primary, .settings-error p.submit .button-primary, .theme-update-message p.submit .button-primary, div.updated p.submit .button-primary, .notice-success p.submit .button-primary, .alert-blue .button, .message .button, .notice-warning .button, .notice-info .button, .update-nag .button, #login_error .button, div.error .button, .notice-error .button, .settings-error .button, .theme-update-message .button, div.updated .button, .notice-success .button {
+  display: inline-block;
+  border-radius: 3px !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  padding: 12px 26.25px !important;
+  -webkit-transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+          transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+  text-align: center;
+  box-shadow: none !important;
+  width: auto;
+  height: auto !important;
+  text-decoration: none;
+  text-shadow: none !important;
+  font-weight: normal !important;
+  font-style: normal !important; }
+  #login #wp-submit:hover, .alert-blue p.submit .button-primary:hover, .message p.submit .button-primary:hover, .notice-warning p.submit .button-primary:hover, .notice-info p.submit .button-primary:hover, .update-nag p.submit .button-primary:hover, #login_error p.submit .button-primary:hover, div.error p.submit .button-primary:hover, .notice-error p.submit .button-primary:hover, .settings-error p.submit .button-primary:hover, .theme-update-message p.submit .button-primary:hover, div.updated p.submit .button-primary:hover, .notice-success p.submit .button-primary:hover, .alert-blue .button:hover, .message .button:hover, .notice-warning .button:hover, .notice-info .button:hover, .update-nag .button:hover, #login_error .button:hover, div.error .button:hover, .notice-error .button:hover, .settings-error .button:hover, .theme-update-message .button:hover, div.updated .button:hover, .notice-success .button:hover, #login #wp-submit:focus, .alert-blue p.submit .button-primary:focus, .message p.submit .button-primary:focus, .notice-warning p.submit .button-primary:focus, .notice-info p.submit .button-primary:focus, .update-nag p.submit .button-primary:focus, #login_error p.submit .button-primary:focus, div.error p.submit .button-primary:focus, .notice-error p.submit .button-primary:focus, .settings-error p.submit .button-primary:focus, .theme-update-message p.submit .button-primary:focus, div.updated p.submit .button-primary:focus, .notice-success p.submit .button-primary:focus, .alert-blue .button:focus, .message .button:focus, .notice-warning .button:focus, .notice-info .button:focus, .update-nag .button:focus, #login_error .button:focus, div.error .button:focus, .notice-error .button:focus, .settings-error .button:focus, .theme-update-message .button:focus, div.updated .button:focus, .notice-success .button:focus {
+    font-weight: normal;
+    text-decoration: none !important; }
+
+#login #wp-submit {
+  padding: 12px 26.25px !important; }
+  #login #wp-submit {
+    color: white !important; }
+  #login #wp-submit {
+    background: #52bde6 !important; }
+  #login #wp-submit {
+    border: 0 !important; }
+  .wp-core-ui #login [disabled]#wp-submit, #login .wp-core-ui [disabled]#wp-submit, .wp-core-ui #login [disabled]#wp-submit:hover, #login .wp-core-ui [disabled]#wp-submit:hover, .wp-core-ui #login [disabled]#wp-submit:focus, #login .wp-core-ui [disabled]#wp-submit:focus, .wp-core-ui #login .disabled#wp-submit, #login .wp-core-ui .disabled#wp-submit, .wp-core-ui #login .disabled#wp-submit:hover, #login .wp-core-ui .disabled#wp-submit:hover, .wp-core-ui #login .disabled#wp-submit:focus, #login .wp-core-ui .disabled#wp-submit:focus {
+    opacity: 0.5;
+    text-shadow: none !important; }
+    .wp-core-ui #login [disabled]#wp-submit, #login .wp-core-ui [disabled]#wp-submit, .wp-core-ui #login [disabled]#wp-submit:hover, #login .wp-core-ui [disabled]#wp-submit:hover, .wp-core-ui #login [disabled]#wp-submit:focus, #login .wp-core-ui [disabled]#wp-submit:focus, .wp-core-ui #login .disabled#wp-submit, #login .wp-core-ui .disabled#wp-submit, .wp-core-ui #login .disabled#wp-submit:hover, #login .wp-core-ui .disabled#wp-submit:hover, .wp-core-ui #login .disabled#wp-submit:focus, #login .wp-core-ui .disabled#wp-submit:focus {
+      color: white !important; }
+    .wp-core-ui #login [disabled]#wp-submit, #login .wp-core-ui [disabled]#wp-submit, .wp-core-ui #login [disabled]#wp-submit:hover, #login .wp-core-ui [disabled]#wp-submit:hover, .wp-core-ui #login [disabled]#wp-submit:focus, #login .wp-core-ui [disabled]#wp-submit:focus, .wp-core-ui #login .disabled#wp-submit, #login .wp-core-ui .disabled#wp-submit, .wp-core-ui #login .disabled#wp-submit:hover, #login .wp-core-ui .disabled#wp-submit:hover, .wp-core-ui #login .disabled#wp-submit:focus, #login .wp-core-ui .disabled#wp-submit:focus {
+      background: #52bde6 !important; }
+  #login #wp-submit:hover, #login #wp-submit:focus {
+    background: #34bbee !important; }
+  #login #wp-submit:hover, #login #wp-submit:focus {
+    color: white !important; }
+
+.alert-blue, .message, .notice-warning, .notice-info, .update-nag, #login_error, div.error, .notice-error, .settings-error, .theme-update-message, div.updated, .notice-success {
+  margin: 15px 0 !important;
+  padding: 0 !important;
+  line-height: 1.4;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  clear: left !important; }
+  .alert-blue, .message, .notice-warning, .notice-info, .update-nag, #login_error, div.error, .notice-error, .settings-error, .theme-update-message, div.updated, .notice-success, .alert-blue p, .message p, .notice-warning p, .notice-info p, .update-nag p, #login_error p, div.error p, .notice-error p, .settings-error p, .theme-update-message p, div.updated p, .notice-success p {
+    font-size: 15px !important;
+    margin: 0;
+    padding: 0; }
+  .alert-blue a, .message a, .notice-warning a, .notice-info a, .update-nag a, #login_error a, div.error a, .notice-error a, .settings-error a, .theme-update-message a, div.updated a, .notice-success a {
+    text-decoration: underline; }
+  .alert-blue strong, .message strong, .notice-warning strong, .notice-info strong, .update-nag strong, #login_error strong, div.error strong, .notice-error strong, .settings-error strong, .theme-update-message strong, div.updated strong, .notice-success strong {
+    font-weight: normal; }
+  .is-dismissible.alert-blue, .is-dismissible.message, .is-dismissible.notice-warning, .is-dismissible.notice-info, .is-dismissible.update-nag, .is-dismissible#login_error, div.is-dismissible.error, .is-dismissible.notice-error, .is-dismissible.settings-error, .is-dismissible.theme-update-message, div.is-dismissible.updated, .is-dismissible.notice-success {
+    padding-left: 26.25px !important; }
+  .alert-blue .notice-dismiss, .message .notice-dismiss, .notice-warning .notice-dismiss, .notice-info .notice-dismiss, .update-nag .notice-dismiss, #login_error .notice-dismiss, div.error .notice-dismiss, .notice-error .notice-dismiss, .settings-error .notice-dismiss, .theme-update-message .notice-dismiss, div.updated .notice-dismiss, .notice-success .notice-dismiss {
+    right: auto;
+    left: 0;
+    padding: 0; }
+    .alert-blue .notice-dismiss:before, .message .notice-dismiss:before, .notice-warning .notice-dismiss:before, .notice-info .notice-dismiss:before, .update-nag .notice-dismiss:before, #login_error .notice-dismiss:before, div.error .notice-dismiss:before, .notice-error .notice-dismiss:before, .settings-error .notice-dismiss:before, .theme-update-message .notice-dismiss:before, div.updated .notice-dismiss:before, .notice-success .notice-dismiss:before {
+      content: "\f335";
+      line-height: 21px;
+      width: auto;
+      height: auto;
+      font-size: 22.5px;
+      -webkit-transition: color 0.15s;
+              transition: color 0.15s; }
+      .alert-blue .notice-dismiss:before, .message .notice-dismiss:before, .notice-warning .notice-dismiss:before, .notice-info .notice-dismiss:before, .update-nag .notice-dismiss:before, #login_error .notice-dismiss:before, div.error .notice-dismiss:before, .notice-error .notice-dismiss:before, .settings-error .notice-dismiss:before, .theme-update-message .notice-dismiss:before, div.updated .notice-dismiss:before, .notice-success .notice-dismiss:before {
+        color: #c5c5c5 ; }
+    .alert-blue .notice-dismiss:hover:before, .message .notice-dismiss:hover:before, .notice-warning .notice-dismiss:hover:before, .notice-info .notice-dismiss:hover:before, .update-nag .notice-dismiss:hover:before, #login_error .notice-dismiss:hover:before, div.error .notice-dismiss:hover:before, .notice-error .notice-dismiss:hover:before, .settings-error .notice-dismiss:hover:before, .theme-update-message .notice-dismiss:hover:before, div.updated .notice-dismiss:hover:before, .notice-success .notice-dismiss:hover:before {
+      color: #777 ; }
+  .alert-blue p.submit .button-primary, .message p.submit .button-primary, .notice-warning p.submit .button-primary, .notice-info p.submit .button-primary, .update-nag p.submit .button-primary, #login_error p.submit .button-primary, div.error p.submit .button-primary, .notice-error p.submit .button-primary, .settings-error p.submit .button-primary, .theme-update-message p.submit .button-primary, div.updated p.submit .button-primary, .notice-success p.submit .button-primary, .alert-blue .button, .message .button, .notice-warning .button, .notice-info .button, .update-nag .button, #login_error .button, div.error .button, .notice-error .button, .settings-error .button, .theme-update-message .button, div.updated .button, .notice-success .button {
+    padding: 7px 13px !important;
+    font-size: 13px !important;
+    margin-bottom: 4px; }
+
+.alert-blue, .message, .notice-warning, .notice-info, .update-nag, .alert-blue [href], .message [href], .notice-warning [href], .notice-info [href], .update-nag [href], .alert-blue [href]:hover, .message [href]:hover, .notice-warning [href]:hover, .notice-info [href]:hover, .update-nag [href]:hover, .alert-blue *, .message *, .notice-warning *, .notice-info *, .update-nag * {
+  color: #51c3ef ; }
+
+#login_error, div.error, .notice-error, .settings-error, .theme-update-message, #login_error [href], div.error [href], .notice-error [href], .settings-error [href], .theme-update-message [href], #login_error [href]:hover, div.error [href]:hover, .notice-error [href]:hover, .settings-error [href]:hover, .theme-update-message [href]:hover, #login_error *, div.error *, .notice-error *, .settings-error *, .theme-update-message * {
+  color: #d85858 ; }
+
+div.updated, .notice-success, div.updated [href], .notice-success [href], div.updated [href]:hover, .notice-success [href]:hover, div.updated *, .notice-success * {
+  color: #75ba76 ; }
+
+#login form p label input {
+  margin: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-width: 1px;
+  font-size: 15px !important;
+  max-width: 100%; }
+  #login form p label input {
+    background: #fff !important; }
+  #login form p label input {
+    border-color: #e8e8e8 !important; }
+  #login form p label input:focus {
+    border-color: #52bde6 ; }
+  #login form p label input.widefat {
+    width: 100%; }
+  #login form p label input.large-text {
+    width: 100%; }
+  #login form p label input.small-text {
+    width: 100px; }
+  #login form p label input.current-page {
+    font-size: 13px !important; }
+  #titlewrap #login form p label input#title, #login form p label #titlewrap input#title {
+    font-size: 18px !important; }
+  #login form p label input::-webkit-input-placeholder {
+    color: #c5c5c5 ; }
+  #login form p label input::-moz-placeholder {
+    color: #c5c5c5 ; }
+  #login form p label input:-ms-input-placeholder {
+    color: #c5c5c5 ; }
+  #login form p label input::placeholder {
+    color: #c5c5c5 ; }
+  #login form p label input[disabled], #login form p label input[readonly] {
+    opacity: 0.5; }
+
+#login form p label input {
+  height: 45px !important;
+  padding: 11px !important;
+  width: 300px;
+  border-radius: 2px; }
+  #login form p label input {
+    color: #222 ; }
+  .form-table #login form p label input, #login form p label .form-table input {
+    margin-top: -12px !important; }
+  #login form p label input.current-page {
+    border-radius: 2px;
+    height: 33px !important;
+    padding: 6.4px !important; }
+  #titlewrap #login form p label input#title, #login form p label #titlewrap input#title {
+    height: 52px !important;
+    padding: 15.4px !important; }
+
+/*
+ * Table of contents
+ *
+ * 1.0 Resets
+ * 2.0 Alert boxes
+ * 3.0 Login window
+ */
+
+/*
+ * 1.0 Resets
+ */
+html, body {
+  background: #f8f8fa; }
+
+body {
+  font-family: "Lato", "Helvetica Neue", "Segoe UI", "Roboto", "Open Sans", sans-serif;
+  font-size: 15px; }
+  body * {
+    box-sizing: border-box; }
+
+/*
+ * 2.0 Alert boxes
+ */
+/* Sometimes an .updated can appear outside of the .wrap. Then give it .wrap padding */
+#wpbody-content > .notice-error, #wpbody-content > .notice-success, #wpbody-content > .notice-info, #wpbody-content > .notice-warning, #wpbody-content > .error, #wpbody-content > div.updated, #wpbody-content > .settings-error, #wpbody-content > .update-nag {
+  margin: 0;
+  padding: 45px 90px 0 !important;
+  display: block;
+  clear: both !important; }
+  @media (min-width: 1880px) {
+    #wpbody-content > .notice-error, #wpbody-content > .notice-success, #wpbody-content > .notice-info, #wpbody-content > .notice-warning, #wpbody-content > .error, #wpbody-content > div.updated, #wpbody-content > .settings-error, #wpbody-content > .update-nag {
+      padding: 67.5px 135px 0 !important; } }
+  @media (max-width: 782px) {
+    #wpbody-content > .notice-error, #wpbody-content > .notice-success, #wpbody-content > .notice-info, #wpbody-content > .notice-warning, #wpbody-content > .error, #wpbody-content > div.updated, #wpbody-content > .settings-error, #wpbody-content > .update-nag {
+      padding: 15px 15px 0 !important; } }
+#wpbody-content > .notice-error + .notice-error, #wpbody-content > .notice-success + .notice-success, #wpbody-content > .notice-info + .notice-info, #wpbody-content > .notice-warning + .notice-warning, #wpbody-content > .error + .error, #wpbody-content > div.updated + div.updated, #wpbody-content > .settings-error + .settings-error, #wpbody-content > .update-nag + .update-nag {
+  padding-top: 0 !important; }
+
+.clientside-notification-center #wpbody .notice-error, .clientside-notification-center #wpbody .notice-success, .clientside-notification-center #wpbody .notice-info, .clientside-notification-center #wpbody .notice-warning, .clientside-notification-center #wpbody .error, .clientside-notification-center #wpbody div.updated, .clientside-notification-center #wpbody .settings-error, .clientside-notification-center #wpbody .update-nag {
+  display: none; }
+  .clientside-notification-center #wpbody .notice-error.inline, .clientside-notification-center #wpbody .notice-success.inline, .clientside-notification-center #wpbody .notice-info.inline, .clientside-notification-center #wpbody .notice-warning.inline, .clientside-notification-center #wpbody .error.inline, .clientside-notification-center #wpbody div.updated.inline, .clientside-notification-center #wpbody .settings-error.inline, .clientside-notification-center #wpbody .update-nag.inline {
+    display: block; }
+body.mobile #wpbody .notice-error, body.mobile #wpbody .notice-success, body.mobile #wpbody .notice-info, body.mobile #wpbody .notice-warning, body.mobile #wpbody .error, body.mobile #wpbody div.updated, body.mobile #wpbody .settings-error, body.mobile #wpbody .update-nag {
+  display: block; }
+
+/*
+ * 3.0 Login window
+ */
+#login h1 a {
+  background-size: contain;
+  background-position: center center;
+  margin-bottom: 15px;
+  width: 100%; }
+#login .message, #login #reg_passmail {
+  text-align: center; }
+#login form {
+  box-shadow: none;
+  margin-top: 15px; }
+  #login form {
+    padding: 0 ; }
+  #login form {
+    background: none ; }
+  #login form p {
+    position: relative;
+    height: 60px; }
+    #login form p label input {
+      padding: 17.4px 21px !important;
+      font-size: 18px !important;
+      height: 60px !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      border-radius: 0;
+      width: 100%; }
+      #login form p label input:focus {
+        z-index: 2; }
+      #login form p label input::-webkit-input-placeholder {
+        font-size: 15px;
+        line-height: 1.5; }
+      #login form p label input::-moz-placeholder {
+        font-size: 15px;
+        line-height: 1.5; }
+      #login form p label input:-ms-input-placeholder {
+        font-size: 15px;
+        line-height: 1.5; }
+      #login form p label input::placeholder {
+        font-size: 15px;
+        line-height: 1.5; }
+    #login form p + p {
+      height: 59px; }
+      #login form p + p label input {
+        margin-top: -1px !important; }
+    #login form p.forgetmenot {
+      display: none; }
+    #login form p#reg_passmail {
+      font-style: italic;
+      height: auto;
+      margin: 1em 0; }
+    #login form p.submit {
+      height: auto;
+      margin: 1em 0; }
+  #login form#loginform #user_login {
+    border-radius: 4px 4px 0 0 ; }
+  #login form#loginform #user_pass {
+    border-radius: 0 0 4px 4px ; }
+  #login form#lostpasswordform #user_login {
+    border-radius: 4px ; }
+  #login form > br.clear {
+    display: none; }
+#login #wp-submit {
+  padding: 15px 26.25px !important;
+  font-size: 15px !important;
+  line-height: 22px !important;
+  padding: 15.5px;
+  float: none;
+  width: 100%;
+  height: auto;
+  border: 0;
+  box-shadow: none; }
+#login #nav, #login #backtoblog {
+  padding: 0;
+  margin: 0;
+  font-size: 0; }
+  #login #nav a, #login #backtoblog a {
+    display: block;
+    font-size: 15px;
+    line-height: 1.54; }
+    #login #nav a, #login #backtoblog a {
+      color: #ccc ; }
+    #login #nav a:hover, #login #nav a:active, #login #nav a:focus, #login #backtoblog a:hover, #login #backtoblog a:active, #login #backtoblog a:focus {
+      text-decoration: underline; }
+      #login #nav a:hover, #login #nav a:active, #login #nav a:focus, #login #backtoblog a:hover, #login #backtoblog a:active, #login #backtoblog a:focus {
+        color: #555 ; }
