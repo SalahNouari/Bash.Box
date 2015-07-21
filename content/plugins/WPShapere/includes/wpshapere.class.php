@@ -299,7 +299,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 			$menuId = explode('<span', $menu_value[0]); 
 			$cleanLabel = $this->wps_clean_name($menuId[0]);
 			$getMenudata = (isset($wps_sorteddmenu[$cleanLabel])) ? $wps_sorteddmenu[$cleanLabel] : NULL;
-			$menu_value[5] = ""; //removing list ID in order to override icons set by other plugins
+			//$menu_value[5] = ""; //removing list ID in order to override icons set by other plugins
 			if($menu_value[4] != 'wp-menu-separator' && !preg_match("/separator/i",$menu_value[4])){
 				if(is_super_admin()) {
 					if($this->get_wps_option('show_all_menu_to_admin') == 2 && !in_array($user_id, $privilege_users) && $getMenudata[3] == "hide")
