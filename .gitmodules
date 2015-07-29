@@ -18,16 +18,6 @@
 	path = content/plugins/woocommerce
 	url = git@github.com:lakesareadesign/woocommerce.git
 
-[submodule "Roots"]
-	path = content/themes/roots
-	url = git@github.com:lakesareadesign/roots.git
-
-[submodule "Foundation5"]
-	path = content/themes/FoundationPress
-	url = git@github.com:lakesareadesign/FoundationPress.git
-
-################################################
-## Admin
 [submodule "daux"]
 	path = daux
 	url = git@github.com:lakesareadesign/daux.git
