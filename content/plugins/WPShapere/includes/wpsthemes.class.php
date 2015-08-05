@@ -7,7 +7,7 @@
 
 defined('ABSPATH') || die;
 
-class WPSTHEMES extends WPSHAPERE {
+class WPSTHEMES extends WPSHAPERE{
 	
 	private $wps_options = 'wpshapere_options';
 		

@@ -4,7 +4,7 @@
 	$this->wpshapereOptions = TitanFramework::getInstance( 'wpshapere' );
 	
 	$blog_email = get_option('admin_email');
-	$blog_from_name = get_option('blogname'); 
+	$blog_from_name = get_option('blogname');
 	$wps_options = unserialize(get_option('wpshapere_options'));
 	//get all admin users
 	$user_query = new WP_User_Query( array( 'role' => 'Administrator' ) );
@@ -22,32 +22,32 @@
 	) );
 	
 	$generalTab = $wpshapePanel->createTab( array(
-		'name' => 'General',
+		'name' => __( 'General', 'wps' ),
 		'id' => 'general_options',
 	));
 	
 	$loginTab = $wpshapePanel->createTab( array(
-		'name' => 'Login Page',
+		'name' => __( 'Login Page', 'wps' ),
 		'id' => 'login_options',
 	));
 	$dashTab = $wpshapePanel->createTab( array(
-		'name' => 'Dashboard',
+		'name' => __( 'Dashboard', 'wps' ),
 		'id' => 'dash_options',
 	));
 	$adminbarTab = $wpshapePanel->createTab( array(
-		'name' => 'Adminbar',
+		'name' => __( 'Adminbar', 'wps' ),
 		'id' => 'adminbar_options',
 	));
 	$adminTab = $wpshapePanel->createTab( array(
-		'name' => 'Admin Pages',
+		'name' => __( 'Admin Pages', 'wps' ),
 		'id' => 'admin_options',
 	));
 	$footerTab = $wpshapePanel->createTab( array(
-		'name' => 'Footer',
+		'name' => __( 'Footer', 'wps' ),
 		'id' => 'footer_options',
 	));
 	$emailsTab = $wpshapePanel->createTab( array(
-		'name' => 'Email Settings',
+		'name' => __( 'Email Settings', 'wps' ),
 		'id' => 'email_options',
 	));
 	
@@ -55,281 +55,281 @@
 	
 	//AdminTab Options
 	$adminTab->createOption( array(
-		'name' => 'Admin Menu Color options',
+		'name' => __( 'Admin Menu Color options', 'wps' ),
 		'type' => 'heading',
 	) );
 
 	$adminTab->createOption( array(
-		'name' => 'Background color',
+		'name' => __( 'Background color', 'wps' ),
 		'id' => 'bg_color',
 		'type' => 'color',
 		'default' => '#e3e7ea',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Left menu wrap color',
+		'name' => __( 'Left menu wrap color', 'wps' ),
 		'id' => 'nav_wrap_color',
 		'type' => 'color',
 		'default' => '#1b2831',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Submenu wrap color',
+		'name' => __( 'Submenu wrap color', 'wps' ),
 		'id' => 'sub_nav_wrap_color',
 		'type' => 'color',
 		'default' => '#22303a',
 	) );	
 	$adminTab->createOption( array(
-		'name' => 'Menu hover color',
+		'name' => __( 'Menu hover color', 'wps' ),
 		'id' => 'hover_menu_color',
 		'type' => 'color',
 		'default' => '#3f4457',
 	) );	
 	$adminTab->createOption( array(
-		'name' => 'Current active Menu color',
+		'name' => __( 'Current active Menu color', 'wps' ),
 		'id' => 'active_menu_color',
 		'type' => 'color',
 		'default' => '#6da87a',
 	) );	
 	$adminTab->createOption( array(
-		'name' => 'Menu text color',
+		'name' => __( 'Menu text color', 'wps' ),
 		'id' => 'nav_text_color',
 		'type' => 'color',
 		'default' => '#90a1a8',
 	) );	
 	$adminTab->createOption( array(
-		'name' => 'Menu hover text color',
+		'name' => __( 'Menu hover text color', 'wps' ),
 		'id' => 'menu_hover_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Updates Count notification background',
+		'name' => __( 'Updates Count notification background', 'wps' ),
 		'id' => 'menu_updates_count_bg',
 		'type' => 'color',
 		'default' => '#212121',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Updates Count text color',
+		'name' => __( 'Updates Count text color', 'wps' ),
 		'id' => 'menu_updates_count_text',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Primary button colors',
+		'name' => __( 'Primary button colors', 'wps' ),
 		'type' => 'heading',
 	) );	
 	$adminTab->createOption( array(
-		'name' => 'Button background  color',
+		'name' => __( 'Button background  color', 'wps' ),
 		'id' => 'pry_button_color',
 		'type' => 'color',
 		'default' => '#7ac600',
 	) );
 	if(isset($wps_options['design_type']) && $wps_options['design_type'] != 1) {
 		$adminTab->createOption( array(
-			'name' => 'Button border color',
+			'name' => __( 'Button border color', 'wps' ),
 			'id' => 'pry_button_border_color',
 			'type' => 'color',
 			'default' => '#86b520',
 		) );
 		$adminTab->createOption( array(
-			'name' => 'Button shadow color',
+			'name' => __( 'Button shadow color', 'wps' ),
 			'id' => 'pry_button_shadow_color',
 			'type' => 'color',
 			'default' => '#98ce23',
 		) );
 	}
 	$adminTab->createOption( array(
-		'name' => 'Button text color',
+		'name' => __( 'Button text color', 'wps' ),
 		'id' => 'pry_button_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Button hover background color',
+		'name' => __( 'Button hover background color', 'wps' ),
 		'id' => 'pry_button_hover_color',
 		'type' => 'color',
 		'default' => '#29ac39',
 	) );
 	if(isset($wps_options['design_type']) && $wps_options['design_type'] != 1) {
 		$adminTab->createOption( array(
-			'name' => 'Button hover border color',
+			'name' => __( 'Button hover border color', 'wps' ),
 			'id' => 'pry_button_hover_border_color',
 			'type' => 'color',
 			'default' => '#259633',
 		) );
 		$adminTab->createOption( array(
-			'name' => 'Button hover shadow color',
+			'name' => __( 'Button hover shadow color', 'wps' ),
 			'id' => 'pry_button_hover_shadow_color',
 			'type' => 'color',
 			'default' => '#3d7a0c',
 		) );
 	}
 	$adminTab->createOption( array(
-		'name' => 'Button hover text color',
+		'name' => __( 'Button hover text color', 'wps' ),
 		'id' => 'pry_button_hover_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Secondary button colors',
+		'name' => __( 'Secondary button colors', 'wps' ),
 		'type' => 'heading',
 	) );	
 	$adminTab->createOption( array(
-		'name' => 'Button background color',
+		'name' => __( 'Button background color', 'wps' ),
 		'id' => 'sec_button_color',
 		'type' => 'color',
 		'default' => '#ced6c9',
 	) );
 	if(isset($wps_options['design_type']) && $wps_options['design_type'] != 1) {
 		$adminTab->createOption( array(
-			'name' => 'Button border color',
+			'name' => __( 'Button border color', 'wps' ),
 			'id' => 'sec_button_border_color',
 			'type' => 'color',
 			'default' => '#bdc4b8',
 		) );
 		$adminTab->createOption( array(
-			'name' => 'Button shadow color',
+			'name' => __( 'Button shadow color', 'wps' ),
 			'id' => 'sec_button_shadow_color',
 			'type' => 'color',
 			'default' => '#dde5d7',
 		) );
 	}
 	$adminTab->createOption( array(
-		'name' => 'Button text color',
+		'name' => __( 'Button text color', 'wps' ),
 		'id' => 'sec_button_text_color',
 		'type' => 'color',
 		'default' => '#7a7a7a',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Button hover background color',
+		'name' => __( 'Button hover background color', 'wps' ),
 		'id' => 'sec_button_hover_color',
 		'type' => 'color',
 		'default' => '#c9c8bf',
 	) );
 	if(isset($wps_options['design_type']) && $wps_options['design_type'] != 1) {
 		$adminTab->createOption( array(
-			'name' => 'Button hover border color',
+			'name' => __( 'Button hover border color', 'wps' ),
 			'id' => 'sec_button_hover_border_color',
 			'type' => 'color',
 			'default' => '#babab0',
 		) );
 		$adminTab->createOption( array(
-			'name' => 'Button hover shadow color',
+			'name' => __( 'Button hover shadow color', 'wps' ),
 			'id' => 'sec_button_hover_shadow_color',
 			'type' => 'color',
 			'default' => '#9ea59b',
 		) );
 	}
 	$adminTab->createOption( array(
-		'name' => 'Button hover text color',
+		'name' => __( 'Button hover text color', 'wps' ),
 		'id' => 'sec_button_hover_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );	
 	
 	$adminTab->createOption( array(
-		'name' => 'Add New button',
+		'name' => __( 'Add New button', 'wps' ),
 		'type' => 'heading',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Button background color',
+		'name' => __( 'Button background color', 'wps' ),
 		'id' => 'addbtn_bg_color',
 		'type' => 'color',
 		'default' => '#53D860',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Button hover background color',
+		'name' => __( 'Button hover background color', 'wps' ),
 		'id' => 'addbtn_hover_bg_color',
 		'type' => 'color',
 		'default' => '#5AC565',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Button text color',
+		'name' => __( 'Button text color', 'wps' ),
 		'id' => 'addbtn_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Button hover text color',
+		'name' => __( 'Button hover text color', 'wps' ),
 		'id' => 'addbtn_hover_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	
 	$adminTab->createOption( array(
-		'name' => 'Metabox Colors',
+		'name' => __( 'Metabox Colors', 'wps' ),
 		'type' => 'heading',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Metabox header box',
+		'name' => __( 'Metabox header box', 'wps' ),
 		'id' => 'metabox_h3_color',
 		'type' => 'color',
 		'default' => '#bdbdbd',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Metabox header box border',
+		'name' => __( 'Metabox header box border', 'wps' ),
 		'id' => 'metabox_h3_border_color',
 		'type' => 'color',
 		'default' => '#9e9e9e',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Metabox header Click button color',
+		'name' => __( 'Metabox header Click button color', 'wps' ),
 		'id' => 'metabox_handle_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Metabox header Click button hover color',
+		'name' => __( 'Metabox header Click button hover color', 'wps' ),
 		'id' => 'metabox_handle_hover_color',
 		'type' => 'color',
 		'default' => '#949494',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Metabox header text color',
+		'name' => __( 'Metabox header text color', 'wps' ),
 		'id' => 'metabox_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	
 	$adminTab->createOption( array(
-		'name' => 'Message box (Post/Page updates)',
+		'name' => __( 'Message box (Post/Page updates)', 'wps' ),
 		'type' => 'heading',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Message box color',
+		'name' => __( 'Message box color', 'wps' ),
 		'id' => 'msg_box_color',
 		'type' => 'color',
 		'default' => '#02c5cc',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Message text color',
+		'name' => __( 'Message text color', 'wps' ),
 		'id' => 'msgbox_text_color',
 		'type' => 'color',
 		'default' => '#ffffff',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Message box border color',
+		'name' => __( 'Message box border color', 'wps' ),
 		'id' => 'msgbox_border_color',
 		'type' => 'color',
 		'default' => '#007e87',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Message link color',
+		'name' => __( 'Message link color', 'wps' ),
 		'id' => 'msgbox_link_color',
 		'type' => 'color',
 		'default' => '#efefef',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Message link hover color',
+		'name' => __( 'Message link hover color', 'wps' ),
 		'id' => 'msgbox_link_hover_color',
 		'type' => 'color',
 		'default' => '#e5e5e5',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Custom CSS',
+		'name' => __( 'Custom CSS', 'wps' ),
 		'type' => 'heading',
 	) );
 	$adminTab->createOption( array(
-		'name' => 'Custom CSS for Admin pages',
+		'name' => __( 'Custom CSS for Admin pages', 'wps' ),
 		'id' => 'admin_page_custom_css',
 		'type' => 'textarea',
 	) );
@@ -340,71 +340,65 @@
 	) );
 	
 	//AdminBar Options
-	/*$adminbarTab->createOption( array(
-		'name' => 'Admin Title',
-		'id' => 'admin_title',
-		'type' => 'text',
-	) );*/
-
 	$adminbarTab->createOption( array(
-		'name' => 'Upload Logo',
+		'name' => __( 'Upload Logo', 'wps' ),
 		'id' => 'admin_logo',
 		'type' => 'upload',
-		'desc' => 'Image to be displayed in all pages. Maximum size 200x50 pixels.'
+		'desc' => __( 'Image to be displayed in all pages. Maximum size 200x50 pixels.', 'wps' ),
 	) );
 	
 	$adminbarTab->createOption( array(
-		'name' => 'Move logo Top by',
+		'name' => __( 'Move logo Top by', 'wps' ),
 		'id' => 'logo_top_margin',
 		'type' => 'number',
-		'desc' => "Can be used in case of logo position haven't matched the menu position.",
+		'desc' => __( "Can be used in case of logo position haven't matched the menu position.", 'wps' ),
 		'default' => '0',
 		'max' => '20',
 	) );
 	
 	$adminbarTab->createOption( array(
-		'name' => 'Move logo Bottom by',
+		'name' => __( 'Move logo Bottom by', 'wps' ),
 		'id' => 'logo_bottom_margin',
 		'type' => 'number',
-		'desc' => "Can be used in case of logo position haven't matched the menu position.",
+		'desc' => __( "Can be used in case of logo position haven't matched the menu position.", 'wps' ),
 		'default' => '0',
 		'max' => '20',
 	) );
 	
 	$adminbarTab->createOption( array(
-		'name' => 'Admin bar color',
+		'name' => __( 'Admin bar color', 'wps' ),
 		'id' => 'admin_bar_color',
 		'type' => 'color',
 		'default' => '#fff',
 	) );
 	
 	$adminbarTab->createOption( array(
-		'name' => 'Admin bar menu color',
+		'name' => __( 'Admin bar menu color', 'wps' ),
 		'id' => 'admin_bar_menu_color',
 		'type' => 'color',
 		'default' => '#94979B',
 	) );
 	
 	$adminbarTab->createOption( array(
-		'name' => 'Admin bar menu hover color',
+		'name' => __( 'Admin bar menu hover color', 'wps' ),
 		'id' => 'admin_bar_menu_hover_color',
 		'type' => 'color',
 		'default' => '#474747',
 	) );
 	
 	$adminbarTab->createOption( array(
-		'name' => 'Remove Unwanted Menus',
+		'name' => __( 'Remove Unwanted Menus', 'wps' ),
 		'id' => 'hide_admin_bar_menus',
 		'type' => 'multicheck',
-		'desc' => 'Select whichever you want to remove.',
+		'desc' => __( 'Select menu items to remove.', 'wps' ),
 		'options' => array(
-			'1' => 'Site Name',
-			'2' => 'Updates',					
-			'3' => 'Comments',
-			'4' => 'New Content',
-			'5' => 'Edit Profile',
-			'6' => 'My account',
-			'7' => 'WordPress Logo',
+			'1' => __( 'Site Name', 'wps' ),
+			'2' => __( 'Updates', 'wps' ),					
+			'3' => __( 'Comments', 'wps' ),
+			'4' => __( 'New Content', 'wps' ),
+			'5' => __( 'Edit Profile', 'wps' ),
+			'6' => __( 'My account', 'wps' ),
+			'7' => __( 'WordPress Logo', 'wps' ),
 		),
 		'default' => array( '3', '4', '7' ),
 	) );
@@ -415,33 +409,33 @@
 	
 	//Login Page Options
 	$loginTab->createOption( array(
-		'name' => 'Background color',
+		'name' => __( 'Background color', 'wps' ),
 		'id' => 'login_bg_color',
 		'type' => 'color',
 		'default' => '#292931',
 	) );
 
 	$loginTab->createOption( array(
-		'name' => 'Background image',
+		'name' => __( 'Background image', 'wps' ),
 		'id' => 'login_bg_img',
 		'type' => 'upload',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Background Repeat',
+		'name' => __( 'Background Repeat', 'wps' ),
 		'id' => 'login_bg_img_repeat',
 		'type' => 'checkbox',
-		'desc' => 'Check to repeat',
+		'desc' => __( 'Check to repeat', 'wps' ),
 		'default' => true,
 	) );	
 	$loginTab->createOption( array(
-		'name' => 'Scale background image',
+		'name' => __( 'Scale background image', 'wps' ),
 		'id' => 'login_bg_img_scale',
 		'type' => 'checkbox',
-		'desc' => 'Scale image to fit Screen size.',
+		'desc' => __( 'Scale image to fit Screen size.', 'wps' ),
 		'default' => true,
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Login Form Top margin',
+		'name' => __( 'Login Form Top margin', 'wps' ),
 		'id' => 'login_form_margintop',
 		'type' => 'number',
 		'default' => '100',
@@ -449,7 +443,7 @@
 		'max' => '700',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Login Form Width(%)',
+		'name' => __( 'Login Form Width in %', 'wps' ),
 		'id' => 'login_form_width',
 		'type' => 'number',
 		'default' => '30',
@@ -458,107 +452,107 @@
 	) );
 
 	$loginTab->createOption( array(
-	'name' => 'Upload Logo',
+	'name' => __( 'Upload Logo', 'wps' ),
 	'id' => 'admin_login_logo',
 	'type' => 'upload',
-	'desc' => 'Image to be displayed on login page. Maximum width should be under 450pixels.'
+	'desc' => __( 'Image to be displayed on login page. Maximum width should be under 450pixels.', 'wps' ),
 	) );
 
 	$loginTab->createOption( array(
-		'name' => 'Resize Logo?',
+		'name' => __( 'Resize Logo?', 'wps' ),
 		'id' => 'admin_logo_resize',
 		'type' => 'checkbox',
 		'default' => false,
-		'desc' => 'Select to resize logo size.'
+		'desc' => __( 'Select to resize logo size.', 'wps' ),
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Set Logo size (%)',
+		'name' => __( 'Set Logo size in %', 'wps' ),
 		'id' => 'admin_logo_size_percent',
 		'type' => 'number',
 		'default' => '1',
 		'max' => '100',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Logo Height',
+		'name' => __( 'Logo Height', 'wps' ),
 		'id' => 'admin_logo_height',
 		'type' => 'number',
 		'default' => '50',
 		'max' => '150',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Logo url',
+		'name' => __( 'Logo url', 'wps' ),
 		'id' => 'login_logo_url',
 		'type' => 'text',
 		'default' => get_bloginfo('url'),
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Transparent Form',
+		'name' => __( 'Transparent Form', 'wps' ),
 		'id' => 'login_divbg_transparent',
 		'type' => 'checkbox',
 		'default' => false,
-		'desc' => 'Select to show transparent form background.'
+		'desc' => __( 'Select to show transparent form background.', 'wps' ),
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Login div bacground color',
+		'name' => __( 'Login div bacground color', 'wps' ),
 		'id' => 'login_divbg_color',
 		'type' => 'color',
 		'default' => '#f5f5f5',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Login form bacground color',
+		'name' => __( 'Login form bacground color', 'wps' ),
 		'id' => 'login_formbg_color',
 		'type' => 'color',
 		'default' => '#423143',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Form border color',
+		'name' => __( 'Form border color', 'wps' ),
 		'id' => 'form_border_color',
 		'type' => 'color',
 		'default' => '#e5e5e5',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Form text color',
+		'name' => __( 'Form text color', 'wps' ),
 		'id' => 'form_text_color',
 		'type' => 'color',
 		'default' => '#cccccc',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Form link color',
+		'name' => __( 'Form link color', 'wps' ),
 		'id' => 'form_link_color',
 		'type' => 'color',
 		'default' => '#777777',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Form link hover color',
+		'name' => __( 'Form link hover color', 'wps' ),
 		'id' => 'form_link_hover_color',
 		'type' => 'color',
 		'default' => '#555555',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Hide "Back to blog link"',
+		'name' => __( 'Hide Back to blog link', 'wps' ),
 		'id' => 'hide_backtoblog',
 		'type' => 'checkbox',
 		'default' => false,
-		'desc' => 'select to hide',
+		'desc' => __( 'select to hide', 'wps' ),
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Hide "Remember me"',
+		'name' => __( 'Hide Remember me', 'wps' ),
 		'id' => 'hide_remember',
 		'type' => 'checkbox',
 		'default' => false,
-		'desc' => 'select to hide',
+		'desc' => __( 'select to hide', 'wps' ),
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Custom Footer content',
+		'name' => __( 'Custom Footer content', 'wps' ),
 		'id' => 'login_footer_content',
 		'type' => 'editor',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Custom CSS',
+		'name' => __( 'Custom CSS', 'wps' ),
 		'type' => 'heading',
 	) );
 	$loginTab->createOption( array(
-		'name' => 'Custom CSS for Login page',
+		'name' => __( 'Custom CSS for Login page', 'wps' ),
 		'id' => 'login_custom_css',
 		'type' => 'textarea',
 	) );
@@ -568,113 +562,113 @@
 	) );
 	
 	$generalTab->createOption( array(
-		'name' => 'General options',
+		'name' => __( 'General options', 'wps' ),
 		'type' => 'heading',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Choose design type',
+		'name' => __( 'Choose design type', 'wps' ),
 		'id' => 'design_type',
 		'type' => 'radio',
 		'options' => array(
-			'1' => 'Flat design',
-			'2' => 'Default design',
+			'1' => __( 'Flat design', 'wps' ),
+			'2' => __( 'Default design', 'wps' ),
 		),
 		'default' => '1',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Heading H1 color',
+		'name' => __( 'Heading H1 color', 'wps' ),
 		'id' => 'h1_color',
 		'type' => 'color',
 		'default' => '#333333',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Heading H2 color',
+		'name' => __( 'Heading H2 color', 'wps' ),
 		'id' => 'h2_color',
 		'type' => 'color',
 		'default' => '#222222',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Heading H3 color',
+		'name' => __( 'Heading H3 color', 'wps' ),
 		'id' => 'h3_color',
 		'type' => 'color',
 		'default' => '#222222',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Heading H4 color',
+		'name' => __( 'Heading H4 color', 'wps' ),
 		'id' => 'h4_color',
 		'type' => 'color',
 		'default' => '#555555',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Heading H5 color',
+		'name' => __( 'Heading H5 color', 'wps' ),
 		'id' => 'h5_color',
 		'type' => 'color',
 		'default' => '#555555',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Heading H6 color',
+		'name' => __( 'Heading H6 color', 'wps' ),
 		'id' => 'h6_color',
 		'type' => 'color',
 		'default' => '#555555',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Remove unwanted items',
+		'name' => __( 'Remove unwanted items', 'wps' ),
 		'id' => 'admin_generaloptions',
 		'type' => 'multicheck',
-		'desc' => 'Select whichever you want to remove.',
+		'desc' => __( 'Select whichever you want to remove.', 'wps' ),
 		'options' => array(
-			'1' => 'Wordpress Help tab.',					
-			'2' => 'Screen Options.',
-			'3' => 'Wordpress update notifications.',
+			'1' => __( 'Wordpress Help tab.', 'wps' ),					
+			'2' => __( 'Screen Options.', 'wps' ),
+			'3' => __( 'Wordpress update notifications.', 'wps' ),
 		),
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Disable automatic updates',
+		'name' => __( 'Disable automatic updates', 'wps' ),
 		'id' => 'disable_auto_updates',
 		'type' => 'checkbox',
-		'desc' => 'Select to disable all automatic background updates.',
+		'desc' => __( 'Select to disable all automatic background updates.', 'wps' ),
 		'default' => false,
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Disable update emails',
+		'name' => __( 'Disable update emails', 'wps' ),
 		'id' => 'disable_update_emails',
 		'type' => 'checkbox',
-		'desc' => 'Select to disable emails regarding automatic updates.',
+		'desc' => __( 'Select to disable emails regarding automatic updates.', 'wps' ),
 		'default' => false,
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Hide Admin bar',
+		'name' => __( 'Hide Admin bar', 'wps' ),
 		'id' => 'hide_admin_bar',
 		'type' => 'checkbox',
-		'desc' => 'Select to hideadmin bar on frontend.',
+		'desc' => __( 'Select to hideadmin bar on frontend.', 'wps' ),
 		'default' => false,
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Hide Color picker from user profile',
+		'name' => __( 'Hide Color picker from user profile', 'wps' ),
 		'id' => 'hide_profile_color_picker',
 		'type' => 'checkbox',
-		'desc' => 'Select to hide Color picker from user profile.',
+		'desc' => __( 'Select to hide Color picker from user profile.', 'wps' ),
 		'default' => false,
 	) );
 	
 	$generalTab->createOption( array(
-		'name' => 'Menu Customization options',
+		'name' => __( 'Menu Customization options', 'wps' ),
 		'type' => 'heading',
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Menu display',
+		'name' => __( 'Menu display', 'wps' ),
 		'id' => 'show_all_menu_to_admin',
 		'type' => 'radio',
 		'options' => array(
-			'1' => 'Show all Menu links to all admin users',
-			'2' => 'Show all Menu links to specific admin users',
+			'1' => __( 'Show all Menu links to all admin users', 'wps' ),
+			'2' => __( 'Show all Menu links to specific admin users', 'wps' ),
 		),
 	) );
 	$generalTab->createOption( array(
-		'name' => 'Select Privilege users',
+		'name' => __( 'Select Privilege users', 'wps' ),
 		'id' => 'privilege_users',
 		'type' => 'multicheck',
-		'desc' => 'Select admin users who can have access to all menu items.',
+		'desc' => __( 'Select admin users who can have access to all menu items.', 'wps' ),
 		'options' => $admin_users,
 	) );
 	$generalTab->createOption( array(
@@ -682,186 +676,186 @@
 	) );
 	
 	$dashTab->createOption( array(
-		'name' => 'Remove unwanted Widgets',
+		'name' => __( 'Remove unwanted Widgets', 'wps' ),
 		'id' => 'remove_dash_widgets',
 		'type' => 'multicheck',
-		'desc' => 'Select whichever you want to remove.',
+		'desc' => __( 'Select whichever you want to remove.', 'wps' ),
 		'options' => array(
-			'1' => 'Welcome panel',					
-			'2' => 'Right now',
-			'3' => 'Recent activity',
-			'4' => 'Incoming links',
-			'5' => 'Plugins',
-			'6' => 'Quick press',
-			'7' => 'Recent drafts',
-			'8' => 'Wordpress news',
-			'9' => 'Wordpress blog',
-			'10' => 'bbPress',
-			'11' => 'Yoast seo',
-			'12' => 'Gravity forms',
+			'1' => __( 'Welcome panel', 'wps' ),					
+			'2' => __( 'Right now', 'wps' ),
+			'3' => __( 'Recent activity', 'wps' ),
+			'4' => __( 'Incoming links', 'wps' ),
+			'5' => __( 'Plugins', 'wps' ),
+			'6' => __( 'Quick press', 'wps' ),
+			'7' => __( 'Recent drafts', 'wps' ),
+			'8' => __( 'Wordpress news', 'wps' ),
+			'9' => __( 'Wordpress blog', 'wps' ),
+			'10' => __( 'bbPress', 'wps' ),
+			'11' => __( 'Yoast seo', 'wps' ),
+			'12' => __( 'Gravity forms', 'wps' ),
 		),
 		'default' => array( '8', '9' ),
 	) );	
 	$dashTab->createOption( array(
-		'name' => 'Create New Widgets',
+		'name' => __( 'Create New Widgets', 'wps' ),
 		'type' => 'heading',
 	) );
 	$dashTab->createOption( array(
 		'type' => 'note',
-		'desc' => 'Widget 1'
+		'desc' => __( 'Widget 1', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Type',
+		'name' => __( 'Widget Type', 'wps' ),
 		'id' => 'wps_widget_1_type',
 		'options' => array(
-        '1' => 'RSS Feed',
-        '2' => 'Text Content',
+                                            '1' => __( 'RSS Feed', 'wps' ),
+                                            '2' => __( 'Text Content', 'wps' ),
 		),
 		'type' => 'radio',
 		'default' => '1',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Position',
+		'name' => __( 'Widget Position', 'wps' ),
 		'id' => 'wps_widget_1_position',
 		'options' => array(
-		'normal' => 'Left',
-		'side' => 'Right',
+                                            'normal' => __( 'Left', 'wps' ),
+                                            'side' => __( 'Right', 'wps' ),
 		),
 		'type' => 'select',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Title',
+		'name' => __( 'Widget Title', 'wps' ),
 		'id' => 'wps_widget_1_title',
 		'type' => 'text',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'RSS Feed url',
+		'name' => __( 'RSS Feed url', 'wps' ),
 		'id' => 'wps_widget_1_rss',
 		'type' => 'text',
-		'desc' => 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.',
+		'desc' => __( 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Content',
+		'name' => __( 'Widget Content', 'wps' ),
 		'id' => 'wps_widget_1_content',
 		'type' => 'editor',
 	) );
 	
 	$dashTab->createOption( array(
 		'type' => 'note',
-		'desc' => 'Widget 2'
+		'desc' => __( 'Widget 2', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Type',
+		'name' => __( 'Widget Type', 'wps' ),
 		'id' => 'wps_widget_2_type',
 		'options' => array(
-		'1' => 'RSS Feed',
-		'2' => 'Text Content',
+                                            '1' => __( 'RSS Feed', 'wps' ),
+                                            '2' => __( 'Text Content', 'wps' ),
 		),
 		'type' => 'radio',
 		'default' => '1',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Position',
+		'name' => __( 'Widget Position', 'wps' ),
 		'id' => 'wps_widget_2_position',
 		'options' => array(
-		'normal' => 'Left',
-		'side' => 'Right',
+                                            'normal' => __( 'Left', 'wps' ),
+                                            'side' => __( 'Right', 'wps' ),
 		),
 		'type' => 'select',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Title',
+		'name' => __( 'Widget Title', 'wps' ),
 		'id' => 'wps_widget_2_title',
 		'type' => 'text',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'RSS Feed url',
+		'name' => __( 'RSS Feed url', 'wps' ),
 		'id' => 'wps_widget_2_rss',
 		'type' => 'text',
-		'desc' => 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.',
+		'desc' => __( 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Content',
+		'name' => __( 'Widget Content', 'wps' ),
 		'id' => 'wps_widget_2_content',
 		'type' => 'editor',
 	) );
 	
 	$dashTab->createOption( array(
 		'type' => 'note',
-		'desc' => 'Widget 3'
+		'desc' => __( 'Widget 3', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Type',
+		'name' => __( 'Widget Type', 'wps' ),
 		'id' => 'wps_widget_3_type',
 		'options' => array(
-        '1' => 'RSS Feed',
-        '2' => 'Text Content',
+                                            '1' => __( 'RSS Feed', 'wps' ),
+                                            '2' => __( 'Text Content', 'wps' ),
 		),
 		'type' => 'radio',
 		'default' => '1',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Position',
+		'name' => __( 'Widget Position', 'wps' ),
 		'id' => 'wps_widget_3_position',
 		'options' => array(
-        'normal' => 'Left',
-        'side' => 'Right',
+                                            'normal' => __( 'Left', 'wps' ),
+                                            'side' => __( 'Right', 'wps' ),
 		),
 		'type' => 'select',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Title',
+		'name' => __( 'Widget Title', 'wps' ),
 		'id' => 'wps_widget_3_title',
 		'type' => 'text',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'RSS Feed url',
+		'name' => __( 'RSS Feed url', 'wps' ),
 		'id' => 'wps_widget_3_rss',
 		'type' => 'text',
-		'desc' => 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.',
+		'desc' => __( 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Content',
+		'name' => __( 'Widget Content', 'wps' ),
 		'id' => 'wps_widget_3_content',
 		'type' => 'editor',
 	) );
 	
 	$dashTab->createOption( array(
 		'type' => 'note',
-		'desc' => 'Widget 4'
+		'desc' => __( 'Widget 4', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Type',
+		'name' => __( 'Widget Type', 'wps' ),
 		'id' => 'wps_widget_4_type',
 		'options' => array(
-        '1' => 'RSS Feed',
-        '2' => 'Text Content',
+                                            '1' => __( 'RSS Feed', 'wps' ),
+                                            '2' => __( 'Text Content', 'wps' ),
 		),
 		'type' => 'radio',
 		'default' => '1',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Position',
+		'name' => __( 'Widget Position', 'wps' ),
 		'id' => 'wps_widget_4_position',
 		'options' => array(
-        'normal' => 'Left',
-        'side' => 'Right',
+                                            'normal' => __( 'Left', 'wps' ),
+                                            'side' => __( 'Right', 'wps' ),
 		),
 		'type' => 'select',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Title',
+		'name' => __( 'Widget Title', 'wps' ),
 		'id' => 'wps_widget_4_title',
 		'type' => 'text',
 	) );
 	$dashTab->createOption( array(
-		'name' => 'RSS Feed url',
+		'name' => __( 'RSS Feed url', 'wps' ),
 		'id' => 'wps_widget_4_rss',
 		'type' => 'text',
-		'desc' => 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.',
+		'desc' => __( 'Put your RSS feed url here if you want to show your own RSS feeds. Otherwise fill your static contents in the below editor.', 'wps' ),
 	) );
 	$dashTab->createOption( array(
-		'name' => 'Widget Content',
+		'name' => __( 'Widget Content', 'wps' ),
 		'id' => 'wps_widget_4_content',
 		'type' => 'editor',
 	) );
@@ -871,34 +865,34 @@
 	) );
 	
 	$footerTab->createOption( array(
-		'name' => 'Footer Text',
+		'name' => __( 'Footer Text', 'wps' ),
 		'id' => 'admin_footer_txt',
 		'type' => 'editor',
-		'desc' => 'Put any text you want to show on admin footer.',
+		'desc' => __( 'Put any text you want to show on admin footer.', 'wps' ),
 	) );
 	$footerTab->createOption( array(
 		'type' => 'save'
 	) );
 
 	$emailsTab->createOption( array(
-		'name' => 'White Label emails',
+		'name' => __( 'White Label emails', 'wps' ),
 		'id' => 'email_settings',
 		'options' => array(
-		'3' => 'Disable White Label emails',
-		'1' => 'Set Email address as <strong>' . $blog_email . '</strong> From name as <strong>' . $blog_from_name . '</strong>',
-		'2' => 'Set different',
+		'3' => __( 'Disable White Label emails', 'wps' ),
+		'1' => sprintf( __( 'Set Email address as <strong> %1$s </strong> From name as <strong> %2$s', 'wps' ), $blog_email, $blog_from_name ),
+		'2' => __( 'Set different', 'wps' ),
 		),
 		'type' => 'radio',
 		'default' => '1',
 	) );
 	$emailsTab->createOption( array(
-		'name' => 'Email From address',
+		'name' => __( 'Email From address', 'wps' ),
 		'id' => 'email_from_addr',
 		'type' => 'text',
-		'desc' => 'Enter valid email address',
+		'desc' => __( 'Enter valid email address', 'wps' ),
 	) );
 	$emailsTab->createOption( array(
-		'name' => 'Email From name',
+		'name' => __( 'Email From name', 'wps' ),
 		'id' => 'email_from_name',
 		'type' => 'text',
 	) );
