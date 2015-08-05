@@ -1,31 +1,10 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Renders Help and Documentation Page.
  *
  * Extends MS_View for rendering methods and magic methods.
  *
- * @since 1.1.0
+ * @since  1.0.0
  *
  * @return object
  */
@@ -39,7 +18,7 @@ class MS_View_Help extends MS_View {
 	 * the navigation gets loaded with dynamic method calls.
 	 * e.g. if key is 'settings' then render_settings() gets called, if 'bob' then render_bob().
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @return object
 	 */
@@ -75,7 +54,7 @@ class MS_View_Help extends MS_View {
 				<?php
 				$html = call_user_func( $render_callback );
 				$html = apply_filters( 'ms_view_help_' . $callback_name, $html );
-				echo '' . $html;
+				echo $html;
 				?>
 			</div>
 		</div>
@@ -86,28 +65,81 @@ class MS_View_Help extends MS_View {
 	/**
 	 * Renders the General help contents
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string
 	 */
 	public function render_tab_general() {
 		ob_start();
 		?>
 		<h2>
-			<?php _ex( 'Overview', 'help', MS_TEXT_DOMAIN ); ?>
+			<?php _e( 'You\'re awesome :)', MS_TEXT_DOMAIN ); ?><br />
 		</h2>
 		<p>
-			<?php _ex( 'Thank you for using Membership2!', 'help', MS_TEXT_DOMAIN ); ?>
-			<br />
-			<?php
-			if ( is_multisite() ) {
-				if ( MS_Plugin::is_network_wide() ) {
-					_ex( 'Your Protection mode is <strong>network-wide</strong>', 'help', MS_TEXT_DOMAIN );
-				} else {
-					_ex( 'Your Protection mode is <strong>site-wide</strong>', 'help', MS_TEXT_DOMAIN );
-				}
-			}
-			?>
+			<em><?php _e( 'Thank you for using Membership 2', MS_TEXT_DOMAIN ); ?></em>
+			<br/ ><br />
+			<?php _ex( 'Here is a quick overview:', 'help', MS_TEXT_DOMAIN ); ?>
 		</p>
+		<div>
+		<?php
+		printf(
+			_x( 'You use verion <strong>%s</strong> of Membership 2', 'help', MS_TEXT_DOMAIN ),
+			MS_PLUGIN_VERSION
+		);
+		if ( function_exists( 'membership2_init_pro_app' ) ) {
+			printf(
+				'<br />' .
+				_x( 'Hey, this is the <strong>PRO version</strong> of Membership 2 - thanks a lot for supporting us!', 'help', MS_TEXT_DOMAIN )
+			);
+		} else {
+			printf(
+				'<br />' .
+				_x( 'This is the <strong>Free version</strong> of Membership 2 - did you check out our %sPRO version%s already?', 'help', MS_TEXT_DOMAIN ),
+				'<a href="https://premium.wpmudev.org/project/membership/" target="_blank">',
+				'</a>'
+			);
+		}
+		if ( is_multisite() ) {
+			if ( MS_Plugin::is_network_wide() ) {
+				printf(
+					'<br />' .
+					_x( 'Your Protection mode is <strong>%s network-wide</strong>.', 'help', MS_TEXT_DOMAIN ),
+					'<i class="wpmui-fa wpmui-fa-globe"></i>'
+				);
+			} else {
+				printf(
+					'<br />' .
+					_x( 'Your Protection covers <strong>%s only this site</strong>.', 'help', MS_TEXT_DOMAIN ),
+					'<i class="wpmui-fa wpmui-fa-home"></i>'
+				);
+			}
+		}
+		$admin_cap = MS_Plugin::instance()->controller->capability;
+		if ( $admin_cap ) {
+			printf(
+				'<br />' .
+				_x( 'All users with capability <strong>%s</strong> are M2 Admin-users.', 'help', MS_TEXT_DOMAIN ),
+				$admin_cap
+			);
+		} else {
+			printf(
+				'<br />' .
+				_x( 'Only the <strong>Network-Admin</strong> can manage M2.', 'help', MS_TEXT_DOMAIN )
+			);
+		}
+		if ( defined( 'MS_STOP_EMAILS' ) && MS_STOP_EMAILS ) {
+			printf(
+				'<br />' .
+				_x( 'Currently M2 is configured to <strong>not send</strong> any emails.', 'help', MS_TEXT_DOMAIN )
+			);
+		}
+		if ( defined( 'MS_LOCK_SUBSCRIPTIONS' ) && MS_LOCK_SUBSCRIPTIONS ) {
+			printf(
+				'<br />' .
+				_x( 'Currently M2 is configured <strong>not expire/change</strong> any subscription status.', 'help', MS_TEXT_DOMAIN )
+			);
+		}
+		?>
+		</div>
 		<?php MS_Helper_Html::html_separator(); ?>
 		<h2>
 			<?php _ex( 'Plugin menu', 'help', MS_TEXT_DOMAIN ); ?>
@@ -131,16 +163,24 @@ class MS_View_Help extends MS_View {
 				<td><?php _ex( 'Set the protection options, i.e. which pages are protected by which membership', 'help', MS_TEXT_DOMAIN ); ?></td>
 			</tr>
 			<tr class="alternate">
-				<td><span><?php _e( 'Members', MS_TEXT_DOMAIN ); ?></span></td>
+				<td><span><?php _e( 'All Members', MS_TEXT_DOMAIN ); ?></span></td>
 				<td><?php _ex( 'Lists all your WordPress users and allows you to manage their Memberships', 'help', MS_TEXT_DOMAIN ); ?></td>
 			</tr>
 			<tr>
+				<td><span><?php _e( 'Add Member', MS_TEXT_DOMAIN ); ?></span></td>
+				<td><?php _ex( 'Create a new WP User or edit subscriptions of an existing user', 'help', MS_TEXT_DOMAIN ); ?></td>
+			</tr>
+			<tr class="alternate">
 				<td><span><?php _e( 'Billing', MS_TEXT_DOMAIN ); ?></span></td>
 				<td><?php _ex( 'Manage sent invoices, including details such as the payment status. <em>Only visible when you have at least one paid membership</em>', 'help', MS_TEXT_DOMAIN ); ?></td>
 			</tr>
-			<tr class="alternate">
+			<tr>
 				<td><span><?php _e( 'Coupons', MS_TEXT_DOMAIN ); ?></span></td>
 				<td><?php _ex( 'Manage your discount coupons. <em>Requires Add-on "Coupons"</em>', 'help', MS_TEXT_DOMAIN ); ?></td>
+			</tr>
+			<tr class="alternate">
+				<td><span><?php _e( 'Invitation Codes', MS_TEXT_DOMAIN ); ?></span></td>
+				<td><?php _ex( 'Manage your invitation codes. <em>Requires Add-on "Invitation Codes"</em>', 'help', MS_TEXT_DOMAIN ); ?></td>
 			</tr>
 			<tr>
 				<td><span><?php _e( 'Add-ons', MS_TEXT_DOMAIN ); ?></span></td>
@@ -158,7 +198,7 @@ class MS_View_Help extends MS_View {
 	/**
 	 * Renders the Shortcode help contents
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string
 	 */
 	public function render_tab_shortcodes() {
@@ -1028,6 +1068,15 @@ class MS_View_Help extends MS_View {
 			</div>
 		</div>
 
+		<?php
+		/**
+		 * Allow Add-ons to add their own shortcode documentation.
+		 *
+		 * @since  1.0.1.0
+		 */
+		do_action( 'ms_view_help_shortcodes-common' );
+		?>
+
 
 
 		<hr />
@@ -1186,6 +1235,14 @@ class MS_View_Help extends MS_View {
 			</div>
 		</div>
 
+		<?php
+		/**
+		 * Allow Add-ons to add their own shortcode documentation.
+		 *
+		 * @since  1.0.1.0
+		 */
+		do_action( 'ms_view_help_shortcodes-membership' );
+		?>
 
 
 		<hr />
@@ -1534,15 +1591,29 @@ class MS_View_Help extends MS_View {
 			</div>
 		</div>
 
+		<?php
+		/**
+		 * Allow Add-ons to add their own shortcode documentation.
+		 *
+		 * @since  1.0.1.0
+		 */
+		do_action( 'ms_view_help_shortcodes-other' );
+		?>
+
 		<hr />
 		<?php
-		return ob_get_clean();
+		$html = ob_get_clean();
+
+		return apply_filters(
+			'ms_view_help_shortcodes',
+			$html
+		);
 	}
 
 	/**
 	 * Renders the Network-Wide Protection help contents
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 * @return string
 	 */
 	public function render_tab_network() {
@@ -1565,7 +1636,7 @@ class MS_View_Help extends MS_View {
 	/**
 	 * Renders the Advanced settings help contents
 	 *
-	 * @since  1.1.0.5
+	 * @since  1.0.0
 	 * @return string
 	 */
 	public function render_tab_advanced() {
@@ -1577,12 +1648,12 @@ class MS_View_Help extends MS_View {
 			<?php _ex( 'Open the Settings page and add <code>&reset=1</code> to the URL. A prompt is displayed that can be used to reset all Membership2 settings. Use this to clean all traces after testing the plugin.', 'help', MS_TEXT_DOMAIN ); ?>
 		</p>
 		<p>
-			<strong><?php _ex( 'Restore', 'help', MS_TEXT_DOMAIN ); ?></strong><br />
-			<?php _ex( 'Open the Settings page and add <code>&restore=1</code> to the URL. In the prompt that is displayed you can select an existing DB Snapshot that can be restored. Use this if something goes wrong after an update. A new snapshot is generated <em>before</em> the plugin is updating the Database to a new version.', 'help', MS_TEXT_DOMAIN ); ?>
-		</p>
-		<p>
 			<strong><?php _ex( 'Stop Emails', 'help', MS_TEXT_DOMAIN ); ?></strong><br />
 			<?php _ex( 'In wp-config.php add the line <code>define( "MS_STOP_EMAILS", true );</code> to force Procted Content to <em>not</em> send any emails to Members. This can be used when testing to prevent your users from getting email notifications.', 'help', MS_TEXT_DOMAIN ); ?>
+		</p>
+		<p>
+			<strong><?php _ex( 'Reduce Emails', 'help', MS_TEXT_DOMAIN ); ?></strong><br />
+			<?php _ex( 'By default your members will get an email for every event that is handled (see the "Settings > Automated Email Responses" section). However, you can reduce the emails sent to your users by adding the following line to your wp-config.php <code>define( "MS_DUPLICATE_EMAIL_HOURS", 24 );</code>. This will prevent the same email being sent more than once every 24 hours.', 'help', MS_TEXT_DOMAIN ); ?>
 		</p>
 		<p>
 			<strong><?php _ex( 'Lock Subscription Status', 'help', MS_TEXT_DOMAIN ); ?></strong><br />
@@ -1595,18 +1666,6 @@ class MS_View_Help extends MS_View {
 		<p>
 			<strong><?php _ex( 'Define Membership 2 Admin users', 'help', MS_TEXT_DOMAIN ); ?></strong><br />
 			<?php _ex( 'By default all users with capability <code>manage_options</code> are considered Membership 2 admin users and have unlimited access to the whole site (including protected content). To change the required capability add the line <code>define( "MS_ADMIN_CAPABILITY", "manage_options" );</code> in wp-config.php. When you set the value to <code>false</code> then only the Superadmin has full access to the site.', 'help', MS_TEXT_DOMAIN ); ?>
-		</p>
-
-		<hr />
-		<p>
-			<strong><?php _ex( 'Developer Docs', 'help', MS_TEXT_DOMAIN ); ?></strong><br />
-			<?php
-			printf(
-				__( 'Membership2 comes with an easy to use API module that makes it simple to integrate it in other plugins. %sAPI documentation%s', 'help', MS_TEXT_DOMAIN ),
-				'<a href="' . MS_Plugin::instance()->url . 'docs/classes/MS_Controller_Api.html" target="_blank">',
-				'</a>'
-			);
-			?>
 		</p>
 		<hr />
 		<?php

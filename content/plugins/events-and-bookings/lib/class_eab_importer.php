@@ -97,6 +97,6 @@ abstract class Eab_ScheduledImporter extends Eab_Importer {
 	}
 
 	protected function _add_hooks () {
-		add_action('eab_scheduled_jobs', array($this, 'check_import_schedule'));
+		add_action('eab_scheduled_jobs', array($this, 'check_import_schedule'));	     	 	 			 		 	
 	}
 }

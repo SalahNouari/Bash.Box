@@ -14,7 +14,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetARB
  */
-class AuthorizeNetARB extends AuthorizeNetRequest
+class M2_AuthorizeNetARB extends M2_AuthorizeNetRequest
 {
 
     const LIVE_URL = "https://api.authorize.net/xml/v1/request.api";
@@ -55,7 +55,7 @@ class AuthorizeNetARB extends AuthorizeNetRequest
      *
      * @return AuthorizeNetARB_Response
      */
-    public function updateSubscription($subscriptionId, AuthorizeNet_Subscription $subscription)
+    public function updateSubscription($subscriptionId, M2_AuthorizeNet_Subscription $subscription)
     {
         $this->_request_type = "UpdateSubscriptionRequest";
         $this->_request_payload .= "<subscriptionId>$subscriptionId</subscriptionId>";
@@ -100,7 +100,7 @@ class AuthorizeNetARB extends AuthorizeNetRequest
      */
     protected function _handleResponse($response)
     {
-        return new AuthorizeNetARB_Response($response);
+        return new M2_AuthorizeNetARB_Response($response);
     }
 
     /**
@@ -137,7 +137,7 @@ XML;
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetARB
  */
-class AuthorizeNetARB_Response extends AuthorizeNetXMLResponse
+class M2_AuthorizeNetARB_Response extends M2_AuthorizeNetXMLResponse
 {
 
     /**

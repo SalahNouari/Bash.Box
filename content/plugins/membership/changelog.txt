@@ -4,6 +4,73 @@ Author: Fabio Jun, Rheinard Khorf, Philipp Stracker
 Change Log:
 ----------------------------------------------------------------------
 
+1.0.1.1
+----------------------------------------------------------------------
+- Add a new Automated Email Response: User account created (i.e. welcome email)
+- Add a warning when BuddyPress pages conflict with M2 Membership pages
+- Add a warning when M2 is installed in an deprecated directory (can cause conflicts)
+- Fix detection of valid subscriptions to fix issues with subscriptions getting expired too early
+- Fix the BuddyPress registration form/workflow
+- Fix the Profile Fields Add-on, now settings are actually saved
+- Fix Invitation Code Add-on to not automatically change existing codes upon saving
+- Fix bug that prevented deleting invoices
+- Fix a bug that would temporarily grant access to a membership when user cancels payment
+- Fix a bug that created duplicate email templates every time an email was sent
+- Fix a bug in the reset-script that would delete too much data in multisite installs (see Help > Advanced Settings)
+- Fix a wrong action hook used in registration form that would display wrong fields when certain plugins are activated
+- Fix a PHP warning on Membership 2 pages about "invalid argument in foreach"
+
+1.0.1.0
+----------------------------------------------------------------------
+- Add gateway: 2Checkout
+- Add new Add-on for WPML integration
+- Add new Add-on to enable Pro-Rating when switching memberships
+- Add new Add-on to allow Search Engines to index protected content
+- Add new Add-on to customize the Registration Form and User Profile Fields
+- Add new Add-on that allows creation of custom Membership Attributes
+- Add a new Add/Edit Member page where subscription details can be modified
+- Add an admin notice when no payment gateway is active but paid memberships exist
+- Add bulk actions to the Members admin page
+- Add a dedicated Edit Membership page with improved layout
+- Add an edit page to change the Membership Type at any time
+- Add an edit page to override Automated Email Responses for each Membership
+- Add an edit page to override Protection Messages for each Membership
+- Add a new settings page to define Upgrade Paths to each Membership
+- Add a warning when using a wrong value in the PayPal Standard settings
+- Add a few new API functions (see the API Docs link in the Help page)
+- Add new functions to Payment Logs to manually handle invalid payments
+- Add new template tag function `ms_has_membership()`
+- Add template support so themes can define custom Membership pages (m2-account.php, m2-memberships.php, m2-protected-content.php, m2-register.php, m2-registration-complete.php, m2-invoice.php)
+- Improve payment logs to display additional/better information for errors
+- Improve the layout of the coupon fields in the payment confirmation form
+- Improve HTML output of shortcodes to be compatible with most themes (remove line breaks inside HTML tags)
+- Improved third party library by adding a class prefix to avoid class collisions (Stripe, Mailchimp, AuthorizeNet)
+- Improve the BuddyPress Add-on to optionally use the M2 registration page
+- Improve caching and reduce SQL queries to make the plugin faster
+- Improve the Billings list (status-indicator, overdue payments, quick-pay for manual payment gateway)
+- Remove condition that auto-injected missing M2 shortcodes on Membership pages
+- Fix wrong subscription logic that activated Subscriptions without payment in a few cases
+- Fix possible memory issue that happened when updating the plugin
+- Fix bug that did not activate Subscription when an invoice was paid via Manual Gateway
+- Fix the invitation code Add-on (integration in payment form was not working)
+- Fix a caching issue that caused problems with Subscriptions when memcache was enabled
+- Fix problem in network wide mode that would not display all Users in the Members page
+- Fix registration logic to honor domain limitation for signup email addresses
+- Fix bug that would not give access to protected content while user is in trial period
+- Fix bug that set the wrong expire date for "Finite Access" subscriptions
+- Fix wrong rounding-logic in Stripe gateway
+- Fix bug that prevented admin to change the recurring payment frequency to anything else than 'Days' in few cases
+- Fix a bug in Automated Email Response Settings that did always enable the email when saving changes
+- Fix bug that would send some emails even when the 'MS_STOP_EMAILS' flag was active
+- Fix bug that would always add M2 menu items when a new membership is created
+- Fix plugin logic to allow changing Protection Rules even when Content Protection is disabled
+- Fix plugin translation using .mo files, added a readme file with instructions to /languages dir
+- Fix compatibility issue with WP Recaptcha during user registration
+- Fix a minor security hole in the data import module
+- Fix a rare 403 error that happened when a user was accessing protected content
+- Fix a bunch of PHP notices and warnings
+- A lot of small improvements behind the scenes, cleanup and some new filters
+
 1.0.0.8
 ----------------------------------------------------------------------
 - Add new option to customize which users are considered Admin users (details in the Help > Advanced page)
@@ -329,4 +396,4 @@ Membership2 1.0.0.0
 - Initial version.
 
 
-133620-1435659492-au
+133620-1439138920-au

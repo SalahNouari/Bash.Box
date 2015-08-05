@@ -178,7 +178,7 @@ class MS_Test_Subscriptions extends WP_UnitTestCase {
 		TData::enable_addon( MS_Model_Addon::ADDON_TRIAL );
 
 		$user_id = TData::id( 'user', 'editor' );
-		$membership_id = TData::id( 'membership', 'simple-trial' );
+		$membership_id = TData::id( 'membership', 'limited-trial' );
 		$subscription = TData::subscribe( $user_id, $membership_id );
 
 		// No invoice was paid yet, to the current invoice counter must be 1.
@@ -457,7 +457,7 @@ class MS_Test_Subscriptions extends WP_UnitTestCase {
 		TData::enable_addon( MS_Model_Addon::ADDON_TRIAL );
 
 		$user_id = TData::id( 'user', 'editor' );
-		$membership_id = TData::id( 'membership', 'simple' );
+		$membership_id = TData::id( 'membership', 'simple-free' );
 		$subscription = TData::subscribe( $user_id, $membership_id );
 
 		// Brand new invoice, must be NEW
@@ -469,6 +469,22 @@ class MS_Test_Subscriptions extends WP_UnitTestCase {
 
 		$invoice->pay_it( 'free', '' );
 		$this->assertEquals( MS_Model_Invoice::STATUS_PAID, $invoice->status );
+
+		// Also make sure that a non-free membership cannot be processed with
+		// the Free gateway:
+
+		$membership_id = TData::id( 'membership', 'simple' );
+		$subscription = TData::subscribe( $user_id, $membership_id );
+
+		// Brand new invoice, must be NEW
+
+		$invoice = $subscription->get_current_invoice();
+		$this->assertEquals( MS_Model_Invoice::STATUS_NEW, $invoice->status );
+
+		// Invoice Status must be BILLED, because membership is not free!
+
+		$invoice->pay_it( 'free', '' );
+		$this->assertEquals( MS_Model_Invoice::STATUS_BILLED, $invoice->status );
 	}
 
 	/**
@@ -549,11 +565,49 @@ class MS_Test_Subscriptions extends WP_UnitTestCase {
 		$membership_id = TData::id( 'membership', 'free-limited' );
 		$subscription = TData::subscribe( $user_id, $membership_id );
 
-		// Because the membership is free we should have an active subscription
-		// with correct expire data already.
+		$start_date = MS_Helper_Period::current_date();
+		$limit_end = MS_Helper_Period::add_interval( 28, 'days', $start_date );
+
+		// Because the membership is non-admin it needs to be paid before the
+		// expire date is set.
+
+		$this->assertEquals( MS_Model_Relationship::STATUS_PENDING, $subscription->status, 'Pending status' );
+		$this->assertEquals( $start_date, $subscription->start_date );
+		$this->assertEquals( '', $subscription->expire_date );
+
+		$invoice = $subscription->get_current_invoice();
+		$invoice->pay_it( 'free', '0' );
+
+		// Now the subscription was paid using the free gateway. This means it
+		// now has an active status and also expiration date.
+
+		$this->assertEquals( MS_Model_Relationship::STATUS_ACTIVE, $subscription->status, 'Active status' );
+		$this->assertEquals( $start_date, $subscription->start_date );
+		$this->assertEquals( $limit_end, $subscription->expire_date );
+	}
+
+	/**
+	 * Test expire date of limited-length memberships.
+	 * @test
+	 */
+	function limited_expire_date() {
+		$user_id = TData::id( 'user', 'editor' );
+		$membership_id = TData::id( 'membership', 'limited' );
+		$subscription = TData::subscribe( $user_id, $membership_id );
 
 		$start_date = MS_Helper_Period::current_date();
 		$limit_end = MS_Helper_Period::add_interval( 28, 'days', $start_date );
+
+		$this->assertEquals( MS_Model_Relationship::STATUS_PENDING, $subscription->status, 'Pending status' );
+		$this->assertEquals( $start_date, $subscription->start_date );
+		$this->assertEquals( '', $subscription->expire_date );
+
+		// Pay for the subscription.
+
+		$invoice = $subscription->get_current_invoice();
+		$invoice->pay_it( 'stripe', 'external_123' );
+
+		// The subscription is paid, now the expire date should be set.
 
 		$this->assertEquals( MS_Model_Relationship::STATUS_ACTIVE, $subscription->status, 'Active status' );
 		$this->assertEquals( $start_date, $subscription->start_date );
@@ -576,19 +630,24 @@ class MS_Test_Subscriptions extends WP_UnitTestCase {
 		$start_date = MS_Helper_Period::current_date();
 		$this->assertEquals( $start_date, $subscription->start_date );
 		$this->assertEquals( '', $subscription->expire_date );
+		$this->assertTrue( $invoice->is_paid() );
+		$this->assertEquals( 'active', $subscription->status );
 
 		// This check should not modify the subscription.
 		$subscription->check_membership_status();
 		$this->assertEquals( $start_date, $subscription->start_date );
 		$this->assertEquals( '', $subscription->expire_date );
+		$this->assertTrue( $invoice->is_paid() );
+		$this->assertEquals( 'active', $subscription->status );
 
 		// Now the user changes the membership to recurring.
 
-		$membership = MS_Factory::load( 'MS_Model_Membership', $membership_id );
+		$membership = $subscription->get_membership();
 		$membership->payment_type = MS_Model_Membership::PAYMENT_TYPE_RECURRING;
 		$membership->pay_cycle_period_unit = 7;
 		$membership->pay_cycle_period_type = 'days';
 		$membership->save();
+		$this->assertEquals( MS_Model_Membership::PAYMENT_TYPE_RECURRING, $membership->payment_type );
 
 		// The membership status check is automaticaly done every six hours.
 		// It will update the subscription details to match the new payment type.

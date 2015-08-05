@@ -5,7 +5,7 @@
  *
  * Extends MS_View for rendering methods and magic methods.
  *
- * @since 1.1.0
+ * @since  1.0.0
  * @package Membership2
  * @subpackage View
  */
@@ -14,7 +14,7 @@ class MS_View_Member_Subscription extends MS_Dialog {
 	/**
 	 * Generate/Prepare the dialog attributes.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 */
 	public function prepare() {
 		$subscription_id = $_POST['subscription_id'];
@@ -37,7 +37,8 @@ class MS_View_Member_Subscription extends MS_Dialog {
 		);
 
 		// Dialog Size
-		$this->height = 600;
+		$this->width = 940;
+		$this->height = 800;
 
 		// Contents
 		$this->content = $this->get_contents( $data );
@@ -49,7 +50,7 @@ class MS_View_Member_Subscription extends MS_Dialog {
 	/**
 	 * Save the dialog details.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return string
 	 */
 	public function submit() {
@@ -59,16 +60,18 @@ class MS_View_Member_Subscription extends MS_Dialog {
 	/**
 	 * Returns the contens of the dialog
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @return object
 	 */
 	public function get_contents( $data ) {
 		$subscription = $data['model'];
-		$gateways = MS_Model_Gateway::get_gateway_names();
+		$gateways = MS_Model_Gateway::get_gateway_names( false, true );
 
 		if ( isset( $gateways[ $subscription->gateway_id ] ) ) {
 			$gateway = $gateways[ $subscription->gateway_id ];
+		} elseif ( empty( $subscription->gateway_id ) ) {
+			$gateway = __( '- No Gateway -', MS_TEXT_DOMAIN );
 		} else {
 			$gateway = '(' . $subscription->gateway_id . ')';
 		}
@@ -81,8 +84,6 @@ class MS_View_Member_Subscription extends MS_Dialog {
 			)
 		);
 
-		$payment_types = MS_Model_Membership::get_payment_types();
-
 		$sub_details = array(
 			'title' => __( 'Subscription Details', MS_TEXT_DOMAIN ),
 			'type' => MS_Helper_Html::TYPE_HTML_TABLE,
@@ -90,7 +91,7 @@ class MS_View_Member_Subscription extends MS_Dialog {
 				array( 'Subscription ID', $subscription->id ),
 				array( 'Membership', $subscription->get_membership()->name ),
 				array( 'Payment Gateway', $gateway ),
-				array( 'Payment Type', $payment_types[ $subscription->payment_type ] ),
+				array( 'Payment Type', $subscription->get_payment_description( null, true ) ),
 				array( 'Subscription Start', $subscription->start_date ),
 				array( 'Subscription End', $subscription->expire_date ),
 				array( 'Status', $subscription->status ),

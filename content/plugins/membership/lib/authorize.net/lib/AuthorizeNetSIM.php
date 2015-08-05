@@ -12,7 +12,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetSIM
  */
-class AuthorizeNetSIM extends AuthorizeNetResponse
+class M2_AuthorizeNetSIM extends M2_AuthorizeNetResponse
 {
 
     // For ARB transactions
@@ -92,7 +92,7 @@ class AuthorizeNetSIM extends AuthorizeNetResponse
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetSIM
  */
-class AuthorizeNetSIM_Form
+class M2_AuthorizeNetSIM_Form
 {
     public $x_address;
     public $x_amount;

@@ -3,7 +3,7 @@
 Plugin Name: Category Color
 Plugin URI: https://wordpress.org/plugins/category-color/
 Description: Easily set a custom color per Post Category and use the colors in your Wordpress templates to spice up your theme.
-Version: 1.1
+Version: 1.2
 Author: Zayed Baloch, Naeem Nur
 Author URI: http://www.radlabs.biz/
 License: GPL2+
@@ -111,19 +111,6 @@ class RadLabs_Category_Colors{
 
             echo '</tr>';
         }
-        echo "<tr><th valign='top'><b>HOW TO USE</b></th>
-        <td>In Template:<xmp>
-        <?php
-            \$category = get_the_category();
-            \$the_category_id = \$category[0]->cat_ID;
-
-            if(function_exists('rl_color')){
-                \$rl_category_color = rl_color(\$the_category_id);
-            }
-        ?>
-        </xmp>
-        Now you used the color in your template in an inline stylesheet. <xmp><?php echo \$rl_category_color; ?></xmp> The above variable can be used for anything.
-        </td></tr>";
         echo '</table>';
     }
 

@@ -26,7 +26,7 @@ class MS_Rule_CptItem_View extends MS_View {
 			MS_Helper_Html::settings_tab_header( $header_data );
 
 			$rule_listtable->views();
-			$rule_listtable->search_box( __( 'Posts', MS_TEXT_DOMAIN ) );	   	 	 		 	  					  
+			$rule_listtable->search_box( __( 'Posts', MS_TEXT_DOMAIN ) );
 			?>
 			<form action="" method="post">
 				<?php

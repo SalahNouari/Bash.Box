@@ -15,7 +15,7 @@
  * @subpackage AuthorizeNetSoap
  * @todo       Make the doc file a usable class.
  */
-class AuthorizeNetSOAP extends SoapClient
+class M2_AuthorizeNetSOAP extends SoapClient
 {
     const WSDL_URL = "https://api.authorize.net/soap/v1/Service.asmx?WSDL";
     const LIVE_URL = "https://api.authorize.net/soap/v1/Service.asmx";
@@ -89,7 +89,7 @@ class AuthorizeNetSOAP extends SoapClient
         $string .= " * Auto generated documentation for the AuthorizeNetSOAP API.\n";
         $string .= " * Generated " . date("m/d/Y") . "\n";
         $string .= " */\n";
-        $string .= "class AuthorizeNetSOAP\n";
+        $string .= "class M2_AuthorizeNetSOAP\n";
         $string .= "{\n" . $this->getSoapMethods() . "\n}\n\n" . $this->getSoapTypes() ."\n\n ?>";
         return file_put_contents($path, $string);
     }

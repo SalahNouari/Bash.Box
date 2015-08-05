@@ -1,26 +1,5 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Gateway: Paypal Single
  *
  * Officially: PayPal Payments Standard
@@ -30,7 +9,7 @@
  *
  * Persisted by parent class MS_Model_Option. Singleton.
  *
- * @since 1.0.0
+ * @since  1.0.0
  * @package Membership2
  * @subpackage Model
  */
@@ -41,7 +20,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	/**
 	 * Gateway singleton instance.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $instance
 	 */
 	public static $instance;
@@ -49,7 +28,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	/**
 	 * Paypal merchant/seller's email.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var bool $paypal_email
 	 */
 	protected $paypal_email;
@@ -57,7 +36,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	/**
 	 * Paypal country site.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var bool $paypal_site
 	 */
 	protected $paypal_site;
@@ -67,7 +46,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	 * Hook to add custom transaction status.
 	 * This is called by the MS_Factory
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 */
 	public function after_load() {
 		parent::after_load();
@@ -75,14 +54,14 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 		$this->id = self::ID;
 		$this->name = __( 'PayPal Single Gateway', MS_TEXT_DOMAIN );
 		$this->group = 'PayPal';
-		$this->manual_payment = true;
+		$this->manual_payment = true; // Recurring billed/paid manually
 		$this->pro_rate = true;
 	}
 
 	/**
 	 * Processes gateway IPN return.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 */
 	public function handle_return() {
 		$success = false;
@@ -192,6 +171,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 					default:
 					case 'Partially-Refunded':
 					case 'In-Progress':
+						$success = null;
 						break;
 				}
 
@@ -220,9 +200,41 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 					$subscription
 				);
 			} else {
-				$notes = 'Response Error: Unexpected transaction response';
+				$reason = 'Unexpected transaction response';
+				switch ( true ) {
+					case is_wp_error( $response ):
+						$reason = 'Response is error';
+						break;
+
+					case 200 != $response['response']['code']:
+						$reason = 'Response code is ' . $response['response']['code'];
+						break;
+
+					case empty( $response['body'] ):
+						$reason = 'Response is empty';
+						break;
+
+					case 'VERIFIED' != $response['body']:
+						$reason = sprintf(
+							'Expected response "%s" but got "%s"',
+							'VERIFIED',
+							(string) $response['body']
+						);
+						break;
+
+					case $invoice->id != $invoice_id:
+						$reason = sprintf(
+							'Expected invoice_id "%s" but got "%s"',
+							$invoice->id,
+							$invoice_id
+						);
+						break;
+				}
+
+				$notes = 'Response Error: ' . $reason;
 				MS_Helper_Debug::log( $notes );
 				MS_Helper_Debug::log( $response );
+				MS_Helper_Debug::log( $_POST );
 				$exit = true;
 			}
 		} else {
@@ -271,7 +283,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	 * Get paypal country sites list.
 	 *
 	 * @see MS_Gateway::get_country_codes()
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_paypal_sites() {
@@ -284,7 +296,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	/**
 	 * Verify required fields.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return boolean
 	 */
@@ -309,7 +321,7 @@ class MS_Gateway_Paypalsingle extends MS_Gateway {
 	/**
 	 * Validate specific property before set.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @access public
 	 * @param string $name The name of a property to associate.

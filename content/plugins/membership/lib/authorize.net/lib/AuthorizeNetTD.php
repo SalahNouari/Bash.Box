@@ -14,7 +14,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetTD
  */
-class AuthorizeNetTD extends AuthorizeNetRequest
+class M2_AuthorizeNetTD extends M2_AuthorizeNetRequest
 {
 
     const LIVE_URL = "https://api.authorize.net/xml/v1/request.api";
@@ -104,7 +104,7 @@ class AuthorizeNetTD extends AuthorizeNetRequest
         $batches = $response->xpath("batchList/batch");
         foreach ($batches as $batch) {
             $batch_id = (string)$batch->batchId;
-            $request = new AuthorizeNetTD;
+            $request = new M2_AuthorizeNetTD;
             $tran_list = $request->getTransactionList($batch_id);
             $transactions = array_merge($transactions, $tran_list->xpath("transactions/transaction"));
         }
@@ -168,7 +168,7 @@ class AuthorizeNetTD extends AuthorizeNetRequest
      */
     protected function _handleResponse($response)
     {
-        return new AuthorizeNetTD_Response($response);
+        return new M2_AuthorizeNetTD_Response($response);
     }
 
     /**
@@ -202,7 +202,7 @@ class AuthorizeNetTD extends AuthorizeNetRequest
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetTD
  */
-class AuthorizeNetTD_Response extends AuthorizeNetXMLResponse
+class M2_AuthorizeNetTD_Response extends M2_AuthorizeNetXMLResponse
 {
 
 

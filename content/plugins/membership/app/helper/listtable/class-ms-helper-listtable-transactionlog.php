@@ -2,14 +2,9 @@
 /**
  * List of transaction protocol entries.
  *
- * @since 1.0.0.6
+ * @since  1.0.0
  */
 class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
-
-	/**
-	 * The post type that contains the transaction log items.
-	 */
-	const POST_TYPE = 'ms_transaction_log';
 
 	/**
 	 * This ID is used as class-name for the list output and also in various
@@ -22,7 +17,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Constructor, defines general list table attributes.
 	 *
-	 * @since 1.0.0.6
+	 * @since  1.0.0
 	 */
 	public function __construct() {
 		// 'singular' just added for fun...
@@ -38,7 +33,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Defines the columns of the list table
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_columns() {
@@ -70,7 +65,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Defines, which columns should be output as hidden columns.
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_hidden_columns() {
@@ -83,7 +78,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Defines, which columns can be sorted.
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_sortable_columns() {
@@ -96,7 +91,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Defines available bulk actions.
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_bulk_actions() {
@@ -109,7 +104,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Loads the items that are displayed on the current list page.
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 */
 	public function prepare_items() {
 		$this->_column_headers = array(
@@ -118,36 +113,11 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 			$this->get_sortable_columns(),
 		);
 
-		$args = $this->get_query_args();
-		$this->count_items();
-
-		$this->items = apply_filters(
-			'ms_helper_listtable_transactionlog_items',
-			$this->get_items( $args )
-		);
-
-		$this->set_pagination_args(
-			array(
-				'total_items' => $total_items,
-				'per_page' => $args['posts_per_page'],
-			)
-		);
-	}
-
-	/**
-	 * Prepares the collection of query arguments used to filter list items.
-	 * These arguments are later passed to a WP_Query constructor.
-	 *
-	 * @since  1.0.0.6
-	 * @return array
-	 */
-	protected function get_query_args() {
-		$defaults = MS_Model_Invoice::get_query_args();
-
 		$per_page = $this->get_items_per_page(
 			'transactionlog_per_page',
 			self::DEFAULT_PAGE_SIZE
 		);
+
 		$current_page = $this->get_pagenum();
 
 		$args = array(
@@ -155,17 +125,40 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 			'offset' => ( $current_page - 1 ) * $per_page,
 		);
 
-		$args = wp_parse_args( $args, $defaults );
+		if ( ! empty( $_GET['state'] ) ) {
+			$args['state'] = $_GET['state'];
+		}
 
-		return $args;
+		if ( ! empty( $_GET['gateway_id'] ) ) {
+			$args['meta_query'] = array(
+				'gateway_id' => array(
+					'key' => '_gateway_id',
+					'value' => $_GET['gateway_id'],
+				),
+			);
+		}
+
+		$total_items = MS_Model_Transactionlog::get_item_count( $args );
+
+		$this->items = apply_filters(
+			'ms_helper_listtable_transactionlog_items',
+			MS_Model_Transactionlog::get_items( $args )
+		);
+
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,
+				'per_page' => $per_page,
+			)
+		);
 	}
 
 	/**
 	 * Displays a custom search box for this list.
 	 *
-	 * @since  1.0.0.7
+	 * @since  1.0.0
 	 */
-	public function search_box() {
+	public function search_box( $text = null, $input_id = 'search' ) {
 		// Do not display anything.
 		// Transaction logs cannot be searched currently
 	}
@@ -173,11 +166,41 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Defines predefines filters for this list table.
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_views() {
 		$views = array();
+
+		$views['all'] = array(
+			'label' => __( 'All', MS_TEXT_DOMAIN ),
+			'url' => remove_query_arg( 'state' ),
+			'count' => MS_Model_Transactionlog::get_item_count(),
+		);
+
+		$views['ok'] = array(
+			'label' => __( 'Successful', MS_TEXT_DOMAIN ),
+			'url' => add_query_arg( 'state', 'ok' ),
+			'count' => MS_Model_Transactionlog::get_item_count(
+				array( 'state' => 'ok' )
+			),
+		);
+
+		$views['err'] = array(
+			'label' => __( 'Failed', MS_TEXT_DOMAIN ),
+			'url' => add_query_arg( 'state', 'err' ),
+			'count' => MS_Model_Transactionlog::get_item_count(
+				array( 'state' => 'err' )
+			),
+		);
+
+		$views['ignore'] = array(
+			'label' => __( 'Ignored', MS_TEXT_DOMAIN ),
+			'url' => add_query_arg( 'state', 'ignore' ),
+			'count' => MS_Model_Transactionlog::get_item_count(
+				array( 'state' => 'ignore' )
+			),
+		);
 
 		return apply_filters(
 			'ms_helper_listtable_transactionlog_views',
@@ -192,13 +215,19 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	 * @return string Class to be added to the table row.
 	 */
 	protected function single_row_class( $item ) {
-		return 'log-' . $item->status;
+		$class = 'log-' . $item->state;
+
+		if ( $item->is_manual ) {
+			$class .= ' is-manual';
+		}
+
+		return $class;
 	}
 
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
@@ -210,7 +239,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
@@ -223,16 +252,12 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
 	public function column_status( $item, $column_name ) {
-		if ( $item->success ) {
-			$html = '<span class="log-status"><i class="wpmui-fa wpmui-fa-check"></i></span>';
-		} else {
-			$html = '<span class="log-status"><i class="wpmui-fa wpmui-fa-warning"></i></span>';
-		}
+		$html = '<span class="log-status"><i class="wpmui-fa log-status-icon"></i></span>';
 
 		return $html;
 	}
@@ -240,7 +265,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
@@ -274,19 +299,19 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
 	public function column_gateway( $item, $column_name ) {
-		$html = $html = MS_Model_Gateway::get_name( $item->gateway_id, true );
+		$html = MS_Model_Gateway::get_name( $item->gateway_id, true );
 		return $html;
 	}
 
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
@@ -299,7 +324,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
@@ -325,73 +350,102 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	/**
 	 * Output column content
 	 *
-	 * @since  1.0.0.6
+	 * @since  1.0.0
 	 * @param  object $item The item that is displayed.
 	 * @return string The HTML code to output.
 	 */
 	public function column_note( $item, $column_name ) {
+		$extra_infos = '';
+		$row_actions = '';
+		$nonce_action = '';
+		$detail_lines = array();
+		$actions = array();
+
+		// 1. Prepare the "Additional Details" popup.
+		if ( $item->is_manual ) {
+			$detail_lines[] = __( 'Transaction state manually changed', MS_TEXT_DOMAIN );
+			$detail_lines[] = sprintf(
+				__( 'Modified on: %s', MS_TEXT_DOMAIN ),
+				$item->manual_date
+			);
+			$detail_lines[] = sprintf(
+				__( 'Modified by: %s', MS_TEXT_DOMAIN ),
+				$item->get_manual_user()->display_name
+			);
+		}
+
+		$item_post_info = $item->post;
+		if ( ! empty( $item_post_info ) ) {
+			if ( count( $detail_lines ) ) {
+				$detail_lines[] = '<hr>';
+			}
+			$detail_lines[] = __( 'POST data:', MS_TEXT_DOMAIN );
+			foreach ( $item_post_info as $key => $value ) {
+				$detail_lines[] = "[$key] = \"$value\"";
+			}
+		}
+
+		if ( count( $detail_lines ) ) {
+			$extra_infos = sprintf(
+				'<div class="more-details">%2$s<div class="post-data">%1$s</div></div>',
+				implode( '<br>', $detail_lines ),
+				'<i class="wpmui-fa wpmui-fa-info-circle"></i>'
+			);
+		}
+
+		// 2. Prepare the row actions.
+		if ( 'err' == $item->state ) {
+			$actions = array(
+				'action-ignore' => __( 'Ignore', MS_TEXT_DOMAIN ),
+				'action-link' => __( 'Link', MS_TEXT_DOMAIN ),
+			);
+		} elseif ( 'ignore' == $item->state && $item->is_manual ) {
+			$actions = array(
+				'action-clear' => __( 'Reset', MS_TEXT_DOMAIN ),
+			);
+			$nonce_action = MS_Controller_Billing::AJAX_ACTION_TRANSACTION_LINK;
+		}
+
+		if ( count( $actions ) ) {
+			$nonces = array();
+			$nonces[] = wp_nonce_field(
+				MS_Controller_Billing::AJAX_ACTION_TRANSACTION_UPDATE,
+				'nonce_update',
+				false,
+				false
+			);
+			$nonces[] = wp_nonce_field(
+				MS_Controller_Billing::AJAX_ACTION_TRANSACTION_LINK,
+				'nonce_link',
+				false,
+				false
+			);
+			$action_tags = array();
+			foreach ( $actions as $class => $label ) {
+				$action_tags[] = sprintf(
+					'<a href="#" class="%s">%s</a>',
+					$class,
+					$label
+				);
+			}
+
+			$row_actions = sprintf(
+				'<div class="actions %1$s-actions">%2$s %3$s</div>',
+				$item->state,
+				implode( '', $nonces ),
+				implode( ' | ', $action_tags )
+			);
+		}
+
+		// 3. Combine the prepared parts.
 		$html = sprintf(
-			'<div class="detail-block">%1$s</div>',
-			$item->note
+			'<div class="detail-block">%s %s %s</div>',
+			$extra_infos,
+			$item->description,
+			$row_actions
 		);
 
 		return $html;
-	}
-
-	/**
-	 * Returns the total number of transaction logs in the database.
-	 *
-	 * @since  1.0.0.6
-	 * @return int
-	 */
-	protected function count_items() {
-		$count = wp_count_posts( self::POST_TYPE );
-
-		$log_count = 0;
-		foreach ( $count as $value ) {
-			$log_count += $value;
-		}
-
-		return $log_count;
-	}
-
-	/**
-	 * Returns a list of transaction log items that will be displayed in the
-	 * listview.
-	 *
-	 * @since  1.0.0.6
-	 * @param  array $args Filter options.
-	 * @return array List of matching transaction log entries.
-	 */
-	protected function get_items( $args ) {
-		$args['post_type'] = self::POST_TYPE;
-
-		$query = new WP_Query( $args );
-		$item = array();
-
-		foreach ( $query->posts as $post ) {
-			$item = (object) array(
-				'id' => $post->ID,
-				'date' => $post->post_date,
-				'note' => $post->post_content,
-				'gateway_id' => get_post_meta( $post->ID, '_gateway_id', true ),
-				'method' => get_post_meta( $post->ID, '_method', true ),
-				'success' => get_post_meta( $post->ID, '_success', true ),
-				'subscription_id' => get_post_meta( $post->ID, '_subscription_id', true ),
-				'invoice_id' => get_post_meta( $post->ID, '_invoice_id', true ),
-				'amount' => get_post_meta( $post->ID, '_amount', true ),
-			);
-
-			if ( $item->success ) {
-				$item->status = 'ok';
-			} else {
-				$item->status = 'err';
-			}
-
-			$items[] = $item;
-		}
-
-		return $items;
 	}
 
 }

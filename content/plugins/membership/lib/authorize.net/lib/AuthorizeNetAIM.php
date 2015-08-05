@@ -5,7 +5,7 @@
  * Example Authorize and Capture Transaction against the Sandbox:
  * <code>
  * <?php require_once 'AuthorizeNet.php'
- * $sale = new AuthorizeNetAIM;
+ * $sale = new M2_AuthorizeNetAIM;
  * $sale->setFields(
  *     array(
  *    'amount' => '4.99',
@@ -24,7 +24,7 @@
  * Note: To send requests to the live gateway, either define this:
  * define("AUTHORIZENET_SANDBOX", false);
  *   -- OR --
- * $sale = new AuthorizeNetAIM;
+ * $sale = new M2_AuthorizeNetAIM;
  * $sale->setSandbox(false);
  *
  * @package    AuthorizeNet
@@ -39,7 +39,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetAIM
  */
-class AuthorizeNetAIM extends AuthorizeNetRequest
+class M2_AuthorizeNetAIM extends M2_AuthorizeNetRequest
 {
 
     const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll';
@@ -305,7 +305,7 @@ class AuthorizeNetAIM extends AuthorizeNetRequest
             if (in_array($name, $this->_all_aim_fields)) {
                 $this->_x_post_fields[$name] = $value;
             } else {
-                throw new AuthorizeNetException("Error: no field $name exists in the AIM API.
+                throw new M2_AuthorizeNetException("Error: no field $name exists in the AIM API.
                 To set a custom field use setCustomField('field','value') instead.");
             }
         } else {
@@ -344,7 +344,7 @@ class AuthorizeNetAIM extends AuthorizeNetRequest
      */
     protected function _handleResponse($response)
     {
-        return new AuthorizeNetAIM_Response($response, $this->_x_post_fields['delim_char'], $this->_x_post_fields['encap_char'], $this->_custom_fields);
+        return new M2_AuthorizeNetAIM_Response($response, $this->_x_post_fields['delim_char'], $this->_x_post_fields['encap_char'], $this->_custom_fields);
     }
 
     /**
@@ -384,7 +384,7 @@ class AuthorizeNetAIM extends AuthorizeNetRequest
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetAIM
  */
-class AuthorizeNetAIM_Response extends AuthorizeNetResponse
+class M2_AuthorizeNetAIM_Response extends M2_AuthorizeNetResponse
 {
     private $_response_array = array(); // An array with the split response.
 

@@ -2,9 +2,7 @@
 /**
  * Membership List Table
  *
- *
- * @since 4.0.0
- *
+ * @since  1.0.0
  */
 class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
@@ -31,7 +29,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 				'user' => __( 'User', MS_TEXT_DOMAIN ),
 				'membership' => __( 'Membership', MS_TEXT_DOMAIN ),
 				'status' => __( 'Status', MS_TEXT_DOMAIN ),
-				'total' => sprintf( '%1$s (%2$s)', __( 'Total', MS_TEXT_DOMAIN ), $currency ),
+				'total' => __( 'Total', MS_TEXT_DOMAIN ),
 				'due_date' => __( 'Due date', MS_TEXT_DOMAIN ),
 				'gateway_id' => __( 'Gateway', MS_TEXT_DOMAIN ),
 			)
@@ -103,6 +101,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	private function get_query_args() {
 		$defaults = MS_Model_Invoice::get_query_args();
+		lib2()->array->equip_request( 's' );
 
 		$per_page = $this->get_items_per_page( 'invoice_per_page', self::DEFAULT_PAGE_SIZE );
 		$current_page = $this->get_pagenum();
@@ -135,30 +134,59 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	public function column_invoice( $item ) {
 		$actions = array();
-		$actions['edit'] = sprintf(
-			'<a href="?page=%s&action=%s&invoice_id=%s">%s</a>',
-			esc_attr( $_REQUEST['page'] ),
-			'edit',
-			esc_attr( $item->id ),
-			__( 'Edit', MS_TEXT_DOMAIN )
-		);
+
+		// Prepare the item actions.
 		$actions['view'] = sprintf(
 			'<a href="%s">%s</a>',
 			get_permalink( $item->id ),
 			__( 'View', MS_TEXT_DOMAIN )
 		);
 
+		if ( MS_Gateway_Manual::ID == $item->gateway_id && ! $item->is_paid() ) {
+			$action_url = MS_Controller_Plugin::get_admin_url(
+				'billing',
+				array(
+					'action' => MS_Controller_Billing::ACTION_PAY_IT,
+					'_wpnonce' => wp_create_nonce( MS_Controller_Billing::ACTION_PAY_IT ),
+					'invoice_id' => $item->id,
+				)
+			);
+
+			$actions['pay_it'] = sprintf(
+				'<a href="%s">%s</a>',
+				$action_url,
+				__( 'Mark as paid', MS_TEXT_DOMAIN )
+			);
+		}
+
+		$edit_url = MS_Controller_Plugin::get_admin_url(
+			'billing',
+			array(
+				'action' => MS_Controller_Billing::ACTION_EDIT,
+				'invoice_id' => $item->id,
+			)
+		);
+
 		return sprintf(
-			'%1$s (#%3$s) %2$s',
-			$item->id,
+			'<a href="%3$s"><b>%1$s</b></a> %2$s',
+			$item->get_invoice_number(),
 			$this->row_actions( $actions ),
-			$item->invoice_number
+			$edit_url
 		);
 	}
 
 	public function column_user( $item, $column_name ) {
 		$member = MS_Factory::load( 'MS_Model_Member', $item->user_id );
-		$html = $member->username;
+
+		$html = sprintf(
+			'<a href="%s">%s</a>',
+			MS_Controller_Plugin::get_admin_url(
+				'add-member',
+				array( 'user_id' => $item->user_id )
+			),
+			$member->username
+		);
+
 		return $html;
 	}
 
@@ -169,9 +197,35 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 	}
 
 	public function column_status( $item, $column_name ) {
+		$icon = '';
+
+		switch ( $item->status ) {
+			case MS_Model_Invoice::STATUS_NEW:
+				$icon = '<i class="wpmui-fa wpmui-fa-circle-o"></i>';
+				break;
+
+			case MS_Model_Invoice::STATUS_PAID:
+				$icon = '<i class="wpmui-fa wpmui-fa-check-circle"></i>';
+				break;
+
+			case MS_Model_Invoice::STATUS_PENDING:
+			case MS_Model_Invoice::STATUS_BILLED:
+				$icon = '<i class="wpmui-fa wpmui-fa-clock-o"></i>';
+				break;
+
+			case MS_Model_Invoice::STATUS_DENIED:
+				$icon = '<i class="wpmui-fa wpmui-fa-times-circle"></i>';
+				break;
+
+			default:
+				$icon = $item->status_text();
+				break;
+		}
+
 		return sprintf(
-			'<span class="payment-status-%1$s">%2$s</span>',
+			'<span class="payment-status payment-status-%1$s" title="%3$s">%2$s</span>',
 			$item->status,
+			$icon,
 			$item->status_text()
 		);
 	}
@@ -182,12 +236,49 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 	}
 
 	public function column_total( $item, $column_name ) {
-		$html = MS_Helper_Billing::format_price( $item->total );
+		if ( $item->total ) {
+			$currency = $item->currency;
+			$value = MS_Helper_Billing::format_price( $item->total );
+
+			$html = sprintf(
+				'<b>%1$s</b> <small>%2$s</small>',
+				$value,
+				$currency
+			);
+		} else {
+			$html = __( 'Free', MS_TEXT_DOMAIN );
+		}
+
 		return $html;
 	}
 
 	public function column_due_date( $item, $column_name ) {
-		$html = MS_Helper_Period::format_date( $item->due_date );
+		$due_now = false;
+		if ( ! $item->is_paid() ) {
+			$diff = MS_Helper_Period::subtract_dates(
+				$item->due_date,
+				MS_Helper_Period::current_date(),
+				null,
+				true
+			);
+			$due_now = ($diff < 0);
+		}
+
+		$date = MS_Helper_Period::format_date( $item->due_date );
+
+		if ( $due_now ) {
+			$html = sprintf(
+				'<span class="due-now" title="%2$s">%1$s</span>',
+				$date,
+				__( 'Payment is overdue', MS_TEXT_DOMAIN )
+			);
+		} else {
+			$html = sprintf(
+				'<span>%1$s</span>',
+				$date
+			);
+		}
+
 		return $html;
 	}
 
@@ -207,11 +298,14 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 	}
 
 	public function get_bulk_actions() {
+		$bulk_actions = array(
+			'delete' => __( 'Delete', MS_TEXT_DOMAIN ),
+		);
+
 		return apply_filters(
 			'ms_helper_listtable_billing_bulk_actions',
-			array(
-				'delete' => __( 'Delete', MS_TEXT_DOMAIN ),
-			)
+			$bulk_actions,
+			$this
 		);
 	}
 
@@ -220,6 +314,9 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		$views = array();
 
 		$args = $this->get_query_args();
+		if ( isset( $args['meta_query'] ) && isset( $args['meta_query']['status'] ) ) {
+			unset( $args['meta_query']['status'] );
+		}
 		$url = esc_url_raw( remove_query_arg( array( 'status', 'msg' ) ) );
 		$count = MS_Model_Invoice::get_invoice_count( $args );
 		$views['all'] = array(
@@ -249,6 +346,9 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		);
 
 		foreach ( $all_status as $status => $desc ) {
+			if ( 'billed' == $status ) { continue; }
+			if ( 'pending' == $status ) { continue; }
+
 			$args = $this->get_query_args();
 			$args['meta_query']['status']['value'] = $status;
 			$count = MS_Model_Invoice::get_invoice_count( $args );

@@ -1,31 +1,10 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Stripe Gateway Integration.
  *
  * Persisted by parent class MS_Model_Option. Singleton.
  *
- * @since 1.0.0
+ * @since  1.0.0
  * @package Membership2
  * @subpackage Model
  */
@@ -36,7 +15,7 @@ class MS_Gateway_Stripe extends MS_Gateway {
 	/**
 	 * Gateway singleton instance.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $instance
 	 */
 	public static $instance;
@@ -46,39 +25,39 @@ class MS_Gateway_Stripe extends MS_Gateway {
 	 *
 	 * @see https://support.stripe.com/questions/where-do-i-find-my-api-keys
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $test_secret_key
 	 */
-	protected $test_secret_key;
+	protected $test_secret_key = '';
 
 	/**
 	 * Stripe Secret key (live).
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $secret_key
 	 */
-	protected $secret_key;
+	protected $secret_key = '';
 
 	/**
 	 * Stripe test publishable key (sandbox).
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $test_publishable_key
 	 */
-	protected $test_publishable_key;
+	protected $test_publishable_key = '';
 
 	/**
 	 * Stripe publishable key (live).
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $publishable_key
 	 */
-	protected $publishable_key;
+	protected $publishable_key = '';
 
 	/**
 	 * Instance of the shared stripe API integration
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @var MS_Gateway_Stripe_Api $api
 	 */
 	protected $_api = null;
@@ -86,7 +65,7 @@ class MS_Gateway_Stripe extends MS_Gateway {
 	/**
 	 * Initialize the object.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @internal
 	 */
 	public function after_load() {
@@ -96,14 +75,14 @@ class MS_Gateway_Stripe extends MS_Gateway {
 		$this->id = self::ID;
 		$this->name = __( 'Stripe Single Gateway', MS_TEXT_DOMAIN );
 		$this->group = 'Stripe';
-		$this->manual_payment = false;
+		$this->manual_payment = true; // Recurring billed/paid manually
 		$this->pro_rate = true;
 	}
 
 	/**
 	 * Processes purchase action.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @param MS_Model_Relationship $subscription The related membership relationship.
@@ -119,7 +98,7 @@ class MS_Gateway_Stripe extends MS_Gateway {
 			$subscription,
 			$this
 		);
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		$member = $subscription->get_member();
 		$invoice = $subscription->get_current_invoice();
@@ -190,7 +169,7 @@ class MS_Gateway_Stripe extends MS_Gateway {
 	/**
 	 * Request automatic payment to the gateway.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @param MS_Model_Relationship $subscription The related membership relationship.
@@ -205,7 +184,7 @@ class MS_Gateway_Stripe extends MS_Gateway {
 			$subscription,
 			$this
 		);
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		$member = $subscription->get_member();
 		$invoice = $subscription->get_current_invoice();
@@ -274,33 +253,53 @@ class MS_Gateway_Stripe extends MS_Gateway {
 	/**
 	 * Get Stripe publishable key.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @return string The Stripe API publishable key.
 	 */
 	public function get_publishable_key() {
-		$this->_api->mode = $this->mode;
-		return $this->_api->get_publishable_key();
+		$publishable_key = null;
+
+		if ( MS_Gateway::MODE_LIVE == $this->mode ) {
+			$publishable_key = $this->publishable_key;
+		} else {
+			$publishable_key = $this->test_publishable_key;
+		}
+
+		return apply_filters(
+			'ms_gateway_stripe_get_publishable_key',
+			$publishable_key
+		);
 	}
 
 	/**
 	 * Get Stripe secret key.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @internal The secret key should not be used outside this object!
 	 *
 	 * @return string The Stripe API secret key.
 	 */
-	protected function get_secret_key() {
-		$this->_api->mode = $this->mode;
-		return $this->_api->get_secret_key();
+	public function get_secret_key() {
+		$secret_key = null;
+
+		if ( MS_Gateway::MODE_LIVE == $this->mode ) {
+			$secret_key = $this->secret_key;
+		} else {
+			$secret_key = $this->test_secret_key;
+		}
+
+		return apply_filters(
+			'ms_gateway_stripe_get_secret_key',
+			$secret_key
+		);
 	}
 
 	/**
 	 * Verify required fields.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @return boolean True if configured.
@@ -320,7 +319,7 @@ class MS_Gateway_Stripe extends MS_Gateway {
 	/**
 	 * Auto-update some fields of the _api instance if required.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @internal
 	 *
 	 * @param string $key Field name.

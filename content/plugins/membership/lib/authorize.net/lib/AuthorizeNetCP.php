@@ -15,7 +15,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCP
  */
-class AuthorizeNetCP extends AuthorizeNetAIM
+class M2_AuthorizeNetCP extends M2_AuthorizeNetAIM
 {
 
     const LIVE_URL = 'https://cardpresent.authorize.net/gateway/transact.dll';
@@ -88,7 +88,7 @@ class AuthorizeNetCP extends AuthorizeNetAIM
      */
     protected function _handleResponse($response)
     {
-        return new AuthorizeNetCP_Response($response, $this->_x_post_fields['delim_char'], $this->_x_post_fields['encap_char'], $this->_custom_fields);
+        return new M2_AuthorizeNetCP_Response($response, $this->_x_post_fields['delim_char'], $this->_x_post_fields['encap_char'], $this->_custom_fields);
     }
 
 }
@@ -100,7 +100,7 @@ class AuthorizeNetCP extends AuthorizeNetAIM
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCP
  */
-class AuthorizeNetCP_Response extends AuthorizeNetResponse
+class M2_AuthorizeNetCP_Response extends M2_AuthorizeNetResponse
 {
     private $_response_array = array(); // An array with the split response.
 

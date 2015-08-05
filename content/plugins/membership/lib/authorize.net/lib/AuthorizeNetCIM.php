@@ -15,7 +15,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetCIM extends AuthorizeNetRequest
+class M2_AuthorizeNetCIM extends M2_AuthorizeNetRequest
 {
 
     const LIVE_URL = "https://api.authorize.net/xml/v1/request.api";
@@ -358,7 +358,7 @@ class AuthorizeNetCIM extends AuthorizeNetRequest
      */
     protected function _handleResponse($response)
     {
-        return new AuthorizeNetCIM_Response($response);
+        return new M2_AuthorizeNetCIM_Response($response);
     }
 
     /**
@@ -451,14 +451,14 @@ class AuthorizeNetCIM extends AuthorizeNetRequest
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetCIM_Response extends AuthorizeNetXMLResponse
+class M2_AuthorizeNetCIM_Response extends M2_AuthorizeNetXMLResponse
 {
     /**
      * @return AuthorizeNetAIM_Response
      */
     public function getTransactionResponse()
     {
-        return new AuthorizeNetAIM_Response($this->_getElementContents("directResponse"), ",", "|", array());
+        return new M2_AuthorizeNetAIM_Response($this->_getElementContents("directResponse"), ",", "|", array());
     }
 
     /**
@@ -469,7 +469,7 @@ class AuthorizeNetCIM_Response extends AuthorizeNetXMLResponse
         $responses = (array)$this->xml->validationDirectResponseList;
         $return = array();
         foreach ((array)$responses["string"] as $response) {
-            $return[] = new AuthorizeNetAIM_Response($response, ",", "", array());
+            $return[] = new M2_AuthorizeNetAIM_Response($response, ",", "", array());
         }
         return $return;
     }
@@ -479,7 +479,7 @@ class AuthorizeNetCIM_Response extends AuthorizeNetXMLResponse
      */
     public function getValidationResponse()
     {
-        return new AuthorizeNetAIM_Response($this->_getElementContents("validationDirectResponse"), ",", "|", array());
+        return new M2_AuthorizeNetAIM_Response($this->_getElementContents("validationDirectResponse"), ",", "|", array());
     }
 
     /**

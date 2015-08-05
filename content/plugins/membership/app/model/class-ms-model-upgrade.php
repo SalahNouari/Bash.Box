@@ -1,26 +1,5 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Upgrade DB model.
  *
  * Manages DB upgrading.
@@ -28,7 +7,7 @@
  * IMPORTANT: Make sure that the snapshot_data() function is up-to-date!
  * Things that are missed during back-up might be lost forever...
  *
- * @since 1.0.0
+ * @since  1.0.0
  *
  * @package Membership2
  * @subpackage Model
@@ -38,14 +17,17 @@ class MS_Model_Upgrade extends MS_Model {
 	/**
 	 * Initialize upgrading check.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 */
 	public static function init() {
 		self::update();
 
 		MS_Factory::load( 'MS_Model_Upgrade' );
 
+		// This function is intended for development/testing only!
 		self::maybe_restore();
+
+		// This is a hidden feature available in the Settings > General page.
 		add_action( 'init', array( __CLASS__, 'maybe_reset' ) );
 
 		do_action( 'ms_model_upgrade_init' );
@@ -54,7 +36,7 @@ class MS_Model_Upgrade extends MS_Model {
 	/**
 	 * Upgrade database.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @param  bool $force Also execute update logic when version did not change.
 	 */
 	public static function update( $force = false ) {
@@ -79,7 +61,11 @@ class MS_Model_Upgrade extends MS_Model {
 
 		// Compare current src version to DB version:
 		// We only do UP-grades but no DOWN-grades!
-		$version_changed = $old_version && version_compare( $old_version, $new_version, 'lt' );
+		if ( $old_version ) {
+			$version_changed = version_compare( $old_version, $new_version, 'lt' );
+		} else {
+			$version_changed = true;
+		}
 
 		if ( $force || $version_changed ) {
 			$Done = true;
@@ -124,6 +110,7 @@ class MS_Model_Upgrade extends MS_Model {
 			}
 
 			// Remove an old version of Protected Content
+			// TODO: REMOVE THIS BLOCK/FUNCTION END OF 2015
 			if ( $version_changed ) {
 				self::remove_old_copy();
 			}
@@ -135,9 +122,14 @@ class MS_Model_Upgrade extends MS_Model {
 			 * ----- Version-Specific update logic -----------------------------
 			 */
 
-			// Upgrade from a 0.x version to 1.0.x or higher
-			if ( version_compare( $old_version, '1.0.0.0', 'lt' ) ) {
-				self::_upgrade_1_0_0_0();
+			// Upgrade from a 1.0.0.x version to 1.0.1.0 or higher
+			if ( version_compare( $old_version, '1.0.1.0', 'lt' ) ) {
+				self::_upgrade_1_0_1_0();
+			}
+
+			// Upgrade from 1.0.1.0 version to 1.0.1.1 or higher
+			if ( version_compare( $old_version, '1.0.1.1', 'lt' ) ) {
+				self::_upgrade_1_0_1_1();
 			}
 
 			/*
@@ -174,24 +166,82 @@ class MS_Model_Upgrade extends MS_Model {
 	#
 
 	/**
-	 * Upgrade from any 1.0.x version to a higher version.
+	 * Upgrade from any 1.0.0.x version to a higher version.
 	 */
-	static private function _upgrade_1_0_0_0() {
-		self::snapshot( '1.0.0.0' );
+	static private function _upgrade_1_0_1_0() {
+		lib2()->updates->clear();
 
 		/*
-		 * Demo update process
+		 * The "is_member" flag of users was not correctly saved when a
+		 * subscription was added via the M2 > Members page.
+		 * Fix this now.
 		 */
-		/*
 		{
-			lib2()->updates->add( 'wp_clear_scheduled_hook', 'ms_cron_check_membership_status' );
-			lib2()->updates->add( 'wp_clear_scheduled_hook', 'ms_cron_process_communications' );
+			global $wpdb;
+			$sql = "
+			SELECT DISTINCT usr.user_id
+			FROM
+				{$wpdb->posts} post
+				LEFT JOIN {$wpdb->usermeta} usr
+					ON usr.user_id = post.post_author
+					AND usr.meta_key = 'ms_is_member'
+			WHERE
+				post_type = 'ms_relationship'
+				AND (usr.meta_value IS NULL OR usr.meta_value != 1);
+			";
+			$result = $wpdb->get_col( $sql );
+			foreach ( $result as $user_id ) {
+				lib2()->updates->add( 'update_user_meta', $user_id, 'ms_is_member', true );
+			}
 		}
 
 		// Execute all queued actions!
 		lib2()->updates->plugin( MS_TEXT_DOMAIN );
 		lib2()->updates->execute();
-		*/
+	}
+
+	/**
+	 * Upgrade from 1.0.1.0 version to a higher version.
+	 */
+	static private function _upgrade_1_0_1_1() {
+		lib2()->updates->clear();
+
+		/*
+		 * A bug in 1.0.1 created multiple copies of email templates.
+		 * This update block will delete the duplicates again.
+		 */
+		{
+			global $wpdb;
+			$sql = "
+			SELECT ID
+			FROM {$wpdb->posts}
+			WHERE
+				post_type = 'ms_communication'
+				AND ID NOT IN (
+				SELECT
+					MIN( p.ID ) ID
+				FROM
+					{$wpdb->posts} p
+					INNER JOIN {$wpdb->postmeta} m1
+					ON m1.post_id = p.ID AND m1.meta_key = 'type'
+				WHERE
+					p.post_type = 'ms_communication'
+					AND LENGTH( m1.meta_value ) > 0
+				GROUP BY
+					m1.meta_value,
+					p.post_parent
+				);
+			";
+			$ids = $wpdb->get_col( $sql );
+
+			foreach ( $ids as $id ) {
+				lib2()->updates->add( 'wp_delete_post', $id, true );
+			}
+		}
+
+		// Execute all queued actions!
+		lib2()->updates->plugin( MS_TEXT_DOMAIN );
+		lib2()->updates->execute();
 	}
 
 	#
@@ -204,7 +254,7 @@ class MS_Model_Upgrade extends MS_Model {
 	 * "protected-content" folder may survive the upgrade and needs to be
 	 * manually removed.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 */
 	static private function remove_old_copy() {
 		$new_dir = WP_PLUGIN_DIR . '/membership';
@@ -218,6 +268,14 @@ class MS_Model_Upgrade extends MS_Model {
 		// Make sure that the current plugin is the official M2 one.
 		if ( false === strpos( MS_Plugin::instance()->dir, $new_dir ) ) {
 			// Cancel: This plugin is not the official plugin (maybe a backup or beta version)
+
+			if ( false !== strpos( MS_Plugin::instance()->dir, $old_dir ) ) {
+				lib2()->ui->admin_message(
+					__( '<b>Upgrade warning</b>:<br>The Membership 2 plugin is installed in an deprecated folder. Some users did report issues when the plugin is installed in this directory.<br>To fix this issue please follow these steps:<br><br>1. Delete* the old Membership Premium plugin if it is still installed.<br>2. Delete* the Membership 2 plugin.<br>3. Re-install Membership 2 from the WPMU Dashboard - your existing data is not affected by this.<br><br>*) <em>Only deactivating the plugins does not work, you have to delete them.</em>', MS_TEXT_DOMAIN ),
+					'error'
+				);
+			}
+
 			return;
 		}
 
@@ -262,98 +320,11 @@ class MS_Model_Upgrade extends MS_Model {
 
 
 	/**
-	 * Creates a current DB Snapshot and clears all items from the update queue.
-	 *
-	 * @since  1.1.0.5
-	 * @param  string $next_version Used for snapshot file name.
-	 */
-	static private function snapshot( $next_version ) {
-		// Simply create a snapshot that we can restore later.
-		lib2()->updates->plugin( MS_TEXT_DOMAIN );
-		lib2()->updates->snapshot(
-			'upgrade_' . str_replace( '.', '_', $next_version ),
-			self::snapshot_data()
-		);
-
-		lib2()->updates->clear();
-	}
-
-	/**
-	 * Takes an __PHP_Incomplete_Class and casts it to a stdClass object.
-	 * All properties will be made public in this step.
-	 *
-	 * @since  1.1.0
-	 * @param  object $object __PHP_Incomplete_Class
-	 * @return object
-	 */
-	static public function fix_object( $object ) {
-		// preg_replace_callback handler. Needed to calculate new key-length.
-		$fix_key = create_function(
-			'$matches',
-			'return ":" . strlen( $matches[1] ) . ":\"" . $matches[1] . "\"";'
-		);
-
-		// Serialize the object to a string.
-		$dump = serialize( $object );
-
-		// Change class-type to 'stdClass'.
-		$dump = preg_replace( '/^O:\d+:"[^"]++"/', 'O:8:"stdClass"', $dump );
-
-		// Strip "private" and "protected" prefixes.
-		$dump = preg_replace_callback( '/:\d+:"\0.*?\0([^"]+)"/', $fix_key, $dump );
-
-		// Unserialize the modified object again.
-		return unserialize( $dump );
-	}
-
-	/**
-	 * Returns the option-keys and post-IDs that should be backed-up.
-	 *
-	 * @since  1.1.0.2
-	 * @internal
-	 *
-	 * @return object Snapshot data-definition.
-	 */
-	static private function snapshot_data() {
-		global $wpdb;
-		$data = (object) array();
-
-		// Options.
-		$sql = "
-			SELECT option_name
-			FROM {$wpdb->options}
-			WHERE
-				option_name LIKE 'ms_addon_%'
-				OR option_name LIKE 'ms_model_%'
-				OR option_name LIKE 'ms_gateway_%'
-		";
-		$data->options = $wpdb->get_col( $sql );
-
-		// Posts and Post-Meta
-		$sql = "
-			SELECT ID
-			FROM {$wpdb->posts}
-			WHERE
-				post_type IN (
-					'ms_membership',
-					'ms_relationship',
-					'ms_event',
-					'ms_invoice',
-					'ms_communication'
-					'ms_coupon'
-				)
-		";
-		$data->posts = $wpdb->get_col( $sql );
-
-		return $data;
-	}
-
-	/**
 	 * Completely whipe all Membership data from Database.
 	 *
 	 * Note: This function is not used currently...
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 */
 	static private function cleanup_db() {
 		global $wpdb;
@@ -361,7 +332,7 @@ class MS_Model_Upgrade extends MS_Model {
 		$trash_ids = array();
 
 		// Delete membership meta-data from users.
-		$users = MS_Model_Member::get_members( );
+		$users = MS_Model_Member::get_members();
 		foreach ( $users as $user ) {
 			$user->delete_all_membership_usermeta();
 			$user->save();
@@ -378,7 +349,9 @@ class MS_Model_Upgrade extends MS_Model {
 		 * Delete all plugin settings.
 		 * Settings are saved by classes that extend MS_Model_option
 		 */
-		foreach ( MS_Model_Gateway::get_gateways() as $option ) { $option->delete(); }
+		foreach ( MS_Model_Gateway::get_gateways() as $option ) {
+			$option->delete();
+		}
 		MS_Factory::load( 'MS_Model_Addon' )->delete();
 		MS_Factory::load( 'MS_Model_Pages' )->delete();
 		MS_Factory::load( 'MS_Model_Settings' )->delete();
@@ -397,9 +370,11 @@ class MS_Model_Upgrade extends MS_Model {
 			MS_Model_Communication::get_post_type(),
 			MS_Model_Event::get_post_type(),
 			MS_Model_Invoice::get_post_type(),
+			MS_Model_Transactionlog::get_post_type(),
 			MS_Model_Membership::get_post_type(),
 			MS_Model_Relationship::get_post_type(),
 			MS_Addon_Coupon_Model::get_post_type(),
+			MS_Addon_Invitation_Model::get_post_type(),
 		);
 
 		foreach ( $ms_posttypes as $type ) {
@@ -410,10 +385,18 @@ class MS_Model_Upgrade extends MS_Model {
 		}
 
 		// Remove orphaned post-metadata.
-		$sql[] = "DELETE FROM $wpdb->postmeta WHERE NOT EXISTS (SELECT 1 FROM wp_posts tmp WHERE tmp.ID = post_id);";
+		$sql[] = "
+		DELETE FROM $wpdb->postmeta
+		WHERE NOT EXISTS (
+			SELECT 1 FROM $wpdb->posts tmp WHERE tmp.ID = post_id
+		);
+		";
 
 		// Clear all WP transient cache.
-		$sql[] = "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%';";
+		$sql[] = "
+		DELETE FROM $wpdb->options
+		WHERE option_name LIKE '_transient_%';
+		";
 
 		foreach ( $sql as $s ) {
 			$wpdb->query( $s );
@@ -436,7 +419,7 @@ class MS_Model_Upgrade extends MS_Model {
 	 * Makes sure that network-wide protection works by ensuring that the plugin
 	 * is also network-activated.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 */
 	static private function check_network_setup() {
 		static $Network_Checked = false;
@@ -516,7 +499,7 @@ class MS_Model_Upgrade extends MS_Model {
 	 * - Each token has a timeout of max. 120 seconds.
 	 * - Each token can be used once only.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @internal
 	 *
 	 * @param  string $action Like a nonce, this is the action to execute.
@@ -541,7 +524,7 @@ class MS_Model_Upgrade extends MS_Model {
 	 * $_GET['ms_token'] must match the current ms_token
 	 * $_POST['confirm'] must have value 'yes'
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @internal
 	 *
 	 * @param  string $action Like a nonce, this is the action to execute.
@@ -576,7 +559,7 @@ class MS_Model_Upgrade extends MS_Model {
 	 * - The request is an wp-admin request
 	 * - The request is not an Ajax call
 	 *
-	 * @since  1.1.0.4
+	 * @since  1.0.0
 	 * @return bool True if all conditions are true
 	 */
 	static private function valid_user() {
@@ -584,7 +567,7 @@ class MS_Model_Upgrade extends MS_Model {
 		if ( ! is_admin() ) { return false; }
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { return false; }
 		if ( defined( 'DOING_CRON' ) && DOING_CRON ) { return false; }
-		if ( ! MS_Model_Member::is_admin_user() ) { return false; }
+		if ( ! current_user_can( 'manage_options' ) ) { return false; }
 
 		return true;
 	}
@@ -593,7 +576,7 @@ class MS_Model_Upgrade extends MS_Model {
 	 * Checks if valid reset-instructions are present. If yes, then whipe the
 	 * plugin settings.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 */
 	static public function maybe_reset() {
 		static $Reset_Done = false;
@@ -615,7 +598,8 @@ class MS_Model_Upgrade extends MS_Model {
 	 * Checks if valid restore-options are specified. If they are, the snapshot
 	 * will be restored.
 	 *
-	 * @since  1.1.0.4
+	 * @since  1.0.0
+	 * @internal This function is intended for development/testing only!
 	 */
 	static private function maybe_restore() {
 		static $Restore_Done = false;

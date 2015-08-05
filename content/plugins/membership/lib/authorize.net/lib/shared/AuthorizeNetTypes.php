@@ -13,7 +13,7 @@
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetCustomer
+class M2_AuthorizeNetCustomer
 {
     public $merchantCustomerId;
     public $description;
@@ -30,7 +30,7 @@ class AuthorizeNetCustomer
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetAddress
+class M2_AuthorizeNetAddress
 {
     public $firstName;
     public $lastName;
@@ -51,7 +51,7 @@ class AuthorizeNetAddress
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetPaymentProfile
+class M2_AuthorizeNetPaymentProfile
 {
 
     public $customerType;
@@ -61,8 +61,8 @@ class AuthorizeNetPaymentProfile
 
     public function __construct()
     {
-        $this->billTo = new AuthorizeNetAddress;
-        $this->payment = new AuthorizeNetPayment;
+        $this->billTo = new M2_AuthorizeNetAddress;
+        $this->payment = new M2_AuthorizeNetPayment;
     }
 
 }
@@ -73,15 +73,15 @@ class AuthorizeNetPaymentProfile
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetPayment
+class M2_AuthorizeNetPayment
 {
     public $creditCard;
     public $bankAccount;
 
     public function __construct()
     {
-        $this->creditCard = new AuthorizeNetCreditCard;
-        $this->bankAccount = new AuthorizeNetBankAccount;
+        $this->creditCard = new M2_AuthorizeNetCreditCard;
+        $this->bankAccount = new M2_AuthorizeNetBankAccount;
     }
 }
 
@@ -91,7 +91,7 @@ class AuthorizeNetPayment
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetTransaction
+class M2_AuthorizeNetTransaction
 {
     public $amount;
     public $tax;
@@ -145,7 +145,7 @@ class AuthorizeNetTransaction
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetLineItem
+class M2_AuthorizeNetLineItem
 {
     public $itemId;
     public $name;
@@ -162,7 +162,7 @@ class AuthorizeNetLineItem
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetCreditCard
+class M2_AuthorizeNetCreditCard
 {
     public $cardNumber;
     public $expirationDate;
@@ -175,7 +175,7 @@ class AuthorizeNetCreditCard
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetCIM
  */
-class AuthorizeNetBankAccount
+class M2_AuthorizeNetBankAccount
 {
     public $accountType;
     public $routingNumber;
@@ -191,7 +191,7 @@ class AuthorizeNetBankAccount
  * @package    AuthorizeNet
  * @subpackage AuthorizeNetARB
  */
-class AuthorizeNet_Subscription
+class M2_AuthorizeNet_Subscription
 {
 
     public $name;

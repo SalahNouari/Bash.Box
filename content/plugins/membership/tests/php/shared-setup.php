@@ -104,6 +104,14 @@ class TData {
 				'price' => 29,
 				'rule_values' => array(),
 			),
+			'simple-free' => array(
+				'name' => 'Simple Membership',
+				'type' => MS_Model_Membership::TYPE_STANDARD,
+				'payment_type' => MS_Model_Membership::PAYMENT_TYPE_PERMANENT,
+				'is_free' => true,
+				'price' => 0,
+				'rule_values' => array(),
+			),
 			'simple-trial' => array(
 				'name' => 'Simple Membership with Trial',
 				'type' => MS_Model_Membership::TYPE_STANDARD,
@@ -184,8 +192,10 @@ class TData {
 		$gateway->save();
 
 		$gateway = MS_Model_Gateway::factory( MS_Gateway_Stripeplan::ID );
-		$gateway->active = true;
 		$gateway->mode = MS_Gateway::MODE_SANDBOX;
+		$gateway->active = true;
+		$gateway->test_secret_key = 'sk_test_MSKvYHhIm3kKNr4tshnZHIEk';
+		$gateway->test_publishable_key = 'pk_test_h8fk0CAW287ToA3o6aeehThB';
 		$gateway->save();
 
 		// Clear the plugin Factory-Cache

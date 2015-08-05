@@ -1,26 +1,5 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Manage Add-ons.
  *
  * Add-ons are stored in the directory /app/addon/<addon_name>/
@@ -28,7 +7,7 @@
  * This file must define class MS_Addon_<addon_name>.
  * This object is reponsible to initialize the the add-on logic.
  *
- * @since 1.0.0
+ * @since  1.0.0
  *
  * @package Membership2
  * @subpackage Model
@@ -42,7 +21,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	 *             Use the appropriate hooks to register new addons!
 	 *             Example: See the "Taxamo" addon
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -52,7 +31,6 @@ class MS_Model_Addon extends MS_Model_Option {
 	const ADDON_CPT_POST_BY_POST = 'cpt_post_by_post';
 	const ADDON_TRIAL = 'trial';
 	const ADDON_MEDIA = 'media';
-	const ADDON_PRO_RATE = 'pro_rate';
 	const ADDON_SHORTCODE = 'shortcode';
 	const ADDON_AUTO_MSGS_PLUS = 'auto_msgs_plus';
 	const ADDON_SPECIAL_PAGES = 'special_pages';
@@ -86,7 +64,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Used by function `flush_list`
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 *
 	 * @var bool
 	 */
@@ -95,7 +73,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * List of add-on files to load when plugin is initialized.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @var array of file-paths
 	 */
@@ -104,7 +82,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Add-ons array.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var array {
 	 *     @key <string> The add-on ID.
@@ -116,7 +94,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Initalize Object Hooks
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -127,7 +105,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Returns a list of all registered Add-Ons
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array Add-on lisl
 	 */
 	static public function get_addons() {
@@ -146,7 +124,7 @@ class MS_Model_Addon extends MS_Model_Option {
 			/**
 			 * Register new addons.
 			 *
-			 * @since 1.1.0
+			 * @since  1.0.0
 			 */
 			$addons = apply_filters(
 				'ms_model_addon_register',
@@ -186,7 +164,7 @@ class MS_Model_Addon extends MS_Model_Option {
 				/**
 				 * Add custom Actions or remove default actions
 				 *
-				 * @since 1.1.0
+				 * @since  1.0.0
 				 */
 				$addons[$key]->action = apply_filters(
 					'ms_model_addon_action-' . $key,
@@ -203,7 +181,7 @@ class MS_Model_Addon extends MS_Model_Option {
 			/**
 			 * The Add-on list is prepared. Initialize the addons now.
 			 *
-			 * @since 1.1.0
+			 * @since  1.0.0
 			 */
 			do_action( 'ms_model_addon_initialize' );
 		}
@@ -217,7 +195,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	 * Related action hooks:
 	 * - ms_model_addon_flush
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 */
 	public function flush_list() {
 		self::$_reload_files = true;
@@ -228,7 +206,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	 * Checks the /app/addon directory for a list of all addons and loads these
 	 * files.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 */
 	static protected function load_core_addons() {
 		$model = MS_Factory::load( 'MS_Model_Addon' );
@@ -251,7 +229,7 @@ class MS_Model_Addon extends MS_Model_Option {
 			/**
 			 * Allow other plugins/themes to register custom addons
 			 *
-			 * @since 1.1.0
+			 * @since  1.0.0
 			 *
 			 * @var array
 			 */
@@ -275,7 +253,10 @@ class MS_Model_Addon extends MS_Model_Option {
 
 			if ( file_exists( $addon ) ) {
 				if ( ! class_exists( $class ) ) {
-					include_once $addon;
+					try {
+						include_once $addon;
+					} catch ( Exception $ex ) {
+					}
 				}
 
 				if ( class_exists( $class ) ) {
@@ -287,7 +268,7 @@ class MS_Model_Addon extends MS_Model_Option {
 		/**
 		 * Allow custom addon-initialization code to run
 		 *
-		 * @since 1.1.0
+		 * @since  1.0.0
 		 */
 		do_action( 'ms_model_addon_load' );
 	}
@@ -295,7 +276,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Verify if an add-on is enabled
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string $addon The add-on type.
 	 * @return boolean True if enabled.
@@ -322,7 +303,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Enable an add-on type in the plugin.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string $addon The add-on type.
 	 */
@@ -337,7 +318,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Disable an add-on type in the plugin.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string $addon The add-on type.
 	 */
@@ -352,7 +333,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Toggle add-on type status in the plugin.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string $addon The add-on type.
 	 */
@@ -373,7 +354,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	/**
 	 * Enable add-on necessary to membership.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string $addon The add-on type.
 	 */
@@ -404,7 +385,7 @@ class MS_Model_Addon extends MS_Model_Option {
 	 *    **       This function should not be extended       **
 	 *    **  Create new Add-ons in the app/addon/ directory  **
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array List of Add-ons
 	 */
 	static private function get_core_list() {
@@ -418,6 +399,7 @@ class MS_Model_Addon extends MS_Model_Option {
 		$list[self::ADDON_MULTI_MEMBERSHIPS] = (object) array(
 			'name' => __( 'Multiple Memberships', MS_TEXT_DOMAIN ),
 			'description' => __( 'Your members can join more than one membership at the same time.', MS_TEXT_DOMAIN ),
+			'icon' => 'dashicons dashicons-forms',
 		);
 
 		$list[self::ADDON_TRIAL] = (object) array(

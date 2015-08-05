@@ -1,31 +1,10 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Plugin Pages model.
  *
  * Main MS Pages class, contains any Membership page functions.
  *
- * @since 1.0.0
+ * @since  1.0.0
  *
  * @package Membership2
  * @subpackage Model
@@ -35,7 +14,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Singleton instance.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @staticvar MS_Model_Settings
 	 */
@@ -44,7 +23,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Plugin pages constants.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -57,7 +36,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Association between membership page-types and WordPress post_ids.
 	 *
-	 * @since  1.0.4.5
+	 * @since  1.0.0
 	 *
 	 * @var array
 	 */
@@ -66,7 +45,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Returns the singleton instance of the MS_Model_Pages object
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return MS_Model_Pages
 	 */
 	static public function get_model() {
@@ -83,7 +62,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	 * Returns a MS_Model_Pages setting value (these are the association between
 	 * our Membership Page types and WordPress posts)
 	 *
-	 * @since  1.0.4.5
+	 * @since  1.0.0
 	 * @param  string $key The setting key.
 	 * @return any The setting value. A post_id or 0.
 	 */
@@ -104,7 +83,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Saves a MS_Model_Pages setting value.
 	 *
-	 * @since  1.0.4.5
+	 * @since  1.0.0
 	 * @param  string $key The setting key.
 	 * @param  any $value The new setting value.
 	 */
@@ -124,7 +103,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get MS Page types
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return array{
 	 *     @type string $page_type The ms page type.
@@ -155,7 +134,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Returns a longer description for a page-type
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  string $type The page-type
 	 * @return string The full description
 	 */
@@ -188,7 +167,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Validate ms page type.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $type The page type to validate.
 	 * @return boolean True if valid.
@@ -211,7 +190,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get MS Pages.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return WP_Post[] The page model objects.
 	 */
@@ -254,7 +233,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get specific MS Page.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $page_type The page type to retrieve the page.
 	 * @return WP_Post The page model object.
@@ -282,7 +261,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get specific MS Page using either ID or slug information.
 	 *
-	 * @since 1.0.4.4
+	 * @since  1.0.0
 	 *
 	 * @param string $field The field to check. [id|slug]
 	 * @param string $value The field value
@@ -332,7 +311,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	 * Returns the page_id that is identified by the specified filter.
 	 * Filter can be either a type-name, post-ID or WP_Post (in that order)
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  mixed $filter The filter to translate into a post_id
 	 * @return int
 	 */
@@ -365,7 +344,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	 * Possible keys:
 	 *   - all keys available in get_bloginfo()
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 * @param  string $key The detail to return. See info for possible values.
 	 * @return string The requested detail about the site.
 	 */
@@ -407,12 +386,18 @@ class MS_Model_Pages extends MS_Model_Option {
 	 * Checks if the current URL is a MS Page.
 	 * If yes, then some basic information on this page are returned.
 	 *
-	 * @since  1.0.4.4
+	 * @since  1.0.0
 	 * @param  int $page_id Optional. The page_id to fetch.
 	 * @return WP_Post|null
 	 */
 	static public function current_page( $page_id = false, $page_type = null ) {
 		static $Res = array();
+		$page_id = apply_filters(
+			'ms_model_pages_current_page_id',
+			$page_id,
+			$page_type
+		);
+
 		$key = json_encode( $page_id ) . json_encode( $page_type );
 
 		if ( ! isset( $Res[$key] ) ) {
@@ -457,7 +442,6 @@ class MS_Model_Pages extends MS_Model_Option {
 				$this_page
 			);
 		}
-
 		return $Res[$key];
 	}
 
@@ -466,15 +450,21 @@ class MS_Model_Pages extends MS_Model_Option {
 	 *
 	 * Verify if current page, or passed page_id is a plugin special page.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param int $page_id Optional. The page id to verify. Default to current page.
 	 * @param string $page_type Optional. The page type to verify. If null, test it against all ms pages.
 	 */
 	static public function is_membership_page( $page_id = null, $page_type = null ) {
 		$ms_page_type = false;
-		$page = self::current_page( $page_id );
 
+		$page_id = apply_filters(
+			'ms_model_pages_membership_page_id',
+			$page_id,
+			$page_type
+		);
+
+		$page = self::current_page( $page_id );
 		$site_id = self::get_site_info( 'id' );
 
 		if ( $site_id == get_current_blog_id() ) {
@@ -505,7 +495,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get MS Page URL.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string|WP_Post $page_type The page type name or a WP_Post object.
 	 * @param boolean $ssl If wanted a SSL url. Set to null to use auto detection.
@@ -533,7 +523,8 @@ class MS_Model_Pages extends MS_Model_Option {
 				'ms_model_pages_get_ms_page_url',
 				$url,
 				$page_type,
-				$ssl
+				$ssl,
+				$site_id
 			);
 		}
 
@@ -543,7 +534,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Redirect the user the specified membership page.
 	 *
-	 * @since  1.1.1.4
+	 * @since  1.0.0
 	 * @param  string $page_type The page-type.
 	 * @param  array $args Optional. Additional URL parameters.
 	 */
@@ -570,7 +561,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Returns the URL to display after successful login.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 *
 	 * @param  bool $filter Optional. If set to false then the URL is not
 	 *                      filtered and the default value is returned.
@@ -599,7 +590,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Returns the URL to display after successful logout.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 *
 	 * @param  bool $filter Optional. If set to false then the URL is not
 	 *                      filtered and the default value is returned.
@@ -628,7 +619,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get MS Page type by ID.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @param string|WP_Post $page_type The page type name or a WP_Post object.
 	 * @return string The MS Page type name.
@@ -661,7 +652,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Creates any missing Membership pages.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return array|false Titles of the created pages
 	 */
 	static public function create_missing_pages() {
@@ -708,7 +699,7 @@ class MS_Model_Pages extends MS_Model_Option {
 				/**
 				 * Filter the new page_id
 				 *
-				 * @since 1.1.0
+				 * @since  1.0.0
 				 */
 				$new_id = apply_filters(
 					'ms_model_pages_create_missing_page',
@@ -724,7 +715,7 @@ class MS_Model_Pages extends MS_Model_Option {
 					/**
 					 * Trigger action to allow modifications to the page
 					 *
-					 * @since 1.1.0
+					 * @since  1.0.0
 					 */
 					do_action(
 						'ms_model_pages_create_wp_page',
@@ -748,7 +739,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	 * - There are no menus where items can be added to.
 	 * - The user is no admin.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool
 	 */
 	static public function can_edit_menus() {
@@ -777,7 +768,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Create MS Pages in Menus.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $page_type The page type to create menu.
 	 * @param string $update_only Only used by the upgrade class.
@@ -858,13 +849,13 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Remove MS Pages from Menus.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @param string $page_type The page type to create menu.
 	 * @return bool True means that at least one menu item was deleted.
 	 */
 	static public function drop_menu( $page_type ) {
-		$res = false;
+		$res = true;
 
 		if ( MS_Plugin::is_network_wide() ) {
 			return $res;
@@ -900,14 +891,14 @@ class MS_Model_Pages extends MS_Model_Option {
 					if ( $db_id ) {
 						if ( false !== wp_delete_post( $db_id ) ) {
 							self::set_setting( 'has_nav_' . $page_type, false );
-							$res = true;
+						} else {
+							$res = false;
 						}
 					}
 				}
-			} else {
-				// No menus defined.
-				$res = true;
 			}
+		} else {
+			$res = false;
 		}
 
 		return $res;
@@ -921,7 +912,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	 * We do this, because the menu items are added to all existing nav menus
 	 * and the user might remove them from one nav menu but not from all...
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  string $page_type
 	 * @return bool
 	 */
@@ -942,7 +933,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Get default content for membership pages.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @param  string $type The page type name.
 	 * @return string The default content.
@@ -997,7 +988,7 @@ class MS_Model_Pages extends MS_Model_Option {
 	/**
 	 * Creates a new WordPress menu and adds all top level pages to this menu.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 */
 	static public function create_default_menu() {
 		if ( MS_Plugin::is_network_wide() ) {

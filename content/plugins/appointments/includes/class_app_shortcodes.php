@@ -1084,7 +1084,7 @@ class App_Shortcode_MyAppointments extends App_Shortcode {
 				$(".app-my-appointments-cancel").change( function() {
 					if ( $(this).is(":checked") ) {
 						var cancel_box = $(this);
-						if ( !confirm("'. esc_js( __("Are you sure to cancel the selected appointment?","appointments") ) .'") ) {
+						if ( !confirm("'. esc_js( __("Are you sure you want to cancel the selected appointment?","appointments") ) .'") ) {
 							cancel_box.attr("checked", false);
 							return false;
 						}
@@ -1200,10 +1200,9 @@ class App_Shortcode_Services extends App_Shortcode {
 		global $wpdb, $appointments;
 		$appointments->get_lsw();
 
-		if ( !trim( $order_by ) )
-			$order_by = 'ID';
+		if (!trim($order_by)) $order_by = 'ID';
 
-		if ( $worker ) {
+		if ($worker) {
 			$services = $appointments->get_services_by_worker( $worker );
 			// Find first service by this worker
 			$fsby = $services[0]->ID;
@@ -1213,15 +1212,14 @@ class App_Shortcode_Services extends App_Shortcode {
 			}
 			// Re-sort worker services
 			if (!empty($services) && !empty($order_by) && 'ID' !== $order_by) $services = $this->_reorder_services($services, $order_by);
-		}
-		else
+		} else {
 			$services = $appointments->get_services( $order_by );
+		}
 
 		$services = apply_filters( 'app_services', $services );
 
 		// If there are no workers do nothing
-		if ( !$services || empty( $services ) )
-			return;
+		if (!$services || empty($services)) return;
 
 		$script ='';
 		$s = '';
@@ -1234,15 +1232,14 @@ class App_Shortcode_Services extends App_Shortcode {
 		$s .= '</div>';
 		$s .= '<div class="app_services_dropdown_select">';
 		$s .= '<select name="app_select_services" class="app_select_services">';
-		if ( $services ) {
-			foreach ( $services as $service ) {
+		if ($services) {
+			foreach ($services as $service) {
 				$service_description = '';
 				// Check if this is the first service, so it would be displayed by default
-				if ( $service->ID == $appointments->service ) {
+				if ($service->ID == $appointments->service) {
 					$d = '';
 					$sel = ' selected="selected"';
-				}
-				else {
+				} else {
 					$d = ' style="display:none"';
 					$sel = '';
 				}
@@ -1251,12 +1248,19 @@ class App_Shortcode_Services extends App_Shortcode {
 				// Include excerpts
 				$e .= '<div '.$d.' class="app_service_excerpt" id="app_service_excerpt_'.$service->ID.'" >';
 				// Let addons modify service page
-				$page = apply_filters( 'app_service_page', $service->page, $service->ID );
-				switch ( $description ) {
-					case 'none'		:		break;
-					case 'excerpt'	:		$service_description .= $appointments->get_excerpt( $page, $thumb_size, $thumb_class, $service->ID ); break;
-					case 'content'	:		$service_description .= $appointments->get_content( $page, $thumb_size, $thumb_class, $service->ID ); break;
-					default			:		$service_description .= $appointments->get_excerpt( $page, $thumb_size, $thumb_class, $service->ID ); break;
+				$page = apply_filters('app_service_page', $service->page, $service->ID);
+				switch ($description) {
+					case 'none':
+						break;
+					case 'excerpt':
+						$service_description .= $appointments->get_excerpt($page, $thumb_size, $thumb_class, $service->ID);
+						break;
+					case 'content':
+						$service_description .= $appointments->get_content($page, $thumb_size, $thumb_class, $service->ID);
+						break;
+					default:
+						$service_description .= $appointments->get_excerpt($page, $thumb_size, $thumb_class, $service->ID);
+						break;
 				}
 				$e .= apply_filters('app-services-service_description', $service_description, $service, $description) . '</div>';
 			}
@@ -1270,10 +1274,12 @@ class App_Shortcode_Services extends App_Shortcode {
 		$s .= $e;
 		$s .= '</div>';
 		$s .= '</div>';
-		if ( isset( $_GET['wcalendar'] ) && (int)$_GET['wcalendar'] )
-			$wcalendar = (int)$_GET['wcalendar'];
-		else
-			$wcalendar = false;
+
+		$wcalendar = isset($_GET['wcalendar']) && (int)$_GET['wcalendar']
+			? (int)$_GET['wcalendar']
+			: false
+		;
+
 		// First remove these parameters and add them again to make wcalendar appear before js variable
 		$href = add_query_arg( array( "wcalendar"=>false, "app_provider_id" => false, "app_service_id" => false ) );
 		$href = apply_filters( 'app_service_href', add_query_arg( array( "wcalendar"=>$wcalendar, "app_service_id" => "__selected_service__" ), $href ) );
@@ -1285,21 +1291,21 @@ class App_Shortcode_Services extends App_Shortcode {
 		$script .= "$('.app_select_services').change(function(){";
 		$script .= "var selected_service=$('.app_select_services option:selected').val();";
 		$script .= "if (typeof selected_service=='undefined' || selected_service===null){";
-		$script .= "selected_service=".$appointments->get_first_service_id().";";
+		$script .= "selected_service=" . (int)$appointments->get_first_service_id() . ";";
 		$script .= "}";
 		$script .= "$('.app_service_excerpt').hide();";
 		$script .= "$('#app_service_excerpt_'+selected_service).show();";
 		if ( $autorefresh ) {
-			$script .= "window.location.href='".$href."'.replace(/__selected_service__/, selected_service);";
+			$script .= "window.location.href='" . esc_url($href) . "'.replace(/__selected_service__/, selected_service);";
 		}
 		$script .= "});";
 
 		$script .= "$('.app_services_button').click(function(){";
 		$script .= "var selected_service=$('.app_select_services option:selected').val();";
-		$script .= "window.location.href='".$href."'.replace(/__selected_service__/, selected_service);";
+		$script .= "window.location.href='" . esc_url($href) . "'.replace(/__selected_service__/, selected_service);";
 		$script .= "});";
 
-		if (!$_noscript) $appointments->add2footer( $script );
+		if (!$_noscript) $appointments->add2footer($script);
 
 		return $s;
 	}
@@ -1324,8 +1330,8 @@ class App_Shortcode_Services extends App_Shortcode {
 		;
 
 		$comparator = 'ASC' === $direction
-			? create_function('$a, $b', "return strcmp(\$a->$by, \$b->$by);")
-			: create_function('$a, $b', "return strcmp(\$b->$by, \$a->$by);")
+			? create_function('$a, $b', "return strnatcasecmp(\$a->{$by}, \$b->{$by});")
+			: create_function('$a, $b', "return strnatcasecmp(\$b->{$by}, \$a->{$by});")
 		;
 		usort($services, $comparator);
 

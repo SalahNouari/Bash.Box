@@ -1,31 +1,10 @@
 <?php
 /**
- * @copyright Incsub (http://incsub.com/)
- *
- * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301 USA
- *
-*/
-
-/**
  * Stripe Gateway Integration for repeated payments (payment plans).
  *
  * Persisted by parent class MS_Model_Option. Singleton.
  *
- * @since 2.0.0
+ * @since  1.0.0
  * @package Membership2
  * @subpackage Model
  */
@@ -36,15 +15,49 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	/**
 	 * Gateway singleton instance.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @var string $instance
 	 */
 	public static $instance;
 
 	/**
+	 * Stripe test secret key (sandbox).
+	 *
+	 * @see https://support.stripe.com/questions/where-do-i-find-my-api-keys
+	 *
+	 * @since  1.0.0
+	 * @var string $test_secret_key
+	 */
+	protected $test_secret_key = false;
+
+	/**
+	 * Stripe Secret key (live).
+	 *
+	 * @since  1.0.0
+	 * @var string $secret_key
+	 */
+	protected $secret_key = false;
+
+	/**
+	 * Stripe test publishable key (sandbox).
+	 *
+	 * @since  1.0.0
+	 * @var string $test_publishable_key
+	 */
+	protected $test_publishable_key = false;
+
+	/**
+	 * Stripe publishable key (live).
+	 *
+	 * @since  1.0.0
+	 * @var string $publishable_key
+	 */
+	protected $publishable_key = false;
+
+	/**
 	 * Instance of the shared stripe API integration
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @var MS_Gateway_Stripe_Api $api
 	 */
 	protected $_api;
@@ -52,16 +65,27 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	/**
 	 * Initialize the object.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 */
 	public function after_load() {
 		parent::after_load();
 		$this->_api = MS_Factory::load( 'MS_Gateway_Stripe_Api' );
 
+		// If the gateway is initialized for the first time then copy settings
+		// from the Stripe Single gateway.
+		if ( false === $this->test_secret_key ) {
+			$single = MS_Factory::load( 'MS_Gateway_Stripe' );
+			$this->test_secret_key = $single->test_secret_key;
+			$this->secret_key = $single->secret_key;
+			$this->test_publishable_key = $single->test_publishable_key;
+			$this->publishable_key = $single->publishable_key;
+			$this->save();
+		}
+
 		$this->id = self::ID;
 		$this->name = __( 'Stripe Subscriptions Gateway', MS_TEXT_DOMAIN );
 		$this->group = 'Stripe';
-		$this->manual_payment = false;
+		$this->manual_payment = false; // Recurring charged automatically
 		$this->pro_rate = true;
 		$this->unsupported_payment_types = array(
 			MS_Model_Membership::PAYMENT_TYPE_PERMANENT,
@@ -94,7 +118,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	 * This ID takes the current WordPress Site-URL into account to avoid
 	 * collissions when several Membership2 sites use the same stripe account.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @param  int $id The internal ID.
@@ -124,11 +148,11 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	 * This function is called when the gateway is activated and after a
 	 * membership was saved to database.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 */
 	public function update_stripe_data() {
 		if ( ! $this->active ) { return false; }
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		// 1. Update all playment plans.
 		$memberships = MS_Model_Membership::get_memberships();
@@ -151,11 +175,11 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	 * This function is called when the gateway is activated and after a
 	 * membership was saved to database.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 */
 	public function update_stripe_data_membership( $membership ) {
 		if ( ! $this->active ) { return false; }
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		$plan_data = array(
 			'id' => self::get_the_id( $membership->id, 'plan' ),
@@ -167,9 +191,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 		) {
 			// Prepare the plan-data for Stripe.
 			$trial_days = null;
-			if ( MS_Model_Addon::is_enabled( MS_Model_Addon::ADDON_TRIAL )
-				&& $membership->trial_period_enabled
-			) {
+			if ( $membership->has_trial() ) {
 				$trial_days = MS_Helper_Period::get_period_in_days(
 					$membership->trial_period_unit,
 					$membership->trial_period_type
@@ -231,11 +253,11 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	 * This function is called when the gateway is activated and after a
 	 * coupon was saved to database.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 */
 	public function update_stripe_data_coupon( $coupon ) {
 		if ( ! $this->active ) { return false; }
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		$settings = MS_Plugin::instance()->settings;
 		$duration = 'once';
@@ -275,7 +297,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	/**
 	 * Processes purchase action.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @param MS_Model_Relationship $subscription The related membership relationship.
 	 */
 	public function process_purchase( $subscription ) {
@@ -288,7 +310,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 			$subscription,
 			$this
 		);
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		$member = $subscription->get_member();
 		$invoice = $subscription->get_current_invoice();
@@ -360,7 +382,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	/**
 	 * Check if the subscription is still active.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @param MS_Model_Relationship $subscription The related membership relationship.
 	 * @return bool True on success.
 	 */
@@ -373,7 +395,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 			$subscription,
 			$this
 		);
-		$this->_api->mode = $this->mode;
+		$this->_api->set_gateway( $this );
 
 		$member = $subscription->get_member();
 		$invoice = $subscription->get_current_invoice();
@@ -442,11 +464,11 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	 * Checks if a subscription has reached the maximum paycycle repetitions.
 	 * If the last paycycle was paid then the subscription is cancelled.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 * @internal Called by process_purchase() and request_payment()
 	 *
 	 * @param  MS_Model_Relationship $subscription
-	 * @param  Stripe_Subscription $stripe_sub
+	 * @param  M2_Stripe_Subscription $stripe_sub
 	 */
 	protected function cancel_if_done( $subscription, $stripe_sub ) {
 		$membership = $subscription->get_membership();
@@ -469,11 +491,12 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	 * When a member cancels a subscription we need to notify Stripe to also
 	 * cancel the Stripe subscription.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 * @param MS_Model_Relationship $subscription The membership relationship.
 	 */
 	public function cancel_membership( $subscription ) {
 		parent::cancel_membership( $subscription );
+		$this->_api->set_gateway( $this );
 
 		$customer = $this->_api->find_customer( $subscription->get_member() );
 		$membership = $subscription->get_membership();
@@ -496,33 +519,55 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 	/**
 	 * Get Stripe publishable key.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @return string The Stripe API publishable key.
 	 */
 	public function get_publishable_key() {
-		$this->_api->mode = $this->mode;
-		return $this->_api->get_publishable_key();
+		$publishable_key = null;
+
+		if ( MS_Gateway::MODE_LIVE == $this->mode ) {
+			$publishable_key = $this->publishable_key;
+		} else {
+			$publishable_key = $this->test_publishable_key;
+		}
+
+		return apply_filters(
+			'ms_gateway_stripeplan_get_publishable_key',
+			$publishable_key
+		);
 	}
 
 	/**
 	 * Get Stripe secret key.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @internal The secret key should not be used outside this object!
 	 *
 	 * @return string The Stripe API secret key.
 	 */
-	protected function get_secret_key() {
-		$this->_api->mode = $this->mode;
-		return $this->_api->get_secret_key();
+	public function get_secret_key() {
+		$secret_key = null;
+
+		if ( MS_Gateway::MODE_LIVE == $this->mode ) {
+			$secret_key = $this->secret_key;
+		} else {
+			$secret_key = $this->test_secret_key;
+		}
+
+		return apply_filters(
+			'ms_gateway_stripeplan_get_secret_key',
+			$secret_key
+		);
 	}
 
 	/**
 	 * Verify required fields.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
+	 * @api
+	 *
 	 * @return boolean True if configured.
 	 */
 	public function is_configured() {
@@ -535,6 +580,30 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 			'ms_gateway_stripeplan_is_configured',
 			$is_configured
 		);
+	}
+
+	/**
+	 * Auto-update some fields of the _api instance if required.
+	 *
+	 * @since  1.0.0
+	 * @internal
+	 *
+	 * @param string $key Field name.
+	 * @param mixed $value Field value.
+	 */
+	public function __set( $key, $value ) {
+		switch ( $key ) {
+			case 'test_secret_key':
+			case 'test_publishable_key':
+			case 'secret_key':
+			case 'publishable_key':
+				$this->_api->$key = $value;
+				break;
+		}
+
+		if ( property_exists( $this, $key ) ) {
+			$this->$key = $value;
+		}
 	}
 
 }

@@ -4,7 +4,7 @@
  *
  * Persisted by parent class MS_Model_CustomPostType.
  *
- * @since 1.0.0
+ * @since  1.0.0
  *
  * @package Membership2
  * @subpackage Model
@@ -16,7 +16,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Both static and class property are used to handle php 5.2 limitations.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @var string $POST_TYPE
 	 */
 	protected static $POST_TYPE = 'ms_coupon';
@@ -24,7 +24,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Coupon type constant: Discount by a fixed amount from membership price.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @see $discount_type
 	 * @var string
@@ -34,7 +34,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Coupon type constant: Discount a percentage of the membership price.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @see $discount_type
 	 * @var string
@@ -44,7 +44,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Coupon duration constant: Coupon is only applied to the first invoice.
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 *
 	 * @see $duration
 	 * @var string
@@ -56,7 +56,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Note: NOT IMPLEMENTED YET
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 *
 	 * @see $duration
 	 * @var string
@@ -70,7 +70,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Default value 3600 means 1 hour (60 sec * 60 min)
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var int
 	 */
@@ -79,7 +79,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Is set to true once the coupon is loaded from DB.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 * @internal
 	 *
 	 * @var string
@@ -89,7 +89,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * The code that the user can enter to apply the coupon to a payment.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -100,7 +100,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Defines, how the $discount property is interpreted.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -110,7 +110,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * Discount value. Depending on the $discount_type property this is either
 	 * a static amount or a percentage.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var number
 	 */
@@ -122,7 +122,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Note: THIS IS NOT IMPLEMENTED YET. CURRENTLY ALL COUPONS ARE 'once'
 	 *
-	 * @since 2.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -131,7 +131,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Defines the earliest date when a coupon code can be used.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -141,7 +141,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * Defines the last date when a coupon code can be used.
 	 * This is optional and can be left empty for no end date.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string
 	 */
@@ -152,7 +152,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Zero value indicates that coupon is valid for any membership.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var array
 	 */
@@ -171,7 +171,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * So max_uses means: Lock the code once max_uses payments were made with
 	 * the coupon for new invoices.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var int
 	 */
@@ -182,7 +182,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * See notes of $max_uses for more details.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var int
 	 */
@@ -194,7 +194,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * This message is set by the Coupon model when the coupon is applied.
 	 * It can be a success or error message (e.g. coupon expired, etc.)
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @internal
 	 *
 	 * @var string
@@ -202,9 +202,9 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	protected $coupon_message = '';
 
 	/**
-	 * Stores the flag of the is_valid_coupon() test.
+	 * Stores the flag of the is_valid() test.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 *
 	 * @var   bool
 	 */
@@ -213,7 +213,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Not persisted fields.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @var string[]
 	 */
@@ -232,7 +232,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Returns the post-type of the current object.
 	 *
-	 * @since  2.0.0
+	 * @since  1.0.0
 	 * @return string The post-type name.
 	 */
 	public static function get_post_type() {
@@ -242,7 +242,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Get custom register post type args for this model.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 */
 	public static function get_register_post_type_args() {
 		$args = array(
@@ -259,7 +259,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Defines and return discount types.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return array {
 	 *     The discount types array.
@@ -288,7 +288,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Verify if is a valid coupon type
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $type The discount type to validate.
 	 *
@@ -307,7 +307,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Defines and return discount types descriptions.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @return array The discount types description array
 	 */
@@ -328,7 +328,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * For list table count.
 	 * Include expired coupon too.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param $args The query post args
 	 *				@see @link http://codex.wordpress.org/Class_Reference/WP_Query
@@ -358,7 +358,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * By default all available Coupons are returned. The result can be filtered
 	 * via the $args parameter that takes any WP_Query options.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @api
 	 *
 	 * @param  array $args The query post args
@@ -376,7 +376,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 
 		MS_Factory::select_blog();
 		$query = new WP_Query( $args );
-		$items = $query->get_posts();
+		$items = $query->posts;
 		MS_Factory::revert_blog();
 
 		$coupons = array();
@@ -395,12 +395,12 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Load coupon using coupon code.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $code The coupon code used to load model
 	 * @return MS_Addon_Coupon_Model The coupon model, or null if not found.
 	 */
-	public static function load_by_coupon_code( $code ) {
+	public static function load_by_code( $code ) {
 		$code = sanitize_text_field( $code );
 
 		$args = array(
@@ -418,7 +418,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 
 		MS_Factory::select_blog();
 		$query = new WP_Query( $args );
-		$item = $query->get_posts();
+		$item = $query->posts;
 		$coupon_id = 0;
 		MS_Factory::revert_blog();
 
@@ -430,42 +430,104 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 		$coupon->_empty = false;
 
 		return apply_filters(
-			'ms_addon_coupon_model_load_by_coupon_code',
+			'ms_addon_coupon_model_load_by_code',
 			$coupon,
 			$code
 		);
 	}
 
 	/**
+	 * Returns the name of the transient value where the current users
+	 * coupon details are stored.
+	 *
+	 * @since  1.0.1.0
+	 * @param  int $user_id
+	 * @param  int $membership_id
+	 * @return string The transient name.
+	 */
+	protected static function get_transient_name( $user_id, $membership_id ) {
+		global $blog_id;
+
+		$key = apply_filters(
+			'ms_addon_coupon_model_transient_name',
+			"ms_coupon_{$blog_id}_{$user_id}_{$membership_id}"
+		);
+
+		return substr( $key, 0, 40 );
+	}
+
+	/**
+	 * Save coupon application.
+	 *
+	 * Saving the application to keep track of the application in gateway return.
+	 * Using COUPON_REDEMPTION_TIME to expire coupon application.
+	 *
+	 * This is a non-static function, as it saves the current object!
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param MS_Model_Relationship $subscription The subscription to apply the coupon.
+	 */
+	public function save_application( $subscription ) {
+		$membership = $subscription->get_membership();
+		$discount = $this->get_discount_value( $subscription );
+
+		$time = apply_filters(
+			'ms_addon_coupon_model_save_application_redemption_time',
+			self::COUPON_REDEMPTION_TIME
+		);
+
+		// Grab the user account as we should be logged in by now.
+		$user = MS_Model_Member::get_current_member();
+
+		$key = self::get_transient_name( $user->id, $membership->id );
+
+		$transient = apply_filters(
+			'ms_addon_coupon_model_transient_value',
+			array(
+				'id' => $this->id,
+				'user_id' => $user->id,
+				'membership_id'	=> $membership->id,
+				'discount' => $discount,
+				'message' => $this->coupon_message,
+			)
+		);
+
+		MS_Factory::set_transient( $key, $transient, $time );
+		$this->save();
+
+		do_action(
+			'ms_addon_coupon_model_save_application',
+			$subscription,
+			$this
+		);
+	}
+
+	/**
 	 * Get user's coupon application.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param int $user_id The user id.
 	 * @param int $membership_id The membership id.
 	 * @return MS_Addon_Coupon_Model The coupon model object.
 	 */
-	public static function get_coupon_application( $user_id, $membership_id ) {
-		global $blog_id;
+	public static function get_application( $user_id, $membership_id ) {
+		$key = self::get_transient_name( $user_id, $membership_id );
 
-		$transient_name = apply_filters(
-			'ms_addon_coupon_model_transient_name',
-			"ms_coupon_{$blog_id}_{$user_id}_{$membership_id}"
-		);
-
-		$transient = MS_Factory::get_transient( $transient_name );
+		$transient = MS_Factory::get_transient( $key );
 
 		$coupon = null;
-		if ( is_array( $transient ) && ! empty( $transient['coupon_id'] ) ) {
-			$the_id = intval( $transient['coupon_id'] );
+		if ( is_array( $transient ) && ! empty( $transient['id'] ) ) {
+			$the_id = intval( $transient['id'] );
 			$coupon = MS_Factory::load( 'MS_Addon_Coupon_Model', $the_id );
-			$coupon->coupon_message = $transient['coupon_message'];
+			$coupon->coupon_message = $transient['message'];
 		} else {
 			$coupon = MS_Factory::load( 'MS_Addon_Coupon_Model' );
 		}
 
 		return apply_filters(
-			'ms_addon_coupon_model_get_coupon_application',
+			'ms_addon_coupon_model_get_application',
 			$coupon,
 			$user_id,
 			$membership_id
@@ -475,23 +537,18 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Remove user application for this coupon.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param int $user_id The user id.
 	 * @param int $membership_id The membership id.
 	 */
-	public static function remove_coupon_application( $user_id, $membership_id ) {
-		global $blog_id;
+	public static function remove_application( $user_id, $membership_id ) {
+		$key = self::get_transient_name( $user->id, $membership->id );
 
-		$transient_name = apply_filters(
-			'ms_addon_coupon_model_transient_name',
-			"ms_coupon_{$blog_id}_{$user_id}_{$membership_id}"
-		);
-
-		MS_Factory::delete_transient( $transient_name );
+		MS_Factory::delete_transient( $key );
 
 		do_action(
-			'ms_addon_coupon_model_remove_coupon_application',
+			'ms_addon_coupon_model_remove_application',
 			$user_id,
 			$membership_id
 		);
@@ -509,12 +566,12 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 *
 	 * Checks for maximun number of uses, date range and membership_id restriction.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param int $membership_id The membership id for which coupon is applied
 	 * @return boolean True if valid coupon.
 	 */
-	public function is_valid_coupon( $membership_id = 0 ) {
+	public function is_valid( $membership_id = 0 ) {
 		$valid = true;
 		$this->coupon_message = null;
 
@@ -538,11 +595,15 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 			$this->coupon_message = __( 'This Coupon has expired.', MS_TEXT_DOMAIN );
 			$valid = false;
 		} else {
-			foreach ( $this->membership_id as $valid_id ) {
-				if ( 0 == $valid_id || $valid_id == $membership_id ) {
-					$membership_allowed = true;
-					break;
+			if ( is_array( $this->membership_id ) ) {
+				foreach ( $this->membership_id as $valid_id ) {
+					if ( 0 == $valid_id || $valid_id == $membership_id ) {
+						$membership_allowed = true;
+						break;
+					}
 				}
+			} elseif ( '0' == $this->membership_id ) {
+				$membership_allowed = true;
 			}
 			if ( ! $membership_allowed ) {
 				$this->coupon_message = __( 'This Coupon is not valid for this membership.', MS_TEXT_DOMAIN );
@@ -553,7 +614,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 		$this->_valid = $valid;
 
 		return apply_filters(
-			'ms_coupon_model_is_valid_coupon',
+			'ms_coupon_model_is_valid',
 			$valid,
 			$membership_id,
 			$this
@@ -561,9 +622,9 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	}
 
 	/**
-	 * Returns the result of the last is_valid_coupon() function call
+	 * Returns the result of the last is_valid() function call
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool
 	 */
 	public function was_valid() {
@@ -577,7 +638,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	 * If the membership price is free, the discount will be zero.
 	 * If discount is bigger than the price, the discount will be equal to the price.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param MS_Model_Relationship $subscription The membership relationship to apply coupon.
 	 * @return float The discount value.
@@ -588,7 +649,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 		$original_price = $price;
 		$discount = 0;
 
-		if ( $this->is_valid_coupon( $membership->id ) ) {
+		if ( $this->is_valid( $membership->id ) ) {
 			$discount = $this->discount;
 
 			if ( self::TYPE_PERCENT == $this->discount_type ) {
@@ -601,10 +662,8 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 			}
 			$discount = $original_price - $price;
 			$this->coupon_message = sprintf(
-				__( 'Using Coupon code: %1$s. Discount applied: %2$s %3$s', MS_TEXT_DOMAIN ),
-				$this->code,
-				MS_Plugin::instance()->settings->currency,
-				MS_Helper_Billing::format_price( $discount )
+				__( 'Coupon applied: %1$s', MS_TEXT_DOMAIN ),
+				$this->code
 			);
 		}
 
@@ -617,59 +676,9 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	}
 
 	/**
-	 * Save coupon application.
-	 *
-	 * Saving the application to keep track of the application in gateway return.
-	 * Using COUPON_REDEMPTION_TIME to expire coupon application.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param MS_Model_Relationship $subscription The subscription to apply the coupon.
-	 */
-	public function save_coupon_application( $subscription ) {
-		global $blog_id;
-
-		$membership = $subscription->get_membership();
-		$discount = $this->get_discount_value( $subscription );
-
-		$time = apply_filters(
-			'ms_addon_coupon_model_save_coupon_application_redemption_time',
-			self::COUPON_REDEMPTION_TIME
-		);
-
-		// Grab the user account as we should be logged in by now.
-		$user = MS_Model_Member::get_current_member();
-
-		$key = apply_filters(
-			'ms_addon_coupon_model_transient_name',
-			"ms_coupon_{$blog_id}_{$user->id}_{$membership->id}"
-		);
-
-		$transient = apply_filters(
-			'ms_addon_coupon_model_transient_value',
-			array(
-				'coupon_id' => $this->id,
-				'user_id' => $user->id,
-				'membership_id'	=> $membership->id,
-				'discount' => $discount,
-				'coupon_message' => $this->coupon_message,
-			)
-		);
-
-		MS_Factory::set_transient( $key, $transient, $time );
-		$this->save();
-
-		do_action(
-			'ms_addon_coupon_model_save_coupon_application',
-			$subscription,
-			$this
-		);
-	}
-
-	/**
 	 * Returns property.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $property The name of a property.
 	 * @return mixed Returns mixed value of a property or NULL if a property doesn't exist.
@@ -725,7 +734,7 @@ class MS_Addon_Coupon_Model extends MS_Model_CustomPostType {
 	/**
 	 * Set specific property.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
 	 * @param string $property The name of a property to associate.
 	 * @param mixed $value The value of a property.

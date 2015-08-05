@@ -2,9 +2,7 @@
 /**
  * Membership List Table
  *
- *
- * @since 1.0.0
- *
+ * @since  1.0.0
  */
 class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 
@@ -18,7 +16,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Holds the human readable name of the rule tyle
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 * @var array
 	 */
 	protected $name = array(
@@ -46,7 +44,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	 * member variable for later usage.
 	 *
 	 * @var   array
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 */
 	protected $prepared_args = array();
 
@@ -54,14 +52,14 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	 * A list of all active memberships
 	 *
 	 * @var array
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 */
 	static protected $memberships = array();
 
 	/**
 	 * Initialize the list table
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 * @param MS_Rule $model Rule-Model
 	 */
 	public function __construct( $model ) {
@@ -100,7 +98,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Returns the rule model.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return MS_Rule
 	 */
 	public function get_model() {
@@ -166,7 +164,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	 * Adds a hidden field to the form that passes the current rule_type to the
 	 * bulk-edit action handler.
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 */
 	public function add_rule_type() {
 		MS_Helper_Html::html_element(
@@ -214,6 +212,18 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 		$per_page = $this->get_items_per_page(
 			"{$this->id}_per_page",
 			self::DEFAULT_PAGE_SIZE
+		);
+
+		/**
+		 * Custom filter to modify the items on all Protection Rule list tables.
+		 *
+		 * @since 1.0.1.0
+		 * @var   int
+		 */
+		$per_page = apply_filters(
+			'rule_items_per_page',
+			$per_page,
+			$this->id
 		);
 
 		$current_page = $this->get_pagenum();
@@ -277,7 +287,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	 * Returns true, if the list displays items of the base membership.
 	 * i.e. true means that the Membership filter is set to "All"
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool
 	 */
 	public function list_shows_base_items() {
@@ -293,7 +303,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Returnst the membership of the current view.
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool
 	 */
 	public function get_membership() {
@@ -315,7 +325,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Can be overwritten to customize the args array for prepare_items()
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  array $defaults
 	 * @return array
 	 */
@@ -467,7 +477,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Adds a class to the <tr> element
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @param  object $item
 	 */
 	protected function single_row_class( $item ) {
@@ -481,7 +491,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Displays the inline-edit form used to edit the dripped content details.
 	 *
-	 * @since 1.1.0
+	 * @since  1.0.0
 	 */
 	protected function inline_edit() {
 		$rule = $this->model;
@@ -542,7 +552,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 			'type' => MS_Helper_Html::INPUT_TYPE_TEXT,
 			'name' => 'delay_unit',
 			'class' => 'ms-text-small',
-			'placeholder' => '1',
+			'placeholder' => '0',
 		);
 
 		$field_delay_type = array(
@@ -606,7 +616,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	 * membership-ID. Combined with the views (below) users can filter all rules
 	 * by membership + protection status independantly
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 */
 	public function list_head() {
 		$type_name = $this->name['plural'];
@@ -719,7 +729,7 @@ class MS_Helper_ListTable_Rule extends MS_Helper_ListTable {
 	/**
 	 * Return true if the current list is a view except "all"
 	 *
-	 * @since  1.1.0
+	 * @since  1.0.0
 	 * @return bool
 	 */
 	public function is_view() {

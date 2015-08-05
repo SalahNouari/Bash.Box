@@ -13,7 +13,7 @@
  * @package AuthorizeNet
  * @subpackage    AuthorizeNetResponse
  */
-class AuthorizeNetResponse
+class M2_AuthorizeNetResponse
 {
 
     const APPROVED = 1;
