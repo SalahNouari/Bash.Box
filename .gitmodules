@@ -26,6 +26,3 @@
 	path = TGM-Plugin-Activation
 	url = git@github.com:lakesareadesign/TGM-Plugin-Activation.git
 	
-[submodule "SRDB"]
-	path = SRDB
-	url = git@github.com:lakesareadesign/Search-Replace-DB.git
