@@ -3,7 +3,7 @@
 Plugin Name: Clientside
 Plugin URI: http://frique.me/clientside/
 Description: Clientside is a meticulous combination of a redesigned admin theme and a set of settings and tools that help customize and unclutter the WordPress interface for yourself or your clients.
-Version: 1.1.7
+Version: 1.1.12
 Author: Berend de Jong
 Author URI: http://frique.me/
 */
@@ -81,8 +81,9 @@ add_action( 'admin_menu', array( 'Clientside_Admin_Menu_Editor', 'action_gather_
 add_action( 'init', array( 'Clientside_Admin_Menu_Editor', 'action_prepare_menu_changes' ) );
 add_filter( 'parent_file', array( 'Clientside_Menu', 'filter_admin_menu_active_states' ) );
 add_filter( 'custom_menu_order', '__return_true' );
-add_filter( 'menu_order', array( 'Clientside_Admin_Menu_Editor', 'filter_apply_custom_menu_order' ) );
-add_action( 'admin_menu', array( 'Clientside_Admin_Menu_Editor', 'action_apply_custom_menu_removal' ), 2020 );
+add_filter( 'menu_order', array( 'Clientside_Admin_Menu_Editor', 'filter_apply_custom_menu_order' ), 2020 );
+add_action( 'admin_menu', array( 'Clientside_Admin_Menu_Editor', 'action_apply_custom_menu_removal' ), 2030 );
+add_action( 'admin_menu', array( 'Clientside_Admin_Menu_Editor', 'action_apply_custom_menu_unremoval' ), 2030 );
 add_action( 'admin_menu', array( 'Clientside_Menu', 'action_add_numbers' ) );
 add_action( 'admin_menu', array( 'Clientside_Admin_Menu_Editor', 'action_apply_custom_menu_renaming' ), 99 );
 

@@ -107,7 +107,7 @@ jQuery(document).ready(function() {
 		theme_new_category = theme.edit_row.find('.theme-new-edit-category').val();
 
 		if(theme_new_category != '') {
-			theme.edit_row.find('.spinner-add-category').show();
+			theme.edit_row.find('.spinner-add-category').css('visibility', 'visible');
 
 			var data = { //looks for and sets all variables used for export
 				action: 'prettythemes_add_category_ajax',
@@ -165,7 +165,7 @@ jQuery(document).ready(function() {
 		theme_edit_category_key = theme.edit_row.find('.theme-edit-category-key').val();
 
 		if(theme_edit_category != '') {
-			theme.edit_row.find('.spinner-add-category').show();
+			theme.edit_row.find('.spinner-add-category').css('visibility', 'visible');
 
 			var data = { //looks for and sets all variables used for export
 				action: 'prettythemes_save_category_ajax',
@@ -213,7 +213,7 @@ jQuery(document).ready(function() {
 			theme_categories_ready.push(jQuery(this).val());
 		});
 
-		theme.edit_row.find('.spinner-save').show();
+		theme.edit_row.find('.spinner-save').css('visibility', 'visible');
 
 		var data = {
 			action: 'prettythemes_save_theme_details_ajax',
@@ -329,7 +329,7 @@ function prettythemes_hide_image_id_edit_button(target) {
 	target.find('.theme_image_edit_button').hide().attr('href', '#');
 }
 function prettythemes_hide_new_edit_form(target) {
-	target.find('.spinner-add-category').hide();
+	target.find('.spinner-add-category').css('visibility', 'hidden');
 
 	target.find('.add-category-show-form, .add-category-button').show();
 	target.find('.edit-category, .edit-category-save-button').hide();

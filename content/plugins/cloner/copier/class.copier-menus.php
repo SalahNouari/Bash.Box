@@ -64,7 +64,7 @@ if ( ! class_exists( 'Site_Copier_Menus' ) ) {
             $new_menu_id = wp_update_nav_menu_object( 0, $menu_args );
 
             if ( ! $new_menu_id || is_wp_error( $new_menu_id ) )
-                return new WP_Error( 'insert_menu_error', sprintf( __( 'There was an error trying to copy the menu. ID: ', WPMUDEV_COPIER_LANG_DOMAIN ), $this->args['menu_id'] ) );
+                return new WP_Error( 'insert_menu_error', sprintf( __( 'There was an error trying to copy the menu. ID: ', WPMUDEV_COPIER_LANG_DOMAIN ), $this->args['menu_id'] ) );							 					 	 	  	
 
 
             foreach ( $source_menu->items as $menu_item ) {

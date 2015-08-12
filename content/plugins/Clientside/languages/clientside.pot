@@ -2,16 +2,16 @@
 # This file is distributed under the same license as the Clientside package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clientside 1.1.7\n"
+"Project-Id-Version: Clientside 1.1.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-22 08:10:41+00:00\n"
+"POT-Creation-Date: 2015-08-08 17:16:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"X-Generator: grunt-wp-i18n 0.5.0\n"
+"X-Generator: grunt-wp-i18n 0.5.2\n"
 "X-Poedit-KeywordsList: "
 "__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
 "attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
@@ -56,19 +56,19 @@ msgstr ""
 msgid "The user's post count"
 msgstr ""
 
-#: class-clientside-admin-menu-editor.php:122
+#: class-clientside-admin-menu-editor.php:119
 msgid "Edit"
 msgstr ""
 
-#: class-clientside-admin-menu-editor.php:123
+#: class-clientside-admin-menu-editor.php:120
 msgid "Close"
 msgstr ""
 
-#: class-clientside-admin-menu-editor.php:137
+#: class-clientside-admin-menu-editor.php:134
 msgid "Title"
 msgstr ""
 
-#: class-clientside-admin-menu-editor.php:143
+#: class-clientside-admin-menu-editor.php:140
 msgid "Role-based visibility"
 msgstr ""
 
@@ -84,31 +84,31 @@ msgstr ""
 msgid "Collapse menu"
 msgstr ""
 
-#: class-clientside-options.php:94 inc/page-tools.php:48
+#: class-clientside-options.php:95 inc/page-tools.php:48
 msgid "Admin Menu Editor"
 msgstr ""
 
-#: class-clientside-options.php:175 class-clientside-options.php:187
-#: class-clientside-options.php:199 class-clientside-options.php:211
-#: class-clientside-options.php:378 class-clientside-options.php:458
-#: class-clientside-options.php:470
+#: class-clientside-options.php:176 class-clientside-options.php:188
+#: class-clientside-options.php:200 class-clientside-options.php:212
+#: class-clientside-options.php:390 class-clientside-options.php:470
+#: class-clientside-options.php:482
 msgid "Enable"
 msgstr ""
 
-#: class-clientside-options.php:434 class-clientside-options.php:528
-#: class-clientside-options.php:540
+#: class-clientside-options.php:446 class-clientside-options.php:540
+#: class-clientside-options.php:552
 msgid "Disable"
 msgstr ""
 
-#: class-clientside-options.php:446
+#: class-clientside-options.php:458
 msgid "Remove"
 msgstr ""
 
-#: class-clientside-options.php:505
+#: class-clientside-options.php:517
 msgid "Hide"
 msgstr ""
 
-#: class-clientside-options.php:552
+#: class-clientside-options.php:564
 msgid "Make Clientside only manageable by Network/Super Admins"
 msgstr ""
 
@@ -352,7 +352,7 @@ msgctxt "Admin column title"
 msgid "Posts"
 msgstr ""
 
-#: class-clientside-admin-menu-editor.php:110
+#: class-clientside-admin-menu-editor.php:113
 msgctxt "Item name in the admin menu editor"
 msgid "(separator)"
 msgstr ""
@@ -473,19 +473,19 @@ msgctxt "Option description"
 msgid "This is not technically a page widget, but close enough to include here."
 msgstr ""
 
-#: class-clientside-options.php:153
+#: class-clientside-options.php:154
 msgctxt "Option description"
 msgid "Text on the Admin Dashboard button when viewing the site."
 msgstr ""
 
-#: class-clientside-options.php:165
+#: class-clientside-options.php:166
 msgctxt "Option description"
 msgid ""
 "Disabling this option will prevent all style related changes for the "
 "specific user role."
 msgstr ""
 
-#: class-clientside-options.php:178
+#: class-clientside-options.php:179
 msgctxt "Option description"
 msgid ""
 "Useful when using any of the <a href=\"%s\" target=\"_blank\">affected "
@@ -493,136 +493,141 @@ msgid ""
 "performance because less CSS will be loaded."
 msgstr ""
 
-#: class-clientside-options.php:190
+#: class-clientside-options.php:191
 msgctxt "Option description"
 msgid ""
 "This replaces the default behavior of clicking a menu item to expand its "
 "submenu."
 msgstr ""
 
-#: class-clientside-options.php:202
+#: class-clientside-options.php:203
 msgctxt "Option description"
 msgid ""
 "Some themes might make the editor styling match the site's typography. "
 "Enabling this option will overwrite that styling."
 msgstr ""
 
-#: class-clientside-options.php:214
+#: class-clientside-options.php:215
 msgctxt "Option description"
 msgid "Menu separators are hidden by default. This option enables them."
 msgstr ""
 
-#: class-clientside-options.php:223
+#: class-clientside-options.php:224
 msgctxt "Option description"
 msgid ""
 "The affected user role won't be confronted with update information. This "
 "will also speed up certain page load times."
 msgstr ""
 
-#: class-clientside-options.php:243
+#: class-clientside-options.php:244
 msgctxt "Option description"
 msgid "Note that this overwrites the native user-based setting when checked."
 msgstr ""
 
-#: class-clientside-options.php:255
+#: class-clientside-options.php:256
 msgctxt "Option description"
 msgid ""
 "This will make the affected users unable to manage the page's widgets and "
 "other page customizations."
 msgstr ""
 
-#: class-clientside-options.php:278
+#: class-clientside-options.php:279
+msgctxt "Option description"
+msgid "Hides the role changing dropdown above user-listings."
+msgstr ""
+
+#: class-clientside-options.php:290
 msgctxt "Option description"
 msgid "Hides the post-listing date filter dropdown (for all post types)."
 msgstr ""
 
-#: class-clientside-options.php:298
+#: class-clientside-options.php:310
 msgctxt "Option description"
 msgid "Hides the post-listing category filter dropdown (for all post types)."
 msgstr ""
 
-#: class-clientside-options.php:318
+#: class-clientside-options.php:330
 msgctxt "Option description"
 msgid ""
 "Hides the paging navigation above post-listings (for all post types). The "
 "bottom one remains."
 msgstr ""
 
-#: class-clientside-options.php:330
+#: class-clientside-options.php:342
 msgctxt "Option description"
 msgid ""
 "Hides the Bulk Actions dropdown above post-listings (for all post types). "
 "The bottom one remains."
 msgstr ""
 
-#: class-clientside-options.php:342
+#: class-clientside-options.php:354
 msgctxt "Option description"
 msgid "Hides the search form above post-listings (for all post types)."
 msgstr ""
 
-#: class-clientside-options.php:354
+#: class-clientside-options.php:366
 msgctxt "Option description"
 msgid "Hides the view switcher above the media page."
 msgstr ""
 
-#: class-clientside-options.php:366
+#: class-clientside-options.php:378
 msgctxt "Option description"
 msgid ""
 "Hides the Bulk Select button above the media page that allows for deletion "
 "of multiple files."
 msgstr ""
 
-#: class-clientside-options.php:379
+#: class-clientside-options.php:391
 msgctxt "Option description"
 msgid ""
 "The Clientside Notification Center puts notifications away into a toolbar "
 "item instead of showing them directly on the page."
 msgstr ""
 
-#: class-clientside-options.php:435
+#: class-clientside-options.php:447
 msgctxt "Option description"
 msgid "Prevent WP from showing login errors. This can add to security."
 msgstr ""
 
-#: class-clientside-options.php:447
+#: class-clientside-options.php:459
 msgctxt "Option description"
 msgid ""
 "Prevent WP from printing the WP version in the site header. This can add to "
 "security."
 msgstr ""
 
-#: class-clientside-options.php:459
+#: class-clientside-options.php:471
 msgctxt "Option description"
 msgid "Also apply theming to the login/register pages."
 msgstr ""
 
-#: class-clientside-options.php:471
+#: class-clientside-options.php:483
 msgctxt "Option description"
 msgid "Disable if the active site theme is breaking the toolbar positioning."
 msgstr ""
 
-#: class-clientside-options.php:482
+#: class-clientside-options.php:494
 msgctxt "Option description"
 msgid ""
 "Will appear on the login page and above the admin menu (optional). Leave "
 "empty to use the default WordPress logo."
 msgstr ""
 
-#: class-clientside-options.php:493
+#: class-clientside-options.php:505
 msgctxt "Option description"
 msgid ""
 "Applies if a custom logo is uploaded. The \"View Site\" button will appear "
 "instead."
 msgstr ""
 
-#: class-clientside-options.php:506
+#: class-clientside-options.php:518
 msgctxt "Option description"
 msgid ""
 "Completely hides the logo on the login page, wether it's a custom uploaded "
 "logo or the default."
 msgstr ""
 
-#: class-clientside-options.php:517
+#: class-clientside-options.php:529
 msgctxt "Option description"
 msgid ""
 "This changes the number of posts per page for all post types and all users "
@@ -630,7 +635,7 @@ msgid ""
 "empty to use the default behaviour."
 msgstr ""
 
-#: class-clientside-options.php:529
+#: class-clientside-options.php:541
 msgctxt "Option description"
 msgid ""
 "Prevent access to the theme/plugin file editing pages. Note that this will "
@@ -638,7 +643,7 @@ msgid ""
 "(generally via wp-config.php)."
 msgstr ""
 
-#: class-clientside-options.php:541
+#: class-clientside-options.php:553
 msgctxt "Option description"
 msgid ""
 "Clientside prevents PHP from printing errors before the document HTML and "
@@ -646,7 +651,7 @@ msgid ""
 "here if this causes problems with your own error logging solutions."
 msgstr ""
 
-#: class-clientside-options.php:553
+#: class-clientside-options.php:565
 msgctxt "Option description"
 msgid ""
 "Plugin Options, Clientside Tools and the entry in the plugin list on all "
@@ -673,202 +678,207 @@ msgctxt "Option section name"
 msgid "General plugin options and extra functionality"
 msgstr ""
 
-#: class-clientside-options.php:42
+#: class-clientside-options.php:41
 msgctxt "Option section name"
 msgid "Admin Theme Options"
 msgstr ""
 
-#: class-clientside-options.php:54
+#: class-clientside-options.php:53
 msgctxt "Option section name"
 msgid "Post Listing Options"
 msgstr ""
 
-#: class-clientside-options.php:68
+#: class-clientside-options.php:69
 msgctxt "Option section name"
 msgid "Toolbar Options"
 msgstr ""
 
-#: class-clientside-options.php:84
+#: class-clientside-options.php:85
 msgctxt "Option section name"
 msgid "Network options"
 msgstr ""
 
-#: class-clientside-options.php:152
+#: class-clientside-options.php:153
 msgctxt "Option title"
 msgid "Admin Dashboard button text"
 msgstr ""
 
-#: class-clientside-options.php:162
+#: class-clientside-options.php:163
 msgctxt "Option title"
 msgid "Enable Clientside admin theming"
 msgstr ""
 
-#: class-clientside-options.php:174
+#: class-clientside-options.php:175
 msgctxt "Option title"
 msgid "Additional plugin support"
 msgstr ""
 
-#: class-clientside-options.php:186
+#: class-clientside-options.php:187
 msgctxt "Option title"
 msgid "Expand Submenus on Hover"
 msgstr ""
 
-#: class-clientside-options.php:198
+#: class-clientside-options.php:199
 msgctxt "Option title"
 msgid "Text editor styling"
 msgstr ""
 
-#: class-clientside-options.php:210
+#: class-clientside-options.php:211
 msgctxt "Option title"
 msgid "Menu separators"
 msgstr ""
 
-#: class-clientside-options.php:222
+#: class-clientside-options.php:223
 msgctxt "Option title"
 msgid "Hide update information (WP core, plugins, themes)"
 msgstr ""
 
-#: class-clientside-options.php:242
+#: class-clientside-options.php:243
 msgctxt "Option title"
 msgid "Hide the admin toolbar when viewing the site"
 msgstr ""
 
-#: class-clientside-options.php:254
+#: class-clientside-options.php:255
 msgctxt "Option title"
 msgid "Hide the Screen Options button"
 msgstr ""
 
-#: class-clientside-options.php:266
+#: class-clientside-options.php:267
 msgctxt "Option title"
 msgid "Hide the Help button"
 msgstr ""
 
-#: class-clientside-options.php:277
+#: class-clientside-options.php:278
+msgctxt "Option title"
+msgid "Hide User Role Changer"
+msgstr ""
+
+#: class-clientside-options.php:289
 msgctxt "Option title"
 msgid "Hide Date Filter"
 msgstr ""
 
-#: class-clientside-options.php:297
+#: class-clientside-options.php:309
 msgctxt "Option title"
 msgid "Hide Category Filter"
 msgstr ""
 
-#: class-clientside-options.php:317
+#: class-clientside-options.php:329
 msgctxt "Option title"
 msgid "Hide Top Pager"
 msgstr ""
 
-#: class-clientside-options.php:329
+#: class-clientside-options.php:341
 msgctxt "Option title"
 msgid "Hide Top Bulk Actions"
 msgstr ""
 
-#: class-clientside-options.php:341
+#: class-clientside-options.php:353
 msgctxt "Option title"
 msgid "Hide Post Search"
 msgstr ""
 
-#: class-clientside-options.php:353
+#: class-clientside-options.php:365
 msgctxt "Option title"
 msgid "Hide View Switch"
 msgstr ""
 
-#: class-clientside-options.php:365
+#: class-clientside-options.php:377
 msgctxt "Option title"
 msgid "Hide Media Bulk Select"
 msgstr ""
 
-#: class-clientside-options.php:377
+#: class-clientside-options.php:389
 msgctxt "Option title"
 msgid "Notification Center"
 msgstr ""
 
-#: class-clientside-options.php:389
+#: class-clientside-options.php:401
 msgctxt "Option title"
 msgid "Hide the \"New\" dropdown list in the toolbar."
 msgstr ""
 
-#: class-clientside-options.php:400
+#: class-clientside-options.php:412
 msgctxt "Option title"
 msgid "Hide the \"Comments\" button in the toolbar."
 msgstr ""
 
-#: class-clientside-options.php:411
+#: class-clientside-options.php:423
 msgctxt "Option title"
 msgid "Hide the \"Updates\" button in the toolbar."
 msgstr ""
 
-#: class-clientside-options.php:422
+#: class-clientside-options.php:434
 msgctxt "Option title"
 msgid "Hide the Search functionality in the toolbar when viewing the site."
 msgstr ""
 
-#: class-clientside-options.php:433
+#: class-clientside-options.php:445
 msgctxt "Option title"
 msgid "Login error hinting"
 msgstr ""
 
-#: class-clientside-options.php:445
+#: class-clientside-options.php:457
 msgctxt "Option title"
 msgid "WordPress version meta tag"
 msgstr ""
 
-#: class-clientside-options.php:457
+#: class-clientside-options.php:469
 msgctxt "Option title"
 msgid "Themed login/register page"
 msgstr ""
 
-#: class-clientside-options.php:469
+#: class-clientside-options.php:481
 msgctxt "Option title"
 msgid "Themed Site Toolbar"
 msgstr ""
 
-#: class-clientside-options.php:481
+#: class-clientside-options.php:493
 msgctxt "Option title"
 msgid "Logo image"
 msgstr ""
 
-#: class-clientside-options.php:492
+#: class-clientside-options.php:504
 msgctxt "Option title"
 msgid "Hide the logo above the menu"
 msgstr ""
 
-#: class-clientside-options.php:504
+#: class-clientside-options.php:516
 msgctxt "Option title"
 msgid "Hide the login logo"
 msgstr ""
 
-#: class-clientside-options.php:516
+#: class-clientside-options.php:528
 msgctxt "Option title"
 msgid "Posts per page"
 msgstr ""
 
-#: class-clientside-options.php:527
+#: class-clientside-options.php:539
 msgctxt "Option title"
 msgid "Theme/plugin file editor"
 msgstr ""
 
-#: class-clientside-options.php:539
+#: class-clientside-options.php:551
 msgctxt "Option title"
 msgid "Custom error handler"
 msgstr ""
 
-#: class-clientside-options.php:551
+#: class-clientside-options.php:563
 msgctxt "Option title"
 msgid "Network Admins Only"
 msgstr ""
 
-#: class-clientside-options.php:564
+#: class-clientside-options.php:576
 msgctxt "Option title"
 msgid "Admin Menu"
 msgstr ""
 
-#: class-clientside-options.php:154
+#: class-clientside-options.php:155
 msgctxt "Toolbar button text"
 msgid "Admin Dashboard"
 msgstr ""
 
-#: class-clientside-options.php:958
+#: class-clientside-options.php:970
 msgctxt "Upload button text"
 msgid "Upload"
 msgstr ""

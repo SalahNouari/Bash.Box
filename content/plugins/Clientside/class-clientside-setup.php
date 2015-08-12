@@ -13,18 +13,18 @@ class Clientside_Setup {
 	static function action_enqueue_admin_styles() {
 
 		// Always-use CSS
-		wp_enqueue_style( 'clientside-admin-css', plugins_url( 'css/clientside-admin.css', __FILE__ ), array(), '1.1.7' );
+		wp_enqueue_style( 'clientside-admin-css', plugins_url( 'css/clientside-admin.css', __FILE__ ), array(), '1.1.12' );
 
 		// Enqueue the media manager scripts and styles
 		wp_enqueue_media();
 
 		// Theme CSS, when admin theming is enabled
 		if ( Clientside_Options::get_saved_option( 'enable-admin-theme' ) ) {
-			wp_enqueue_style( 'clientside-theme-css', plugins_url( 'css/clientside-admin-theme.min.css', __FILE__ ), array( 'clientside-admin-css', 'thickbox' ), '1.1.7' );
+			wp_enqueue_style( 'clientside-theme-css', plugins_url( 'css/clientside-admin-theme.min.css', __FILE__ ), array( 'clientside-admin-css', 'thickbox' ), '1.1.12' );
 
 			// Additional external plugin support
 			if ( Clientside_Options::get_saved_option( 'enable-plugin-support' ) ) {
-				wp_enqueue_style( 'clientside-plugin-support-css', plugins_url( 'css/clientside-plugin-support.min.css', __FILE__ ), array( 'clientside-theme-css' ), '1.1.7' );
+				wp_enqueue_style( 'clientside-plugin-support-css', plugins_url( 'css/clientside-plugin-support.min.css', __FILE__ ), array( 'clientside-theme-css' ), '1.1.12' );
 			}
 
 		}
@@ -34,7 +34,7 @@ class Clientside_Setup {
 	// Enqueue admin scripts
 	static function action_enqueue_admin_scripts() {
 
-		wp_enqueue_script( 'clientside-admin-js', plugins_url( 'js/clientside-admin.js', __FILE__ ), array( 'jquery', 'thickbox', 'jquery-ui-sortable' ), '1.1.7' );
+		wp_enqueue_script( 'clientside-admin-js', plugins_url( 'js/clientside-admin.js', __FILE__ ), array( 'jquery', 'thickbox', 'jquery-ui-sortable' ), '1.1.12' );
 
 		// Add localized strings
 		wp_localize_script( 'clientside-admin-js', 'L10n',
@@ -59,7 +59,7 @@ class Clientside_Setup {
 
 		// Only if login page theming is enabled
 		if ( Clientside_Options::get_saved_option( 'enable-login-theme' ) ) {
-			wp_enqueue_style( 'clientside-login-css', plugins_url( 'css/clientside-login.css', __FILE__ ), array(), '1.1.7' );
+			wp_enqueue_style( 'clientside-login-css', plugins_url( 'css/clientside-login.css', __FILE__ ), array(), '1.1.12' );
 		}
 
 	}
@@ -69,7 +69,7 @@ class Clientside_Setup {
 
 		// Only if login page theming is enabled
 		if ( Clientside_Options::get_saved_option( 'enable-login-theme' ) ) {
-			wp_enqueue_script( 'clientside-login-js', plugins_url( 'js/clientside-login.js', __FILE__ ), array( 'jquery' ), '1.1.7' );
+			wp_enqueue_script( 'clientside-login-js', plugins_url( 'js/clientside-login.js', __FILE__ ), array( 'jquery' ), '1.1.12' );
 		}
 
 	}
@@ -196,6 +196,11 @@ class Clientside_Setup {
 		// If hide-top-bulk option is enabled
 		if ( Clientside_Options::get_saved_option( 'hide-top-bulk' ) ) {
 			$new_classes[] = 'clientside-hide-top-bulk';
+		}
+
+		// If hide-user-role-changer
+		if ( Clientside_Options::get_saved_option( 'hide-user-role-changer' ) ) {
+			$new_classes[] = 'clientside-hide-user-role-changer';
 		}
 
 		// If hide-view-switch option is enabled

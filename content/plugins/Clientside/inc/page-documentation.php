@@ -30,6 +30,7 @@
 				<li><a href="#clientside-doc-updating">Updating the plugin</a></li>
 				<li><a href="#clientside-doc-uninstall">Deactivating / Uninstalling the plugin</a></li>
 				<li><a href="#clientside-doc-admin-menu-editor">Customizing the admin menu with the Admin Menu Editor Tool</a></li>
+				<li><a href="#clientside-doc-disabling-menu-editor">How do I disable the Clientside Menu Editor?</a></li>
 				<li><a href="#clientside-doc-admin-widget-manager">Hiding admin page sections with the Admin Widget Manager Tool</a></li>
 				<li><a href="#clientside-doc-notification-center">Using or disabling the Notification Center</a></li>
 				<li><a href="#clientside-doc-hiding">Hiding other admin page sections</a></li>
@@ -157,6 +158,18 @@
 		<h4>Want more?</h4>
 		<p>
 			As with the <a class="clientside-internal-link" href="<?php echo Clientside_Pages::get_page_url( 'clientside-tools' ); ?>">other tools</a> included in Clientside, they are limited to their basic functionality. For more control, it is advised to turn to a dedicated plugin for the specific purpose.
+		</p>
+
+		<p>
+			<a class="clientside-docs-backtotop" href="#wpwrap">Back to top</a>
+		</p>
+
+		<h3 class="clientside-header-underlined" id="clientside-doc-disabling-menu-editor">
+			How do I disable the Clientside Menu Editor?
+		</h3>
+
+		<p>
+			To prevent any manipulation of the menu, simply revert the Menu Editor Tool's configuration on <a class="clientside-internal-link" href="<?php echo Clientside_Pages::get_page_url( 'clientside-admin-menu-editor' ); ?>">its page</a>.
 		</p>
 
 		<p>

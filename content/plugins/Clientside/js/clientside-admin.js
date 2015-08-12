@@ -2,7 +2,7 @@
  * This file is part of: Clientside
  * Author: Berend de Jong
  * Author URI: http://frique.me/
- * Version: 1.1.7 (2015-06-22 15:10)
+ * Version: 1.1.12 (2015-08-09 00:16)
  */
 
 jQuery( function( $ ) {
@@ -83,8 +83,8 @@ jQuery( function( $ ) {
 		window.screenMeta = {
 			init: function() {}
 		};
+		// Pre WP 4.3
 		$( '.screen-meta-toggle a' ).each( function() {
-
 			var $this = $( this ).addClass( 'thickbox thickbox--clientside' );
 			var width = 600;
 			var height = 400;
@@ -98,8 +98,18 @@ jQuery( function( $ ) {
 			if ( $this.is( $( '#contextual-help-link' ) ) ) {
 				$this.attr( 'title', L10n.help );
 			}
-
 		} );
+		// WP 4.3+
+		if ( $( '.screen-meta-toggle button' ).length ) {
+			// Screen options
+			$( '#show-settings-link' ).on( 'click', function() {
+				tb_show( L10n.screenOptions, '#TB_inline?inlineId=screen-options-wrap' );
+			} );
+			// Help
+			$( '#contextual-help-link' ).on( 'click', function() {
+				tb_show( L10n.help, '#TB_inline?inlineId=contextual-help-wrap' );
+			} );
+		}
 	}
 
 	/* 5.0 Revert Clientside Options */
@@ -493,11 +503,11 @@ jQuery( function( $ ) {
 		var $submenu = $toolbar_item.find( '.ab-submenu' );
 		var notification_count = 0;
 		var important_flag = false;
-		var $alerts = $( '.update-nag, .notice-success, .updated, .settings-error, .error, .notice-error, .notice-warning, .notice-info' )
+		var $alerts = $( '.update-nag, .notice, .notice-success, .updated, .settings-error, .error, .notice-error, .notice-warning, .notice-info' )
 			.not( '.inline, .theme-update-message, .hidden, .hide-if-js' );
 		var greens = [ 'updated', 'notice-success' ];
 		var reds = [ 'error', 'notice-error', 'settings-error' ];
-		var blues = [ 'update-nag', 'notice-info', 'update-nag', 'notice-warning' ];
+		var blues = [ 'update-nag', 'notice', 'notice-info', 'update-nag', 'notice-warning' ];
 
 		// Itirate page alerts to analyse & copy to the toolbar
 		$alerts.each( function( i ) {

@@ -47,16 +47,46 @@ themes.view.Appearance = wp.Backbone.View.extend({
       parent: this
     });
 
-    // Render search form.
-    this.search();
-
     // Render categories form.
     this.categories();
+
+    // Render search form.
+    this.search();
 
     // Render and append
     this.view.render();
     this.$el.empty().append( this.view.el ).addClass('rendered');
     this.$el.append( '<br class="clear"/>' );
+  },
+
+  // Search input and view
+  // for current theme collection
+  categories: function() {
+    var view,
+      self = this;
+
+    // Don't render the categories if there is only one theme or one category(all)
+    /*
+    var count_categories = 0;
+    var i;
+
+    for (i in categories) {
+        if (categories.hasOwnProperty(i)) {
+            count_categories++;
+        }
+    }
+    */
+    if ( themes.data.themes.length === 1 ) {
+      return;
+    }
+
+
+    view = new themes.view.Categories({ collection: self.collection });
+
+    // Render and append before themes list
+    view.render();
+    $('#wpbody .theme-browser')
+      .before( view.el );
   },
 
   // Search input and view
@@ -72,38 +102,11 @@ themes.view.Appearance = wp.Backbone.View.extend({
 
     view = new themes.view.Search({ collection: self.collection });
 
-    // Render and append after screen title
     view.render();
-    $('#wpbody h2:first')
-      .append( $.parseHTML( '<label class="screen-reader-text" for="theme-search-input">' + l10n.search + '</label>' ) )
+    $('.wp-filter')
+      .append( '<div class="search-form"></div>' );
+    $('.wp-filter .search-form')
       .append( view.el );
-  },
-
-  // Search input and view
-  // for current theme collection
-  categories: function() {
-    var view,
-      self = this;
-
-    // Don't render the categories if there is only one theme or one category(all)
-    var count_categories = 0;
-    var i;
-
-    for (i in categories) {
-        if (categories.hasOwnProperty(i)) {
-            count_categories++;
-        }
-    }
-    if ( themes.data.themes.length === 1 || count_categories < 2 ) {
-      return;
-    }
-
-    view = new themes.view.Categories({ collection: self.collection });
-
-    // Render and append before themes list
-    view.render();
-    $('#wpbody .theme-browser')
-      .before( view.el );
   },
 
   // Checks when the user gets close to the bottom
@@ -777,7 +780,7 @@ themes.view.Search = wp.Backbone.View.extend({
 themes.view.Categories = wp.Backbone.View.extend({
 
   tagName: 'div',
-  className: 'theme-categories theme-navigation',
+  className: 'wp-filter theme-categories',
 
   events: {
     'click a':  'categories'
@@ -785,13 +788,17 @@ themes.view.Categories = wp.Backbone.View.extend({
 
   render: function() {
     var el = $(this.el);
-    el.append( $.parseHTML( '<span class="theme-categories-label">' + l10n.categories + '</span>' ) );
-    $.each(categories, function( index, value ) {
-      var add_class = '';
-      if(index == 'all')
-        add_class = ' current';
-      el.append( $.parseHTML( '<a data-category="'+ index +'" class="theme-section theme-category'+ add_class +'" href="#">' + value + '</a>' ) );
-    });
+    el.append( $( '.filter-count' ) );
+
+      el.append( $.parseHTML( '<span style="display:none;" class="theme-categories-label">' + l10n.categories + '</span>' ) );
+      el.append( '<ul class="filter-links"></ul>' );
+      var el_ul = el.find('.filter-links');
+      $.each(categories, function( index, value ) {
+        var add_class = '';
+        if(index == 'all')
+          add_class = ' current';
+        el_ul.append( $.parseHTML( '<li><a data-category="'+ index +'" class="theme-category '+ add_class +'" href="#">' + value + '</a></li>' ) );
+      });
   },
 
   // Runs a search on the theme collection.

@@ -1,7 +1,9 @@
 
 <div class="wrap">
 	<h2><?php echo stripslashes( $this->options['themes_page_title'] ); ?>
-		<span class="theme-count"><?php echo count( $this->themes_data ); ?></span>
+		<div class="filter-count">
+			<span class="count theme-count"><?php echo count( $this->themes_data ); ?></span>
+		</div>
 	</h2>
 	<?php if($this->options['themes_page_description']) { ?>
 	<p class="page-description">

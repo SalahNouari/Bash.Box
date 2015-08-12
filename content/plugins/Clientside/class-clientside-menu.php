@@ -57,11 +57,11 @@ class Clientside_Menu {
 		global $menu;
 		foreach ( $menu as $menuitem_key => $menuitem ) {
 			// Collapse menu button
-			if ( $menuitem[2] == 'clientside-menu-collapse' ) {
+			if ( isset( $menuitem[2] ) && $menuitem[2] == 'clientside-menu-collapse' ) {
 				$menu[ $menuitem_key ][2] = '#';
 			}
 			// View Site button
-			if ( $menuitem[2] == 'clientside-view-site' ) {
+			if ( isset( $menuitem[2] ) && $menuitem[2] == 'clientside-view-site' ) {
 				$menu[ $menuitem_key ][2] = home_url();
 			}
 		}
@@ -134,6 +134,10 @@ class Clientside_Menu {
 
 		// Each main menu item
 		foreach ( $menu as $item_key => $item ) {
+
+			if ( ! isset( $item[2] ) ) {
+				continue;
+			}
 
 			$item_slug = $item[2];
 			$item_title = $item[0];

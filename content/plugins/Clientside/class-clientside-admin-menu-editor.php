@@ -9,6 +9,7 @@ class Clientside_Admin_Menu_Editor {
 	static $main_menus = array();
 	static $sub_menus = array();
 	static $new_order = array();
+	static $unremove_items = array();
 	static $remove_items = array();
 	static $saved_customizations = array();
 	static $admin_locked = array(
@@ -35,7 +36,9 @@ class Clientside_Admin_Menu_Editor {
 			// Save as $slug => $item array
 			ksort( $menu );
 			foreach ( $menu as $position => $mainmenu_item ) {
-				self::$main_menus[ $mainmenu_item[2] ] = $mainmenu_item;
+				if ( isset( $mainmenu_item[2] ) ) {
+					self::$main_menus[ $mainmenu_item[2] ] = $mainmenu_item;
+				}
 			}
 			// Save as $parent_slug => $items array
 			self::$sub_menus = $submenu;
@@ -111,12 +114,6 @@ class Clientside_Admin_Menu_Editor {
 		$capability = $item_info[1];
 		$icon = isset( $item_info[5] ) ? $item_info[5] : '';
 
-		// Exception capabilities
-		//todo Make generic & more flexible (disabled roles will be manageable aswel) by making the menu-editor re-apply an accurate capability
-		if ( $capability == 'gform_full_access' ) {
-			$capability = 'edit_theme_options';
-		}
-
 		?>
 		<div class="clientside-admin-menu-editor-page">
 			<a href="#" class="clientside-admin-menu-editor-item-edit -expand"><?php _e( 'Edit', 'clientside' ); ?></a>
@@ -145,35 +142,38 @@ class Clientside_Admin_Menu_Editor {
 					<?php foreach ( Clientside_User::get_all_roles() as $role ) {
 
 						$field_id = $name_prefix . '_role_' . $role['slug'];
-						$saved_value = null;
+						$saved_role_value = null;
+						$role_default = 1;
+						$role_disabled = false;
 
+						// If this admin has the required capability
+						if ( Clientside_User::is_admin() && ( ( ! is_multisite() && $role['slug'] == 'administrator' ) || $role['slug'] == 'super' ) && current_user_can( $capability ) ) {
+							$role_default = 1;
+						}
 						// If the role can not access this page anyway
-						if ( ! array_key_exists( $capability, $role['capabilities'] ) ) {
-							$disabled = true;
-							$saved_value = 0;
+						else if ( ! array_key_exists( $capability, $role['capabilities'] ) ) {
+							//$role_disabled = true;
+							//$saved_role_value = 0;
+							$role_default = 0;
 						}
 						// Only let Super Admins manage Super Admin preferences
-						else if ( $role['slug'] == 'super' && ! is_super_admin() ) {
-							$disabled = true;
+						if ( $role['slug'] == 'super' && ! is_super_admin() ) {
+							$role_disabled = true;
 						}
 						// If the page is locked to the admin roles
-						else if ( Clientside_User::is_admin() && ( ( ! is_multisite() && $role['slug'] == 'administrator' ) || $role['slug'] == 'super' ) && in_array( $name_prefix, self::$admin_locked ) ) {
-							$disabled = true;
-							$saved_value = 1;
-						}
-						// Regular situation
-						else {
-							$disabled = false;
+						if ( Clientside_User::is_admin() && ( ( ! is_multisite() && $role['slug'] == 'administrator' ) || $role['slug'] == 'super' ) && in_array( $name_prefix, self::$admin_locked ) ) {
+							$role_disabled = true;
+							$saved_role_value = 1;
 						}
 
 						// Get saved value unless it's forced before
-						if ( is_null( $saved_value ) ) {
-							$saved_value = isset( $customizations[ $array_key . '[roles][' . $role['slug'] . ']' ] ) ? $customizations[ $array_key . '[roles][' . $role['slug'] . ']' ] : 1;
+						if ( is_null( $saved_role_value ) ) {
+							$saved_role_value = isset( $customizations[ $array_key . '[roles][' . $role['slug'] . ']' ] ) ? $customizations[ $array_key . '[roles][' . $role['slug'] . ']' ] : $role_default;
 						}
 						?>
 
-						<label class="<?php if ( $disabled ) { echo 'form-label-disabled'; } ?>" for="<?php echo esc_attr( $field_id ); ?>">
-							<input type="checkbox" id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name_prefix . '[roles][' . $role['slug'] . ']' ); ?>" value="1" <?php checked( $saved_value ); ?> <?php disabled( $disabled ); ?>>
+						<label class="<?php if ( $role_disabled ) { echo 'form-label-disabled'; } ?>" for="<?php echo esc_attr( $field_id ); ?>">
+							<input type="checkbox" id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $name_prefix . '[roles][' . $role['slug'] . ']' ); ?>" value="1" <?php checked( $saved_role_value ); ?> <?php disabled( $role_disabled ); ?>>
 							<?php echo $role['name']; ?>
 						</label>
 
@@ -232,7 +232,6 @@ class Clientside_Admin_Menu_Editor {
 			}
 
 			$is_submenu = $key === 'submenu-' . $value . '[slug]';
-			$realslug = $value;
 			$slug = $is_submenu ? 'submenu-' . $value : $value;
 			$parent = $is_submenu ? $customizations[ $slug . '[parent]' ] : false;
 			$hide = isset( $customizations[ $slug . '[roles][' . Clientside_User::get_user_role() . ']' ] ) && ! $customizations[ $slug . '[roles][' . Clientside_User::get_user_role() . ']' ];
@@ -245,9 +244,14 @@ class Clientside_Admin_Menu_Editor {
 			// Prepare for role-based hiding
 			if ( $hide ) {
 				self::$remove_items[] = array(
-					'slug' => $realslug,
+					'slug' => $value,
 					'parent' => $parent
 				);
+			}
+
+			// Prepare for role-based unhiding (when the item would normally be hidden by capability restriction but is specifically enabled in the menu editor)
+			else {
+				self::$unremove_items[] = $value;
 			}
 
 		}
@@ -287,6 +291,34 @@ class Clientside_Admin_Menu_Editor {
 
 	}
 
+	// Apply role-based showing of menu items that would normally be hidden by capability restriction
+	static function action_apply_custom_menu_unremoval() {
+
+		// Only if items are to be processed
+		if ( empty( self::$unremove_items ) ) {
+			return;
+		}
+
+		// Apply new cap to menu item
+		global $menu;
+		global $submenu;
+		foreach ( self::$unremove_items as $item_slug ) {
+			foreach ( $menu as $menu_item_key => $menu_item ) {
+				if ( isset( $menu_item[2] ) && $menu_item[2] == $item_slug ) {
+					$menu[ $menu_item_key ][1] = 'read';
+				}
+			}
+			foreach ( $submenu as $main_menu_item_key => $main_menu_item ) {
+				foreach ( $main_menu_item as $menu_item_key => $menu_item ) {
+					if ( isset( $menu_item[2] ) && $menu_item[2] == $item_slug ) {
+						$submenu[ $main_menu_item_key ][ $menu_item_key ][1] = 'read';
+					}
+				}
+			}
+		}
+
+	}
+
 	// Apply the renaming of menu items, based on the admin menu customizations
 	static function action_apply_custom_menu_renaming() {
 
@@ -301,6 +333,10 @@ class Clientside_Admin_Menu_Editor {
 
 		// Each main menu item
 		foreach ( $menu as $mainmenu_key => $mainmenu_item ) {
+
+			if ( ! isset( $mainmenu_item[2] ) ) {
+				continue;
+			}
 
 			$mainmenu_item_slug = $mainmenu_item[2];
 			$mainmenu_array_key = $mainmenu_item_slug;

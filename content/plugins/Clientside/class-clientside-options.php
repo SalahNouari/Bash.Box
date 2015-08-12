@@ -26,7 +26,6 @@ class Clientside_Options {
 					'logo-image',
 					'hide-login-logo',
 					'hide-menu-logo',
-					'paging-posts',
 					'disable-login-errors',
 					'remove-version-header',
 					'hide-updates',
@@ -54,13 +53,15 @@ class Clientside_Options {
 				'title' => _x( 'Post Listing Options', 'Option section name', 'clientside' ),
 				'page' => 'clientside-options-general',
 				'options' => array(
+					'paging-posts',
 					'hide-post-list-date-filter',
 					'hide-post-list-category-filter',
 					'hide-top-paging',
 					'hide-top-bulk',
 					'hide-post-search',
 					'hide-view-switch',
-					'hide-media-bulk-select'
+					'hide-media-bulk-select',
+					'hide-user-role-changer'
 				)
 			),
 			'clientside-section-toolbar' => array(
@@ -267,6 +268,17 @@ class Clientside_Options {
 				'type' => 'checkbox',
 				'default' => 0,
 				'role-based' => true
+			)
+		);
+
+		$options['hide-user-role-changer'] = array_merge(
+			$default_args,
+			array(
+				'name' => 'hide-user-role-changer',
+				'title' => _x( 'Hide User Role Changer', 'Option title', 'clientside' ),
+				'help' => _x( 'Hides the role changing dropdown above user-listings.', 'Option description', 'clientside' ),
+				'type' => 'checkbox',
+				'default' => 0
 			)
 		);
 

@@ -11,7 +11,7 @@ class Clientside_Toolbar {
 
 		// Toolbar styling
 		if ( is_admin_bar_showing() && Clientside_Options::get_saved_option( 'enable-admin-theme' ) && Clientside_Options::get_saved_option( 'enable-site-toolbar-theme' ) ) {
-			wp_enqueue_style( 'clientside-toolbar-css', plugins_url( 'css/clientside-site-toolbar.min.css', __FILE__ ), array(), '1.1.7' );
+			wp_enqueue_style( 'clientside-toolbar-css', plugins_url( 'css/clientside-site-toolbar.min.css', __FILE__ ), array(), '1.1.12' );
 		}
 
 	}

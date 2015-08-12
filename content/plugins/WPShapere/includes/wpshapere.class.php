@@ -747,6 +747,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 		if ( 200 == wp_remote_retrieve_response_code( $file_contents ) ) {
                                                 $icon_contents = $file_contents['body'];
                                         }
+  
 		$icons = array();
 		if(!empty($icon_contents)) {
                                             preg_match_all($pattern, $icon_contents, $matches, PREG_SET_ORDER);
@@ -754,6 +755,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                                                     $icons[$match[1]] = $match[2];
                                             }
                                         }
+                                        return $icons;
 	}
 	
 	public function wpsiconStyles(){

@@ -22,7 +22,7 @@ table#psts_checkout_grid {
 	text-shadow: 1px 1px 2px #222;
 	background: #b8cad8;
 	background: -moz-linear-gradient(top, #b8cad8 1%, #5d7a93 3%, #5d7a93 36%, #4f687c 56%, #234966 99%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(2%,#b8cad8), color-stop(4%,#5d7a93), color-stop(36%,#5d7a93), color-stop(56%,#4f687c), color-stop(99%,#234966));
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(2%,#b8cad8), color-stop(4%,#5d7a93), color-stop(36%,#5d7a93), color-stop(56%,#4f687c), color-stop(99%,#234966));	     	 	   	  	 	
 	background: -webkit-linear-gradient(top, #b8cad8 1%,#5d7a93 3%,#5d7a93 36%,#4f687c 56%,#234966 99%);
 	background: -o-linear-gradient(top, #b8cad8 1%,#5d7a93 3%,#5d7a93 36%,#4f687c 56%,#234966 99%);
 	background: -ms-linear-gradient(top, #b8cad8 1%,#5d7a93 3%,#5d7a93 36%,#4f687c 56%,#234966 99%);
@@ -544,6 +544,10 @@ ul.pricing-column li, .pricing-column ul li {
 	display: block;
 }
 
+.feature-section-wrapper {
+    overflow: hidden;
+}
+
 .feature-section,
 .pricing-column {
 	list-style:none;
@@ -557,6 +561,10 @@ ul.pricing-column li, .pricing-column ul li {
 	margin:0;
 }
 
+.feature-content .feature-name {
+    /*font-size: 17px;*/
+    text-align: center;
+}
 
 li.summary {
 	position:relative;
@@ -710,8 +718,8 @@ ul.pricing-column ul.feature-section li {
 }
 .pricing-column:first-child .summary {
 	border: none;
-	/*position:relative;*/
-	/*font-size: 1em;*/
+	position:relative;
+	font-size: 1em;
 }
 
 .pricing-column .summary.no-periods {
@@ -814,20 +822,12 @@ ul.pricing-column ul.feature-section li {
 .pricing-column.featured .title {
 	border-width: 5px;
 }
-.pricing-column.featured .title.no-title {
-
-}
 .pricing-column.featured .summary {
 	border-width: 5px;
-}
-.pricing-column.featured .sub-title {
-
+	border-bottom: 1px solid #B6B6B6;
 }
 .pricing-column.featured .sub-title.no-title {
 	border-width: 5px;
-}
-.pricing-column.featured .sub-title.no-header {
-
 }
 .pricing-column.featured .feature-section {
 	border-width: 5px;
@@ -841,6 +841,12 @@ ul.pricing-column ul.feature-section li {
 }
 .pricing-column.featured .button-box.no-button {
 
+}
+.pricing-column.featured .period-selector {
+    border-bottom: 0;
+}
+.pricing-column.featured .title.no-title.no-summary {
+    border-bottom: 1px solid #B6B6B6;
 }
 
 /* Other formatting */
@@ -940,22 +946,12 @@ ul.pricing-column ul.feature-section li {
 }
 
 #prosites-checkout-table .coupon-wrapper {
-    /*clear: both;*/
-    /*padding-top: 8px;*/
-    /*font-size: 0.8em;*/
-    /*margin: 0 auto;*/
-    /*width: 80%;*/
-}
-
-#prosites-checkout-table .coupon-wrapper {
-    /*border: 1px solid;*/
     clear: both;
-    /*float: left;*/
     font-size: 0.8em;
     margin: 6px auto;
     padding-top: 8px;
     text-align: center;
-    /*width: 27.5em;*/
+    top: 20px;
 }
 
 #prosites-checkout-table .coupon-wrapper .coupon-box {
@@ -1110,6 +1106,9 @@ ul.pricing-column.not-chosen-plan .button-box button {
 }
 
 /* === GATEWAYS === */
+.checkout-gateways {
+    margin-top: 30px;
+}
 #gateways ul {
     margin:0;
 }
@@ -1188,7 +1187,7 @@ ul.pricing-column.not-chosen-plan .button-box button {
     text-align: center;
     margin-top: 3px;
     position:relative;
-    top: 3px;
+    top: 12px;
     clear:both;
     cursor: pointer;
 
@@ -1219,6 +1218,7 @@ ul.pricing-column.not-chosen-plan .button-box button {
 
 .period-selector-container {
     margin: 0 auto;
+    overflow: hidden;
 }
 
 .period-selector-container .period-option {
@@ -1393,4 +1393,4 @@ ul.pricing-column.not-chosen-plan .button-box button {
 }
 
 
-/* 133620-1435761437-au */
+/* 133620-1439422441-au */

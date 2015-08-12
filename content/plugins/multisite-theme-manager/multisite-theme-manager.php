@@ -3,7 +3,7 @@
 Plugin Name: Multisite Theme Manager
 Plugin URI: http://premium.wpmudev.org/multisite-theme-manager/
 Description: Take control of the theme admin page for your multisite network. Categorize your themes into groups, modify the name, description, and screenshot used for themes.
-Version: 1.1
+Version: 1.1.1
 Network: true
 Text Domain: wmd_multisitethememanager
 Author: WPMU DEV
@@ -131,7 +131,9 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 			'themes_auto_screenshots_by_name' => '0',
 			'themes_page_title' => __('Themes', 'wmd_multisitethememanager'),
 			'themes_page_description' => '',
-			'themes_link_label' => __('Learn more about theme', 'wmd_multisitethememanager')
+			'themes_link_label' => __('Learn more about theme', 'wmd_multisitethememanager'),
+			'author_link_target' => '',
+			'custom_link_target' => ''
 		);
 
 		//load options
@@ -268,10 +270,10 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 		}
 		//register scripts and styles for network theme page
 		elseif($hook == 'themes.php' && is_network_admin()) {
-			wp_register_style('wmd-prettythemes-network-admin', $this->plugin_dir_url.'multisite-theme-manager-files/css/network-admin.css', array(), 2);
+			wp_register_style('wmd-prettythemes-network-admin', $this->plugin_dir_url.'multisite-theme-manager-files/css/network-admin.css', array(), 4);
 			wp_enqueue_style('wmd-prettythemes-network-admin');
 
-			wp_register_script('wmd-prettythemes-network-admin', $this->plugin_dir_url.'multisite-theme-manager-files/js/network-admin.js', array(), 3, true);
+			wp_register_script('wmd-prettythemes-network-admin', $this->plugin_dir_url.'multisite-theme-manager-files/js/network-admin.js', array(), 4, true);
 			wp_enqueue_script('wmd-prettythemes-network-admin');
 
 			$themes_custom_data_ready = $this->get_converted_themes_data_for_js($this->get_merged_themes_custom_data());
@@ -309,14 +311,9 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 			else
 				$theme_path = get_stylesheet();
 
-			if(isset($theme_path) && isset($themes_custom_data_ready[$theme_path]))
-				$theme = $themes_custom_data_ready[$theme_path];
-
-			if($theme) {
-				wp_register_script('wmd-prettythemes-customize', $this->plugin_dir_url.'multisite-theme-manager-files/js/customize.js', false, true);
-				wp_enqueue_script('wmd-prettythemes-customize');
-				wp_localize_script( 'wmd-prettythemes-customize', 'wmd_msreader', array('current_theme' => $theme) );
-			}
+			wp_register_script('wmd-prettythemes-customize', $this->plugin_dir_url.'multisite-theme-manager-files/js/customize.js', false, 4);
+			wp_enqueue_script('wmd-prettythemes-customize');
+			wp_localize_script( 'wmd-prettythemes-customize', 'prettythemes_customize', array('current_theme_path' => $theme_path, 'themes_custom_data' => $themes_custom_data_ready) );
 		}
 	}
 
@@ -384,7 +381,7 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 	function admin_body_class($classes) {
 		global $pagenow;
 
-		if(!is_network_admin() && $pagenow == 'themes.php' && $_GET['page'] == 'multisite-theme-manager.php')
+		if(!is_network_admin() && $pagenow == 'themes.php' && isset($_GET['page']) && $_GET['page'] == 'multisite-theme-manager.php')
 			return ($classes) ? $classes.' themes-php' : 'themes-php';
 	}
 

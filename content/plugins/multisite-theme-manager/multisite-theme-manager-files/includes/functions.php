@@ -116,7 +116,7 @@ class WMD_PrettyThemes_Functions {
 			foreach ($categories as $category_key => $category_name) {
 				$category_valid = false;
 				foreach ($themes as $theme_path => $theme_details) {
-					if(is_array($theme_details['categories_keys']) && in_array($category_key, $theme_details['categories_keys'])) {
+					if(isset($theme_details['categories_keys']) && is_array($theme_details['categories_keys']) && in_array($category_key, $theme_details['categories_keys'])) {
 						$category_valid = true;
 						break;
 					}
@@ -196,8 +196,13 @@ class WMD_PrettyThemes_Functions {
 		$themes_custom_data_ready = array();
 		foreach ($themes_custom_data_source as $path => $details) {
 			$possible_data = array('Name', 'Description', 'Categories', 'CustomLink', 'CustomLinkLabel', 'ScreenShot', 'ScreenShotID');
-			foreach ($possible_data as $possible_data_name)
+			$strip_slashes = array('Name', 'Description', 'CustomLinkLabel');
+			foreach ($possible_data as $possible_data_name) {
+				if(in_array($possible_data_name, $strip_slashes))
+					$details[$possible_data_name] = stripslashes($details[$possible_data_name]);
+
 				$details[$possible_data_name] = (isset($details[$possible_data_name]) && !empty($details[$possible_data_name])) ? $details[$possible_data_name] : null;
+			}
 
 			$details['ScreenShotPreview'] = $this->get_screenshot_url($details['ScreenShot'], $path);
 
@@ -205,11 +210,11 @@ class WMD_PrettyThemes_Functions {
 
 			$themes_custom_data_ready[$path] = array(
 					'path' => $path,
-					'name' => stripslashes($details['Name']),
-					'description' => stripslashes($details['Description']),
+					'name' => $details['Name'],
+					'description' => $details['Description'],
 					'categories' => $details['Categories'],
 					'custom_url' => $details['CustomLink'],
-					'custom_url_label' => stripslashes($details['CustomLinkLabel']),
+					'custom_url_label' => $details['CustomLinkLabel'],
 					'image_url' => $details['ScreenShot'],
 					'image_url_preview' => $details['ScreenShotPreview'],
 					'image_id' => $details['ScreenShotID'],
