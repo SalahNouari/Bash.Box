@@ -6,6 +6,9 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.2.5 =
+* Fixed second issues with site theme customizer
+
 = 2.7.2.4 =
 * Fixed issues with site theme customizer
 
@@ -440,4 +443,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1439422430-au
+133620-1439476527-au

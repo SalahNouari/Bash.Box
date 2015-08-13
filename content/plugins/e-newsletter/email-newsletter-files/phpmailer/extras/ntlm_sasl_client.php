@@ -30,7 +30,7 @@ class ntlm_sasl_client_class
 				"mcrypt_encrypt"=>"mcrypt",
 				"mhash"=>"mhash"
 			);
-			$client->error="the extension ".$extensions[$function]." required by the NTLM SASL client class is not available in this PHP configuration";	     	 	 		 			 	
+			$client->error="the extension ".$extensions[$function]." required by the NTLM SASL client class is not available in this PHP configuration";
 			return(0);
 		}
 		return(1);

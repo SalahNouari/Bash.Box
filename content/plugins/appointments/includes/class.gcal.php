@@ -293,7 +293,7 @@ class AppointmentsGcal {
 				if ( $result )
 					$message .= __('Test is successful. Please REFRESH your Google Calendar and check that test appointment has been saved.','appointments');
 				else {
-					$message .= App_Google_ServiceException::getErrors();
+					$message .= __('Test failed. Please inspect your log for more info.', 'appointments');
 					$error = true;
 				}
 			}
@@ -858,8 +858,10 @@ class AppointmentsGcal {
 		// Just in case
 		require_once $this->plugin_dir . '/includes/external/google/Client.php';
 
-		$extra_config = apply_filters('app-gcal-client_parameters', array());
-		$this->client = new App_Google_Client($extra_config);
+		$config = new App_Google_AppointmentsGoogleConfig(apply_filters('app-gcal-client_parameters', array(
+			//'cache_class' => 'App_Google_Cache_Null', // For an example
+		)));
+		$this->client = new App_Google_Client($config);
 		$this->client->setApplicationName("Appointments+");
 		//$this->client->setUseObjects(true);
 		$key = $this->_file_get_contents( $worker_id );
@@ -1154,7 +1156,20 @@ class AppointmentsGcal {
 			'orderBy' => apply_filters('app_gcal_orderby', 'startTime'),
 		));
 		// Get only future events and limit them with appointment limit setting and 500 events
-		$events = $this->service->events->listEvents($this->get_selected_calendar($worker_id), $arguments);
+		$error_code = false;
+		try {
+			$events = $this->service->events->listEvents($this->get_selected_calendar($worker_id), $arguments);
+		} catch (Exception $e) {
+			$error_code = is_callable(array($e, 'getCode'))
+				? $e->getCode()
+				: 'Unknown'
+			;
+		}
+
+		// Simulate `finally` keyword
+		if (!empty($error_code)) {
+			$appointments->log(sprintf("Error fetching Google events: %s", $error_code));
+		}
 //$appointments->log(sprintf("got back some events: %d", ($events ? 1 : 0)));
 
 		if ($events && class_exists('App_Google_Service_Calendar_Events') && !($events instanceof App_Google_Service_Calendar_Events)) {
@@ -1270,4 +1285,5 @@ class AppointmentsGcal {
 		return in_array($status, $syncable_status);
 	}
 }
+
 }
