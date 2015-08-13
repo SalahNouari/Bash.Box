@@ -2,45 +2,99 @@
 //* Start the engine
 include_once( get_template_directory() . '/lib/init.php' );
 
+//* Setup Theme
+include_once( get_stylesheet_directory() . '/lib/theme-defaults.php' );
+
 //* Set Localization (do not remove)
-load_child_theme_textdomain( 'streamline', apply_filters( 'child_theme_textdomain', get_stylesheet_directory() . '/languages', 'streamline' ) );
+load_child_theme_textdomain( 'altitude', apply_filters( 'child_theme_textdomain', get_stylesheet_directory() . '/languages', 'altitude' ) );
+
+//* Add Image upload and Color select to WordPress Theme Customizer
+require_once( get_stylesheet_directory() . '/lib/customize.php' );
+
+//* Include Customizer CSS
+include_once( get_stylesheet_directory() . '/lib/output.php' );
 
 //* Child theme (do not remove)
-define( 'CHILD_THEME_NAME', __( 'Streamline Pro Theme', 'streamline' ) );
-define( 'CHILD_THEME_URL', 'http://my.studiopress.com/streamline/' );
-define( 'CHILD_THEME_VERSION', '3.0.1' );
+define( 'CHILD_THEME_NAME', 'Epic Encore Ent. v2' );
+define( 'CHILD_THEME_URL', 'http://epicencoreent.com/' );
+define( 'CHILD_THEME_VERSION', '2.0.0' );
+
+//* Enqueue scripts and styles
+add_action( 'wp_enqueue_scripts', 'altitude_enqueue_scripts_styles' );
+function altitude_enqueue_scripts_styles() {
+
+	wp_enqueue_script( 'altitude-global', get_bloginfo( 'stylesheet_directory' ) . '/js/global.js', array( 'jquery' ), '1.0.0' );
+
+	wp_enqueue_style( 'dashicons' );
+	wp_enqueue_style( 'altitude-google-fonts', '//fonts.googleapis.com/css?family=Ek+Mukta:200,800', array(), CHILD_THEME_VERSION );
+
+}
 
 //* Add HTML5 markup structure
-add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list' ) );
+add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ) );
 
 //* Add viewport meta tag for mobile browsers
 add_theme_support( 'genesis-responsive-viewport' );
 
-//* Enqueue PT Sans Google font
-add_action( 'wp_enqueue_scripts', 'streamline_google_fonts' );
-function streamline_google_fonts() {
-
-	wp_enqueue_style( 'google-fonts', '//fonts.googleapis.com/css?family=PT+Sans:400,700', array(), CHILD_THEME_VERSION );
-	
-}
-
-//* Enqueue Responsive Menu Script
-add_action( 'wp_enqueue_scripts', 'streamline_enqueue_responsive_script' );
-function streamline_enqueue_responsive_script() {
-
-	wp_enqueue_script( 'streamline-responsive-menu', get_bloginfo( 'stylesheet_directory' ) . '/js/responsive-menu.js', array( 'jquery' ), '1.0.0' );
-
-}
-
-//* Add support for additional color style options
-add_theme_support( 'genesis-style-selector', array( 
-	'streamline-pro-blue'  => __( 'Streamline Pro Blue', 'streamline' ), 
-	'streamline-pro-green' => __( 'Streamline Pro Green', 'streamline' ),
-) );
-
 //* Add new image sizes
-add_image_size( 'post-image', 760, 360, TRUE );
-add_image_size( 'widget-image', 295, 200, TRUE );
+add_image_size( 'featured-page', 1140, 400, TRUE );
+add_image_size( 'home-quad', 504, 200, TRUE );
+
+//* Add support for 1-column footer widget area
+add_theme_support( 'genesis-footer-widgets', 1 );
+
+//* Add support for footer menu
+add_theme_support ( 'genesis-menus' , array ( 'primary' => 'Primary Navigation Menu', 'secondary' => 'Secondary Navigation Menu', 'footer' => 'Footer Navigation Menu' ) );
+
+//* Add support for footer menu
+add_filter( 'genesis_footer_output', 'lad_footer_output', 10, 3 );
+function lad_footer_output( $creds ) {
+	$creds ='<a href="#" class="top">Return to top of page</a><div class="creds"><p>Copyright © 2015 · Epic Encore Ent.</p><p>Powered by the <a href="http://www.lakesareadesign.com/" title="Lakes Area Design">Lakes Area Design</a> Network</p></div>';
+return $creds;
+}
+
+//* Unregister the header right widget area
+unregister_sidebar( 'header-right' );
+
+//* Reposition the primary navigation menu
+remove_action( 'genesis_after_header', 'genesis_do_nav' );
+add_action( 'genesis_header', 'genesis_do_nav', 12 );
+
+//* Remove output of primary navigation right extras
+remove_filter( 'genesis_nav_items', 'genesis_nav_right', 10, 2 );
+remove_filter( 'wp_nav_menu_items', 'genesis_nav_right', 10, 2 );
+
+//* Reposition the secondary navigation menu
+remove_action( 'genesis_after_header', 'genesis_do_subnav' );
+add_action( 'genesis_header', 'genesis_do_subnav', 5 );
+
+//* Add secondary-nav class if secondary navigation is used
+add_filter( 'body_class', 'altitude_secondary_nav_class' );
+function altitude_secondary_nav_class( $classes ) {
+
+	$menu_locations = get_theme_mod( 'nav_menu_locations' );
+
+	if ( ! empty( $menu_locations['secondary'] ) ) {
+		$classes[] = 'secondary-nav';
+	}
+	return $classes;
+
+}
+
+//* Hook menu in footer
+add_action( 'genesis_footer', 'rainmaker_footer_menu', 7 );
+function rainmaker_footer_menu() {
+	printf( '<nav %s>', genesis_attr( 'nav-footer' ) );
+	wp_nav_menu( array(
+		'theme_location' => 'footer',
+		'container'      => false,
+		'depth'          => 1,
+		'fallback_cb'    => false,
+		'menu_class'     => 'genesis-nav-menu',	
+	) );
+	
+	echo '</nav>';
+}
 
 //* Unregister layout settings
 genesis_unregister_layout( 'content-sidebar-sidebar' );
@@ -50,116 +104,143 @@ genesis_unregister_layout( 'sidebar-sidebar-content' );
 //* Unregister secondary sidebar
 unregister_sidebar( 'sidebar-alt' );
 
-//* Add support for custom background
-add_theme_support( 'custom-background' );
-
 //* Add support for custom header
 add_theme_support( 'custom-header', array(
-	'header_image'    => '',
+	'flex-height'     => true,
+	'width'           => 360,
+	'height'          => 76,
 	'header-selector' => '.site-title a',
 	'header-text'     => false,
-	'height'          => 60,
-	'width'           => 300,
 ) );
 
-//* Add support for 3-column footer widgets
-add_theme_support( 'genesis-footer-widgets', 3 );
-
-//* Reposition the breadcrumbs
-remove_action( 'genesis_before_loop', 'genesis_do_breadcrumbs' );
-add_action( 'genesis_before_content_sidebar_wrap', 'genesis_do_breadcrumbs' );
-
-//* Customize breadcrumbs display
-add_filter( 'genesis_breadcrumb_args', 'streamline_breadcrumb_args' );
-function streamline_breadcrumb_args( $args ) {
-	$args['home'] = __( 'Home', 'streamline' );
-	$args['sep'] = ' ';
-	$args['list_sep'] = ', '; // Genesis 1.5 and later
-	$args['prefix'] = '<div class="breadcrumb">';
-	$args['suffix'] = '</div>';
-	$args['labels']['prefix'] = '<span class="icon-home"></span>';
-	return $args;
-}
-
-//* Remove default post image
-remove_action( 'genesis_entry_content', 'genesis_do_post_image', 8 );
-
-//* Add post image above post title
-add_action( 'genesis_entry_header', 'streamline_post_image', 1 );
-function streamline_post_image() {
-
-	if ( is_page() || ! genesis_get_option( 'content_archive_thumbnail' ) )
-		return;
-	
-	if ( $image = genesis_get_image( array( 'format' => 'url', 'size' => genesis_get_option( 'image_size' ) ) ) ) {
-		printf( '<a href="%s" rel="bookmark"><img class="post-photo" src="%s" alt="%s" /></a>', get_permalink(), $image, the_title_attribute( 'echo=0' ) );
-	}
-	
-}
-
-//* Reposition the post info function
-remove_action( 'genesis_entry_header', 'genesis_post_info', 12 );
-add_action( 'genesis_entry_header', 'genesis_post_info', 2 );
-
-//* Customize the post info function
-add_filter( 'genesis_post_info', 'post_info_filter' );
-function post_info_filter( $post_info ) {
-
-	if ( !is_page() ) {
-    	$post_info = '[post_author_posts_link] [post_date] [post_comments] [post_edit]';
-    	return $post_info;
-	}
-	
-}
-
-//* Add the after entry section
-add_action( 'genesis_entry_footer', 'streamline_after_entry', 10 );
-function streamline_after_entry() {
-	
-	if ( ! is_singular( 'post' ) ) return;
-	
-	genesis_widget_area( 'after-entry', array(
-		'before' => '<div class="after-entry widget-area">',
-		'after'  => '</div>',
-   ) );
-   
-}
+//* Add support for structural wraps
+add_theme_support( 'genesis-structural-wraps', array(
+	'header',
+	'nav',
+	'subnav',
+	'footer-widgets',
+	'footer',
+) );
 
 //* Modify the size of the Gravatar in the author box
-add_filter( 'genesis_author_box_gravatar_size', 'streamline_author_box_gravatar_size' );
-function streamline_author_box_gravatar_size( $size ) {
+add_filter( 'genesis_author_box_gravatar_size', 'altitude_author_box_gravatar' );
+function altitude_author_box_gravatar( $size ) {
 
-    return '80';
-    
+	return 176;
+
+}
+
+//* Modify the size of the Gravatar in the entry comments
+add_filter( 'genesis_comment_list_args', 'altitude_comments_gravatar' );
+function altitude_comments_gravatar( $args ) {
+
+	$args['avatar_size'] = 120;
+	return $args;
+
 }
 
 //* Remove comment form allowed tags
-add_filter( 'comment_form_defaults', 'streamline_remove_comment_form_allowed_tags' );
-function streamline_remove_comment_form_allowed_tags( $defaults ) {
+add_filter( 'comment_form_defaults', 'altitude_remove_comment_form_allowed_tags' );
+function altitude_remove_comment_form_allowed_tags( $defaults ) {
 
-	$defaults['comment_notes_after'] = '';
+	$defaults['comment_field'] = '<p class="comment-form-comment"><label for="comment">' . _x( 'Comment', 'noun', 'altitude' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>';
+	$defaults['comment_notes_after'] = '';	
 	return $defaults;
+
+}
+
+//* Add support for after entry widget
+add_theme_support( 'genesis-after-entry-widget-area' );
+
+//* Relocate after entry widget
+remove_action( 'genesis_after_entry', 'genesis_after_entry_widget_area' );
+add_action( 'genesis_after_entry', 'genesis_after_entry_widget_area', 5 );
+
+//* Setup widget counts
+function altitude_count_widgets( $id ) {
+	global $sidebars_widgets;
+
+	if ( isset( $sidebars_widgets[ $id ] ) ) {
+		return count( $sidebars_widgets[ $id ] );
+	}
+
+}
+
+function altitude_widget_area_class( $id ) {
+	$count = altitude_count_widgets( $id );
+
+	$class = '';
+	
+	if( $count == 1 ) {
+		$class .= ' widget-full';
+	} elseif( $count % 3 == 1 ) {
+		$class .= ' widget-thirds';
+	} elseif( $count % 4 == 1 ) {
+		$class .= ' widget-fourths';
+	} elseif( $count % 2 == 0 ) {
+		$class .= ' widget-halves uneven';
+	} else {	
+		$class .= ' widget-halves';
+	}
+	return $class;
 	
 }
 
-// Register widget areas
+//* Relocate the post info
+remove_action( 'genesis_entry_header', 'genesis_post_info', 12 );
+add_action( 'genesis_entry_header', 'genesis_post_info', 5 );
+
+//* Customize the entry meta in the entry header
+add_filter( 'genesis_post_info', 'altitude_post_info_filter' );
+function altitude_post_info_filter( $post_info ) {
+
+    $post_info = '[post_date format="M d Y"] [post_edit]';
+    return $post_info;
+
+}
+
+//* Customize the entry meta in the entry footer
+add_filter( 'genesis_post_meta', 'altitude_post_meta_filter' );
+function altitude_post_meta_filter( $post_meta ) {
+
+	$post_meta = 'Written by [post_author_posts_link] [post_categories before=" &middot; Categorized: "]  [post_tags before=" &middot; Tagged: "]';
+	return $post_meta;
+	
+}
+
+//* Register widget areas
 genesis_register_sidebar( array(
-	'id'          => 'home-featured-1',
-	'name'        => __( 'Home - Featured 1', 'streamline' ),
-	'description' => __( 'This is the first featured column on the homepage.', 'streamline' ),
+	'id'          => 'front-page-1',
+	'name'        => __( 'Front Page 1', 'altitude' ),
+	'description' => __( 'This is the front page 1 section.', 'altitude' ),
 ) );
 genesis_register_sidebar( array(
-	'id'          => 'home-featured-2',
-	'name'        => __( 'Home - Featured 2', 'streamline' ),
-	'description' => __( 'This is the second featured column on the homepage.', 'streamline' ),
+	'id'          => 'front-page-2',
+	'name'        => __( 'Front Page 2', 'altitude' ),
+	'description' => __( 'This is the front page 2 section.', 'altitude' ),
 ) );
 genesis_register_sidebar( array(
-	'id'          => 'home-featured-3',
-	'name'        => __( 'Home - Featured 3', 'streamline' ),
-	'description' => __( 'This is the third featured column on the homepage.', 'streamline' ),
+	'id'          => 'front-page-3',
+	'name'        => __( 'Front Page 3', 'altitude' ),
+	'description' => __( 'This is the front page 3 section.', 'altitude' ),
 ) );
 genesis_register_sidebar( array(
-	'id'          => 'after-entry',
-	'name'        => __( 'After Entry', 'streamline' ),
-	'description' => __( 'This is the after entry section.', 'streamline' ),
+	'id'          => 'front-page-4',
+	'name'        => __( 'Front Page 4', 'altitude' ),
+	'description' => __( 'This is the front page 4 section.', 'altitude' ),
+) );
+genesis_register_sidebar( array(
+	'id'          => 'front-page-5',
+	'name'        => __( 'Front Page 5', 'altitude' ),
+	'description' => __( 'This is the front page 5 section.', 'altitude' ),
+) );
+genesis_register_sidebar( array(
+	'id'          => 'front-page-6',
+	'name'        => __( 'Front Page 6', 'altitude' ),
+	'description' => __( 'This is the front page 6 section.', 'altitude' ),
+) );
+genesis_register_sidebar( array(
+	'id'          => 'front-page-7',
+	'name'        => __( 'Front Page 7', 'altitude' ),
+	'description' => __( 'This is the front page 7 section.', 'altitude' ),
 ) );

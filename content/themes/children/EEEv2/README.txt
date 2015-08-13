@@ -1,31 +1,29 @@
-STREAMLINE PRO CHILD THEME
-http://my.studiopress.com/themes/streamline/
+ALTITUDE PRO THEME
+http://my.studiopress.com/themes/altitude/
 
 INSTALL
-1. Upload the Streamline Pro theme folder via FTP to your wp-content/themes/ directory. (The Genesis parent theme needs to be in the wp-content/themes/ directory as well.)
+1. Upload the Altitude Pro theme folder via FTP to your wp-content/themes/ directory. (The Genesis parent theme needs to be in the wp-content/themes/ directory as well.)
 2. Go to your WordPress dashboard and select Appearance.
-3. Activate the Streamline Pro theme.
-4. Inside your WordPress dashboard, go to Genesis > Theme Settings and configure them to your liking. To set up the theme like the demo, please visit http://my.studiopress.com/setup/streamline-theme/.
+3. Activate the Altitude Pro theme.
+4. Inside your WordPress dashboard, go to Genesis > Theme Settings and configure them to your liking. To set up the theme like the demo, please visit http://my.studiopress.com/setup/altitude-pro-theme/.
 
 WIDGET AREAS
-Primary Sidebar - This is the primary sidebar if you are using the Content/Sidebar, Sidebar/Content, Content/Sidebar/Sidebar, Sidebar/Sidebar/Content or Sidebar/Content/Sidebar Site Layout option.
-Secondary Sidebar - This is the secondary sidebar if you are using the Content/Sidebar/Sidebar, Sidebar/Sidebar/Content or Sidebar/Content/Sidebar Site Layout option.
-Home - Featured 1 - This is the first featured column on the homepage.
-Home - Featured 2 - This is the second featured column on the homepage.
-Home - Featured 3 - This is the third featured column on the homepage.
-After Entry - This is the after entry section.
-Footer 1 - This is the first column of the footer section.
-Footer 2 - This is the second column of the footer section.
-Footer 3 - This is the third column of the footer section.
+Primary Sidebar - This is the primary sidebar if you are using the Content/Sidebar or Sidebar/Conent Site Layout option.
+Front Page 1 - This is the first section of the home page.
+Front Page 2 - This is the second section of the home page.
+Front Page 3 - This is the third section of the home page.
+Front Page 4 - This is the fourth section of the home page.
+Front Page 5 - This is the fifth section of the home page.
+Front Page 6 - This is the sixth section of the home page.
+Front Page 7 - This is the seventh section of the home page.
+After Entry - This is the widget that appears after the entry on single posts.
+Footer #1 - This is the first column of the footer section.
 
-FEATURED IMAGES
-By default WordPress will create a default thumbnail image for each image you upload and the size can be specified in your dashboard under Settings > Media. In addition, the Streamline Pro theme creates the following thumbnail images you'll see below, which are defined (and can be modified) in the functions.php file. These are the recommended thumbnail sizes that are used on the Streamline Pro theme demo site.
-
-post-image - 760px by 360px
-post-image - 295px by 100px
+BACKGROUND IMAGES
+The background images used in the Altitude Pro theme are free of copyright and courtesy of http://www.gratisography.com/.
 
 LOCALIZATION
-The Streamline Pro theme is translation ready.  More information about the translation process can be found here:http://codex.wordpress.org/Translating_WordPress/
+The Altitude Pro theme is translation ready.  More information about the translation process can be found here:http://codex.wordpress.org/Translating_WordPress/
 
 SUPPORT
 Please visit http://my.studiopress.com/help/ for theme support.

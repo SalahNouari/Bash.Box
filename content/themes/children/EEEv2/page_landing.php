@@ -1,9 +1,9 @@
 <?php
 /**
- * This file adds the Landing template to the Streamline Pro Theme.
+ * This file adds the Landing template to the Altitude Pro Theme.
  *
  * @author StudioPress
- * @package Streamline Pro
+ * @package Altitude
  * @subpackage Customizations
  */
 
@@ -11,11 +11,11 @@
 Template Name: Landing
 */
 
-// Add custom body class to the head
-add_filter( 'body_class', 'streamline_add_body_class' );
-function streamline_add_body_class( $classes ) {
+//* Add custom body class to the head
+add_filter( 'body_class', 'altitude_add_body_class' );
+function altitude_add_body_class( $classes ) {
 
-   $classes[] = 'streamline-pro-landing';
+   $classes[] = 'altitude-landing';
    return $classes;
    
 }
@@ -29,11 +29,11 @@ remove_action( 'genesis_header', 'genesis_do_header' );
 remove_action( 'genesis_header', 'genesis_header_markup_close', 15 );
 
 //* Remove navigation
-remove_action( 'genesis_after_header', 'genesis_do_nav' );
-remove_action( 'genesis_after_header', 'genesis_do_subnav' );
+remove_action( 'genesis_header', 'genesis_do_nav', 12 );
+remove_action( 'genesis_header', 'genesis_do_subnav', 5 );
 
 //* Remove breadcrumbs
-remove_action( 'genesis_before_content_sidebar_wrap', 'genesis_do_breadcrumbs' );
+remove_action( 'genesis_before_loop', 'genesis_do_breadcrumbs' );
 
 //* Remove site footer widgets
 remove_action( 'genesis_before_footer', 'genesis_footer_widget_areas' );
