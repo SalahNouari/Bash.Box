@@ -120,22 +120,7 @@ class WDS_XML_Sitemap {
 				do_action('wds_after_search_engine_update', 'google', (bool)(@$resp['response']['code'] == '200'), $resp);
 			}
 		}
-		/*
-		// Yahoo SiteExporer is dead.
-		if ($forced || @$wds_options['ping-yahoo']) {
-			do_action('wds_before_search_engine_update', 'yahoo');
-			$resp = wp_remote_get('http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=' . esc_url($wds_options['sitemapurl']));
-			$result['yahoo'] = array(
-				'response' => $resp,
-				'time' => $now,
-			);
-			if (is_wp_error($resp)) {
-				do_action('wds_after_search_engine_update', 'yahoo', false, $resp);
-			} else {
-				do_action('wds_after_search_engine_update', 'yahoo', (bool)(@$resp['response']['code'] == '200'), $resp);
-			}
-		}
-		*/
+
 		if ($forced || @$wds_options['ping-bing']) {
 			do_action('wds_before_search_engine_update', 'bing');
 			$resp = wp_remote_get('http://www.bing.com/webmaster/ping.aspx?sitemap=' . esc_url(/*$wds_options['sitemapurl']*/wds_get_sitemap_url()));
@@ -149,35 +134,12 @@ class WDS_XML_Sitemap {
 				do_action('wds_after_search_engine_update', 'bing', (bool)(@$resp['response']['code'] == '200'), $resp);
 			}
 		}
-		// Ask.com doesn't accept sitemap pings on this address anymore
-		/*
-		if ($forced || @$wds_options['ping-ask']) {
-			do_action('wds_before_search_engine_update', 'ask');
-			$resp = wp_remote_get('http://submissions.ask.com/ping?sitemap=' . esc_url($wds_options['sitemapurl']));
-			$result['ask'] = array(
-				'response' => $resp,
-				'time' => $now,
-			);
-			if (is_wp_error($resp)) {
-				do_action('wds_after_search_engine_update', 'ask', false, $resp);
-			} else {
-				do_action('wds_after_search_engine_update', 'ask', (bool)(@$resp['response']['code'] == '200'), $resp);
-			}
-		}
-		*/
 
 		update_option('wds_engine_notification', $result);
 	}
 
 	private function _is_admin_mapped () {
 		return (bool)(is_multisite() && (is_admin() || is_network_admin()) && class_exists('domain_map'));
-		/*
-		if (is_multisite() && (is_admin() || is_network_admin()) && class_exists('domain_map')) {
-			if (get_site_option('map_admindomain') != 'original')
-				return true;
-		}
-		return false;
-		*/
 	}
 
 	private function _get_stylesheet ($xsl) {
@@ -191,7 +153,7 @@ class WDS_XML_Sitemap {
 	}
 
 	private function _write_sitemap ($map) {
-		$file = wds_get_sitemap_path();//$this->_data['sitemappath'];
+		$file = wds_get_sitemap_path();
 		@file_put_contents($file, $map);
 
 		$f = @fopen("{$file}.gz", "w");
@@ -349,7 +311,13 @@ class WDS_XML_Sitemap {
 	private function _load_post_items () {
 		global $wds_options;
 
-		$get_content = @$wds_options['sitemap-images'] ? 'post_content,' : '';
+		$get_content = !empty($wds_options['sitemap-images']) ? 'post_content,' : '';
+
+		// Cache the static front page state
+		$front_page = 'page' === get_option('show_on_front')
+			? get_option('page_on_front')
+			: false
+		;
 
 		$types = array();
 		$raw = get_post_types(array(
@@ -357,7 +325,7 @@ class WDS_XML_Sitemap {
 			'show_ui' => true,
 		));
 		foreach ($raw as $type) {
-			if (@$wds_options['post_types-' . $type . '-not_in_sitemap']) continue;
+			if (!empty($wds_options['post_types-' . $type . '-not_in_sitemap'])) continue;
 			$types[] = $type;
 		}
 		$types_query = "AND post_type IN ('" . join("', '", $types) . "')";
@@ -376,6 +344,9 @@ class WDS_XML_Sitemap {
 
 			// Check for inclusion
 			if (!apply_filters('wds-sitemaps-include_post', true, $post)) continue;
+
+			// If this is a page and it's actually the one set as static front, pass
+			if ('page' === $post->post_type && $front_page === $post->ID) continue;
 
 			$link = get_permalink($post->ID);
 

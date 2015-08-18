@@ -242,7 +242,8 @@ class WDS_Core_Admin_Tabs {
 		$sections = self::_get_allowed_sections();
 		if (empty($sections)) return false; // No allowed sections (yet), so... no step to return
 
-		return reset(array_keys($sections));
+		$sects = array_keys($sections);
+		return reset($sects);
 	}
 
 	private static function _get_all_sections () {

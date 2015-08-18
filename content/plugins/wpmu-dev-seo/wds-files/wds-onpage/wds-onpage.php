@@ -71,6 +71,8 @@ class WDS_OnPage {
 	 * If we get nothing from it, do nothing.
 	 */
 	function wds_process_title_buffer ($head) {
+		if (is_feed()) return $head;
+
 		$title_rx = '<title[^>]*?>.*?' . preg_quote('</title>');
 		$head_rx = '<head [^>]*? >';
 		$head = preg_replace('/\n/', '__WDS_NL__', $head);
@@ -100,7 +102,7 @@ class WDS_OnPage {
 			$fixed_title = wds_get_value('title');
 			if ( $fixed_title ) {
 				$title = $fixed_title;
-			} else if (isset($wds_options['title-'.$post->post_type]) && !empty($wds_options['title-'.$post->post_type]) ) {
+			} else if (!empty($post->post_type) && isset($wds_options['title-'.$post->post_type]) && !empty($wds_options['title-'.$post->post_type]) ) {
 				$title = wds_replace_vars($wds_options['title-'.$post->post_type], (array) $post );
 			}
 		} else if ( is_category() || is_tag() || is_tax() ) {
@@ -165,7 +167,7 @@ class WDS_OnPage {
 			$fixed_title = wds_get_value('title', $post_id);
 			if ( $fixed_title ) {
 				$title = $fixed_title;
-			} else if (isset($wds_options['title-'.$post->post_type]) && !empty($wds_options['title-'.$post->post_type]) ) {
+			} else if (!empty($post->post_type) && isset($wds_options['title-'.$post->post_type]) && !empty($wds_options['title-'.$post->post_type]) ) {
 				$title = wds_replace_vars($wds_options['title-'.$post->post_type], (array) $post );
 			}
 		}

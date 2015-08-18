@@ -3,7 +3,7 @@
 Plugin Name: Infinite SEO
 Plugin URI: http://premium.wpmudev.org/project/wpmu-dev-seo/
 Description: Every SEO option that a site requires, in one easy bundle.
-Version: 1.7.4
+Version: 1.7.5
 Network: true
 Text Domain: wds
 Author: WPMU DEV
@@ -28,7 +28,7 @@ WDP ID: 167
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-define( 'WDS_VERSION', '1.7.4' );
+define( 'WDS_VERSION', '1.7.5' );
 
 /**
  * Autolinks module contains code from SEO Smart Links plugin

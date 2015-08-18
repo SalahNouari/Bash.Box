@@ -5,6 +5,13 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+1.7.5 - 2015-08-15
+----------------------------------------------------------------------
+- Add 301 redirection box permission level to the defaults list.
+- Fix for titles processing in feeds output.
+- Fix and cleanup for post type checks conditionals.
+- Fix for duplicated static front page in sitemaps.
+
 1.7.4 - 2014-12-28
 ----------------------------------------------------------------------
 - Fix duplicates prevention stopping the post autolink expansion.
@@ -330,4 +337,4 @@ exist yet
 - Initial Release.
 
 
-133620-1422153899-au
+133620-1439734554-au

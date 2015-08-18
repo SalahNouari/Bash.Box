@@ -384,7 +384,7 @@ function wds_process_default_hidden_meta_boxes ($arg) {
  */
 function wds_hide_metaboxes ($arg) {
 	// Hide WP defaults, if nothing else:
-	if (empty($arg)) $arg = array('slugdiv', 'trackbacksdiv', 'postcustom', 'postexcerpt', 'commentstatusdiv', 'commentsdiv', 'authordiv', 'revisionsdiv');	     	 	 	  		 		
+	if (empty($arg)) $arg = array('slugdiv', 'trackbacksdiv', 'postcustom', 'postexcerpt', 'commentstatusdiv', 'commentsdiv', 'authordiv', 'revisionsdiv');
 	$arg[] = 'wds-wds-meta-box';
 	$arg[] = 'wds_seomoz_urlmetrics';
 	return $arg;
