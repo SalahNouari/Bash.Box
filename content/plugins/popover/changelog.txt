@@ -4,6 +4,13 @@ Author: Barry (Incsub), Marko Miljus (Incsub), Philipp Stracker (Incsub)
 Change Log:
 ----------------------------------------------------------------------
 
+4.7.1.0
+----------------------------------------------------------------------
+- Add new rules: Show on date, Hide on date
+- Fix incompatibility with ACF Pro plugin
+- Fix issue that made rules inaccessible (not clickable in editor)
+- Fix several PHP warnings and noticed
+
 4.7.0.9
 ----------------------------------------------------------------------
 - Fix bug with Display Animation field in PopUp editor
@@ -143,4 +150,4 @@ Change Log:
 - Added show on exit rule add-on.
 
 
-133620-1434914431-au
+133620-1440111512-au

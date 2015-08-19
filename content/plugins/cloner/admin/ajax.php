@@ -36,7 +36,7 @@ function cloner_autocomplete_site() {
 	}
 	else {
 		if ( $s != trim('/', $current_site->path) ) {
-			$blog_s = addcslashes( $current_site->path . $s, '_%\\' ) . $wild . addcslashes( '/', '_%\\' );
+			$blog_s = addcslashes( $current_site->path . $s, '_%\\' ) . $wild . addcslashes( '/', '_%\\' );							 					 	 	  	
 		} else {
 			$blog_s = addcslashes( $s, '_%\\' );
 		}

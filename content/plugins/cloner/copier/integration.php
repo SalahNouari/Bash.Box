@@ -26,8 +26,9 @@ $files_list = apply_filters( 'copier_integration_files', array(
 ) );
 
 foreach ( $files_list as $file ) {
-	if ( is_file( $includes_dir . $file . '.php' ) )
+	if ( is_file( $includes_dir . $file . '.php' ) ) {
 		include_once( $includes_dir . $file . '.php' );
+	}
 }
 
 
@@ -36,14 +37,15 @@ if ( ! function_exists( 'copier_search_posts_with_shortcode' ) ) {
 	 * Search posts that may have a defined shortcode in them
 	 *
 	 * @param String $shortcode Shortcode slug (no [])
+	 *
 	 * @return Array List of posts
 	 */
 	function copier_search_posts_with_shortcode( $shortcode ) {
 		return get_posts( array(
-		    'post_type' => 'any',
-		    'posts_per_page' => -1,
-		    'ignore_sticky_posts' => true,
-		    's' => $shortcode
+			'post_type'           => 'any',
+			'posts_per_page'      => - 1,
+			'ignore_sticky_posts' => true,
+			's'                   => $shortcode
 		) );
 	}
 }
@@ -63,67 +65,68 @@ if ( ! function_exists( 'copier_replace_shortcode_attributes' ) ) {
 		$shortcode_pattern = get_shortcode_regex();
 
 		foreach ( $all_posts as $post ) {
-			$_post = (array)$post;
+			$_post = (array) $post;
 
 			// Search for shortcodes in the post content
 			if (
-		        preg_match_all( '/'. $shortcode_pattern .'/s', $_post['post_content'], $matches )
-		        && array_key_exists( 2, $matches )
-		        && in_array( $shortcode, $matches[2] )
-		    ) {
-		    	$do_replace = false;
+				preg_match_all( '/' . $shortcode_pattern . '/s', $_post['post_content'], $matches )
+				&& array_key_exists( 2, $matches )
+				&& in_array( $shortcode, $matches[2] )
+			) {
+				$do_replace = false;
 				foreach ( $matches[2] as $key => $shortcode_type ) {
 
 					if ( $shortcode == $shortcode_type ) {
 						// Yeah! We have found the shortcode in this post, let's replace the ID if we can
 
-			    		// Get the shortcode attributes
-		                $atts = shortcode_parse_atts( $matches[3][ $key ] );
+						// Get the shortcode attributes
+						$atts = shortcode_parse_atts( $matches[3][ $key ] );
 
-		                if ( isset( $atts[ $shortcode_attribute ] ) ) {
-		                	// There is an ID attribute, let's replace it
-		                	$source_post_id = absint( $atts[ $shortcode_attribute ] );
+						if ( isset( $atts[ $shortcode_attribute ] ) ) {
+							// There is an ID attribute, let's replace it
+							$source_post_id = absint( $atts[ $shortcode_attribute ] );
 
-		                	if ( ! isset( $posts_map[ $source_post_id ] ) ) {
-		                		// There's not such post ID mapped in the array, let's continue
-		                		continue;
-		                	}
+							if ( ! isset( $posts_map[ $source_post_id ] ) ) {
+								// There's not such post ID mapped in the array, let's continue
+								continue;
+							}
 
-		                	if ( $source_post_id == $posts_map[ $source_post_id ] )
-		                		continue;
+							if ( $source_post_id == $posts_map[ $source_post_id ] ) {
+								continue;
+							}
 
-		                	$new_post_id = $posts_map[ $source_post_id ];
+							$new_post_id = $posts_map[ $source_post_id ];
 
-		                	// Get the original full shortcode
-		                	$full_shortcode = $matches[0][ $key ];
+							// Get the original full shortcode
+							$full_shortcode = $matches[0][ $key ];
 
-		                	// Replace the ID
-		                	$new_atts_ids = str_replace( (string)$source_post_id, $new_post_id, $atts[ $shortcode_attribute ] );
+							// Replace the ID
+							$new_atts_ids = str_replace( (string) $source_post_id, $new_post_id, $atts[ $shortcode_attribute ] );
 
-		                	// Now replace the attributes in the source shortcode
-		                    $new_full_shortcode = str_replace( $atts[ $shortcode_attribute ], $new_atts_ids, $full_shortcode );
+							// Now replace the attributes in the source shortcode
+							$new_full_shortcode = str_replace( $atts[ $shortcode_attribute ], $new_atts_ids, $full_shortcode );
 
-		                    // And finally replace the source shortcode for the new one in the post content
-		                    $_post['post_content'] = str_replace( $full_shortcode, $new_full_shortcode, $_post['post_content'] );
+							// And finally replace the source shortcode for the new one in the post content
+							$_post['post_content'] = str_replace( $full_shortcode, $new_full_shortcode, $_post['post_content'] );
 
-		                    // So we have found a replacement to make, haven't we?
-		                    $do_replace = true;
+							// So we have found a replacement to make, haven't we?
+							$do_replace = true;
 
-		                }
+						}
 
-			    	}
-		    	}
+					}
+				}
 
-		    	if ( $do_replace ) {
-		            // Update the post!
-		            $postarr = array(
-		                'ID' => $_post['ID'],
-		                'post_content' => $_post['post_content']
-		            );
+				if ( $do_replace ) {
+					// Update the post!
+					$postarr = array(
+						'ID'           => $_post['ID'],
+						'post_content' => $_post['post_content']
+					);
 
-		            wp_update_post( $postarr );
-		        }
-		    }
+					wp_update_post( $postarr );
+				}
+			}
 		}
 	}
 }

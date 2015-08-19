@@ -216,7 +216,7 @@ class IncPopupRule_Events extends IncPopupRule {
 			if ( me.data.display_data['click_multi'] ) {
 				jQuery(document).on( 'click', me.data.display_data['click'], me.show_popup );
 			} else {
-				jQuery(document).one( 'click', me.data.display_data['click'], me.show_popup );
+				jQuery(document).one( 'click', me.data.display_data['click'], me.show_popup );	     	 	  		 				
 			}
 		}
 		<?php

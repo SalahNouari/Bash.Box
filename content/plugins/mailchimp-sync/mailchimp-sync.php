@@ -4,7 +4,7 @@ Plugin Name: MailChimp Sync
 Plugin URI: http://premium.wpmudev.org/project/mailchimp-newsletter-integration
 Description: Simply integrate MailChimp with your Multisite (or regular old single user WP) site - automatically add new users to your email lists and import all your existing users
 Author: WPMU DEV
-Version: 1.7.3
+Version: 1.8
 Author URI: http://premium.wpmudev.org
 Network: true
 WDP ID: 73
@@ -83,6 +83,10 @@ class WPMUDEV_MailChimp_Sync {
 		require_once( 'helpers.php' );
 		require_once( 'integration.php' );
 		require_once( 'mailchimp-api/webhooks.php' );
+
+		if ( is_admin() ) {
+			include_once( 'admin/user-profile.php' );
+		}
 
 		// WPMUDEV Dashboard class
 		if ( is_admin() ) {
@@ -163,6 +167,12 @@ class WPMUDEV_MailChimp_Sync {
 			return false;
 		}
 
+		// If we have recently added this email, don't do anything
+		$transient_key = 'mailchimp_sync_' . md5( $user->user_email );
+		if ( get_site_transient( $transient_key ) ) {
+			return false;
+		}
+
 		//check for spam
 		if ( $user->spam || $user->deleted )
 	    	return false;
@@ -185,8 +195,17 @@ class WPMUDEV_MailChimp_Sync {
 		$merge_vars = apply_filters( 'mailchimp_merge_vars', $merge_vars, $user );
 		do_action( 'mailchimp_subscribe_user', $merge_vars, $user );
 
-		$results = mailchimp_subscribe_user( $user->user_email, $mailchimp_mailing_list, $autopt, $merge_vars, true );
+		$results = false;
+		if ( ! mailchimp_is_user_subscribed( $user->user_email ) )
+			$results = mailchimp_subscribe_user( $user->user_email, $mailchimp_mailing_list, $autopt, $merge_vars, true );
 
+		if ( ! is_wp_error( $results ) ) {
+			// There could be other plugins triggering this function twice for a single user.
+			// MailChimp does not refresh the list such fast.
+			// We'll save the subscriber user data in order to avoid that.
+			$transient_key = 'mailchimp_sync_' . md5( $results['email'] );
+			set_site_transient( $transient_key, true, 30 ); // Set it only to 30 seconds, should be enough for most cases
+		}
 		return $results;
 	}
 

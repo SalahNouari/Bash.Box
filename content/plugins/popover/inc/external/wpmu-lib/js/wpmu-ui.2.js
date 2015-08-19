@@ -1,4 +1,4 @@
-/*! WPMU Dev code library - v2.0.2
+/*! WPMU Dev code library - v2.0.3
  * http://premium.wpmudev.org/
  * Copyright (c) 2015; * Licensed GPLv2+ */
 /*!
@@ -140,8 +140,8 @@
 			// Prevent double initialization (with other WPMU LIB plugin)
 			if ( el.data( 'wpmui-select' ) === '1' ) { return; }
 
-			// Prevent auto-initialization when manually disabled
-			if ( el.closest( '.no-auto-init' ).length ) { return; }
+			// Prevent auto-initialization when manually disabled.
+			if ( el.closest( '.no-auto-init', base[0] ).length ) { return; }
 
 			el.data( 'wpmui-select', '1' );
 			clean_ghosts( el );
@@ -214,7 +214,7 @@
 			if ( el.data( 'wpmui-select' ) === '1' ) { return; }
 
 			// Prevent auto-initialization when manually disabled
-			if ( el.closest( '.no-auto-init' ).length ) { return; }
+			if ( el.closest( '.no-auto-init', base[0] ).length ) { return; }
 
 			el.data( 'wpmui-select', '1' );
 			clean_ghosts( el );
@@ -1388,9 +1388,11 @@
 
 				// Update the content.
 				if ( _content instanceof jQuery ) {
+					// _content is a jQuery element.
 					_el_content.empty().append( _content );
 				} else {
-					_el_content.html( jQuery( _content ).html() );
+					// _content is a HTML string.
+					_el_content.html( _content );
 				}
 
 				// Move the buttons out of the content area.
