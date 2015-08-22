@@ -15,7 +15,7 @@ class Incsub_Subscribe_By_Email_Manage_Subscription {
 	public function enqueue_scripts() {
 		$post_id = get_the_ID();
 		if ( ! empty( $this->settings['manage_subs_page'] ) && $this->settings['manage_subs_page'] == $post_id ) {
-			wp_enqueue_style( 'manage-subscriptions-css', INCSUB_SBE_ASSETS_URL . 'css/manage-subscriptions.css' );	     	 	  			  		
+			wp_enqueue_style( 'manage-subscriptions-css', INCSUB_SBE_ASSETS_URL . 'css/manage-subscriptions.css' );
 		}
 	}
 

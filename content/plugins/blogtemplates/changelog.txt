@@ -7,6 +7,11 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+2.7.8 - 2015-08-22
+----------------------------------------------------------------------
+- Fixed: Popup Pro integration
+- Added new filter to hook the templates settings before creating the new blog
+
 2.7.7 - 2015-05-26
 ----------------------------------------------------------------------
 - Added Upfront integration
@@ -362,4 +367,4 @@ templates in Blogs Directory list
 - Bug fix: blog template admin email exported to new blogs
 
 
-133620-1432664188-au
+133620-1440247446-au

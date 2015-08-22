@@ -30,7 +30,7 @@ class ub_custom_login_css {
 	function __construct() {
 
 		add_action( 'ultimatebranding_settings_menu_css', array(&$this, 'custom_login_css_options') );
-		add_filter( 'ultimatebranding_settings_menu_css_process', array(&$this, 'update_custom_login_css'), 10, 1 );
+		add_filter( 'ultimatebranding_settings_menu_css_process', array(&$this, 'update_custom_login_css'), 10, 1 );	   	 		 		 	   		
 
 		add_action('login_head', array(&$this, 'custom_login_css_output'), 99);
 	}
