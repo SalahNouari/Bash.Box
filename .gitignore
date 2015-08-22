@@ -7,11 +7,11 @@ php.ini
 wp-config.php
 
 /shared
+/config
+staging-config.php
 /local-config.php
 /sql-dump-*.sql
 /db-sync
-/content/upgrade/
-/content/uploads/
 
 /slicetool/
 /media-server/
@@ -26,6 +26,4 @@ BingSiteAuth.xml
 661fae407cafb46d6518d0c7af14cd333e8f60fe.php
 pinterest-d636b.html
 stats/
-/config
 .bash_profile
-staging-config.php
