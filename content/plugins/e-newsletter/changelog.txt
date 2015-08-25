@@ -6,6 +6,9 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.2.6 =
+* Fixed WP 4.3 compatibility issues
+
 = 2.7.2.5 =
 * Fixed second issues with site theme customizer
 
@@ -443,4 +446,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1439476527-au
+133620-1440528255-au

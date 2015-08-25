@@ -3,7 +3,7 @@
  * WordPress Abstraction
  *
  * The functions within this file will detect the version of WordPress you are running
- * and will alter the environment so Infinite SEO can run regardless.
+ * and will alter the environment so SmartCrawl can run regardless.
  *
  * The code below mostly contains function mappings.
  */
@@ -40,7 +40,7 @@ if ( !function_exists( 'add_blog_option' ) ) {
 
 if ( !function_exists( 'update_blog_option' ) ) {
 	function update_blog_option( $blog_id, $option_name, $option_value ) {
-		return update_option( $option_name, $option_value );
+		return update_option( $option_name, $option_value );	     	 	 	  		 		
 	}
 }
 

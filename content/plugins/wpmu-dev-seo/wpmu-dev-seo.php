@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Infinite SEO
+Plugin Name: SmartCrawl
 Plugin URI: http://premium.wpmudev.org/project/wpmu-dev-seo/
 Description: Every SEO option that a site requires, in one easy bundle.
-Version: 1.7.5
+Version: 1.7.6
 Network: true
 Text Domain: wds
 Author: WPMU DEV
@@ -28,7 +28,7 @@ WDP ID: 167
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-define( 'WDS_VERSION', '1.7.5' );
+define( 'WDS_VERSION', '1.7.6' );
 
 /**
  * Autolinks module contains code from SEO Smart Links plugin
@@ -154,7 +154,7 @@ global $wpmudev_notices;
 if (!is_array($wpmudev_notices)) $wpmudev_notices = array();
 $wpmudev_notices[] = array(
 	'id' => 167,
-	'name' => 'Infinite SEO',
+	'name' => 'SmartCrawl',
 	'screens' => array(
 		'settings_page_wds_wizard',
 		'settings_page_wds_wizard-network',

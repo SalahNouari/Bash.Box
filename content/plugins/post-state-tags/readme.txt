@@ -3,8 +3,8 @@ Contributors: brandbrilliance
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=D5FQNCTEV2HVJ
 Tags: wp-admin, admin, post state, color, post colours, list, highlight
 Requires at least: 3.8
-Tested up to: 4.2.2
-Stable tag: 1.1.1
+Tested up to: 4.3
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,10 @@ Yes. In the settings admin screen, you can change the color values using the col
 
 Yes. In the settings admin screen, you can pick new dash icons using the picker, or enter the dash icon class, see [DashIcons](https://developer.wordpress.org/resource/dashicons/).
 
+= Are there default colors and icons / How can I reset to defaults? =
+
+You can simply go to the settings and click the reset to defaults button at the bottom to reset all the colors and dash-icons to their default values.
+
 = Can I temporarily disable the plugin? =
 
 Yes. In the settings admin screen, there is a checkbox to disable the output (preserve settings).
@@ -96,6 +100,9 @@ add_filter( 'bb_pst_lightvalue', 'my_lightvalue', 10, 2 );
 3. Screenshot showing the Settings interface where you can adjust settings like colors, icons 
 
 == Changelog ==
+
+= 1.1.2 =
+* Added corrected support for new inline scheduled post status
 
 = 1.1.1 =
 * Added filter for background color light value, with example code in FAQ

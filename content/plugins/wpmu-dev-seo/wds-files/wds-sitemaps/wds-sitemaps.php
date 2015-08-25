@@ -5,9 +5,9 @@
  */
 
 /**
- * Infinite SEO pages optimization classes
+ * SmartCrawl pages optimization classes
  *
- * @package Infinite SEO
+ * @package SmartCrawl
  * @since 1.3
  */
 

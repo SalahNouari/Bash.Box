@@ -50,7 +50,7 @@ class WDS_Taxonomy {
 			: false
 		;
 
-		echo '<h3>' . __( 'Infinite SEO Settings ' , 'wds') . '</h3>';
+		echo '<h3>' . __( 'SmartCrawl Settings ' , 'wds') . '</h3>';
 		echo '<table class="form-table">';
 
 		$this->form_row( 'wds_title', __( 'SEO Title' , 'wds'), __( 'The SEO title is used on the archive page for this term.' , 'wds'), $tax_meta );

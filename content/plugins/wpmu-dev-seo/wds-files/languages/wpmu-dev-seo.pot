@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPMU DEV SEO 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-28 10:58+0100\n"
-"PO-Revision-Date: 2014-12-28 10:58+0100\n"
+"POT-Creation-Date: 2015-08-25 06:43+0100\n"
+"PO-Revision-Date: 2015-08-25 06:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: Incsub\n"
 "Language: en\n"
@@ -185,56 +185,56 @@ msgstr ""
 #: wds-files/wds-core/admin/wds-core-admin.php:179
 #: wds-files/wds-core/admin/wds-core-admin.php:181
 #: wds-files/wds-core/admin/wds-core-admin.php:183
-#: wds-files/wds-core/admin/wds-core-admin.php:350
-msgid "Infinite SEO Wizard"
+#: wds-files/wds-core/admin/wds-core-admin.php:351
+msgid "SmartCrawl Wizard"
 msgstr ""
 
 #: wds-files/wds-core/admin/wds-core-admin.php:179
 #: wds-files/wds-core/admin/wds-core-admin.php:181
 #: wds-files/wds-core/admin/wds-core-admin.php:183
 #: wds-files/wds-core/admin/wds-core-metabox.php:130
-#: wds-files/wds-core/admin/wds-core-metabox.php:425
-msgid "Infinite SEO"
+#: wds-files/wds-core/admin/wds-core-metabox.php:448
+msgid "SmartCrawl"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:318
+#: wds-files/wds-core/admin/wds-core-admin.php:319
 msgid "Settings updated"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:322
+#: wds-files/wds-core/admin/wds-core-admin.php:323
 msgid " &amp; W3 Total Cache Page Cache flushed"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:325
+#: wds-files/wds-core/admin/wds-core-admin.php:326
 msgid " &amp; WP Super Cache flushed"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:342
+#: wds-files/wds-core/admin/wds-core-admin.php:343
 #, php-format
 msgid "Step %d: %s"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:356
+#: wds-files/wds-core/admin/wds-core-admin.php:357
 #, php-format
 msgid ""
 "Your network admin prevented access to '%s', please move onto next step."
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:366
+#: wds-files/wds-core/admin/wds-core-admin.php:367
 msgid "Allow Site Admin access"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:367
+#: wds-files/wds-core/admin/wds-core-admin.php:368
 msgid ""
 "<p>If enabled, this tab will be available to Site Admins once you switch to "
 "per-blog mode.</p>"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:369
+#: wds-files/wds-core/admin/wds-core-admin.php:370
 msgid "Show this to Site Admins:"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:372
+#: wds-files/wds-core/admin/wds-core-admin.php:373
 #: wds-files/wds-sitemaps/wds-sitemaps-settings.php:19
 #: wds-files/wds-sitemaps/wds-sitemaps-settings.php:47
 #: wds-files/wds-sitemaps/wds-sitemaps-settings.php:156
@@ -244,7 +244,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:375
+#: wds-files/wds-core/admin/wds-core-admin.php:376
 #: wds-files/wds-sitemaps/wds-sitemaps-settings.php:19
 #: wds-files/wds-sitemaps/wds-sitemaps-settings.php:47
 #: wds-files/wds-sitemaps/wds-sitemaps-settings.php:156
@@ -254,16 +254,16 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:380
+#: wds-files/wds-core/admin/wds-core-admin.php:381
 msgid "Save Settings"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:385
+#: wds-files/wds-core/admin/wds-core-admin.php:386
 #, php-format
 msgid "You've chosen not to set up '%s', please move onto next step."
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-admin.php:468
+#: wds-files/wds-core/admin/wds-core-admin.php:469
 #, php-format
 msgid ""
 "This site discourages search engines from indexing the pages, which will "
@@ -297,7 +297,7 @@ msgstr ""
 #: wds-files/wds-core/admin/wds-core-config.php:19
 msgid ""
 "\n"
-"\t\t<p>Infinite SEO aims to take care of every SEO option that a site "
+"\t\t<p>SmartCrawl aims to take care of every SEO option that a site "
 "requires, in one easy bundle.</p>\n"
 "\t\t<p>It is made of several components which you complete as you work "
 "through our simple SEO Set Up Wizard:</p>\n"
@@ -384,59 +384,82 @@ msgstr ""
 msgid "The URL preview may be thwarted by domain mapping"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:174
-#: wds-files/wds-core/admin/wds-core-metabox.php:222
-#: wds-files/wds-core/admin/wds-core-metabox.php:427
+#: wds-files/wds-core/admin/wds-core-metabox.php:173
+#: wds-files/wds-core/admin/wds-core-metabox.php:245
+#: wds-files/wds-core/admin/wds-core-metabox.php:450
 msgid "Title Tag"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:176
+#: wds-files/wds-core/admin/wds-core-metabox.php:175
 msgid "Robots Meta"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:223
+#: wds-files/wds-core/admin/wds-core-metabox.php:188
+#, php-format
+msgid "Redirects to %s"
+msgstr ""
+
+#: wds-files/wds-core/admin/wds-core-metabox.php:206
+msgid "No ODP"
+msgstr ""
+
+#: wds-files/wds-core/admin/wds-core-metabox.php:207
+msgid "No YDIR"
+msgstr ""
+
+#: wds-files/wds-core/admin/wds-core-metabox.php:208
+#: wds-files/wds-core/admin/wds-core-metabox.php:322
+msgid "No Archive"
+msgstr ""
+
+#: wds-files/wds-core/admin/wds-core-metabox.php:209
+#: wds-files/wds-core/admin/wds-core-metabox.php:323
+msgid "No Snippet"
+msgstr ""
+
+#: wds-files/wds-core/admin/wds-core-metabox.php:246
 #, php-format
 msgid "Up to %d characters recommended"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:234
-#: wds-files/wds-core/admin/wds-core-metabox.php:443
+#: wds-files/wds-core/admin/wds-core-metabox.php:257
+#: wds-files/wds-core/admin/wds-core-metabox.php:466
 msgid "Meta Description"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:235
+#: wds-files/wds-core/admin/wds-core-metabox.php:258
 #, php-format
 msgid "%d characters maximum"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:246
+#: wds-files/wds-core/admin/wds-core-metabox.php:269
 msgid "Meta keywords"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:247
+#: wds-files/wds-core/admin/wds-core-metabox.php:270
 msgid "Separate keywords with commas"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:248
+#: wds-files/wds-core/admin/wds-core-metabox.php:271
 msgid ""
 "If you enable using tags, post tags will be merged in with any other "
 "keywords you enter in the text box."
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:252
+#: wds-files/wds-core/admin/wds-core-metabox.php:275
 msgid "I want to use post tags in addition to my keywords"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:256
+#: wds-files/wds-core/admin/wds-core-metabox.php:279
 msgid "News Keywords"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:270
-#: wds-files/wds-core/admin/wds-core-metabox.php:276
+#: wds-files/wds-core/admin/wds-core-metabox.php:293
+#: wds-files/wds-core/admin/wds-core-metabox.php:299
 msgid "Index"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:273
+#: wds-files/wds-core/admin/wds-core-metabox.php:296
 #: wds-files/wds-onpage/wds-onpage-settings.php:48
 #: wds-files/wds-onpage/wds-onpage-settings.php:115
 #: wds-files/wds-onpage/wds-onpage-settings.php:145
@@ -447,12 +470,12 @@ msgstr ""
 msgid "Noindex"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:283
-#: wds-files/wds-core/admin/wds-core-metabox.php:289
+#: wds-files/wds-core/admin/wds-core-metabox.php:306
+#: wds-files/wds-core/admin/wds-core-metabox.php:312
 msgid "Follow"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:286
+#: wds-files/wds-core/admin/wds-core-metabox.php:309
 #: wds-files/wds-onpage/wds-onpage-settings.php:49
 #: wds-files/wds-onpage/wds-onpage-settings.php:116
 #: wds-files/wds-onpage/wds-onpage-settings.php:146
@@ -463,76 +486,68 @@ msgstr ""
 msgid "Nofollow"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:297
+#: wds-files/wds-core/admin/wds-core-metabox.php:320
 msgid "NO ODP (Block Open Directory Project description of the page)"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:298
+#: wds-files/wds-core/admin/wds-core-metabox.php:321
 msgid "NO YDIR (Don't display the Yahoo! Directory titles and abstracts)"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:299
-msgid "No Archive"
-msgstr ""
-
-#: wds-files/wds-core/admin/wds-core-metabox.php:300
-msgid "No Snippet"
-msgstr ""
-
-#: wds-files/wds-core/admin/wds-core-metabox.php:320
+#: wds-files/wds-core/admin/wds-core-metabox.php:343
 msgid "Advanced"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:325
+#: wds-files/wds-core/admin/wds-core-metabox.php:348
 msgid "Meta Robots"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:327
+#: wds-files/wds-core/admin/wds-core-metabox.php:350
 msgid "<code>meta</code> robots settings for this page."
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:335
+#: wds-files/wds-core/admin/wds-core-metabox.php:358
 msgid "Canonical URL"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:345
+#: wds-files/wds-core/admin/wds-core-metabox.php:368
 msgid "301 Redirect"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:358
+#: wds-files/wds-core/admin/wds-core-metabox.php:381
 msgid "Automatic prioritization"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:359
+#: wds-files/wds-core/admin/wds-core-metabox.php:382
 msgid "1 - Highest priority"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:361
+#: wds-files/wds-core/admin/wds-core-metabox.php:384
 msgid "High priority (root pages default)"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:363
+#: wds-files/wds-core/admin/wds-core-metabox.php:386
 msgid "Secondary priority (subpages default)"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:364
+#: wds-files/wds-core/admin/wds-core-metabox.php:387
 msgid "Medium priority"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:368
+#: wds-files/wds-core/admin/wds-core-metabox.php:391
 msgid "Lowest priority"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:370
+#: wds-files/wds-core/admin/wds-core-metabox.php:393
 msgid "Sitemap Priority"
 msgstr ""
 
-#: wds-files/wds-core/admin/wds-core-metabox.php:371
+#: wds-files/wds-core/admin/wds-core-metabox.php:394
 msgid "The priority given to this page in the XML sitemap."
 msgstr ""
 
 #: wds-files/wds-core/admin/wds-core-taxonomy.php:53
-msgid "Infinite SEO Settings "
+msgid "SmartCrawl Settings "
 msgstr ""
 
 #: wds-files/wds-core/admin/wds-core-taxonomy.php:56
@@ -623,7 +638,7 @@ msgid ""
 "you in creating the absolute best WordPress MU (WPMU) site you can.</"
 "blockquote>\n"
 "\t<p><img src=\"%s\" alt=\"title and description sample\" /></p>\n"
-"\t<p>This plugin also adds a Infinite SEO module below the Write Post / Page "
+"\t<p>This plugin also adds a SmartCrawl module below the Write Post / Page "
 "editor which you can use to customise SEO options for individual posts and "
 "pages.</p>"
 msgstr ""
@@ -665,7 +680,7 @@ msgstr ""
 #: wds-files/wds-onpage/wds-onpage-settings.php:56
 msgid ""
 "You seem to be using a static front page. You can tweak its SEO settings "
-"using the Infinite SEO metabox in your Page editor."
+"using the SmartCrawl metabox in your Page editor."
 msgstr ""
 
 #: wds-files/wds-onpage/wds-onpage-settings.php:58
@@ -1317,6 +1332,6 @@ msgstr ""
 msgid "Bing"
 msgstr ""
 
-#: wds-files/wds-sitemaps/wds-sitemaps.php:538
+#: wds-files/wds-sitemaps/wds-sitemaps.php:509
 msgid "The sitemap file was not found."
 msgstr ""

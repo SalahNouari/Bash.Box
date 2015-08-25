@@ -2,7 +2,7 @@
 /**
  * WDS_Core_Admin class can be used by any component. It helps build admin pages
  *
- * @package Infinite SEO Core
+ * @package SmartCrawl Core
  */
 class WDS_Core_Admin {
 
@@ -176,11 +176,11 @@ class WDS_Core_Admin {
 		global $wds_page_hook, $wp_version;
 
 		if ( ! is_multisite() || (is_multisite() && !WDS_SITEWIDE)) {
-			$wds_page_hook = add_submenu_page( 'options-general.php', __( 'Infinite SEO Wizard' , 'wds'), __( 'Infinite SEO', 'wds' ), $this->capability, 'wds_wizard', array( &$this, 'options_page' ) );
+			$wds_page_hook = add_submenu_page( 'options-general.php', __( 'SmartCrawl Wizard' , 'wds'), __( 'SmartCrawl', 'wds' ), $this->capability, 'wds_wizard', array( &$this, 'options_page' ) );
 		} else if (is_multisite() && version_compare( $wp_version , '3.0.9', '>' ) ) {
-			$wds_page_hook = add_submenu_page( 'settings.php', __( 'Infinite SEO Wizard' , 'wds'), __( 'Infinite SEO', 'wds' ), $this->capability, 'wds_wizard', array( &$this, 'options_page' ) );
+			$wds_page_hook = add_submenu_page( 'settings.php', __( 'SmartCrawl Wizard' , 'wds'), __( 'SmartCrawl', 'wds' ), $this->capability, 'wds_wizard', array( &$this, 'options_page' ) );
 		} else if (is_multisite()) {
-			$wds_page_hook = add_submenu_page( 'ms-admin.php', __( 'Infinite SEO Wizard' , 'wds'), __( 'Infinite SEO', 'wds' ), $this->capability, 'wds_wizard', array( &$this, 'options_page' ) );
+			$wds_page_hook = add_submenu_page( 'ms-admin.php', __( 'SmartCrawl Wizard' , 'wds'), __( 'SmartCrawl', 'wds' ), $this->capability, 'wds_wizard', array( &$this, 'options_page' ) );
 		}
 
 		add_action( "admin_print_styles-$wds_page_hook", array( &$this, 'admin_styles' ) );
@@ -348,7 +348,7 @@ class WDS_Core_Admin_Tab extends WDS_Core_Admin {
 
 		echo "<div class='wrap'>$msg
 			<div class='icon32' id='icon-options-general'><br></div>
-			<h2>" . __( 'Infinite SEO Wizard', 'wds' ) . "</h2>
+			<h2>" . __( 'SmartCrawl Wizard', 'wds' ) . "</h2>
 			<h3 class='nav-tab-wrapper'>$tabs</h3>
 			<h2>$title</h2>";
 

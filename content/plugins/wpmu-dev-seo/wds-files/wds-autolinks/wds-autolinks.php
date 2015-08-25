@@ -6,9 +6,9 @@
  */
 
 /**
- * Infinite SEO Auto Links class
+ * SmartCrawl Auto Links class
  *
- * @package Infinite SEO
+ * @package SmartCrawl
  * @since 0.1
  */
 

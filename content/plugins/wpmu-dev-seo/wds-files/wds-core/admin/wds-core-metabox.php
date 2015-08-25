@@ -127,7 +127,7 @@ class WDS_Metabox {
 	function wds_create_meta_box() {
 		$show = user_can_see_seo_metabox();
 		if ( function_exists('add_meta_box') ) {
-			$metabox_title = is_multisite() ? __( 'Infinite SEO' , 'wds') : 'Infinite SEO'; // Show branding for singular installs.
+			$metabox_title = is_multisite() ? __( 'SmartCrawl' , 'wds') : 'SmartCrawl'; // Show branding for singular installs.
 			foreach (get_post_types() as $posttype) {
 				if ($show) add_meta_box( 'wds-wds-meta-box', $metabox_title, array(&$this, 'wds_meta_boxes'), $posttype, 'normal', 'high' );
 			}
@@ -161,7 +161,6 @@ class WDS_Metabox {
 		}
 
 		do_action('wds_saved_postdata');
-		//$this->rebuild_sitemap();
 	}
 
 	function rebuild_sitemap() {
@@ -180,17 +179,41 @@ class WDS_Metabox {
 	function wds_page_title_column_content( $column_name, $id ) {
 		if ( $column_name == 'page-title' ) {
 			echo $this->wds_page_title($id);
+
+			// Show any 301 redirects
+			$redirect = wds_get_value('redirect', $id);
+			if (!empty($redirect)) {
+				$href = esc_url($redirect);
+				$link = "<a href='{$href}' target='_blank'>{$href}</a>";
+				echo '<br /><em>' . sprintf(esc_html(__('Redirects to %s', 'wds')), $link) . '</em>';
+			}
 		}
+
 		if ( $column_name == 'page-meta-robots' ) {
 			$meta_robots_arr = array(
 				(wds_get_value( 'meta-robots-noindex', $id ) ? 'noindex' : 'index'),
 				(wds_get_value( 'meta-robots-nofollow', $id ) ? 'nofollow' : 'follow')
 			);
 			$meta_robots = join(',', $meta_robots_arr);
-			//$meta_robots = wds_get_value( 'meta-robots', $id );
 			if ( empty($meta_robots) )
 				$meta_robots = 'index,follow';
 			echo ucwords( str_replace( ',', ', ', $meta_robots ) );
+
+			// Show additional robots data
+			$advanced = array_filter(array_map('trim', explode(',', wds_get_value('meta-robots-adv', $id))));
+			if (!empty($advanced) && 'none' !== $advanced) {
+				$adv_map = array(
+					'noodp' => __('No ODP', 'wds'),
+					'noydir' => __('No YDIR', 'wds'),
+					'noarchive' => __('No Archive', 'wds'),
+					'nosnippet' => __('No Snippet', 'wds'),
+				);
+				$additional = array();
+				foreach ($advanced as $key) {
+					if (!empty($adv_map[$key])) $additional[] = $adv_map[$key];
+				}
+				if (!empty($additional)) echo '<br /><small>' . esc_html(join(', ', $additional)) . '</small>';
+			}
 		}
 	}
 
@@ -422,7 +445,7 @@ $("td.column-title").on('click', 'a.editinline', function () {
 		?>
 <fieldset class="inline-edit-col-left" style="clear:left">
 	<div class="inline-edit-col">
-		<h4><?php _e('Infinite SEO', 'wds'); ?></h4>
+		<h4><?php _e('SmartCrawl', 'wds'); ?></h4>
 		<label>
 			<span class="title"><?php _e('Title Tag', 'wds'); ?></span>
 			<span class="input-text-wrap">
