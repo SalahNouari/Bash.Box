@@ -1,3 +1,16 @@
+Version 2.20.0 / (31.08.2015)
+============================
+- [Fix]: Address an incompatibility issue with WordPress 4.3 which result in white screen of death for some clients
+- [Improvement]: Improvement in formatting the prices for WooCommerce slider
+
+
+Version 2.19.0 / (26.08.2015)
+============================
+- [Improvement]: Security improvement
+- [Fix]: Deprecated PHP4 constructor style replaced with new style
+- [Fix]: Addressed an issue with sizing the thumbnails
+
+
 Version 2.18.2 / (29.06.2015)
 ============================
 - [Improvement]: Under the hood improvement

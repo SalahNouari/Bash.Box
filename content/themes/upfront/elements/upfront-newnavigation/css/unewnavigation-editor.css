@@ -320,9 +320,9 @@ div.upfront-navigation div[data-style="burger"] ul.sub-menu {
 }
 
 /* Hover to open sub-menu in the layout edit mode */
-div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > ul.sub-menu {
+/*div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > ul.sub-menu {
   display: block;
-}
+}*/
 
 .newnavigation_squished > b.upfront-entity_meta {
 	top: 5px !important;
@@ -451,5 +451,14 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 	max-width:170px;
 }
 
+.newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	top:15px;
+	right: inherit;
+}
 
-/* 133620-1437265435-ai */
+.upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	right:15px;
+}
+
+
+/* 133620-1441125902-au */

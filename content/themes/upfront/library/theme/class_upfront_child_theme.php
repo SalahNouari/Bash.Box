@@ -4,6 +4,17 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	const THEME_BASE_URL_MACRO = 'UPFRONT_THEME_BASE';
 
+	/**
+	 * Constant-like file exclusion pattern.
+	 *
+	 * @var array
+	 */
+	private static $_EXCLUDED_FILES = array(
+		".",
+		"..",
+		".DS_Store",
+	);
+
 
 	private $_version = false;
 	private $_required_pages = array();
@@ -36,7 +47,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	protected function __construct () {
 		$this->_version = wp_get_theme()->version;
-
 		$this->set_theme_settings(new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php'));
 
 		self::$instance = $this;
@@ -63,6 +73,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_action('after_switch_theme', array($this, 'initial_theme_setup'));
 
+        add_filter('upfront_get_editor_font_icons', array($this, 'get_editor_font_icons'), 10, 2);
 		$this->_set_up_required_pages_from_settings();
 
 		$this->checkMenusExist();
@@ -208,7 +219,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getThemeStylesAsCss() {
-		//$layout = Upfront_Layout::get_cascade();
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 		$out = '';
@@ -216,7 +226,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
 		// List subdirectories as element types
 		$element_types = is_dir($styles_root)
-			? array_diff(scandir($styles_root), Upfront::$Excluded_Files)
+			? array_diff(scandir($styles_root), self::$_EXCLUDED_FILES)
 			: array()
 		;
 
@@ -230,13 +240,19 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}
 		}
 
-		foreach($element_types as $type) {
-			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+		// Also check more general cascade styles - works with single post layouts
+		if (empty($alternate_layout_id) && !empty($layout['specificity']) && !empty($layout['item'])) {
+			$alternate_layout_id = $layout['item'];
+		}
+
+		foreach ($element_types as $type) {
+			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
 				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . (!empty($alternate_layout_id) ? '|' . preg_quote($alternate_layout_id, '/') : '') . ')/';
-				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style) )
+				if (preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style)) {
 					continue;
+				}
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
 				$out .= $style_content;
@@ -282,6 +298,32 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
+		} else {
+			// Load UpfOnt as default
+			$out .= "/* icomoon fonts */
+				@font-face {
+					font-family: 'icomoon';
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?-7vfzzg');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?#iefix-7vfzzg') format('embedded-opentype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?-7vfzzg') format('woff'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?-7vfzzg') format('truetype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?-7vfzzg#icomoon') format('svg');
+					font-weight: normal;
+					font-style: normal;
+				}
+				.uf_font_icon {
+					font-family: 'icomoon';
+					speak: none;
+					font-style: normal;
+					font-weight: normal;
+					font-variant: normal;
+					text-transform: none;
+					line-height: 1;
+					position: relative;
+					/* Better Font Rendering =========== */
+					-webkit-font-smoothing: antialiased;
+					-moz-osx-font-smoothing: grayscale;
+				}";
 		}
 
 		$this->_theme_styles_called = true;
@@ -292,7 +334,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	private function getActiveIconFont() {
 		$fonts = json_decode($this->get_theme_settings()->get('icon_fonts'), true);
 		$active_font = false;
-        if(empty($fonts)) return false;
+		if(empty($fonts)) return false;
 		foreach($fonts as $font) {
 			if ($font['active'] === true) {
 				$active_font = $font;
@@ -335,11 +377,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $theme_styles;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+		$element_types = array_diff(scandir($styles_root), self::$_EXCLUDED_FILES);
 
 		foreach($element_types as $type) {
 			$theme_styles[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($styles as $style) {
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
@@ -409,6 +451,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (!empty($properties)) {
 			$properties = json_decode($properties, true);
 		}
+
 		return !empty($properties)
 			? $properties
 			: array()
@@ -422,10 +465,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $elementTypes;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+		$element_types = array_diff(scandir($styles_root), self::$_EXCLUDED_FILES);
 		foreach($element_types as $type) {
 			$elementTypes[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($styles as $style) {
 				$elementTypes[$type][] = str_replace('.css', '', $style);
 			}
@@ -460,7 +503,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			// Default typography
 			$properties[] = array(
 				'name' => 'typography',
-				'value' => json_decode(stripslashes('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}'))
+				'value' => json_decode('{}'),
+				//'value' => json_decode(stripslashes('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}'))
 			);
 		}
 		if ($this->get_theme_settings()->get('layout_style')) {
@@ -870,5 +914,23 @@ VRT;
         update_option($key, $images);
 
         return $attach_id;
+    }
+
+    /**
+     * Returns theme font icons if specified
+     *
+     * @param $font_icons default font icons
+     * @param $args
+     * @return array|mixed
+     */
+    function get_editor_font_icons($font_icons, $args){
+
+        $theme_font_icons = $this->get_theme_settings()->get('font_icons');
+
+        $theme_font_icons =  empty( $theme_font_icons ) ? $font_icons : $theme_font_icons;
+
+        if( $args['json'] ) return $theme_font_icons;
+
+        return is_array( $theme_font_icons ) ? $theme_font_icons : json_decode( $theme_font_icons );
     }
 }

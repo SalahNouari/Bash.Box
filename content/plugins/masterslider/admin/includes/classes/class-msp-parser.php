@@ -390,8 +390,8 @@ class MSP_Parser {
 		      'image-gallery' == $slider_setting['template']
 		  ){
 
-			if( isset( $slide['thumb'] ) && ! empty( $slide['thumb'] ) ) {
-				$thumb = $slide['thumb'];
+			if( isset( $slide['thumbOrginal'] ) && ! empty( $slide['thumbOrginal'] ) ) {
+				$thumb = $slide['thumbOrginal'];
 				$thumb = msp_get_the_relative_media_url( $thumb );
 
 			} elseif( isset( $slide['bg'] ) ) {
@@ -416,8 +416,8 @@ class MSP_Parser {
 		   	  'tabs' == $slider_setting['thumbs_type'] ) &&
 			  'true' == $slider_setting['thumbs_in_tab'] ){
 
-			if( isset( $slide['thumb'] ) && ! empty( $slide['thumb'] ) ) {
-				$tab_thumb = $slide['thumb'];
+			if( isset( $slide['thumbOrginal'] ) && ! empty( $slide['thumbOrginal'] ) ) {
+				$tab_thumb = $slide['thumbOrginal'];
 				$tab_thumb = msp_get_the_relative_media_url( $tab_thumb );
 
 			} elseif( isset( $slide['bg'] ) ) {

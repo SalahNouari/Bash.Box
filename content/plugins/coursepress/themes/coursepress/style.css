@@ -2325,6 +2325,11 @@ select.units_dropdown::-ms-expand {
     margin-top: 38px;
 }
 
+.discussion-archive-list li {
+    clear: both;
+}
+
+
 .discussion-archive-single-meta{
     float: left;
     width: 90px;
@@ -2446,6 +2451,32 @@ h1.discussion-title{
     width: 15px;
     height: 11px;
     padding: 20px;
+}
+
+/* DISCUSSION ARCHIVE FIXES */
+.discussion-archive-single-meta {
+    clear:both;
+}
+
+.discussion-archive-list .discussion-archive-single {
+    width: 80%;
+}
+
+.discussion-archive-list .discussion-archive-single-meta {
+    width: 10%;
+}
+
+.discussion-comments .comment-list > li {
+    list-style: none;
+}
+
+.notification-archive-list .notification-archive-single-meta {
+    width: 10%;
+}
+
+.notification-archive-list .notification-archive-single {
+    width: 80%;
+    margin-top: 20px;
 }
 
 #answer_the_question_button{
@@ -2882,6 +2913,11 @@ li.current_page_item a{
     white-space: nowrap;
 }
 
+.entry-content ul{
+    list-style: outside none disc;
+    margin-left: 48px;
+}
+
 /*
 RESPONSIVE
 */
@@ -3095,4 +3131,4 @@ RESPONSIVE
 }
 
 
-/* 133620-1435796034-ai */
+/* 133620-1440683206-au */

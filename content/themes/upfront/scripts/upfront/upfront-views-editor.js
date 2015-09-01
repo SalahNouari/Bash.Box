@@ -289,7 +289,7 @@ define([
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
-			this.$el.addClass('upfront-icon upfront-icon-post');
+			// this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html(l10n.new_post);
             this.$el.prop("title", l10n.new_post);
 		},
@@ -340,7 +340,7 @@ define([
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
-			this.$el.addClass('upfront-icon upfront-icon-page');
+			// this.$el.addClass('upfront-icon upfront-icon-page');
 			this.$el.html(this._default_label);
             this.$el.prop("title", this._default_label);
 		},
@@ -454,7 +454,7 @@ define([
 	var Command_SaveLayout = Command.extend({
 		"className": "command-save",
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
+			// this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
             this.$el.prop("title", l10n.save);
 		},
@@ -786,6 +786,9 @@ define([
 				var columns = grid.size,
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
+				
+				//Adjust grid rulers position
+				Upfront.Application.adjust_grid_padding_settings(this);
 			});
 
 			!Upfront.Application.get_gridstate() || this.show_grid();
@@ -889,6 +892,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var Command_ThemesDropdown = Command.extend({
 		className: 'themes-dropdown',
 		enabled: true,
@@ -939,6 +945,9 @@ define([
 
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var Command_NewLayout = Command.extend({
 		className: "command-new-layout",
 		render: function () {
@@ -951,6 +960,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var Command_BrowseLayout = Command.extend({
 		className: "command-browse-layout upfront-icon upfront-icon-browse-layouts",
 		render: function () {
@@ -1207,6 +1219,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var ResponsiveCommand_BrowseLayout = Command.extend({
 		className: "command-browse-layout command-browse-layout-responsive",
 		render: function () {
@@ -1607,7 +1622,7 @@ define([
 					Upfront.Application.current_subapplication.get_layout_data().properties,
 					{ 'name': 'typography' }
 				),
-				default_typography = $.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
+				default_typography = $.parseJSON('{}'); //$.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
 
 			layout_typography = layout_typography ? layout_typography.value : default_typography;
 			var big_tablet_breakpoint,
@@ -1965,7 +1980,7 @@ define([
 				} else if ('a' === element) {
 					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
 				} else {
-					selector = '.upfront-object-content ' + element;
+					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -1993,9 +2008,10 @@ define([
 			// next wider breakpoint to show what gets applied to current breakpoint.
 			if (!updateSilently) {
 				this.model.set_property('typography', options);
+				this.typography = options;
 			}
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
-				var styleId = this.model.get('id') + '-breakpoint-style';
+				var styleId = this.model.get('id') + '-breakpoint-typography';
 				var cssText = breakpointCss.join("\n");
 
 				if ( $('#' + styleId).length ) {
@@ -2022,7 +2038,9 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) {
+                    css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+                }
 			});
 			$style.empty().append(css.join("\n"));
 		}
@@ -2269,8 +2287,10 @@ define([
                         hide_label : true,
                         default_value: color,
                         spectrum: {
-                            move : function(color){
+                        	change: function (color) {
                                 self.update_colors(this, color, index);
+                        	},
+                            move: function (color) {
 	                            picker.$(".sp-preview").css({
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
@@ -2504,6 +2524,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var SidebarCommands_PrimaryLayout = Commands.extend({
 		"className": "sidebar-commands sidebar-commands-primary clearfix",
 		initialize: function () {
@@ -2562,7 +2585,7 @@ define([
 			}
 			if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
-			} else if (current_app !== MODE.THEME && Upfront.Settings.Application.ALLOW_REVISIONS) {
+			} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
 			if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app !== MODE.THEME) {
@@ -2626,10 +2649,14 @@ define([
 		initialize: function () {
 			this.views = [
 				new Command_BreakpointDropdown(),
-				new Command_AddCustomBreakpoint(),
-				new ResponsiveCommand_BrowseLayout(),
-				new SidebarPanel_ResponsiveSettings({"model": this.model})
+				new Command_AddCustomBreakpoint()
 			];
+			/*
+			if ("themeExporter" in Upfront) {
+				this.views.push(new ResponsiveCommand_BrowseLayout());
+			}
+			*/
+			this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
 		},
 		render: function() {
 			_.each(this.views, function(view) {
@@ -2674,7 +2701,7 @@ define([
 				roles = user.get('roles') || [],
 				tpl
 			;
-			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=26" /></div>' +
+			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
@@ -2729,9 +2756,10 @@ define([
 			this.sidebar_profile = new SidebarProfile({"model": this.model});
 			this.sidebar_commands = {
 				header: new SidebarCommands_Header({"model": this.model}),
-				primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}),
-				additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}),
-				control: new SidebarCommands_Control({"model": this.model})
+				primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}), // DEPRECATED
+				additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}), // DEPRECATED
+				control: new SidebarCommands_Control({"model": this.model}),
+				responsive: new SidebarCommands_Responsive({"model": this.model})
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
 
@@ -2802,12 +2830,8 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
-				if (this.responsive_commands) {
-					this.responsive_commands.destroy();
-				}
-				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
-				this.responsive_commands = responsive_commands;
-				output.append(responsive_commands.render().el);
+				this.sidebar_commands.responsive.render();
+				output.append(this.sidebar_commands.responsive.el);
 			}
 
 			if ( current_app !== Upfront.Settings.Application.MODE.CONTENT && !is_responsive_app ) {
@@ -3037,8 +3061,10 @@ define([
 
 			//Already loaded?
 			if(me.views[panel]){
-				if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
-			 		return this.render_panel(me.views[panel]);
+				if(panel != 'pages' && panel != 'posts') {
+					if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
+						return this.render_panel(me.views[panel]);
+				}
 			}
 
 			if(panel == 'posts'){
@@ -3062,6 +3088,19 @@ define([
 			collection.fetch(fetchOptions).done(function(response){
 				switch(panel){
 					case "posts":
+						//Check if we have rendered the panel once
+						var cachedElements = null;
+						if(typeof me.views[panel] !== "undefined") {
+							cachedElements = me.views[panel].view.collection.pagination.totalElements;
+						}
+						//Check collection total elements
+						var collectionElements = collection.pagination.totalElements;
+						
+						//Compare total items, if same return cached panel
+						if(cachedElements == collectionElements) {
+							return me.render_panel(me.views[panel]);
+						}
+						
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
@@ -3071,6 +3110,19 @@ define([
 						me.views.posts = views;
 						break;
 					case "pages":
+						//Check if we have rendered the panel once
+						var cachedElements = null;
+						if(typeof me.views[panel] !== "undefined") {
+							cachedElements = me.views[panel].view.collection.pagination.totalElements;
+						}
+						//Check collection total elements
+						var collectionElements = collection.pagination.totalElements;
+						
+						//Compare total items, if same return cached panel
+						if(cachedElements == collectionElements) {
+							return me.render_panel(me.views[panel]);
+						}
+						
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
@@ -6033,6 +6085,8 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 	},
 
 	initializeFileUpload: function() {
+		if (!jQuery.fn.fileupload) return false; // No file upload, carry on
+
 		var me = this;
 		this.$el.find('#upfront-upload-icon-font').fileupload({
 			dataType: 'json',
@@ -6512,7 +6566,7 @@ var CSSEditor = Backbone.View.extend({
 
 		if ( !this.no_render ) {
 			this.prepareAce = deferred.promise();
-			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
+			require([Upfront.Settings.ace_url], function() {
 				deferred.resolve();
 			});
 
@@ -6668,6 +6722,7 @@ var CSSEditor = Backbone.View.extend({
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
 			session = editor.getSession(),
+			scrollerDisplayed = false,
 			scope,
 			styles
 		;
@@ -6684,6 +6739,20 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
+						
+			if(typeof me.editor !== "undefined") {
+				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
+				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
+				
+				if(aceOuterWidth < aceInnerWidth + 40) {
+					if(!scrollerDisplayed) {
+						me.startResizable();
+					}
+					scrollerDisplayed = true;
+				} else {
+					scrollerDisplayed = false;
+				}
+			}
 		});
 
 		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
@@ -6696,9 +6765,15 @@ var CSSEditor = Backbone.View.extend({
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
 		editor.renderer.scroller.style.right = "5px";
-
+		
 		editor.focus();
 		this.editor = editor;
+		
+		if(me.timer) clearTimeout(me.timer);
+		me.timer = setTimeout(function(){
+			me.startResizable();
+		},300);
+		
 	},
 	prepareSpectrum: function(){
 		var me = this,
@@ -6833,7 +6908,7 @@ var CSSEditor = Backbone.View.extend({
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
-				
+
 				processed_selectors.push('' +
 					selector + spacer + sel +
 				'');
@@ -6859,8 +6934,13 @@ var CSSEditor = Backbone.View.extend({
 		var splitted = clean_selector.split(' ');
 		var me = this;
 		while(splitted.length > 0) {
-			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
-				return true;
+			try{
+				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+					return true;
+			}
+			catch (err) {
+				
+			}
 			splitted.pop();
 		}
 
@@ -7194,7 +7274,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.global = ( options.global === true );
 
 		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
 		});
 
@@ -7565,34 +7645,44 @@ var Field_Compact_Label_Select_Option = Backbone.View.extend({
 });
 var Field_Compact_Label_Select = Field_Select.extend({
 	className: 'upfront-field-select upfront-no-select upfront-field-compact-label-select',
-	template: '<ul class="upfront-field-select-options">' +
+	template: '' +
+		'<ul class="upfront-field-select-options">' +
 			'<li class="upfront-field-select-option">' +
-			'<label><span class="upfront-field-label-text">{{ label_text }}</span></label>' +
+				'<label><span class="upfront-field-label-text">{{ label_text }}</span></label>' +
 			'</li>' +
-			'</ul></div>',
+		'</ul></div>' +
+	'',
+
 	initialize: function(options) {
 		this.options = options || {};
 		this.listenTo(this.collection, 'add remove change:name change:width', this.render);
 	},
+	
 	render: function () {
 		var me = this;
 		this.$el.html('');
 		this.$el.append(_.template(this.template, this.options));
 		this.$el.addClass(' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' ));
-		if ( this.options.disabled )
+		
+		if (this.options.disabled) {
 			this.$el.addClass('upfront-field-select-disabled');
-		if ( this.options.style == 'zebra' )
+		}
+		
+		if (this.options.style == 'zebra') {
 			this.$el.addClass('upfront-field-select-zebra');
+		}
 
 		// Add option views
 		_.each(this.collection.models, function(breakpoint) {
 			var option = new Field_Compact_Label_Select_Option({ model: breakpoint });
-			this.$el.find('ul').append(option.render().el);
+			option.render();
+			this.$el.find('ul').append(option.el);
 		}, this);
-
-		this.$el.on('click', '.upfront-field-select-option:first-child', function() {
-			me.$el.toggleClass('compact-label-select-open');
-		});
+	},
+	
+	onOptionClick: function (e) {
+		this.$el.toggleClass('compact-label-select-open');
+		Field_Select.prototype.onOptionClick.call(this, e);
 	}
 });
 
@@ -7884,11 +7974,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		render: function () {
 			var me = this;
-			if ( this.options.fixed )
-				this.$el.addClass('upfront-loading-fixed');
+			
 			this.$el.html('<div class="upfront-loading-ani" />');
-			if ( this.options.loading )
-				this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			
+			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
+			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
+			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+
 			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 				var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
 				if ( state == 'start' ){
@@ -9111,7 +9203,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
-
+			
+			this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
+		},
+		
+		adjust_grid_padding: function() {
+			var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
+			togglegrid.update_grid();
 		}
 	});
 
@@ -9238,6 +9336,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				me = this,
 				modal = new Modal({ to: this.panel_view.panels_view.$el, button: true, width: 422 }),
 				disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
+				var parentContainer = me.$el.parents('.upfront-region-center');
+				parentContainer.addClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').hide();
 				fields = {
 					from: new Field_Radios({
 						name: 'from',
@@ -9355,6 +9456,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				}
 			})
 			.always(function(modal_view){
+				parentContainer.removeClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').show();
 				modal_view.remove();
 			});
 
@@ -10273,7 +10376,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 		};
 
-		initialize();
+		Upfront.Events.once("application:mode:before_switch", initialize);
 	};
 
 	var breakpoints_storage = new Breakpoints_Storage(Upfront.mainData.themeInfo.breakpoints);

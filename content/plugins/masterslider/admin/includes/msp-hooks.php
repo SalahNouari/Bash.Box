@@ -65,7 +65,7 @@ function msp_new_api_compatibility(){
 
     if( false === get_transient( 'msp_get_token_validation_status' ) ){
         $status = Axiom_Plugin_License::get_instance()->remove_invalid_token();
-        set_transient( 'msp_get_token_validation_status', 1, DAY_IN_SECONDS );
+        set_transient( 'msp_get_token_validation_status', 5, DAY_IN_SECONDS );
     }
 
 }

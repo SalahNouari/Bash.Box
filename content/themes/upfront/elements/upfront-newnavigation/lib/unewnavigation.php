@@ -25,6 +25,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
 		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
 		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');
+		$breakpoint_data['desktop']['is_floating'] = $this->_get_property('is_floating');
 		//$breakpoint_data['desktop']['menu_style'] = 'horizontal';
 
 		$breakpoint_data = json_encode($breakpoint_data);
@@ -132,6 +133,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'visit_url' => __('Visit URL', 'upfront'),
 			'edit_url' => __('Edit URL', 'upfront'),
 			'create_dropdown' => __('Create Drop-Down', 'upfront'),
+			'choose_existing_menu' => __('Choose existing menu', 'upfront'),
 			'css' => array(
 				'bar_label' => __('Menu Bar', 'upfront'),
 				'bar_info' => __('Menu Bar', 'upfront'),
@@ -306,6 +308,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email') ? '_self' : $e->target,
 			'menu-item-position' => $e->menu_order
 			);
+
 		if(isset($children_elements[$e->ID])) {
 			foreach($children_elements[$e->ID] as $child_element)
 				$this_menu_item['sub'][] = $this->recursive_processMenuItem($child_element, $children_elements);
@@ -502,6 +505,9 @@ class upfront_nav_walker extends Walker_Nav_Menu
 
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
 
+		// to add current menu item status to a paginated blog
+		if($item->url == rtrim(get_permalink(), '/') && !array_search('current-menu-item', $classes))
+			$classes[] = 'current-menu-item';
 
 		//this code is why all this function has been overriden, this one checks if the link is anchor and removes the current-menu-item class
 		if(strpos($item->url, '#')) {
@@ -512,6 +518,7 @@ class upfront_nav_walker extends Walker_Nav_Menu
         }
 
 		$classes[] = 'menu-item-' . $item->ID;
+		$classes[] = 'menu-item-depth-' . $depth;
 
 		/**
 		 * Filter the CSS class(es) applied to a menu item's <li>.

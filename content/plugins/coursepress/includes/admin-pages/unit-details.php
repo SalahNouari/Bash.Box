@@ -99,7 +99,7 @@ if ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'edit' && isset( $_GET[ 
 
 $preview_redirect	 = isset( $_REQUEST[ 'preview_redirect' ] ) ? $_REQUEST[ 'preview_redirect' ] : 'no';
 ?>
-<div class='wrap mp-wrap nocoursesub unit-details cp-wrap'>
+<div class='wrap mp-wrap nocoursesub unit-details cp-wrap' id='cp-unit-details-holder'>
 
     <div id="undefined-sticky-wrapper" class="sticky-wrapper">
         <div class="sticky-slider visible-small visible-extra-small"><i class="fa fa-chevron-circle-right"></i></div>
@@ -202,6 +202,9 @@ $preview_redirect	 = isset( $_REQUEST[ 'preview_redirect' ] ) ? $_REQUEST[ 'prev
                         <div class="force_unit_successful_completion">
 							<input type="checkbox" name="force_current_unit_successful_completion" id="force_current_unit_successful_completion" value="on" <?php echo ( $force_current_unit_successful_completion == 'on' ) ? 'checked' : ''; ?> /> <?php _e( 'User also needs to <strong><em>pass</em></strong> all mandatory assessments', 'cp' ); ?>
 						</div>
+                        <div class="refresh_unit_completion_progress">
+                            <input type="checkbox" name="refresh_unit_completion_progress" id="refresh_unit_completion_progress" value="on" /> <?php _e( 'Force unit completion refresh.', 'cp' ); ?>
+                        </div>
                     </div>
                 </div>
                 <div class="unit-control-buttons">

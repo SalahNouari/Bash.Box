@@ -170,6 +170,12 @@ function msp_get_woocommerce_template_tags() {
 		       'callback' 	=> ''
 		),
 
+        array( 'name'       => 'wc_price-3',
+               'label'      => __( 'Price (custom decimals)', MSWP_TEXT_DOMAIN ),
+               'type'       => 'product',
+               'callback'   => ''
+        ),
+
 	    array( 'name'		=> 'wc_regular_price',
 		       'label' 		=> __( 'Regular Price', MSWP_TEXT_DOMAIN ),
 		       'type'		=> 'product',

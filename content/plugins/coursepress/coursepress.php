@@ -1,32 +1,32 @@
 <?php
 /*
-  Plugin Name: CoursePress Pro
-  Plugin URI: http://premium.wpmudev.org/project/coursepress/
-  Description: CoursePress Pro turns WordPress into a powerful online learning platform. Set up online courses by creating learning units with quiz elements, video, audio etc. You can also assess student work, sell your courses and much much more.
-  Author: WPMU DEV
-  Author URI: http://premium.wpmudev.org
-  Developers: Marko Miljus ( https://twitter.com/markomiljus ), Rheinard Korf ( https://twitter.com/rheinardkorf )
-  Version: 1.2.5.8
-  TextDomain: cp
-  Domain Path: /languages/
-  WDP ID: 913071
-  License: GNU General Public License ( Version 2 - GPLv2 )
+Plugin Name: CoursePress Pro
+Plugin URI: http://premium.wpmudev.org/project/coursepress/
+Description: CoursePress Pro turns WordPress into a powerful online learning platform. Set up online courses by creating learning units with quiz elements, video, audio etc. You can also assess student work, sell your courses and much much more.
+Author: WPMU DEV
+Author URI: http://premium.wpmudev.org
+Developers: Marko Miljus ( https://twitter.com/markomiljus ), Rheinard Korf ( https://twitter.com/rheinardkorf )
+Version: 1.2.6.0
+TextDomain: cp
+Domain Path: /languages/
+WDP ID: 913071
+License: GNU General Public License ( Version 2 - GPLv2 )
 
-  Copyright 2015 Incsub ( http://incsub.com )
+Copyright 2015 Incsub ( http://incsub.com )
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License ( Version 2 - GPLv2 ) as published by
-  the Free Software Foundation.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License ( Version 2 - GPLv2 ) as published by
+the Free Software Foundation.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 if ( !defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,7 +64,7 @@ if ( !class_exists( 'CoursePress' ) ) {
 		 * @since 1.0.0
 		 * @var string
 		 */
-		public $version = '1.2.5.7';
+		public $version = '1.2.6.0';
 
 		/**
 		 * Plugin friendly name.
@@ -166,6 +166,12 @@ if ( !class_exists( 'CoursePress' ) ) {
 			$GLOBALS[ 'instructor_profile_slug' ]	 = $this->get_instructor_profile_slug();
 			$GLOBALS[ 'enrollment_process_url' ]	 = $this->get_enrollment_process_slug( true );
 			$GLOBALS[ 'signup_url' ]				 = $this->get_signup_slug( true );
+
+			/**
+			 * CoursePress Sessions
+			 * Better handling of session data using WP_Session_Tokens introduced in 4.0.
+			 */
+			require_once( $this->plugin_dir . 'includes/classes/class.session.php' );
 
 			/**
 			 * CoursePress Object Class.
@@ -304,6 +310,8 @@ if ( !class_exists( 'CoursePress' ) ) {
 				 */
 				add_action( 'wp_ajax_remove_course_instructor', array( &$this, 'remove_course_instructor' ) );
 
+				add_action( 'wp_ajax_update_unit', array( &$this, 'update_unit' ) );
+
 				/**
 				 * Add instructor MD5 as meta.
 				 *
@@ -409,6 +417,12 @@ if ( !class_exists( 'CoursePress' ) ) {
 				 * @since 1.0.0
 				 */
 				add_action( 'wp_ajax_nopriv_cp_popup_user_exists', array( &$this, 'cp_popup_user_exists' ) );
+
+
+				/**
+				 * Removes uppercase restriction for username registration
+				 */
+				add_filter('wpmu_validate_user_signup', array($this, 'ms_validate_username'));
 
 				/**
 				 * Returns whether the email already exists (AJAX).
@@ -1542,13 +1556,71 @@ if ( !class_exists( 'CoursePress' ) ) {
 
 		function cp_popup_user_exists() {
 			if ( isset( $_POST[ 'username' ] ) ) {
-				if ( !validate_username( $_POST[ 'username' ] ) ) {//username is not valid
-					echo 1;
-					exit;
+				if( ! is_multisite() ) {
+					if ( !validate_username( $_POST[ 'username' ] ) ) {//username is not valid
+						echo 1;
+						exit;
+					}
+				} else {
+					//email
+					if( ! wpmu_validate_user_signup( $_POST[ 'username' ], $_POST[ 'email' ] ) ) {
+						echo 1;
+						exit;
+					};
 				}
 				echo username_exists( $_POST[ 'username' ] );
 				exit;
 			}
+		}
+
+		function ms_validate_username($result) {
+			if (! is_wp_error($result['errors'])) {
+				return $result;
+			}
+
+			$username = $result['user_name'];
+
+			$new_errors = new WP_Error();
+			$errors = $result['errors'];
+			$codes = $errors->get_error_codes();
+
+			foreach ($codes as $code) {
+				$messages = $errors->get_error_messages($code);
+
+				if ($code == 'user_name') {
+					foreach ($messages as $message) {
+						if ($message == __('Only lowercase letters (a-z) and numbers are allowed.')) {
+							if (is_email($username)) {
+								if (! $this->options['allow_email_addresses']) {
+									$new_errors->add($code, $message);
+								}
+							}
+							else {
+								$allowed = '';
+								$allowed .= '-';
+								$allowed .= '_';
+								$allowed .= '.';
+								$allowed .= 'A-Z';
+
+								preg_match('/[' . $allowed . 'a-z0-9]+/', $username, $maybe);
+
+								if ($username != $maybe[0]) {
+									$new_errors->add($code, $message);
+								}
+							}
+						}
+					}
+				}
+				else {
+					foreach ($messages as $message) {
+						$new_errors->add($code, $message);
+					}
+				}
+			}
+
+			$result['errors'] = $new_errors;
+
+			return $result;
 		}
 
 		function cp_popup_email_exists() {
@@ -2135,7 +2207,8 @@ if ( !class_exists( 'CoursePress' ) ) {
 
 			$current_post = get_post( $post_id );
 			if ( $current_post && $current_post->post_type == 'discussions' ) {
-				if ( array_key_exists( 'discussion_archive', $wp->query_vars ) ) {
+				$qv = isset( $wp->query_vars ) ? $wp->query_vars : array();
+				if ( array_key_exists( 'discussion_archive', $qv ) ) {
 					return false;
 				} else {
 					return true;
@@ -4070,6 +4143,31 @@ if ( !class_exists( 'CoursePress' ) ) {
 			ob_end_flush();
 		}
 
+		function update_unit() {
+			global $user_id;
+
+			if ( isset( $_POST[ 'action' ] ) && $_POST[ 'action' ] == 'update_unit' ) {
+
+				if ( wp_verify_nonce( $_REQUEST[ '_wpnonce' ], 'unit_details_overview_' . $user_id ) ) {
+
+					$unit = new Unit( $_POST[ 'unit_id' ] );
+
+					if ( current_user_can( 'manage_options' ) || current_user_can( 'coursepress_create_course_unit_cap' ) || current_user_can( 'coursepress_update_course_unit_cap' ) || current_user_can( 'coursepress_update_my_course_unit_cap' ) || current_user_can( 'coursepress_update_all_courses_unit_cap' ) ) {
+						$new_post_id = $unit->update_unit( isset( $_POST[ 'unit_id' ] ) ? $_POST[ 'unit_id' ] : 0  );
+					}
+
+					if ( isset( $_POST[ 'unit_state' ] ) ) {
+						if ( current_user_can( 'manage_options' ) || current_user_can( 'coursepress_change_course_unit_status_cap' ) || current_user_can( 'coursepress_change_my_course_unit_status_cap' ) || current_user_can( 'coursepress_change_all_courses_unit_status_cap' ) ) {
+							$unit = new Unit( $new_post_id );
+							$unit->change_status( $_POST[ 'unit_state' ] );
+						}
+					}
+				}
+
+				echo 'RESPONSE!';
+			}
+		}
+
 		function remove_course_instructor() {
 
 			$instructor_id	 = (int) $_POST[ 'instructor_id' ];
@@ -4922,6 +5020,7 @@ if ( !class_exists( 'CoursePress' ) ) {
 			}
 
 			wp_localize_script( 'courses-units', 'coursepress_units', array(
+				'admin_ajax_url'				 => admin_url( 'admin-ajax.php' ),
 				'withdraw_class_alert'			 => __( 'Please confirm that you want to withdraw all students from this class?', 'cp' ),
 				'delete_class'					 => __( 'Please confirm that you want to permanently delete the class? All students form this class will be moved to the Default class automatically.', 'cp' ),
 				'setup_gateway'					 => __( "You have selected 'This is a Paid Course'.\n In order to continue you must first setup a payment gateway by clicking on 'Setup Payment Gateways'", 'cp' ),
@@ -5044,7 +5143,12 @@ if ( !class_exists( 'CoursePress' ) ) {
 
 		function create_virtual_pages() {
 
-			$uri = untrailingslashit( trim( ltrim( $_SERVER[ 'REQUEST_URI' ], '/' ) ) );
+			$full_url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+			$site_url = site_url();
+
+			$uri = untrailingslashit( trim( ltrim( str_replace($site_url,'',$full_url), '/' ) ) );
+
+			//$uri = untrailingslashit( trim( ltrim( $_SERVER[ 'REQUEST_URI' ], '/' ) ) );
 
 			$match_uri = $uri; // Use this to test regex pattern
 
@@ -5879,7 +5983,8 @@ if ( !class_exists( 'CoursePress' ) ) {
 
 			foreach ( $items as $item ) {
 				$course_id = get_post_meta( $item[ 'product_id' ], 'cp_course_id', true );
-				$student->enroll_in_course( $course_id );
+				if ( !empty( $course_id ) )
+					$student->enroll_in_course( $course_id );
 			}
 		}
 

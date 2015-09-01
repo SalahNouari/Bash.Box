@@ -1043,19 +1043,19 @@ function msp_get_template_tag_value( $tag_name, $post = null, $args = null ){
 		case 'wc_price':
 			if ( ! msp_is_plugin_active( 'woocommerce/woocommerce.php' ) ) break;
 			$product = get_product( $post );
-			$value = wc_format_decimal( $product->get_price(), 2 );
+			$value = wc_price( $product->get_price(), 2 );
 			break;
 
 		case 'wc_regular_price':
 			if ( ! msp_is_plugin_active( 'woocommerce/woocommerce.php' ) ) break;
 			$product = get_product( $post );
-			$value = wc_format_decimal( $product->get_regular_price(), 2 );
+			$value = wc_price( $product->get_regular_price() );
 			break;
 
 		case 'wc_sale_price':
 			if ( ! msp_is_plugin_active( 'woocommerce/woocommerce.php' ) ) break;
 			$product = get_product( $post );
-			$value = $product->get_sale_price() ? wc_format_decimal( $product->get_sale_price(), 2 ) : '';
+			$value = $product->get_sale_price() ? wc_price( $product->get_sale_price() ) : '';
 			break;
 
 		case 'wc_stock_status':
@@ -1143,7 +1143,7 @@ function msp_get_template_tag_value( $tag_name, $post = null, $args = null ){
                     $points_length = (int) $matches[0];
 
                     $product = get_product( $post );
-                    $value = wc_format_decimal( $product->get_price(), $points_length );
+                    $value = wc_price( $product->get_price(), array( 'decimals' => $points_length ) );
                     break;
                 }
 

@@ -68,7 +68,7 @@
     display: block;
 }
 
-.students_bulk_email_area input[type="text"], .students_bulk_email_area textarea {									   	 	   		
+.students_bulk_email_area input[type="text"], .students_bulk_email_area textarea {
     width: 100%;
     margin-top: 8px;
 }
@@ -518,4 +518,4 @@ body.rtl .chosen-container .chosen-drop {
 }
 
 
-/* 133620-1435796034-ai */
+/* 133620-1440683206-au */

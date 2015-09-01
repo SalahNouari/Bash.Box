@@ -16,7 +16,7 @@
 </div>
 <div class="wpmui-grid-12">
 	<textarea name="po_custom_css" id="po-custom-css" style="display: none"><?php
-	echo esc_textarea( $popup->custom_css );
+	echo esc_textarea( $popup->custom_css );	     	 	  		 				
 	?></textarea>
 	<div class="po_css_editor"
 		id="po-css-editor"

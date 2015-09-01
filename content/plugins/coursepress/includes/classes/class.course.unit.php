@@ -766,6 +766,13 @@ if ( !class_exists( 'Unit' ) ) {
 
 			$input_module_meta = maybe_unserialize( $input_module_meta );
 
+            if( $input_module_meta[ $module_id ]['mandatory_answer'] != $meta['mandatory_answer']
+                || $input_module_meta[ $module_id ]['gradable_answer'] != $meta['gradable_answer']
+                || $input_module_meta[ $module_id ]['minimum_grade_required'] != $meta['minimum_grade_required']
+            ){
+                do_action( 'coursepress_module_completion_criteria_change', $unit_id, $module_id, $meta, $input_module_meta[ $module_id ] );
+            }
+
 			$input_module_meta[ $module_id ] = $meta;
 
 			update_post_meta( $unit_id, 'input_modules', $input_module_meta );
@@ -841,12 +848,13 @@ if ( !class_exists( 'Unit' ) ) {
 				return false;
 			}
 
-			$in_session = isset( $_SESSION[ 'coursepress_unit_completion' ][ $unit_id ] );
+			$session_data = CoursePress_Session::session( 'coursepress_unit_completion' );
+			$in_session = isset( $session_data[ $unit_id ] );
 
 			$criteria = array();
 
-			if ( $in_session && !empty( $_SESSION[ 'coursepress_unit_completion' ][ $unit_id ][ 'all_input_ids' ] ) ) {
-				$criteria = $_SESSION[ 'coursepress_unit_completion' ][ $unit_id ];
+			if ( $in_session && !empty( $session_data[ $unit_id ][ 'all_input_ids' ] ) ) {
+				$criteria = $session_data[ $unit_id ];
 			} else {
 				$module_data				 = self::get_input_module_meta( $unit_id );
 				$mandatory_array			 = array();
@@ -894,7 +902,12 @@ if ( !class_exists( 'Unit' ) ) {
 			}
 
 			if ( !$in_session ) {
-				$_SESSION[ 'coursepress_unit_completion' ][ $unit_id ] = $criteria;
+				//$_SESSION[ 'coursepress_unit_completion' ][ $unit_id ] = $criteria;
+				if( ! is_array( $session_data ) ) {
+					$session_data = array();
+				}
+				$session_data[ $unit_id ] = $criteria;
+				CoursePress_Session::session( 'coursepress_unit_completion', $session_data );
 			}
 
 			return $criteria;

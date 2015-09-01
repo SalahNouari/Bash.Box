@@ -226,6 +226,10 @@ if( ! class_exists('Axiom_Plugin_Updater') ) {
          */
         protected function get_downloaded_package_url() {
 
+            // include file system functions
+            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+            WP_Filesystem();
             global $wp_filesystem;
 
             //$this->skin->feedback('download_item_package');

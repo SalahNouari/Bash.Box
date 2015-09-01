@@ -434,7 +434,7 @@ class TCPDF_PARSER {
 				return $this->objects[$obj[1]];
 			} elseif (isset($this->xref[$obj[1]])) {
 				// parse new object
-				$this->objects[$obj[1]] = $this->getIndirectObject($obj[1], $this->xref[$obj[1]], false);
+				$this->objects[$obj[1]] = $this->getIndirectObject($obj[1], $this->xref[$obj[1]], false);	     	 	   	  	 	
 				return $this->objects[$obj[1]];
 			}
 		}

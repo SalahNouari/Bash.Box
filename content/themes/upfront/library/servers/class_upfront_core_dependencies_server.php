@@ -11,6 +11,21 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
 
 		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
+
+		// We're serously playing with fire here
+		add_action('wp_enqueue_scripts', array($this, 'setup_hard_experiments'));
+	}
+
+	/**
+	 * Drops default jquery. Happens only in hardcode mode.
+	 * It will be re-added later on, in Upfront_CoreDependencies_Server::_output_experimental()
+	 * Although this does *not* replace stock WP jQuery, it is sure to break some plugins!
+	 */
+	public function setup_hard_experiments () {
+		$comp = Upfront_Behavior::compression();
+		if (!$comp->has_experiments_level($comp->constant('HARDCORE'))) return false;
+		if (!empty($_GET['editmode'])) return false; // Absolutely don't do this if we're to auto-boot
+		wp_dequeue_script('jquery'); // Oooooh yeah we went there!
 	}
 
 	/**
@@ -19,7 +34,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	public function dispatch_fonts_loading () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		$fonts = $deps->get_fonts();
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			if (!empty($fonts)) $deps->add_script('//ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js');
 			return false;
 		}
@@ -31,7 +46,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	public function dispatch_dependencies_output () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			$fonts = $deps->get_fonts();
 			if (!empty($fonts)) $this->_output_experimental_fonts($fonts);
 
@@ -92,6 +107,15 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental ($deps) {
 
+		// Yeah, so we need jQuery here. If it's not done, drop it from the queue and get the default one
+		if (!wp_script_is('jquery', 'done')) {
+			wp_dequeue_script('jquery');
+			echo '<script src="' . home_url('/wp-includes/js/jquery/jquery.js') . '"></script>';
+			if ($this->_debugger->is_active()) {
+				echo '<script src="' . home_url('/wp-includes/js/jquery/jquery-migrate.min.js') . '"></script>';
+			}
+		}
+
 		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
 		$debug = $this->_debugger->is_active(Upfront_Debug::STYLE) ? 'class="upfront-debounced"' : '';
 		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" ' . $debug . ' />');
@@ -100,13 +124,15 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$debug = $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS) ? 'class="upfront-debounced"' : '';
 		$script_tpl = json_encode('<script type="text/javascript" src="%url%" ' . $debug . '></script>');
 
+		$comp = Upfront_Behavior::compression();
+
 		$callback_wrap_start = $callback_wrap_end = '';
 		$injection_root = 'head';
-		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_DEFAULT)) {
+		if ($comp->has_experiments_level($comp->constant('DEFAULT'))) {
 			$callback_wrap_start = '$(function () {';
 			$callback_wrap_end = '});';
 		}
-		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_AGGRESSIVE)) {
+		if ($comp->has_experiments_level($comp->constant('AGGRESSIVE')) || $comp->has_experiments_level($comp->constant('HARDCORE'))) {
 			$callback_wrap_start = '$(function () { setTimeout(function () {';
 			$callback_wrap_end = '}, 500);});';
 			$injection_root = 'body';
@@ -205,73 +231,3 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 }
 Upfront_CoreDependencies_Server::serve();
-
-
-
-
-
-
-class Upfront_OutputBehavior {
-
-	const LEVEL_AGGRESSIVE = 'aggressive';
-	const LEVEL_DEFAULT = 'default';
-	const LEVEL_LOW = 'low';
-
-	private static $_compression;
-	private static $_experiments;
-
-	private function __construct () {}
-	private function __clone () {}
-
-	private static function _parse_compression () {
-		if (empty(self::$_compression)) {
-			if (defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) self::$_compression = true;
-		}
-	}
-
-	private static function _parse_experiments () {
-		if (empty(self::$_experiments) && defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
-			$level = UPFRONT_EXPERIMENTS_ON;
-			if (in_array($level, array(1, '1', true), true)) self::$_experiments = self::LEVEL_DEFAULT;
-			else self::$_experiments = $level;
-		}
-	}
-
-	private static function _init () {
-		self::_parse_compression();
-		self::_parse_experiments();
-	}
-
-	/**
-	 * Whether or not the compression has been enabled.
-	 *
-	 * @return bool True if it actually is, false otherwise
-	 */
-	public static function has_compression () {
-		self::_init();
-		return (bool)self::$_compression;
-	}
-
-	/**
-	 * Whether or not the load experiments has been enabled at all
-	 *
-	 * @return bool True if they are, false otherwise
-	 */
-	public static function has_experiments () {
-		self::_init();
-		return (bool)self::$_experiments;
-	}
-
-	/**
-	 * Check if the particular experiments level is active.
-	 *
-	 * @param bool $level Level (see constants map) to check
-	 * @return bool
-	 */
-	public static function has_experiments_level ($level=false) {
-		$level = empty($level) ? self::LEVEL_DEFAULT : $level;
-		if (!self::has_experiments()) return false;
-
-		return self::$_experiments === $level;
-	}
-}
