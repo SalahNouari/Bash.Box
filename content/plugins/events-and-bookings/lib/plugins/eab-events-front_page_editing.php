@@ -286,10 +286,14 @@ class Eab_Events_FrontPageEditing {
 
 		wp_set_post_terms($post_id, array((int)$data['category']), 'eab_events_category', false);
 
-		$message = current_user_can($post_type->cap->publish_posts)
-			? __('Event saved and published', Eab_EventsHub::TEXT_DOMAIN)
-			: __('Event saved and waiting for approval', Eab_EventsHub::TEXT_DOMAIN)
-		;
+		if( current_user_can($post_type->cap->publish_posts) ){
+			$message = __('Event saved and published', Eab_EventsHub::TEXT_DOMAIN);
+			do_action( 'eab_bp_event_published', $post_id );
+		}else{
+			$message = __('Event saved and waiting for approval', Eab_EventsHub::TEXT_DOMAIN);
+			do_action( 'eab_bp_event_saved_for_approval', $post_id );
+		}
+
 		die(json_encode(array(
 			'status' => 1,
 			'post_id' => $post_id,
@@ -485,7 +489,7 @@ class Eab_Events_FrontPageEditing {
 				$ret .= '<label>' . __('Feature Image', Eab_EventsHub::TEXT_DOMAIN) . '</label>' .
 					'<br />' .
 					'<a href="#featured_image" class="eab-fpe-upload">' .
-					'<input type="hidden" id="eab-fpe-attach_id" name="" value="' . esc_url($featured_image) . '" />' .
+					'<input type="hidden" id="eab-fpe-attach_id" name="" value="' . $featured_image_id . '" />' .
 					'<input type="hidden" name="featured" value="' . esc_attr($featured_image_id) . '" />' .
 					'<img src="' . esc_url($featured_image) . '" id="eab-fpe-preview-upload" ' . (empty($featured_image) ? 'style="display:none"' : '') . ' />' .
 					'<br />' .
@@ -514,9 +518,11 @@ class Eab_Events_FrontPageEditing {
 		// RSVPs
 		$ret .= '<div class="eab-events-fpe-meta_box" id="eab-events-fpe-rsvps">';
 
+
 		if ($event->has_bookings()) {
 			$ret .= '<a href="#toggle_rsvps" id="eab-events-fpe-toggle_rsvps">' . __('Toggle RSVPs', Eab_EventsHub::TEXT_DOMAIN) . '</a>';
 			$ret .= '<div id="eab-events-fpe-rsvps-wrapper" style="display:none">';
+			$ret .= Eab_Template::get_admin_attendance_addition_form($event, Eab_Template::get_rsvp_status_list());
 			$ret .= '<div>';
 			$ret .= Eab_Template::get_admin_bookings(Eab_EventModel::BOOKING_YES, $event);
 			$ret .= '</div>';
@@ -529,6 +535,8 @@ class Eab_Events_FrontPageEditing {
 			$ret .= Eab_Template::get_admin_bookings(Eab_EventModel::BOOKING_NO, $event);
 			$ret .= '</div>';
 			$ret .= '</div>'; //eab-events-fpe-rsvps-wrapper
+		} else {
+			$ret .= Eab_Template::get_admin_attendance_addition_form($event, Eab_Template::get_rsvp_status_list());
 		}
 
 		// End RSVPs

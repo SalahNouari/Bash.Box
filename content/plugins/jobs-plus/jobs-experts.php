@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Jobs and Experts
- * Plugin URI: http://premium.wpmudev.org/jobs-plus/
+ * Plugin URI: https://premium.wpmudev.org/project/jobs-and-experts/
  * Description: Match people with projects to industry professionals – it’s more than your average WordPress jobs board.
- * Version: 1.0.1.9
+ * Version: 1.0.2.1
  * Author:WPMU DEV
  * Author URI: http://premium.wpmudev.org
  * Text Domain: jbp
@@ -72,7 +72,7 @@ class Jobs_Experts
     public $domain;
     public $prefix;
 
-    public $version = "1.0.1.8";
+    public $version = "1.0.2.0";
     public $db_version = "1.0";
 
     public $global = array();
@@ -328,6 +328,7 @@ class Jobs_Experts
             //load router
             $router = new JE_Router();
         }
+	    //include_once($this->plugin_path . 'app/components/je-fields-table.php');
         //load shortcode
         $buttons = new JE_Buttons_Shortcode_Controller();
         $job_archive = new JE_Job_Archive_Shortcode_Controller;

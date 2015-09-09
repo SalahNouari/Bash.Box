@@ -1,172 +1,161 @@
 <div class="row">
-    <div class="col-md-12">
-        <ul class="nav nav-tabs" style="overflow: hidden;">
-            <li role="presentation" class="active"><a href="#"><?php _e("Form Arrange", je()->domain) ?></a></li>
-            <li role="presentation"><a href="#"><?php _e("Display Arrange", je()->domain) ?></a></li>
+    <div class="col-md-4">
+        <ul id="main-list" data-id="free" class="dd-list je-fields-list">
+            <?php $this->render_partial('_item', array(
+                'models' => $this->find_free_fields()
+            )) ?>
         </ul>
-        <div class="tab-content">
-            <div class="row">
-                <div class="col-md-4">
-                    <ul id="main-list" data-id="free" class="dd-list je-fields-list">
-                        <?php $this->render_partial('_item', array(
-                            'models' => $this->find_free_fields()
-                        )) ?>
-                    </ul>
-                </div>
-                <div class="col-md-8">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Category Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-cat" class="dd-list je-fields-list">
-                                <?php $this->render_partial('_item', array(
-                                    'models' => $this->find_before_cat_fields()
-                                )) ?>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Category Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-cat" class="dd-list je-fields-list">
-                                <?php $this->render_partial('_item', array(
-                                    'models' => $this->find_after_cat_fields()
-                                )) ?>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Job Title Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-job-title" class="dd-list je-fields-list">
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Category Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-cat" class="dd-list je-fields-list">
+                    <?php $this->render_partial('_item', array(
+                        'models' => $this->find_before_cat_fields()
+                    )) ?>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Category Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-cat" class="dd-list je-fields-list">
+                    <?php $this->render_partial('_item', array(
+                        'models' => $this->find_after_cat_fields()
+                    )) ?>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Job Title Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-job-title" class="dd-list je-fields-list">
 
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Job Title Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-job-title" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Description Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-description" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Description Field") ?></strong>
-                        </div>
-                        <div data-id="after-description" class="panel-body field-drop-place dd">
-                            <ul class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Skill Field") ?></strong>
-                        </div>
-                        <div data-id="before-skill" class="panel-body field-drop-place dd">
-                            <ul class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Skills Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-skill" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Price Field(s)") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-price" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Price Field(s)") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-price" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Email Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-email" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Email Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-email" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Complete Date Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-complete-date" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Complete Date Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-complete-date" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("Before Open For Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="before-open-field" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong><?php _e("After Open For Field") ?></strong>
-                        </div>
-                        <div class="panel-body field-drop-place dd">
-                            <ul data-id="after-open-field" class="dd-list je-fields-list">
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Job Title Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-job-title" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Description Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-description" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Description Field") ?></strong>
+            </div>
+            <div data-id="after-description" class="panel-body field-drop-place dd">
+                <ul class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Skill Field") ?></strong>
+            </div>
+            <div data-id="before-skill" class="panel-body field-drop-place dd">
+                <ul class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Skills Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-skill" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Price Field(s)") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-price" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Price Field(s)") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-price" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Email Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-email" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Email Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-email" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Complete Date Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-complete-date" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Complete Date Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-complete-date" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("Before Open For Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="before-open-field" class="dd-list je-fields-list">
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><?php _e("After Open For Field") ?></strong>
+            </div>
+            <div class="panel-body field-drop-place dd">
+                <ul data-id="after-open-field" class="dd-list je-fields-list">
+                </ul>
             </div>
         </div>
     </div>

@@ -80,17 +80,8 @@ class video_module extends Unit_Module {
 					$editor_id      = ( esc_attr( isset( $data->ID ) ? 'editor_' . $data->ID : rand( 1, 9999 ) ) );
 					$editor_content = htmlspecialchars_decode( ( isset( $data->post_content ) ? $data->post_content : '' ) );
 
-					$args = array(
-						"textarea_name" => $editor_name,
-						"textarea_rows" => 5,
-						"quicktags"     => true,
-						"teeny"         => false,
-						"editor_class"  => 'cp-editor cp-unit-element',
-					);
-
-					$args = apply_filters( 'coursepress_element_editor_args', $args, $editor_name, $editor_id );
-
-					wp_editor( $editor_content, $editor_id, $args );
+					$editor = '<textarea id="' . $editor_id . '" name="' . $editor_name . '" class="coursepress-editor">' . $editor_content . '</textarea>';
+					echo trim( $editor );
 					?>
 
 				</div>
@@ -137,6 +128,11 @@ class video_module extends Unit_Module {
 	}
 
 	function hide_related_videos( $data ) {
+
+		if( ! isset( $data ) || ! isset( $data->hide_related_media) ) {
+			return;
+		}
+
 		?>
 		<label class="hide_related_media">
 				<input type="checkbox" name="<?php echo $this->name; ?>_hide_related_media[<?php $data->id ?>]" value="yes" <?php echo( ! empty( $data ) && isset( $data->hide_related_media ) && $data->hide_related_media == 'yes' ? 'checked' : ( empty( $data ) || ! isset( $data->hide_related_media ) ) ? 'checked' : '' ) ?> />

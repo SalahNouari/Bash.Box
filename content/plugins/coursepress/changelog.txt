@@ -6,6 +6,24 @@ CHANGE LOG
 
 == Changelog ==
 
+= 1.2.6.2 =
+* Fixed: MarketPress 3.0 fatal error warning when sending notifications.
+* Fixed: Prompt for gateway settings even if gateway is enabled (MP3.0 integration)
+* Fixed: Missing course prices when upgrading to MarketPress 3.0.
+* Note:  CoursePress PRO: Temporarily reverting bundled MarketPress to version 2.9.6.2.
+
+= 1.2.6.1 =
+* Fixed: Resubmit link showing even if no answer has been submitted.
+* Fixed: Can now freely move "back" to a previous page without having to complete mandatory elements.
+* Fixed: PHP notice when attempting to make a unit live when it hasn't been saved yet.
+* Fixed: Instructors can only assess their own students. Course creators need to add themselves as instructors if they want to assess.
+* Fixed: Improved performance for Preview Units/Pages/Modules.
+* Fixed: Input elements cannot be submitted when "Previewing" a Unit. It will display "Preview only".
+* Fixed: New implementation of CoursePress editor now allows dynamic editors including Visual/HTML toggles.
+* Fixed: Certificates correctly uses the selected 'Reports' font as set in settings.
+* Added: Integration for MarketPress 3.0.
+* Added: CoursePress now bundled with MarketPress 3.0. Note: Best way to upgrade is using WPMU Dev Dashboard. Alternatively, remove MarketPress 2.9 and install from CoursePress settings.
+
 = 1.2.6.0 =
 * Fixed completion system synchronization.
 * Fixed discussion display in CoursePress theme.
@@ -18,7 +36,6 @@ CHANGE LOG
 * Changed Users can now resubmit answers for file uploads and text boxes while grades are pending.
 * Fixed uppercase usernames now supported by popup.
 * Fixed possible compatibility issue with themes and page titles.
-
 
 = 1.2.5.9 =
 * Fix WP 4.3 compatibility issue with visual editors
@@ -427,4 +444,4 @@ CHANGE LOG
 * 1.0 First Release.
 
 
-133620-1440683206-au
+133620-1441812995-au

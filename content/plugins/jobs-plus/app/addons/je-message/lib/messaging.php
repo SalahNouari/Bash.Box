@@ -4,7 +4,7 @@ Plugin Name: Private Messaging
 Plugin URI: https://premium.wpmudev.org/project/private-messaging
 Description: Private user-to-user communication for placing bids, sharing project specs and hidden internal communication. Complete with front end integration, guarded contact information and protected file sharing.
 Author: WPMU DEV
-Version: 1.0.1.1
+Version: 1.0.1.2
 Author URI: http://premium.wpmudev.org
 Text Domain: private_messaging
 */
@@ -35,7 +35,7 @@ if (!class_exists('MMessaging')) {
         public $domain;
         public $prefix;
 
-        public $version = "1.0.1.1";
+        public $version = "1.0.1.2";
         public $db_version = '1.0';
 
         public $global = array();

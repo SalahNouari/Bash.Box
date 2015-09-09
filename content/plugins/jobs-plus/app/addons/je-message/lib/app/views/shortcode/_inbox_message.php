@@ -50,7 +50,7 @@ if (!isset($render_reply)) {
         )); */ ?>
         <div class="clearfix"></div>
         <div class="page-header">
-            <h3 class="mm-message-subject"><?php echo $message->subject ?></h3>
+            <h3 class="mm-message-subject"><?php echo apply_filters('mm_message_subject', $message->subject) ?></h3>
 
             <div class="row">
                 <div class="col-md-12">
@@ -67,7 +67,13 @@ if (!isset($render_reply)) {
                                     echo $message->get_name($message->send_from);
                                 } ?></strong>
 
-                            <p><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></p>
+                            <div class="clearfix"></div>
+                            <span><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></span>
+
+                            <div class="clearfix"></div>
+                            <?php if (mmg()->get('box') == 'sent'): ?>
+                                <small><?php _e("To:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to); ?></small>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -75,7 +81,7 @@ if (!isset($render_reply)) {
             </div>
         </div>
         <div class="message-body">
-            <?php echo mmg()->html_beautifier($message->content) ?>
+            <?php echo mmg()->html_beautifier(apply_filters('mm_message_content', $message->content)) ?>
         </div>
         <?php $ids = explode(',', $message->attachment);
         $ids = array_filter($ids);
@@ -185,7 +191,7 @@ if (!isset($render_reply)) {
                 <section class="message-content">
 
                     <div class="page-header">
-                        <h3 class="mm-message-subject"><?php echo $message->subject ?></h3>
+                        <h3 class="mm-message-subject"><?php echo apply_filters('mm_message_subject', $message->subject) ?></h3>
 
                         <div class="row">
                             <div class="col-md-12">
@@ -198,7 +204,13 @@ if (!isset($render_reply)) {
                                     <div class="col-md-9">
                                         <strong><?php echo $message->get_name($message->send_from) ?></strong>
 
-                                        <p><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></p>
+                                        <div class="clearfix"></div>
+                                        <span><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></span>
+
+                                        <div class="clearfix"></div>
+                                        <?php if (mmg()->get('box') == 'sent'): ?>
+                                            <small><?php _e("To:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to) ?></small>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +218,7 @@ if (!isset($render_reply)) {
                         </div>
                     </div>
                     <div class="message-body">
-                        <?php echo mmg()->html_beautifier($message->content) ?>
+                        <?php echo mmg()->html_beautifier(apply_filters('mm_message_content', $message->content)) ?>
                     </div>
                     <?php $ids = explode(',', $message->attachment);
                     $ids = array_filter($ids);

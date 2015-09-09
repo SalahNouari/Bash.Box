@@ -82,7 +82,7 @@ if (!class_exists('IG_Request')) {
 
         public function redirect($url)
         {
-            wp_redirect($url);
+            wp_redirect(esc_url_raw($url));
             exit;
         }
 

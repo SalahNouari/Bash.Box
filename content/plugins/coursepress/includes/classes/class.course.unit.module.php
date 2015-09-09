@@ -231,7 +231,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 		function update_module_response( $data ) {
 			global $user_id, $wpdb, $coursepress;
 
-			$user_id = get_current_user_id();
+			$user_id   = get_current_user_id();
 			$unit_id   = get_post_ancestors( $data->response_id );
 			$course_id = get_post_meta( $unit_id[0], 'course_id', true );
 
@@ -249,7 +249,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				$post['ID'] = $data->ID; //If ID is set, wp_insert_post will do the UPDATE instead of insert
 			}
 
-			 //LEGACY: Check if response already exists ( from the user. Only one response is allowed per persponse request / module per user )
+			//LEGACY: Check if response already exists ( from the user. Only one response is allowed per persponse request / module per user )
 			$already_respond_posts_args = array(
 				'posts_per_page' => 1,
 				'meta_key'       => 'user_ID',
@@ -569,6 +569,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 								?><p class="form-info-regular"><?php echo $form_message; ?></p>
 							<?php } ?>
 
+
 							<input type="submit" class="apply-button-enrolled submit-elements-data-button" name="submit_modules_data_<?php echo( $is_last_page ? 'done' : 'save' ); ?>" value="<?php echo( $is_last_page ? __( 'Done', 'cp' ) : __( 'Next', 'cp' ) ); ?>">
 						<?php
 						} else {
@@ -749,6 +750,8 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 
 		public static function get_ungraded_response_count( $course_id = '' ) {
 
+			$counter = 0;
+
 			if ( $course_id == '' ) {
 
 				$args = array(
@@ -771,6 +774,12 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 
 				//Count only ungraded responses from STUDENTS!
 				foreach ( $ungraded_responses as $key => $ungraded_response ) {
+
+					// Only show count for courses an Instructor can actually assess
+					$course_id = get_post_meta( $ungraded_response->ID, 'course_id', true );
+					if ( ! CoursePress_Capabilities::is_course_instructor( $course_id ) ) {
+						continue;
+					}
 
 					if ( get_post_meta( $ungraded_response->post_parent, 'gradable_answer', true ) != 'yes' ) {
 						unset( $ungraded_responses[ $key ] );
@@ -803,9 +812,10 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 						}
 					}
 
+					$counter += 1;
 				}
 
-				return count( $ungraded_responses ); // - $admins_responses;
+				return $counter;
 			} else {
 
 				$args = array(
@@ -825,6 +835,10 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 						)
 					)
 				);
+
+				if ( ! CoursePress_Capabilities::is_course_instructor( $course_id ) ) {
+					return 0;
+				}
 
 				$ungraded_responses = get_posts( $args );
 
@@ -960,7 +974,6 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 			$data, $grade, $responses, $last_public_response = false, $show_grade = true,
 			$total_correct = false, $total_answers = false
 		) {
-			$number_of_answers = 1 < (int) count( $responses ) ? (int) count( $responses ) + (int) count( $last_public_response ) : (int) count( $responses );
 			$number_of_answers = (int) count( $responses ) + (int) count( $last_public_response );
 
 			// Allow unlimited resubmits while grade is pending
@@ -968,6 +981,23 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				'file_input_module',
 				'text_input_module',
 			);
+
+			$preview_data = CoursePress::instance()->preview_data;
+			if ( isset( $preview_data ) && ! empty( $preview_data ) ) {
+				$content = '
+					<div class="module_grade">
+						<div class="module_grade_left">
+						' . esc_html__( 'Preview only', 'cp' ) . '
+						</div>
+						<div class="module_grade_right">
+						</div>
+					</div>
+				';
+
+				echo $content;
+
+				return;
+			}
 
 			$limit_attempts       = $data->limit_attempts; //yes or no
 			$limit_attempts_value = $data->limit_attempts_value;
@@ -980,7 +1010,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				$limit_attempts_value = - 1; //unlimited
 			}
 
-			$allow_free_resubmit = in_array( $data->name, $allowed_resubmits ) && empty( $grade );
+			$allow_free_resubmit = in_array( $data->name, $allowed_resubmits ) && empty( $grade ) && 0 < $number_of_answers;
 
 			if (
 				( $grade && 'yes' == $data->gradable_answer ) ||

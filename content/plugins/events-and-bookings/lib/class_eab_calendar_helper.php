@@ -231,7 +231,7 @@ class Eab_CalendarTable_UpcomingCalendarWidget extends Eab_CalendarTable {
 		$cls = $this->get_calendar_root_class();
 		return $this->_class
 			? sanitize_html_class($cls) . ' ' . sanitize_html_class($this->_class)
-			: $cls
+			: sanitize_html_class($cls)
 		;
 	}
 	public function get_calendar_root_class () {
@@ -322,7 +322,7 @@ class Eab_CalendarTable_UpcomingCalendarWidget extends Eab_CalendarTable {
 	 * Override the main method to allow output caching.
 	 * Calendar widget could be used often, so make sure we're quick.
 	 */
-	public function get_month_calendar ($timestamp) {
+	public function get_month_calendar ($timestamp=false) {
 		if (!(defined('EAB_CALENDAR_USE_CACHE') && EAB_CALENDAR_USE_CACHE)) return parent::get_month_calendar($timestamp);
 
 		$key = md5(serialize($this->_events)) . '-eab_ucw';
@@ -378,6 +378,7 @@ class Eab_CalendarTable_EventArchiveCalendar extends Eab_CalendarTable {
 			: get_permalink($event_info['id'])
 		;
 		$tstamp = esc_attr(date_i18n("Y-m-d\TH:i:sO", $event_tstamps['start']));
+		$daytime = (int)date("His", $event_tstamps['start']);
 
 		if (!empty($event_info['has_no_start_time'])) {
 			$datetime_format = get_option('date_format');
@@ -387,7 +388,7 @@ class Eab_CalendarTable_EventArchiveCalendar extends Eab_CalendarTable {
 			$datetime_class = 'eab-date_format-time';
 		}
 
-		$this->_data[] = '<a class="wpmudevevents-calendar-event ' . $css_classes . '" href="' . $event_permalink . '">' .
+		$this->_data[$daytime] = '<a class="wpmudevevents-calendar-event ' . $css_classes . '" href="' . $event_permalink . '">' .
 			$event_info['title'] .
 			'<span class="wpmudevevents-calendar-event-info">' .
 				(
@@ -416,7 +417,9 @@ class Eab_CalendarTable_EventArchiveCalendar extends Eab_CalendarTable {
 				$day
 			)
 		);
+
 		if ($this->_data) {
+			ksort($this->_data);
 			$activity = '<p>' .
 				"<span class='eab-date-ordinal'>{$day}</span> <span class='eab-date-full' style='display:none'>{$full_date}</span>" .
 				'<br />' . join(' ', $this->_data) .
@@ -427,7 +430,7 @@ class Eab_CalendarTable_EventArchiveCalendar extends Eab_CalendarTable {
 		return $activity;
 	}
 
-	public function get_month_calendar ($timestamp) {
+	public function get_month_calendar ($timestamp=false) {
 		return parent::get_month_calendar($timestamp) . $this->_get_js();
 	}
 
@@ -487,6 +490,7 @@ class Eab_CalendarTable_EventShortcodeCalendar extends Eab_CalendarTable_EventAr
 	protected $_use_footer = false;
 	protected $_use_scripts = true;
 	protected $_navigation = false;
+	protected $_track = false;
 	protected $_title_format = 'M Y';
 	protected $_short_title_format = 'm-Y';
 
@@ -516,6 +520,10 @@ class Eab_CalendarTable_EventShortcodeCalendar extends Eab_CalendarTable_EventAr
 
 	public function set_navigation ($navigation) {
 		$this->_navigation = (bool)$navigation;
+	}
+
+	public function set_track ($track) {
+		$this->_track = (bool)$track;
 	}
 
 	protected function _get_js () {
@@ -561,20 +569,23 @@ class Eab_CalendarTable_EventShortcodeCalendar extends Eab_CalendarTable_EventAr
 				"<span>{$title_format}</span>" .
 			'</time>' .
 		'</a>';
+		$positional_id = $this->_track ? esc_attr('eab-calendar-' . preg_replace('/[^-_a-z0-9]/', '-', $calendar_class)) : '';
+		$id_attr = $this->_track ? "id='{$positional_id}'" : '';
+		$id_href = $this->_track ? "#{$positional_id}" : '';
 		$title = 'top' == $position
-			? "<h4>{$title_link}</h4>"
+			? "<h4 {$id_attr}>{$title_link}</h4>"
 			: "<b>{$title_link}</b>"
 		;
 		return "<tr class='{$row_class}'>" .
 			'<td>' .
 				'<a class="' . $calendar_class . '-navigation-link eab-navigation-prev eab-time_unit-year" href="' .
-					add_query_arg('date', date('Y-m', $time - (366*86400))) . '">' .
+					esc_url(add_query_arg('date', date('Y-m', $time - (366*86400)))) . $id_href . '">' .
 					'&nbsp;&laquo;' .
 				'</a>' .
 			'</td>' .
 			'<td>' .
 				'<a class="' . $calendar_class . '-navigation-link eab-navigation-prev eab-time_unit-month" href="' .
-					add_query_arg('date', date('Y-m', $time - (28*86400))) . '">' .
+					esc_url(add_query_arg('date', date('Y-m', $time - (28*86400)))) . $id_href . '">' .
 					'&nbsp;&lsaquo;' .
 				'</a>' .
 			'</td>' .
@@ -584,13 +595,13 @@ class Eab_CalendarTable_EventShortcodeCalendar extends Eab_CalendarTable_EventAr
 			'</td>' .
 			'<td>' .
 				'<a class="' . $calendar_class . '-navigation-link eab-navigation-next eab-time_unit-month" href="' .
-					add_query_arg('date', date('Y-m', $time + (32*86400))) . '">' .
+					esc_url(add_query_arg('date', date('Y-m', $time + (32*86400)))) . $id_href . '">' .
 					'&rsaquo;&nbsp;' .
 				'</a>' .
 			'</td>' .
 			'<td>' .
 				'<a class="' . $calendar_class . '-navigation-link eab-navigation-next eab-time_unit-year" href="' .
-					add_query_arg('date', date('Y-m', $time + (366*86400))) . '">' .
+					esc_url(add_query_arg('date', date('Y-m', $time + (366*86400)))) . $id_href . '">' .
 					'&raquo;&nbsp;' .
 				'</a>' .
 			'</td>' .

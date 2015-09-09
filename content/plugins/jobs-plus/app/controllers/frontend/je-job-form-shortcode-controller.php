@@ -34,7 +34,7 @@ class JE_Job_Form_Shortcode_Controller extends IG_Request
             if ($model->status == 'publish') {
                 $this->redirect(get_permalink($model->id));
             } else {
-                $this->redirect(get_permalink(je()->pages->page(JE_Page_Factory::MY_JOB)));									     						
+                $this->redirect(get_permalink(je()->pages->page(JE_Page_Factory::MY_JOB)));
             }
         } else {
             je()->global['job_model'] = $model;

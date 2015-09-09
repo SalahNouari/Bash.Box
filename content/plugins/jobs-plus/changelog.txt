@@ -50,6 +50,10 @@ Fix bug recent job widget not showing
 Some other minor bugs fix
 ==1.0.1.9
 Show notification when user deactivate MarketPress plugin while MarketPress integration add-on still enable
+==1.0.2.0
+Integration with MarketPress 3.0
+==1.0.2.1
+Fix backward issue with MarketPress 2.9
 
 
-133620-1435796061-ai
+133620-1441813009-au

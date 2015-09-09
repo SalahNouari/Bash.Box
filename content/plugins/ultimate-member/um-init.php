@@ -96,7 +96,6 @@ class UM_API {
 		require_once um_path . 'core/um-logout.php';
 		require_once um_path . 'core/um-modal.php';
 		require_once um_path . 'core/um-cron.php';
-		require_once um_path . 'core/um-cache.php';
 		require_once um_path . 'core/um-tracking.php';
 		
 		if ( !class_exists( 'Mobile_Detect' ) ) {
@@ -166,7 +165,6 @@ class UM_API {
 		$this->logout = new UM_Logout();
 		$this->modal = new UM_Modal();
 		$this->cron = new UM_Cron();
-		$this->cache = new UM_Cache();
 		$this->tracking = new UM_Tracking();
 		
 		$this->mobile = new Mobile_Detect;
@@ -176,6 +174,9 @@ class UM_API {
 		$domain = 'ultimatemember';
 		$locale = ( get_locale() != '' ) ? get_locale() : 'en_US';
 		load_textdomain($domain, WP_LANG_DIR . '/plugins/' .$domain.'-'.$locale.'.mo');
+		
+		if ( !get_option('show_avatars') )
+			update_option('show_avatars', 1 );
 
 	}
 	

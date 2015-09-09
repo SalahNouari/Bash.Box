@@ -229,9 +229,10 @@ class Eab_Template {
 		return $ret;
 	}
 
-	private static function get_admin_attendance_addition_form ($event, $statuses) {
+	public static function get_admin_attendance_addition_form ($event, $statuses) {
 		if (!method_exists($event, 'get_id') || !is_array($statuses)) return false;
 		if ($event->is_premium()) return ''; // Won't deal with the paid events
+		if ($event->is_recurring() && !$event->is_recurring_child()) return ''; // Won't deal with the recurring hub events
 
 		$content = '';
 
@@ -261,15 +262,11 @@ class Eab_Template {
 		if (!current_user_can('edit_posts')) return false; // Basic sanity check
 		$event = ($post instanceof Eab_EventModel) ? $post : new Eab_EventModel($post);
 
-		$statuses = array(
-			Eab_EventModel::BOOKING_YES => __('Attending', Eab_EventsHub::TEXT_DOMAIN),
-			Eab_EventModel::BOOKING_MAYBE => __('Maybe', Eab_EventsHub::TEXT_DOMAIN),
-			Eab_EventModel::BOOKING_NO => __('No', Eab_EventsHub::TEXT_DOMAIN)
-		);
+		$statuses = self::get_rsvp_status_list();
 		if (!in_array($status, array_keys($statuses))) return false; // Unknown status
 		$status_name = $statuses[$status];
 
-		$content = Eab_Template::get_admin_attendance_addition_form($event, $statuses);
+		//$content = Eab_Template::get_admin_attendance_addition_form($event, $statuses); // Moved to actual bookings areas
 
 		$content .= '<h4>'. __($status_name, Eab_EventsHub::TEXT_DOMAIN). '</h4>';
 		$content .= '<ul class="eab-guest-list">';
@@ -638,6 +635,14 @@ class Eab_Template {
 		return $content;
 	}
 
+	public static function get_rsvp_status_list () {
+		return array(
+			Eab_EventModel::BOOKING_YES => __('Attending', Eab_EventsHub::TEXT_DOMAIN),
+			Eab_EventModel::BOOKING_MAYBE => __('Maybe', Eab_EventsHub::TEXT_DOMAIN),
+			Eab_EventModel::BOOKING_NO => __('No', Eab_EventsHub::TEXT_DOMAIN)
+		);
+	}
+
 	public static function get_status_class ($post) {
 		$event = ($post instanceof Eab_EventModel) ? $post : new Eab_EventModel($post);
 		$status = $event->get_status();
@@ -713,6 +718,7 @@ class Eab_Template {
 		$renderer->set_footer($args['footer']);
 		$renderer->set_scripts(!$args['override_scripts']);
 		$renderer->set_navigation($args['navigation']);
+		$renderer->set_track($args['track']);
 		$renderer->set_title_format($args['title_format']);
 		$renderer->set_short_title_format($args['short_title_format']);
 		$renderer->set_long_date_format($args['long_date_format']);
@@ -831,7 +837,7 @@ class Eab_Template {
 		return $output;
 	}
 
-	public static function util_shortcode_argument_type_string ($raw_type, $argument, $tag) {
+	private static function _shortcode_arg_type_map_values ($raw_type, $argument, $tag) {
 		$type_map = array(
 			'boolean' => array(
 				'type' => __('boolean', Eab_EventsHub::TEXT_DOMAIN),
@@ -889,13 +895,31 @@ class Eab_Template {
 				'example' => sprintf(__('%s="http://example.com/something"', Eab_EventsHub::TEXT_DOMAIN), $argument),
 			),
 		);
-		if (empty($type_map[$raw_type])) return "<code>({$raw_type})</code>";
 
-		$type = $type_map[$raw_type];
-		$title = 'title="' . esc_attr(
-			sprintf(__("%s, e.g. [%s ... %s]", Eab_EventsHub::TEXT_DOMAIN), $type['value'], $tag, $type['example'])
-		) . '"';
-		return "<abbr {$title}>({$type['type']})</abbr>";
+		$type = !empty($type_map[$raw_type])
+			? $type_map[$raw_type]
+			: false
+		;
+		$title = sprintf(__("%s, e.g. [%s ... %s]", Eab_EventsHub::TEXT_DOMAIN), $type['value'], $tag, $type['example']);
+		return array(
+			'type' => $type['type'],
+			'title' => $title,
+		);
+	}
+
+	public static function util_shortcode_argument_type_string_info ($raw_type, $argument, $tag, $tips=false) {
+		if (!is_object($tips)) return Eab_Template::util_shortcode_argument_type_string($raw_type, $argument, $tag);
+		$resolved = Eab_Template::_shortcode_arg_type_map_values($raw_type, $argument, $tag);
+		if (empty($resolved['type']) || empty($resolved['title'])) return "<code>({$raw_type})</code>";
+
+		return "<span>({$resolved['type']})</span>&nbsp;" . $tips->add_tip($resolved['title']);
+	}
+
+	public static function util_shortcode_argument_type_string ($raw_type, $argument, $tag) {
+		$resolved = Eab_Template::_shortcode_arg_type_map_values($raw_type, $argument, $tag);
+		if (empty($resolved['type']) || empty($resolved['title'])) return "<code>({$raw_type})</code>";
+		$title = 'title="' . esc_attr($resolved['title']) . '"';
+		return "<abbr {$title}>({$resolved['type']})</abbr>";
 	}
 
 }

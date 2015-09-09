@@ -14,22 +14,7 @@ class UM_Admin_Metabox {
 
 		add_action( 'load-post.php', array(&$this, 'add_metabox'), 9 );
 		add_action( 'load-post-new.php', array(&$this, 'add_metabox'), 9 );
-		
-		add_action( 'save_post', array(&$this, 'remove_rewrite_rules_option'), 10, 2 );
-	
-	}
-	
-	/***
-	***	@unset rewrite rules if the slug was changed
-	***/
-	function remove_rewrite_rules_option( $post_id ) {
-		if ( ! wp_is_post_revision( $post_id ) ) {
 
-			if ( get_post_meta($post_id, '_um_core', true) ) {
-				delete_option('um_flush_rules');
-			}
-
-		}
 	}
 	
 	/***
@@ -377,6 +362,8 @@ class UM_Admin_Metabox {
 		
 		do_action('um_admin_before_saving_role_meta', $post_id );
 		
+		do_action('um_admin_before_save_role', $post_id, $post );
+		
 		foreach( $_POST as $k => $v ) {
 			if (strstr($k, '_um_')){
 				update_post_meta( $post_id, $k, $v);
@@ -384,6 +371,8 @@ class UM_Admin_Metabox {
 		}
 
 		do_action('um_admin_after_editing_role', $post_id, $post);
+		
+		do_action('um_admin_after_save_role', $post_id, $post );
 		
 	}
 	

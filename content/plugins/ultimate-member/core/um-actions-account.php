@@ -294,9 +294,11 @@
 		
 		<div class="um-account-heading uimob340-hide uimob500-hide"><i class="<?php echo $icon; ?>"></i><?php echo $title; ?></div>
 		
+		<?php if ( class_exists('UM_Messaging_API') || class_exists('UM_Followers_API') ) { ?>
 		<div class="um-field">
 			<div class="um-field-label"><label for=""><?php _e('Email me when','ultimatemember'); ?></label><div class="um-clear"></div></div>
 		</div>
+		<?php } ?>
 		
 		<?php echo $output; ?>
 		
@@ -360,7 +362,7 @@
 			
 			<?php } ?>
 			
-			<div class="um-account-name uimob800-hide"><a href="<?php echo um_user_profile_url(); ?>"><?php echo um_user('display_name'); ?></a></div>
+			<div class="um-account-name uimob800-hide"><a href="<?php echo um_user_profile_url(); ?>"><?php echo um_user('display_name', 'html'); ?></a></div>
 		
 		</div>
 	

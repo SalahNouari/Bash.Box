@@ -3,7 +3,7 @@
 Plugin Name: Appointments+
 Description: Lets you accept appointments from front end and manage or create them from admin side
 Plugin URI: http://premium.wpmudev.org/project/appointments-plus/
-Version: 1.5.1
+Version: 1.5.2
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
 Textdomain: appointments
@@ -32,7 +32,7 @@ if ( !class_exists( 'Appointments' ) ) {
 
 class Appointments {
 
-	var $version = "1.5.1";
+	var $version = "1.5.2";
 
 	function __construct() {
 
@@ -1401,15 +1401,15 @@ class Appointments {
 	 * Check and return necessary fields to the front end
 	 * @return json object
 	 */
-	function pre_confirmation() {
+	function pre_confirmation () {
 
-		$values 		= explode( ":", $_POST["value"] );
-		$location 		= $values[0];
-		$service 		= $values[1];
-		$worker 		= $values[2];
-		$start 			= $values[3];
-		$end 			= $values[4];
-		$post_id		= $values[5];
+		$values = explode( ":", $_POST["value"] );
+		$location = $values[0];
+		$service = $values[1];
+		$worker = $values[2];
+		$start = $values[3];
+		$end = $values[4];
+		$post_id = $values[5];
 
 		// A little trick to pass correct lsw variables to the get_price, is_busy and get_capacity functions
 		$_REQUEST["app_location_id"] = $location;
@@ -1424,11 +1424,11 @@ class Appointments {
 			)));
 		}
 
-		$price = $this->get_price( );
+		$price = $this->get_price();
 
 		// It is possible to apply special discounts
-		$price = apply_filters( 'app_display_amount', $price, $service, $worker );
-		$price = apply_filters( 'app_pre_confirmation_price', $price, $service, $worker, $start, $end );
+		$price = apply_filters('app_display_amount', $price, $service, $worker);
+		$price = apply_filters('app_pre_confirmation_price', $price, $service, $worker, $start, $end);
 
 		$display_currency = !empty($this->options["currency"])
 			? App_Template::get_currency_symbol($this->options["currency"])
@@ -1437,76 +1437,83 @@ class Appointments {
 
 		global $wpdb;
 
-		if ( $this->is_busy( $start,  $end, $this->get_capacity() ) )
-			die( json_encode( array("error"=>apply_filters( 'app_booked_message',__( 'We are sorry, but this time slot is no longer available. Please refresh the page and try another time slot. Thank you.', 'appointments')))));
+		if ($this->is_busy($start,  $end, $this->get_capacity())) {
+			die(json_encode(array(
+				"error" => apply_filters(
+					'app_booked_message',
+					__( 'We are sorry, but this time slot is no longer available. Please refresh the page and try another time slot. Thank you.', 'appointments')
+				)
+			)));
+		}
 
-		$service_obj = $this->get_service( $service );
-		$service = '<label><span>'. __('Service name: ', 'appointments' ).  '</span>'. apply_filters( 'app_confirmation_service', stripslashes( $service_obj->name ), $service_obj->name ) . '</label>';
-		$start = '<label><span>'.__('Date and time: ', 'appointments' ). '</span>'. apply_filters( 'app_confirmation_start', date_i18n( $this->datetime_format, $start ), $start ) . '</label>';
-		$end = '<label><span>'.__('Lasts (approx): ', 'appointments' ). '</span>'. apply_filters( 'app_confirmation_lasts', $service_obj->duration . " ". __('minutes', 'appointments'), $service_obj->duration ) . '</label>';
-		if ( $price > 0 )
-			$price = '<label><span>'.__('Price: ', 'appointments' ).  '</span>'. apply_filters( 'app_confirmation_price', $price . " " . $display_currency, $price ) . '</label>';
-		else
-			$price = 0;
+		$service_obj = $this->get_service($service);
+		$service = '<label><span>' . __('Service name: ', 'appointments') .  '</span>'. apply_filters('app_confirmation_service', stripslashes($service_obj->name), $service_obj->name) . '</label>';
+		$start = '<label><span>' . __('Date and time: ', 'appointments') . '</span>'. apply_filters('app_confirmation_start', date_i18n($this->datetime_format, $start), $start) . '</label>';
+		$end = '<label><span>' . __('Lasts (approx): ', 'appointments') . '</span>'. apply_filters('app_confirmation_lasts', $service_obj->duration . " " . __('minutes', 'appointments'), $service_obj->duration) . '</label>';
 
-		if ( $worker )
-			$worker = '<label><span>'. __('Service provider: ', 'appointments' ).  '</span>'. apply_filters( 'app_confirmation_worker', stripslashes( $this->get_worker_name( $worker ) ), $worker ) . '</label>';
-		else
-			$worker = '';
+		$price = $price > 0
+			? '<label><span>' . __('Price: ', 'appointments') .  '</span>'. apply_filters('app_confirmation_price', $price . " " . $display_currency, $price) . '</label>'
+			: 0
+		;
 
-		if ( $this->options["ask_name"] )
-			$ask_name = "ask";
-		else
-			$ask_name = "";
+		$worker = !empty($worker)
+			? '<label><span>' . __('Service provider: ', 'appointments' ) . '</span>'. apply_filters('app_confirmation_worker', stripslashes($this->get_worker_name($worker)), $worker) . '</label>'
+			: ''
+		;
 
-		if ( $this->options["ask_email"] )
-			$ask_email = "ask";
-		else
-			$ask_email = "";
+		$ask_name = !empty($this->options['ask_name'])
+			? 'ask'
+			: ''
+		;
 
-		if ( $this->options["ask_phone"] )
-			$ask_phone = "ask";
-		else
-			$ask_phone = "";
+		$ask_email = !empty($this->options['ask_email'])
+			? 'ask'
+			: ''
+		;
 
-		if ( $this->options["ask_address"] )
-			$ask_address = "ask";
-		else
-			$ask_address = "";
+		$ask_phone = !empty($this->options['ask_phone'])
+			? 'ask'
+			: ''
+		;
 
-		if ( $this->options["ask_city"] )
-			$ask_city = "ask";
-		else
-			$ask_city = "";
+		$ask_address = !empty($this->options['ask_address'])
+			? 'ask'
+			: ''
+		;
 
-		if ( $this->options["ask_note"] )
-			$ask_note = "ask";
-		else
-			$ask_note = "";
+		$ask_city = !empty($this->options['ask_city'])
+			? 'ask'
+			: ''
+		;
 
-		if ( isset( $this->options["gcal"] ) && 'yes' == $this->options["gcal"] )
-			$ask_gcal = "ask";
-		else
-			$ask_gcal = "";
+		$ask_note = !empty($this->options['ask_note'])
+			? 'ask'
+			: ''
+		;
+
+		$ask_gcal = isset( $this->options["gcal"] ) && 'yes' == $this->options["gcal"]
+			? 'ask'
+			: ''
+		;
 
 		$reply_array = array(
-							'service'	=> $service,
-							'worker'	=> $worker,
-							'start'		=> $start,
-							'end'		=> $end,
-							'price'		=> $price,
-							'name'		=> $ask_name,
-							'email'		=> $ask_email,
-							'phone'		=> $ask_phone,
-							'address'	=> $ask_address,
-							'city'		=> $ask_city,
-							'note'		=> $ask_note,
-							'gcal'		=> $ask_gcal
-						);
+			'service'	=> $service,
+			'worker'	=> $worker,
+			'start'		=> $start,
+			'end'		=> $end,
+			'price'		=> $price,
+			'name'		=> $ask_name,
+			'email'		=> $ask_email,
+			'phone'		=> $ask_phone,
+			'address'	=> $ask_address,
+			'city'		=> $ask_city,
+			'note'		=> $ask_note,
+			'gcal'		=> $ask_gcal
+		);
 
-		$reply_array = apply_filters( 'app_pre_confirmation_reply', $reply_array );
+		$reply_array = apply_filters('app_pre_confirmation_reply', $reply_array);
 
-		die( json_encode( $reply_array ));
+		die(json_encode($reply_array));
 	}
 
 	/**
@@ -1711,13 +1718,13 @@ class Appointments {
 			$gcal_url = '';
 		}
 
-		// Check if this is a App Product page and add variation if it is
-		$post = get_post( $post_id );
-		$mp = $variation = 0;
-		if ( $this->check_marketpress_plugin() && 'product' == $post->post_type && strpos( $post->post_content, '[app_' ) !== false ) {
-			$mp = 1;
-			$variation = $this->add_variation( $insert_id, $post_id, $service, $worker, $start, $end );
-		}
+		$additional = array(
+			'mp' => 0,
+			'variation' => null,
+		);
+		$additional = apply_filters('app-appointment-appointment_created', $additional, $insert_id, $post_id, $service, $worker, $start, $end);
+		$mp = isset($additional['mp']) ? $additional['mp'] : 0;
+		$variation = isset($additional['variation']) ? $additional['variation'] : 0;
 
 		$gcal_same_window = !empty($this->options["gcal_same_window"]) ? 1 : 0;
 
@@ -2158,8 +2165,8 @@ class Appointments {
 			$start = 8;
 			$end = 18;
 		}
-		$start = apply_filters( 'app_schedule_starting_hour', $start );
-		$end = apply_filters( 'app_schedule_ending_hour', $end );
+		$start = apply_filters( 'app_schedule_starting_hour', $start, $day_start, 'day' );
+		$end = apply_filters( 'app_schedule_ending_hour', $end, $day_start, 'day' );
 
 		$first = $start *3600 + $day_start; // Timestamp of the first cell
 		$last = $end *3600 + $day_start; // Timestamp of the last cell
@@ -2329,8 +2336,8 @@ class Appointments {
 			$start = 8;
 			$end = 18;
 		}
-		$start = apply_filters( 'app_schedule_starting_hour', $start );
-		$end = apply_filters( 'app_schedule_ending_hour', $end );
+		$start = apply_filters( 'app_schedule_starting_hour', $start, $date, 'week' );
+		$end = apply_filters( 'app_schedule_ending_hour', $end, $date, 'week' );
 
 		$first = $start *3600 + $sunday; // Timestamp of the first cell of first Sunday
 		$last = $end *3600 + $sunday; // Timestamp of the last cell of first Sunday
@@ -2927,6 +2934,7 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 		$result = $this->get_work_break( $this->location, $this->worker, 'open' );
 		if ( $result !== null ) {
 			$days = maybe_unserialize( $result->hours );
+			$days = array_filter($days);
 			if ( is_array( $days ) ) {
 				$min = 24; $max = 0;
 				foreach ( $days as $day ) {
@@ -3790,329 +3798,21 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 			// Also check if it is activated
 			if ( isset( $this->options["use_mp"] ) && $this->options["use_mp"] ) {
 				$this->mp = true;
-				add_action( 'manage_posts_custom_column', array($this, 'edit_products_custom_columns'), 1 );
-				add_action( 'wp_ajax_nopriv_mp-update-cart', array($this, 'pre_update_cart'), 1 );
-				add_action( 'wp_ajax_mp-update-cart', array($this, 'pre_update_cart'), 1 );
-				add_action( 'wp', array($this, 'remove_from_cart_manual'), 1 );
-				add_filter( 'the_content', array($this, 'product_page'), 18 );
-				add_action( 'mp_order_paid', array($this, 'handle_mp_payment'));
-				add_filter( 'mp_product_list_meta', array($this, 'mp_product_list_meta'), 10, 2);
-				add_filter( 'mp_order_notification_body', array($this, 'modify_email'), 10, 2 );
-				add_filter( 'mp_product_name_display_in_cart', array($this, 'modify_name'), 10, 2 );
-				add_filter( 'mp_buy_button_tag', array($this, 'mp_buy_button_tag'), 10, 3 );
+				if (defined('MP_VERSION') && version_compare(MP_VERSION, '3.0', '>=')) {
+					require_once('includes/class_app_mp_bridge.php');
+					App_MP_Bridge::serve();
+				} else {
+					require_once('includes/class_app_mp_bridge_legacy.php');
+					App_MP_Bridge_Legacy::serve();
+				}
 				return true;
 			}
 		}
 		return false;
 	}
 
-	/**
-	 * Remove duplicate buttons on Product List page and modify button text, also replace form with a link
-	 * @param $button, $product_id, $context: See MarketPress
-	 * @return string
-	 * @Since 1.2.5
-	 */
-	function mp_buy_button_tag( $button, $product_id, $context ) {
 
-		$book_now = apply_filters( 'app_mp_book_now', __('Choose Option &raquo;','appointments') );
 
-		$product = get_post( $product_id );
-		if ( 'list' != $context || !$this->is_app_mp_page( $product ) )
-			return $button;
-
-		if ( isset($_REQUEST['order'] ) ) {
-			$button = preg_replace(
-				'%<input class="mp_button_buynow"(.*?)value="(.*?)" />%is',
-				'<input class="mp_button_buynow" type="submit" name="buynow" value="'.$book_now.'" />',
-				$button
-			);
-			$button = preg_replace(
-				'%<input class="mp_button_addcart"(.*?)value="(.*?)" />%is',
-				'<input class="mp_button_buynow" type="submit" name="buynow" value="'.$book_now.'" />',
-				$button
-			);
-			$button = preg_replace(
-				'%<form(.*?)></form>%is',
-				'<a class="mp_link_buynow" href="'.get_permalink($product_id).'">'.$book_now.'</a>',
-				$button
-			);
-
-			return $button;
-		}
-		else return '';
-	}
-
-	/**
-	 * Determine if a page is A+ Product page from the shortcodes used
-	 * @param $product custom post object
-	 * @return bool
-	 * @Since 1.0.1
-	 */
-	function is_app_mp_page( $product ) {
-		$result = false;
-		if ( is_object( $product ) && strpos( $product->post_content, '[app_' ) !== false )
-			$result = true;
-		// Maybe required for templates
-		return apply_filters( 'app_is_mp_page', $result, $product );
-	}
-
-	/**
-	 * Hide column details for A+ products
-	 * @Since 1.0.1
-	 */
-	function edit_products_custom_columns( $column ) {
-		global $post, $mp;
-		if (!$this->is_app_mp_page($post)) return;
-		$hook = version_compare($mp->version, '2.8.8', '<')
-			? 'manage_posts_custom_column'
-			: 'manage_product_posts_custom_column'
-		;
-		if ('variations' == $column || 'sku' == $column || 'pricing' == $column) {
-			remove_action($hook, array($mp, 'edit_products_custom_columns'));
-			echo '-';
-		} else {
-			add_action($hook, array($mp, 'edit_products_custom_columns'));
-		}
-	}
-
-	/**
-	 * Remove download link from confirmation email
-	 * @Since 1.0.1
-	 */
-	function modify_email( $body, $order ) {
-
-		if ( !is_object( $order ) || !is_array( $order->mp_cart_info ) )
-			return $body;
-
-		$order_id = $order->post_title; // Strange, but true :)
-
-		foreach ( $order->mp_cart_info as $product_id=>$product_detail ) {
-			$product = get_post( $product_id );
-			// Find if this is an A+ product and change link if it is
-			if ( $this->is_app_mp_page( $product ) )
-				$body = str_replace( get_permalink( $product_id ) . "?orderid=$order_id", '-', $body );
-		}
-
-		// Addons may want to modify MP email
-		return apply_filters( 'app_mp_email', $body, $order );
-	}
-
-	/**
-	 * Modify display name in the cart
-	 * @Since 1.0.1
-	 */
-	function modify_name( $name, $product_id ) {
-		$product = get_post( $product_id );
-		$var_names = get_post_meta( $product_id, 'mp_var_name', true );
-		if ( !$this->is_app_mp_page( $product ) || !is_array( $var_names ) )
-			return $name;
-
-		list( $app_title, $app_id ) = split( ':', $name );
-		if ( $app_id ) {
-			global $wpdb;
-			$result = $this->get_app( $app_id );
-			if ( $result ) {
-				$name = $name . " (". date_i18n( $this->datetime_format, strtotime( $result->start ) ) . ")";
-				$name = apply_filters( 'app_mp_product_name_in_cart', $name, $this->get_service_name( $result->service ), $this->get_worker_name( $result->worker ), $result->start, $result );
-			}
-		}
-		return $name;
-	}
-
-	/**
-	 * Handle after a successful Marketpress payment
-	 * @Since 1.0.1
-	 */
-	function handle_mp_payment( $order ) {
-
-		if ( !is_object( $order ) || !is_array( $order->mp_cart_info ) )
-			return;
-
-		foreach ( $order->mp_cart_info as $product_id=>$product_detail ) {
-			$product = get_post( $product_id );
-			// Find if this is an A+ product
-			if ( $this->is_app_mp_page( $product ) && is_array( $product_detail ) ) {
-				foreach( $product_detail as $var ) {
-					// Find variation = app id which should also be downloadable
-					if ( isset( $var['name'] ) && isset( $var['download'] ) ) {
-						list( $product_name, $app_id ) = split( ':', $var['name'] );
-						$app_id = (int)trim( $app_id );
-						if ( $this->change_status( 'paid', $app_id ) ) {
-							do_action( 'app_mp_order_paid', $app_id, $order ); // FIRST do the action
-							if (!empty($this->options["send_confirmation"]) && 'yes' == $this->options["send_confirmation"]) $this->send_confirmation($app_id);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Add to array of product pages where we have A+ shortcodes
-	 * @Since 1.0.1
-	 */
-	function add_to_mp( $post_id ) {
-		$this->mp_posts[] = $post_id;
-	}
-
-	/**
-	 * If this is an A+ product page add js codes to footer to hide some MP fields
-	 * @param content: post content
-	 * @Since 1.0.1
-	 */
-	function product_page( $content ) {
-
-		global $post;
-		if ( is_object( $post ) && in_array( $post->ID, $this->mp_posts ) )
-			$this->add2footer( '$(".mp_quantity,.mp_product_price,.mp_buy_form,.mp_product_variations,.appointments-paypal").hide();' );
-
-		return $content;
-	}
-
-	/**
-	 * Hide meta (Add to chart button, price) for an A+ product
-	 * @Since 1.0.1
-	 */
-	function mp_product_list_meta( $meta, $post_id) {
-
-		if ( in_array( $post_id, $this->mp_posts ) )
-			return '<a class="mp_link_buynow" href="' . get_permalink($post_id) . '">' . __('Choose Option &raquo;', 'mp') . '</a>';
-		else
-			return	$meta;
-	}
-
-	/**
-	 * Adds and returns a variation to the app product
-	 * @Since 1.0.1
-	 */
-	function add_variation( $app_id, $post_id, $service, $worker, $start, $end ) {
-
-		$meta = get_post_meta( $post_id, 'mp_var_name', true );
-		// MP requires at least 2 variations, so we add a dummy one	if there is none
-		if ( !$meta || !is_array( $meta ) ) {
-			add_post_meta( $post_id, 'mp_var_name', array( 0 ) );
-			add_post_meta( $post_id, 'mp_sku', array( 0 ) );
-
-			// Find minimum service price here:
-			global $wpdb;
-			$min_price = $wpdb->get_var( "SELECT MIN(price) FROM " . $this->services_table . " WHERE price>0 " );
-			if ( !$min_price )
-				$min_price = 0;
-
-			add_post_meta( $post_id, 'mp_price', array( $min_price ) );
-			// Variation ID
-			$meta = array( 0 );
-		}
-
-		$max = count( $meta );
-		$meta[$max] = $app_id;
-		update_post_meta( $post_id, 'mp_var_name', $meta );
-
-		$sku = get_post_meta( $post_id, 'mp_sku', true );
-		$sku[$max] = $this->service;
-		update_post_meta( $post_id, 'mp_sku', $sku );
-
-		$price = get_post_meta( $post_id, 'mp_price', true );
-		$price[$max] = apply_filters( 'app_mp_price', $this->get_price( true ), $service, $worker, $start, $end ); // Filter added at V1.2.3.1
-		update_post_meta( $post_id, 'mp_price', $price );
-
-		// Add a download link, so that app will be a digital product
-		$file = get_post_meta($post_id, 'mp_file', true);
-		if ( !$file )
-			add_post_meta( $post_id, 'mp_file', get_permalink( $post_id ) );
-
-		return $max;
-	}
-
-	/**
-	 * If a pending app is removed automatically, also remove it from the cart
-	 * @Since 1.0.1
-	 */
-	function remove_from_cart( $app ) {
-		global $mp;
-		$changed = false;
-		$cart = $mp->get_cart_cookie();
-
-		if ( is_array( $cart ) ) {
-			foreach ( $cart as $product_id=>$product_detail ) {
-				$product = get_post( $product_id );
-				$var_names = get_post_meta( $product_id, 'mp_var_name', true );
-				// Find if this is an A+ product
-				if ( $this->is_app_mp_page( $product ) && is_array( $product_detail ) && is_array( $var_names ) ) {
-					foreach( $product_detail as $var_id=>$var_val ) {
-						// Find variation = app id
-						if ( isset( $var_names[$var_id] ) && $var_names[$var_id] == $app->ID ) {
-							unset( $cart[$product_id] );
-							$changed = true;
-						}
-					}
-				}
-			}
-		}
-		// Update cart only if something has changed
-		if ( $changed )
-			$mp->set_cart_cookie($cart);
-	}
-
-	/**
-	 * Clear appointment that is removed from the cart also from the database
-	 * This is called before MP
-	 * @Since 1.0.1
-	 */
-	function remove_from_cart_manual( ) {
-
-		if (isset($_POST['update_cart_submit'])) {
-			if (isset($_POST['remove']) && is_array($_POST['remove'])) {
-				foreach ($_POST['remove'] as $pbid) {
-					list($bid, $product_id, $var_id) = split(':', $pbid);
-					$product = get_post( $product_id );
-					// Check if this is an app product page
-					if ( $this->is_app_mp_page( $product ) ) {
-						// We need to find var name = app_id
-						$var_names = get_post_meta( $product_id, 'mp_var_name', true );
-						if ( isset( $var_names[$var_id] ) ) {
-							$this->change_status( 'removed', (int)trim( $var_names[$var_id] ) );
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Add the appointment to the cart
-	 * This is called before MP
-	 * @Since 1.0.1
-	 */
-	function pre_update_cart( ) {
-		global $mp;
-
-		if ( isset( $_POST['product_id'] )  && isset( $_POST['variation'] ) && $_POST['product_id'] && $_POST['variation'] ) {
-			$product_id = $_POST['product_id'];
-			$product = get_post( $product_id );
-			// Check if this is an app product page
-			if ( $this->is_app_mp_page( $product ) ) {
-				$variation = $_POST['variation'];
-
-				$cart = $mp->get_cart_cookie();
-				if ( !is_array( $cart ) )
-					$cart = array();
-
-				// Make quantity 0 so that MP can set it to 1
-				$cart[$product_id][$variation] = 0;
-
-				//save items to cookie
-				$mp->set_cart_cookie($cart);
-
-				// Set email to SESSION variables if not set before
-				if ( !isset( $_SESSION['mp_shipping_info']['email'] ) && isset( $_COOKIE["wpmudev_appointments_userdata"] ) ) {
-					$data = unserialize( stripslashes( $_COOKIE["wpmudev_appointments_userdata"] ) );
-					if ( is_array( $data ) && isset( $data["e"] ) )
-						@$_SESSION['mp_shipping_info']['email'] = $data["e"];
-				}
-			}
-		}
-	}
 
 /*******************************
 * Methods for inits, styles, js
@@ -4198,12 +3898,8 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 			if ( is_object( $post ) && stripos( $post->post_content, '[app_' ) !== false ) {
 				$this->shortcode_found = true;
 				$this->add_to_cache( $post->ID );
-				// Don't go further if MP is not active, this may save some time for archive pages
-				if ( !$this->mp )
-					break;
-				// Also add to A+ product posts
-				if ( 'product' == $post->post_type )
-					$this->add_to_mp( $post->ID );
+
+				do_action('app-shortcodes-shortcode_found', $post);
 			}
 		}
 
@@ -4714,20 +4410,47 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 					$_REQUEST["app_provider_id"] = $r->worker;
 
 					$messages[] = array(
-								'ID'		=> $r->ID,
-								'to'		=> $r->email,
-								'subject'	=> $this->_replace( $this->options["reminder_subject"], $r->name, $this->get_service_name( $r->service),
-									$this->get_worker_name( $r->worker), $r->start, $r->price, $this->get_deposit($r->price), $r->phone, $r->note, $r->address, $r->email, $r->city ),
-								'message'	=> apply_filters( 'app_reminder_message', $this->add_cancel_link( $this->_replace( $this->options["reminder_message"],
-									$r->name, $this->get_service_name( $r->service), $this->get_worker_name( $r->worker), $r->start,
-									$r->price, $this->get_deposit($r->price), $r->phone, $r->note, $r->address, $r->email, $r->city ), $r->ID ), $r, $r->ID )
-							);
+						'ID' => $r->ID,
+						'to' => $r->email,
+						'subject' => $this->_replace(
+							$this->options["reminder_subject"],
+							$r->name,
+							$this->get_service_name($r->service),
+							$this->get_worker_name($r->worker),
+							$r->start,
+							$r->price,
+							$this->get_deposit($r->price),
+							$r->phone,
+							$r->note,
+							$r->address,
+							$r->email,
+							$r->city
+						),
+						'message' => apply_filters('app_reminder_message', $this->add_cancel_link(
+							$this->_replace(
+								$this->options["reminder_message"],
+								$r->name,
+								$this->get_service_name($r->service),
+								$this->get_worker_name($r->worker),
+								$r->start,
+								$r->price,
+								$this->get_deposit($r->price),
+								$r->phone,
+								$r->note,
+								$r->address,
+								$r->email,
+								$r->city
+							),
+							$r->ID),
+						$r, $r->ID)
+					);
 					// Update "sent" field
-					$wpdb->update( $this->app_table,
-									array( 'sent'	=> rtrim( $r->sent, ":" ) . ":" . trim( $hour ) . ":" ),
-									array( 'ID'		=> $r->ID ),
-									array ( '%s' )
-								);
+					$wpdb->update(
+						$this->app_table,
+						array('sent' => rtrim($r->sent, ":") . ":" . trim($hour) . ":"),
+						array('ID' => $r->ID),
+						array('%s')
+					);
 				}
 			}
 		}
@@ -4794,20 +4517,45 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 					$_REQUEST["app_provider_id"] = $r->worker;
 
 					$messages[] = array(
-								'ID'		=> $r->ID,
-								'to'		=> $this->get_worker_email( $r->worker ),
-								'subject'	=> $this->_replace( $this->options["reminder_subject"], $r->name, $this->get_service_name($r->service),
-									$this->get_worker_name($r->worker), $r->start, $r->price, $this->get_deposit($r->price), $r->phone, $r->note, $r->address, $r->email ),
-								'message'	=> $provider_add_text . $this->add_cancel_link($this->_replace( $this->options["reminder_message"], $r->name,
-									$this->get_service_name( $r->service), $this->get_worker_name( $r->worker), $r->start, $r->price,
-									$this->get_deposit($r->price), $r->phone, $r->note, $r->address, $r->email ))
-							);
+						'ID' => $r->ID,
+						'to' => $this->get_worker_email( $r->worker ),
+						'subject' => $this->_replace(
+							$this->options["reminder_subject"],
+							$r->name,
+							$this->get_service_name($r->service),
+							$this->get_worker_name($r->worker),
+							$r->start,
+							$r->price,
+							$this->get_deposit($r->price),
+							$r->phone,
+							$r->note,
+							$r->address,
+							$r->email
+						),
+						'message' => apply_filters('app_reminder_message', $provider_add_text . $this->add_cancel_link(
+							$this->_replace(
+								$this->options["reminder_message"],
+								$r->name,
+								$this->get_service_name($r->service),
+								$this->get_worker_name($r->worker),
+								$r->start,
+								$r->price,
+								$this->get_deposit($r->price),
+								$r->phone,
+								$r->note,
+								$r->address,
+								$r->email
+							),
+							$r->ID),
+						$r, $r->ID),
+					);
 					// Update "sent" field
-					$wpdb->update( $this->app_table,
-									array( 'sent_worker' => rtrim( $r->sent_worker, ":" ) . ":" . trim( $hour ) . ":" ),
-									array( 'ID'		=> $r->ID ),
-									array ( '%s' )
-								);
+					$wpdb->update(
+						$this->app_table,
+						array('sent_worker' => rtrim($r->sent_worker, ":") . ":" . trim($hour) . ":"),
+						array('ID' => $r->ID),
+						array('%s')
+					);
 				}
 			}
 		}
@@ -4934,8 +4682,6 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 								);
 					if ( $update ) {
 						do_action( 'app_remove_pending', $expired );
-						if ( $this->mp )
-							$this->remove_from_cart( $expired );
 					}
 				}
 			}

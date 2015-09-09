@@ -41,7 +41,7 @@ if ( post_password_required() ) {
              * define coursepress_comment() and that will be used instead.
              * See coursepress_comment() in inc/template-tags.php for more.
              */
-            wp_list_comments( array( 'callback' => 'coursepress_discussion_comment' ) );									   	 	   		
+            wp_list_comments( array( 'callback' => 'coursepress_discussion_comment' ) );
             ?>
         </ul><!-- .comment-list -->
 

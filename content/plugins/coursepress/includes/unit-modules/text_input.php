@@ -86,8 +86,17 @@ class text_input_module extends Unit_Module {
 
 	public static function front_main( $data ) {
 		$data->name    = __CLASS__;
-		$response      = text_input_module::get_response( get_current_user_id(), $data->ID );
-		$all_responses = text_input_module::get_response( get_current_user_id(), $data->ID, 'private', - 1 );
+
+		$preview_data = CoursePress::instance()->preview_data;
+		$preview = false;
+		if( isset( $preview_data ) && ! empty( $preview_data ) ) {
+			$response = array();
+			$all_responses = array();
+			$preview = true;
+		} else {
+			$response      = text_input_module::get_response( get_current_user_id(), $data->ID );
+			$all_responses = text_input_module::get_response( get_current_user_id(), $data->ID, 'private', - 1 );
+		}
 
 		$grade = false;
 
@@ -200,18 +209,9 @@ class text_input_module extends Unit_Module {
 		$editor_name    = $this->name . "_content[]";
 		$editor_id      = ( esc_attr( isset( $data->ID ) ? 'editor_' . $data->ID : rand( 1, 9999 ) ) );
 		$editor_content = htmlspecialchars_decode( ( isset( $data->post_content ) ? $data->post_content : '' ) );
+		$editor = '<textarea id="' . $editor_id . '" name="' . $editor_name . '" class="coursepress-editor">' . $editor_content . '</textarea>';
+		echo trim( $editor );
 
-		$args = array(
-			"textarea_name" => $editor_name,
-			"textarea_rows" => 5,
-			"quicktags"     => true,
-			"teeny"         => false,
-			"editor_class"  => 'cp-editor cp-unit-element',
-		);
-
-		$args = apply_filters( 'coursepress_element_editor_args', $args, $editor_name, $editor_id );
-
-		wp_editor( $editor_content, $editor_id, $args );
 		?>
 			</div>
 

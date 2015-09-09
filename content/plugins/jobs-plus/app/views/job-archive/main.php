@@ -56,7 +56,7 @@
                                                     }
                                                     $content = strip_tags($content);
                                                     $charlength = 48 / $sub;
-                                                    echo apply_filters('jbp_job_list_content', wp_trim_words($content, $charlength), $content, $charlength);
+                                                    echo apply_filters('jbp_job_list_content', wp_trim_words($content, $charlength), $content, $charlength);									     						
                                                     ?>
                                                 </div>
                                             <?php endif; ?>
