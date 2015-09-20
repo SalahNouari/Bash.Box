@@ -1,0 +1,53 @@
+.upfront-comments {
+    list-style: none;
+    padding-left: 0;
+}
+.comment-author img {
+    border-radius: 12px;
+}
+.comment {
+    position: relative;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+}
+.comment-content ul ul, .comment-content ol ol, .comment-content ul ol, .comment-content ol ul {
+    padding-left: 30px;
+}
+.comment-meta cite {
+    padding-left: 0;
+}
+.comment.even {
+    background-color: #E0F3EA;
+    margin-left: 55px;
+}
+.comment.even blockquote:before {
+    background-color: #E0F3EA;
+}
+.comment.odd {
+    background-color: #FAFAF2;
+    margin-left: 55px;
+}
+.comment.odd blockquote:before {
+    background-color: #FAFAF2;
+}
+.comment.depth-1 {
+    margin-right: 55px;
+}
+.comment.even .comment-author img {
+    position: absolute;
+    right: -65px;
+    top: -5px;
+}
+.comment.odd .comment-author img {
+    position: absolute;
+    left: -65px;
+    top: -5px;
+}
+ ol.children {
+    padding-left: 0px;
+    list-style: none;
+}
+
+
+/* 133620-1442728049-ai */
