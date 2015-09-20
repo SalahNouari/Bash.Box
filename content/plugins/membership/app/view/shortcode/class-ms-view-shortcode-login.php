@@ -295,6 +295,7 @@ class MS_View_Shortcode_Login extends MS_View {
 					</label>
 				</p>
 				<?php endif; ?>
+				<?php do_action( 'login_form' );?>
 				<p class="login-submit">
 					<input
 						type="submit"
@@ -439,7 +440,7 @@ class MS_View_Shortcode_Login extends MS_View {
 		extract( $this->data );
 
 		if ( empty( $redirect_logout ) ) {
-			$redirect_logout = home_url();
+			$redirect_logout = MS_Helper_Utility::home_url( '/' );
 		}
 
 		$yourname = sprintf(
@@ -447,11 +448,29 @@ class MS_View_Shortcode_Login extends MS_View {
 			ucfirst( $member->name )
 		);
 
+		$yourname = apply_filters(
+			'ms_shortcode_logout_message',
+			$yourname,
+			$member
+		);
+
+		$logout_text = apply_filters(
+			'ms_shortcode_logout_link_text',
+			__( 'Logout', MS_TEXT_DOMAIN ),
+			$member
+		);
+
+		$redirect_logout = apply_filters(
+			'ms_shortcode_logout_redirect',
+			$redirect_logout,
+			$member
+		);
+
 		$html = sprintf(
 			'%1$s <a class="login_button" href="%2$s">%3$s</a>',
 			$yourname,
 			wp_logout_url( $redirect_logout ),
-			__( 'Logout', MS_TEXT_DOMAIN )
+			$logout_text
 		);
 
 		if ( ! empty( $holder ) ) {

@@ -68,7 +68,7 @@ class MS_View_Member_Payment extends MS_Dialog {
 		$pay_details = array();
 		$inv_details = array();
 
-		foreach ( $subscription->payments as $payment ) {
+		foreach ( $subscription->get_payments() as $payment ) {
 			if ( isset( $gateways[ $payment['gateway'] ] ) ) {
 				$gateway = $gateways[ $payment['gateway'] ];
 			} else {
@@ -82,6 +82,7 @@ class MS_View_Member_Payment extends MS_Dialog {
 					0 => array( 'Payment Date', $payment['date'] ),
 					1 => array( 'Payment Gateway', $gateway ),
 					2 => array( 'Amount', $payment['amount'] ),
+					3 => array( 'External ID', $payment['external_id'] ),
 				),
 				'field_options' => array(
 					'head_col' => true,
@@ -89,12 +90,7 @@ class MS_View_Member_Payment extends MS_Dialog {
 			);
 		}
 
-		if ( ! empty( $pay_details ) ) {
-			$pay_details[] = array(
-				'type' => MS_Helper_Html::TYPE_HTML_SEPARATOR,
-			);
-		}
-
+		$invoice_list = array();
 		foreach ( $invoices as $invoice ) {
 			if ( isset( $gateways[ $invoice->gateway_id ] ) ) {
 				$gateway = $gateways[ $invoice->gateway_id ];
@@ -102,17 +98,29 @@ class MS_View_Member_Payment extends MS_Dialog {
 				$gateway = '(' . $invoice->gateway_id . ')';
 			}
 
+			$transaction_log = sprintf(
+				' <small>- <a href="%s" target="_blank">%s</a></small>',
+				MS_Controller_Plugin::get_admin_url(
+					'billing',
+					array( 'show' => 'logs', 'invoice' => $invoice->id )
+				),
+				__( 'Show Transaction', MS_TEXT_DOMAIN )
+			);
+			$invoice_list[] = $invoice->id;
+
 			$inv_details[$invoice->id] = array(
 				'title' => sprintf( __( 'Invoice %s', MS_TEXT_DOMAIN ), $invoice->id ),
 				'type' => MS_Helper_Html::TYPE_HTML_TABLE,
 				'value' => array(
-					0 => array( 'Invoice ID', $invoice->id ),
+					0 => array( 'Invoice ID', $invoice->id . $transaction_log ),
 					1 => array( 'Payment Gateway', $gateway ),
 					2 => array( 'Due Date', $invoice->due_date ),
 					3 => array( 'Regular amount', $invoice->amount ),
 					4 => array( 'Total billed', $invoice->total ),
 					5 => array( 'Status', $invoice->status ),
 					6 => array( 'Notes', $invoice->description ),
+					7 => array( 'Checkout IP', $invoice->checkout_ip ),
+					8 => array( 'Checkout Date', $invoice->checkout_date ),
 				),
 				'field_options' => array(
 					'head_col' => true,
@@ -125,18 +133,36 @@ class MS_View_Member_Payment extends MS_Dialog {
 			}
 		}
 
+		$transaction_url = MS_Controller_Plugin::get_admin_url(
+			'billing',
+			array( 'show' => 'logs', 'invoice' => implode( ',', $invoice_list ) )
+		);
+		$transaction_log = array(
+			'type' => MS_Helper_Html::TYPE_HTML_LINK,
+			'value' => __( 'Show all Transactions for this subscription', MS_TEXT_DOMAIN ),
+			'url' => $transaction_url,
+			'target' => '_blank',
+		);
+
 		ob_start();
 		?>
-		<div>
-			<?php
-			foreach ( $pay_details as $detail ) {
-				MS_Helper_Html::html_element( $detail );
-			}
-
-			foreach ( $inv_details as $detail ) {
-				MS_Helper_Html::html_element( $detail );
-			}
-			?>
+		<div class="wpmui-grid-8 ms-payment-infos">
+			<div class="col-5">
+				<?php
+				foreach ( $inv_details as $detail ) {
+					MS_Helper_Html::html_element( $detail );
+				}
+				?>
+			</div>
+			<div class="col-3">
+				<?php
+				MS_Helper_Html::html_element( $transaction_log );
+				MS_Helper_Html::html_separator();
+				foreach ( $pay_details as $detail ) {
+					MS_Helper_Html::html_element( $detail );
+				}
+				?>
+			</div>
 		</div>
 		<?php
 		$html = ob_get_clean();

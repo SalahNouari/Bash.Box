@@ -218,8 +218,7 @@ function ultra_savemenu() {
     $submenurename = $_POST['submenurename'];
     $menudisable = $_POST['menudisable'];
     $submenudisable = $_POST['submenudisable'];
-
-    //print_r($_POST);
+    //echo "<pre>"; print_r($_POST); echo "</pre>";
 	ultra_update_option("ultraadmin_menuorder", $neworder);
 	ultra_update_option("ultraadmin_submenuorder", $newsuborder);
 	ultra_update_option("ultraadmin_menurename", $menurename);
@@ -256,6 +255,7 @@ function ultra_resetmenu() {
 }
 
 if($get_menumng_page != "disable" && !is_network_admin()){
+//	echo "hihi";
 		add_action('admin_menu', 'ultra_adminmenu_rearrange',999999999);
 }
 
@@ -271,7 +271,7 @@ function ultra_adminmenu_rearrange() {
 if($enablemenumng){
 
 	//ultraprint("menu",$menu);
-
+//	echo "hihihihi";
 	$renamemenu = ultra_rename_menu();
 	$menu = $renamemenu;
 	//ultraprint("menu",$menu);

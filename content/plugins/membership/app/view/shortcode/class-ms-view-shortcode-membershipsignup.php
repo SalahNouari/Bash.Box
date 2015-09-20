@@ -297,7 +297,7 @@ class MS_View_Shortcode_MembershipSignup extends MS_View {
 					<h4><span class="ms-title"><?php echo esc_html( $membership->name ); ?></span></h4>
 				</div>
 				<div class="ms-price-details">
-					<div class="ms-description"><?php echo '' . $membership->description; ?></div>
+					<div class="ms-description"><?php echo $membership->get_description(); ?></div>
 					<div class="ms-price price"><?php echo esc_html( $price ); ?></div>
 
 					<?php if ( $msg ) : ?>
@@ -317,6 +317,24 @@ class MS_View_Shortcode_MembershipSignup extends MS_View {
 						'type' => MS_Helper_Html::INPUT_TYPE_SUBMIT,
 						'value' => esc_html( $this->data[ "{$action}_text" ] ),
 						'class' => $class,
+					);
+
+					/**
+					 * Allow customizing the Signup button.
+					 *
+					 * Either adjust the array properties or return a valid HTML
+					 * string that will be directly output.
+					 *
+					 * @since  1.0.1.2
+					 * @param  array|string $button
+					 * @param  MS_Model_Membership $membership
+					 * @param  MS_Model_Subscription $subscription
+					 */
+					$button = apply_filters(
+						'ms_view_shortcode_membershipsignup_button',
+						$button,
+						$membership,
+						$subscription
 					);
 
 					if ( MS_Helper_Membership::MEMBERSHIP_ACTION_CANCEL === $action ) {
@@ -354,6 +372,13 @@ class MS_View_Shortcode_MembershipSignup extends MS_View {
 					foreach ( $fields as $field ) {
 						MS_Helper_Html::html_element( $field );
 					}
+
+					/**
+					 * It's possible to add custom fields to the signup box.
+					 *
+					 * @since  1.0.1.2
+					 */
+					do_action( 'ms_shortcode_signup_form_end', $this );
 
 					MS_Helper_Html::html_element( $button );
 					?>

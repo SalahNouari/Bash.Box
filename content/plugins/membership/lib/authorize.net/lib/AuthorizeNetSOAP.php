@@ -17,8 +17,8 @@
  */
 class M2_AuthorizeNetSOAP extends SoapClient
 {
-    const WSDL_URL = "https://api.authorize.net/soap/v1/Service.asmx?WSDL";
-    const LIVE_URL = "https://api.authorize.net/soap/v1/Service.asmx";
+    const WSDL_URL = "https://api2.authorize.net/soap/v1/Service.asmx?WSDL";
+    const LIVE_URL = "https://api2.authorize.net/soap/v1/Service.asmx";
     const SANDBOX_URL = "https://apitest.authorize.net/soap/v1/Service.asmx";
 
     public $sandbox;
@@ -86,7 +86,7 @@ class M2_AuthorizeNetSOAP extends SoapClient
     {
         $string =  "<?php\n";
         $string .= "/**\n";
-        $string .= " * Auto generated documentation for the AuthorizeNetSOAP API.\n";
+        $string .= " * Auto generated documentation for the M2_AuthorizeNetSOAP API.\n";
         $string .= " * Generated " . date("m/d/Y") . "\n";
         $string .= " */\n";
         $string .= "class M2_AuthorizeNetSOAP\n";

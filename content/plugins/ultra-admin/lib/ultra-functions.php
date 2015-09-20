@@ -106,11 +106,16 @@ function ultra_core(){
                ultra_dynamic_css_settings();
             }
 
+            if($adminside){ 
+                add_action('admin_menu', 'ultra_screen_tabs');
+            }
+
         } else {
             echo "<script type='text/javascript'>console.log('Ultra WP Admin: WordPress Version Not Supported Yet!');</script>";
         }
 
 }
+
 
 function ultraadmin_network($default){
 
@@ -924,6 +929,48 @@ if(!has_action('plugins_loaded', 'ultra_regenerate_all_dynamic_css_file')){
     }
 }}
 
+
+function ultra_screen_tabs(){
+
+
+    global $ultra_css_ver;
+    global $ultraadmin;
+
+    $ultraadmin = ultraadmin_network($ultraadmin);
+
+            /*Remove Screen Option & Help Tabs*/
+    
+            $screenoption = true;
+            $element = 'screen_option_tab';
+
+            //echo $ultraadmin[$element];
+
+            if(isset($ultraadmin[$element]) && trim($ultraadmin[$element]) != ""){
+                if($ultraadmin[$element] == "0"){
+                    $screenoption = false;
+            }}
+
+            $screenhelp = true;
+            $element = 'screen_help_tab';
+            if(isset($ultraadmin[$element]) && trim($ultraadmin[$element]) != ""){
+                if($ultraadmin[$element] == "0"){
+                    $screenhelp = false;
+            }}
+
+            if(!$screenoption){
+                add_filter('screen_options_show_screen', '__return_false');
+            }
+
+            if(!$screenhelp){
+                add_action('admin_head', 'ultra_remove_help_tabs');
+            }
+
+}
+
+function ultra_remove_help_tabs() {
+    $screen = get_current_screen();
+    $screen->remove_help_tabs();
+}
 
 
 ?>

@@ -2,4 +2,4 @@ Library source:
 https://bitbucket.org/mailchimp/mailchimp-api-php/
 
 
-133620-1439138920-au
+133620-1442728675-au

@@ -51,8 +51,10 @@ class MS_Gateway_2checkout extends MS_Gateway {
 	 * Processes gateway IPN return.
 	 *
 	 * @since  1.0.0
+	 * @param  MS_Model_Transactionlog $log Optional. A transaction log item
+	 *         that will be updated instead of creating a new log entry.
 	 */
-	public function handle_return() {
+	public function handle_return( $log = false ) {
 		$success = false;
 		$exit = false;
 		$redirect = false;
@@ -200,33 +202,50 @@ class MS_Gateway_2checkout extends MS_Gateway {
 
 			$notes = 'Error: Missing POST variables. Identification is not possible.';
 			MS_Helper_Debug::log( $notes );
-			$redirect = home_url();
+			$redirect = MS_Helper_Utility::home_url( '/' );
 			$exit = true;
 		}
 
-		do_action(
-			'ms_gateway_transaction_log',
-			self::ID, // gateway ID
-			'handle', // request|process|handle
-			$success, // success flag
-			$subscription_id, // subscription ID
-			$invoice_id, // invoice ID
-			$amount, // charged amount
-			$notes // Descriptive text
-		);
+		if ( ! $log ) {
+			do_action(
+				'ms_gateway_transaction_log',
+				self::ID, // gateway ID
+				'handle', // request|process|handle
+				$success, // success flag
+				$subscription_id, // subscription ID
+				$invoice_id, // invoice ID
+				$amount, // charged amount
+				$notes, // Descriptive text
+				$external_id // External ID
+			);
 
-		if ( $redirect ) {
-			wp_safe_redirect( $redirect );
-			exit;
-		}
-		if ( $exit ) {
-			exit;
+			if ( $redirect ) {
+				wp_safe_redirect( $redirect );
+				exit;
+			}
+			if ( $exit ) {
+				exit;
+			}
+		} else {
+			$log->invoice_id = $invoice_id;
+			$log->subscription_id = $subscription_id;
+			$log->amount = $amount;
+			$log->description = $notes;
+			$log->external_id = $external_id;
+			if ( $success ) {
+				$log->manual_state( 'ok' );
+			}
+			$log->save();
 		}
 
 		do_action(
 			'ms_gateway_2checkout_handle_return_after',
 			$this
 		);
+
+		if ( $log ) {
+			return $log;
+		}
 	}
 
 	/**

@@ -3,51 +3,123 @@
 class removeemailverification {
 
     var $build = 1;
+    var $user_blog_url = 'none';
 
     function __construct() {
+
+
+        add_action('init', array(&$this, 'output_buffer'), 0);
 
         // Remove existing filters - we need to do this in the whitelist_options filter because there isn't another action between
         // the built in MU one and the saving, besides which we need to add our new_admin_email field to the list anyway.
         add_filter('whitelist_options', array(&$this, 'remove_mu_option_hooks'));
-        // Remove BP blog activation
-        remove_action('wpmu_signup_blog_notification', array(&$this, 'bp_core_activation_signup_blog_notification'), 1, 7);
+
+        //filters for overriding other functions
+        add_filter('wpmu_signup_blog_notification', '__return_false');
+
+        add_filter('wpmu_welcome_notification', '__return_false');
+
+        add_filter('wpmu_signup_user_notification', '__return_false');
+
+        //Remove MS welcome email
+        remove_filter('site_option_welcome_user_email', 'welcome_user_msg_filter');
+
         // Blog signup - autoactivate
         add_filter('wpmu_signup_blog_notification', array(&$this, 'activate_on_blog_signup'), 10, 7);
-        // Remove BP user activation
-        remove_action('wpmu_signup_user_notification', array(&$this, 'bp_core_activation_signup_user_notification'), 1, 4);
+
         // Use the brand new BP disable notification filter
-        add_filter('bp_core_signup_send_activation_key', array(&$this, 'remove_email_verification_signup_send_activation_key'));
+        add_filter('bp_core_signup_send_activation_key', '__return_false');
+
         // Lets assume we successfully activated the user account
-        add_filter('bp_registration_needs_activation', array(&$this, 'remove_email_verification_registration_needs_activation'));
+        add_filter('bp_registration_needs_activation',  '__return_false');
+
+        remove_filter('wpmu_welcome_notification', 'wp_mail');
+
+        add_filter('wpmu_welcome_notification', array(&$this, 'remove_bp_activation'));
+
+        remove_filter('wpmu_welcome_user_notification', 'wp_mail');
+
+        add_filter('wpmu_welcome_user_notification', array(&$this, 'remove_bp_activation'));
+
         // User signup - autoactivate
         add_filter('wpmu_signup_user_notification', array(&$this, 'activate_on_user_signup'), 10, 4);
+
+
+        add_filter('wpmu_signup_user_notification', '__return_false');
+
         // Change internal confirmation message - user-new.php
         add_filter('gettext', array(&$this, 'activated_newuser_msg'), 10, 3);
+
         //Remove BP activation emails.
         add_filter('wp_mail', array(&$this, 'remove_bp_activation_emails'));
 
-        add_action('plugins_loaded', array(&$this, 'remove_ev_internationalisation'));
-
         add_action('user_register', array(&$this, 'user_auto_login_after_signup'));
 
-        add_action('init', array(&$this, 'output_buffer'), 0);
+        add_action('wpmu_new_user', array(&$this, 'user_auto_login_after_signup'));
+
+        add_action('bp_init', array(&$this, 'bp_suppress_init'));
     }
 
     function removeemailverification() {
         $this->__construct();
     }
 
-    function remove_ev_internationalisation() {
-        // Load the text-domain
-        $locale = apply_filters('removeev_locale', get_locale());
-        $mofile = dirname(__FILE__) . "/languages/removeev-$locale.mo";
+    function bp_suppress_init() {
+        if (!is_multisite()) {
+            add_action('bp_core_signup_user', array(&$this, 'disable_validation'));
+            add_filter('bp_registration_needs_activation', array(&$this, 'fix_signup_form_validation_text'));
+            add_filter('bp_core_signup_send_activation_key', array(&$this, 'disable_activation_email'));
+        } else {
+            add_filter('wpmu_signup_user_notification', array(&$this, 'activate_on_user_signup'), 10, 4);
+        }
+    }
 
-        if (file_exists($mofile))
-            load_textdomain('removeev', $mofile);
+    function fix_signup_form_validation_text() {
+        return false;
+    }
+
+    function disable_activation_email() {
+        return false;
+    }
+
+    function disable_validation($user_id) {
+        global $wpdb;
+
+        $wpdb->query($wpdb->prepare("UPDATE $wpdb->users SET user_status = 0 WHERE ID = %d", $user_id));
+
+        //Add note on Activity Stream
+        if (function_exists('bp_activity_add')) {
+            $userlink = bp_core_get_userlink($user_id);
+
+            bp_activity_add(array(
+                'user_id' => $user_id,
+                'action' => apply_filters('bp_core_activity_registered_member', sprintf(__('%s became a registered member', 'buddypress'), $userlink), $user_id),
+                'component' => 'profile',
+                'type' => 'new_member'
+            ));
+        }
+
+        //Send email to admin
+        //wp_new_user_notification($user_id);
+        // Remove the activation key meta
+        delete_user_meta($user_id, 'activation_key');
+
+        // Delete the total member cache
+        wp_cache_delete('bp_total_member_count', 'bp');
+
+        //Automatically log the user in	.
+        $user_info = get_userdata($user_id);
+        wp_set_auth_cookie($user_id);
+
+        do_action('wp_signon', $user_info->user_login);
+    }
+
+    function remove_bp_activation() {
+        return false;
     }
 
     function remove_bp_activation_emails($data) {
-        if (strstr($data['message'], __('To activate your user, please click the following link')) || strstr($data['message'], __('To activate your blog, please click the following link'))) {
+        if (strstr($data['message'], __('To activate your user, please click the following link', 'removeev')) || strstr($data['message'], __('To activate your blog, please click the following link', 'removeev')) || preg_match('/Thanks for registering/', $data['message'])) {
             unset($data);
             $data['message'] = '';
             $data['to'] = '';
@@ -94,7 +166,7 @@ class removeemailverification {
 
                 <?php
                 if ($signup->domain . $signup->path != '') {
-                    printf(__('<p class="lead-in">Your blog at <a href="%1$s">%2$s</a> is active. You may now login to your blog using your chosen username of "%3$s".  Please check your email inbox at %4$s for your password and login instructions.  If you do not receive an email, please check your junk or spam folder.  If you still do not receive an email within an hour, you can <a href="%5$s">reset your password</a>.</p>', 'removeev'), 'http://' . $signup->domain, $signup->domain, $signup->user_login, $signup->user_email, 'http://' . $current_site->domain . $current_site->path . 'wp-login.php?action=lostpassword');
+                    printf(__('<p class="lead-in">Your blog at <a href="%1$s">%2$s</a> is active. You may now login to your blog using your chosen username of "%3$s".  Please check your email inbox at %4$s for your password and login instructions.  If you do not receive an email, please check your junk or spam folder.  If you still do not receive an email within an hour, you can <a href="%5$s">reset your password</a>.</p>', 'removeev'), 'http://' . $signup->domain, $signup->domain, $signup->user_login, $signup->user_email, 'http://' . $current_site->domain . $current_site->path . 'wp-login.php?action=lostpassword');	     	 	   					 
                 }
             } else {
                 ?>
@@ -117,8 +189,12 @@ class removeemailverification {
 
             <?php if (!empty($url)) : ?>
                 <p class="view"><?php printf(__('You\'re all set up and ready to go. <a href="%s">View your site</a> or go to the <a href="%s">admin area</a>.', 'removeev'), $url, trailingslashit($url) . 'wp-admin'); ?></p>
+                <?php
+                wp_redirect(trailingslashit(site_url()) . 'pro-site/?bid=' . $result['blog_id']);
+                ?>
             <?php else: ?>
                 <p class="view"><?php printf(__('You\'re all set up and ready to go. Why not go back to the <a href="%2$s">homepage</a>.', 'removeev'), 'http://' . $current_site->domain . $current_site->path); ?></p>
+
             <?php
             endif;
 
@@ -187,9 +263,10 @@ class removeemailverification {
 
         // automatically login the user so they can see the admin area on the next page load
         $userbylogin = get_user_by('login', $user);
+
         if (!empty($userbylogin)) {
-            @wp_set_auth_cookie($userbylogin->ID);
-            wp_set_current_user($userbylogin->ID);
+            wp_set_current_user($ucserbylogin->ID);
+            wp_set_auth_cookie($userbylogin->ID, false, is_ssl());
         }
 
         // Now we need to hijack the sign up message so it isn't displayed
@@ -215,17 +292,14 @@ class removeemailverification {
         return $transtext;
     }
 
-    function remove_email_verification_registration_needs_activation($inactive) {
-        return false;
-    }
-
-    function remove_email_verification_signup_send_activation_key($send) {
-        return false;
-    }
-
     function user_auto_login_after_signup($user_id) {
+        global $current_blog;
+
+        delete_user_meta( $user_id, 'activation_key' );
+
         wp_set_current_user($user_id);
         wp_set_auth_cookie($user_id, false, is_ssl());
+
     }
 
     function output_buffer() {
@@ -237,5 +311,6 @@ class removeemailverification {
         if (ob_get_level() > 0)
             ob_end_clean();
     }
+
 }
 ?>

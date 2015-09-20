@@ -81,6 +81,11 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			$this->get_sortable_columns(),
 		);
 
+		if ( ! isset( $_REQUEST['status'] ) ) {
+			$_GET['status'] = 'default';
+			$_REQUEST['status'] = 'default';
+		}
+
 		$args = $this->get_query_args();
 
 		$total_items = MS_Model_Invoice::get_invoice_count( $args );
@@ -217,6 +222,10 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 				$icon = '<i class="wpmui-fa wpmui-fa-times-circle"></i>';
 				break;
 
+			case MS_Model_Invoice::STATUS_ARCHIVED:
+				$icon = '<i class="wpmui-fa wpmui-fa-times-circle-o"></i>';
+				break;
+
 			default:
 				$icon = $item->status_text();
 				break;
@@ -254,7 +263,9 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	public function column_due_date( $item, $column_name ) {
 		$due_now = false;
-		if ( ! $item->is_paid() ) {
+		$is_paid = $item->is_paid();
+
+		if ( ! $is_paid ) {
 			$diff = MS_Helper_Period::subtract_dates(
 				$item->due_date,
 				MS_Helper_Period::current_date(),
@@ -264,18 +275,28 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			$due_now = ($diff < 0);
 		}
 
-		$date = MS_Helper_Period::format_date( $item->due_date );
+		$due_date = MS_Helper_Period::format_date( $item->due_date );
 
 		if ( $due_now ) {
 			$html = sprintf(
 				'<span class="due-now" title="%2$s">%1$s</span>',
-				$date,
+				$due_date,
 				__( 'Payment is overdue', MS_TEXT_DOMAIN )
+			);
+		} elseif ( $item->pay_date ) {
+			$pay_date = MS_Helper_Period::format_date( $item->pay_date, 'M j, Y' );
+			$html = sprintf(
+				'<span class="is-paid" title="%2$s">%1$s</span>',
+				$due_date,
+				sprintf(
+					__( 'Paid: %s', MS_TEXT_DOMAIN ),
+					$pay_date
+				)
 			);
 		} else {
 			$html = sprintf(
 				'<span>%1$s</span>',
-				$date
+				$due_date
 			);
 		}
 
@@ -299,7 +320,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	public function get_bulk_actions() {
 		$bulk_actions = array(
-			'delete' => __( 'Delete', MS_TEXT_DOMAIN ),
+			'archive' => __( 'Remove', MS_TEXT_DOMAIN ),
 		);
 
 		return apply_filters(
@@ -312,26 +333,23 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 	public function get_views() {
 		$all_status = MS_Model_Invoice::get_status_types();
 		$views = array();
+		$orig_status = '';
 
-		$args = $this->get_query_args();
-		if ( isset( $args['meta_query'] ) && isset( $args['meta_query']['status'] ) ) {
-			unset( $args['meta_query']['status'] );
+		if ( isset( $_REQUEST['status'] ) ) {
+			$orig_status = $_REQUEST['status'];
 		}
-		$url = esc_url_raw( remove_query_arg( array( 'status', 'msg' ) ) );
+		$_REQUEST['status'] = 'default';
+		$args = $this->get_query_args();
+		$_REQUEST['status'] = $orig_status;
+		$base_url = esc_url_raw( remove_query_arg( array( 'status', 'msg' ) ) );
 		$count = MS_Model_Invoice::get_invoice_count( $args );
 		$views['all'] = array(
-			'url' => $url,
-			'label' => __( 'All', MS_TEXT_DOMAIN ),
+			'url' => $base_url,
+			'label' => __( 'Default', MS_TEXT_DOMAIN ),
 			'count' => $count,
 		);
 
-		$url = esc_url_raw(
-			add_query_arg(
-				'status',
-				'open',
-				remove_query_arg( array( 'status', 'msg' ) )
-			)
-		);
+		$url = esc_url_raw( add_query_arg( 'status', 'open', $base_url ) );
 		$args = $this->get_query_args();
 		$args['meta_query']['status']['value'] = array(
 			MS_Model_Invoice::STATUS_BILLED,
@@ -353,12 +371,18 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			$args['meta_query']['status']['value'] = $status;
 			$count = MS_Model_Invoice::get_invoice_count( $args );
 
-			$status_url = esc_url_raw(
-				add_query_arg(
-					array( 'status' => $status ),
-					remove_query_arg( array( 'msg' ) )
-				)
-			);
+			if ( $count ) {
+				$status_url = esc_url_raw(
+					add_query_arg(
+						array( 'status' => $status ),
+						remove_query_arg( array( 'msg' ) )
+					)
+				);
+			} else {
+				$status_url = false;
+				$desc .= ' (0)';
+				$count = false;
+			}
 
 			$views[ $status ] =	array(
 				'url' => $status_url,

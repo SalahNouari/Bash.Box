@@ -128,11 +128,11 @@ ul{
 }
 
 #wpcontent{
-	-webkit-box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;
+/*	-webkit-box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;
 	box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;
 	-ms-box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;
 	-o-box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;
-	-moz-box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;
+	-moz-box-shadow:	1px -1px 1px 0px rgba(200,200,200,0.1) inset;*/
 }
 
 
@@ -141,7 +141,7 @@ ul{
 	margin: 23px 23px 0 0;
 }
 
-.wrap h2 {
+.wrap h2, .wrap h1 {
 	font-size: 30px;
 	font-weight: 400;
 	padding: 0;
@@ -845,7 +845,7 @@ div.wp-menu-image:before{
 #welcome-panel.welcome-panel .welcome-panel-close:before{
 	left: -25px;
 	margin-top: 0px;
-	line-height: 69px;
+	line-height: 54px;
 	color: #eeeeee;
 }
 
@@ -1056,7 +1056,12 @@ form h3, p.submit{
 
 
 .wp-core-ui .button:active{
-	padding: 7px 19px 7px 19px !important;
+	padding: 6px 18px 6px 18px !important;
+}
+
+.wp-core-ui #screen-meta-links .show-settings:active,
+.wp-core-ui button#show-settings-link:active{
+    padding: 3px 6px 3px 16px !important;
 }
 
 
@@ -1334,13 +1339,15 @@ a.post-format-icon:hover:before, a.post-state-format:hover:before{
 	margin-top: 23px;
 }
 
-.wrap .add-new-h2:hover{
+.wrap .add-new-h2:hover,
+.wrap .page-title-action:hover{
 	background-color: #f95e44 !important;
 	color: #ffffff !important;
 	font-weight: 300 !important;
 }
 
-.wrap .add-new-h2{
+.wrap .add-new-h2,
+.wrap .page-title-action{
 	font-weight: 300;
 	border-radius: 0px !important;
 	-webkit-border-radius: 0px !important;
@@ -1701,7 +1708,7 @@ position: relative;
 	color: #f95e44;
 }
 
-.themes-php .wrap h2{
+.themes-php .wrap h2, .themes-php .wrap h1{
 	margin-bottom: 23px;
 }
 
@@ -2398,6 +2405,16 @@ html.wp-toolbar{
 	background-color: transparent;
 }
 
+#wpadminbar:not(.mobile)>#wp-toolbar a:focus span.ab-label, #wpadminbar:not(.mobile)>#wp-toolbar li:hover span.ab-label, #wpadminbar>#wp-toolbar li.hover span.ab-label,
+#wpadminbar .ab-top-menu:hover .ab-item:before,
+#wpadminbar .ab-item:hover .ab-icon:before,
+#wpadminbar .ab-top-menu>li.hover>.ab-item, 
+#wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, 
+#wpadminbar:not(.mobile) .ab-top-menu>li:hover>.ab-item, 
+#wpadminbar:not(.mobile) .ab-top-menu>li>.ab-item:focus{
+	color: #ffffff;
+}
+
 
 /*----------------------------------
  Top bar Style 2
@@ -3018,7 +3035,7 @@ input[type=checkbox], input[type=color], input[type=date], input[type=datetime-l
 }
 
 
-.toplevel_page__ultraoptions .redux-main input, .redux-main select, 
+.redux-main select, 
 .toplevel_page__ultraoptions .redux-main textarea {
     padding: 6px;
 }
@@ -3122,6 +3139,7 @@ input[type=checkbox], input[type=color], input[type=date], input[type=datetime-l
 	height: 37px;
 	line-height: 23px;
 	padding: 6px 18px;
+	border-width: 0px;
 }
 
 
@@ -3593,6 +3611,10 @@ margin-right: -23px;
 	line-height: 44px !important;
 }
 
+/*.wp-core-ui .welcome-panel .button.button-hero:active{
+	line-height: 46px !important;
+}*/
+
 #wpfooter a{
 	font-size: inherit;
 }
@@ -3624,7 +3646,7 @@ Multisite and WordPress 4.1.2 compatibility Style
 
 .wp-core-ui .quicktags-toolbar input.button:active,
 #edit-slug-box .edit-slug.button:active, #edit-slug-box #view-post-btn .button:active {
-  padding: 0px 9px 1px 9px !important;
+  padding: 0px 8px 1px !important;
 }
 
 .wp-core-ui .button-group.button-small .button, .wp-core-ui .button.button-small,
@@ -3765,7 +3787,7 @@ As suggested by "anthonyparsons" on envato
  html, #ws_menu_editor .ws_editbox{background-color: rgba(241,242,247,1.0) /*#f1f2f7*/; ;} 
  
 /* -- Heading -- */
-  h1,h2,h3,h4,h5,h6, .wrap h2 , .welcome-panel .about-description{color:rgba(118,118,118,1.0) /*#767676*/;} 
+  h1,h2,h3,h4,h5,h6, .wrap h2, .wrap h1 , .welcome-panel .about-description{color:rgba(118,118,118,1.0) /*#767676*/;} 
  
 /* -- body text -- */
   body, p,#dashboard_right_now li a:before, #dashboard_right_now li span:before, .welcome-panel .welcome-icon:before,#misc-publishing-actions label[for=post_status]:before, #post-body #visibility:before, #post-body .misc-pub-revisions:before, .curtime #timestamp:before, span.wp-media-buttons-icon:before,.misc-pub-section, input[type=radio]:checked+label:before, .view-switch>a:before,.no-plugin-results , .no-plugin-results a,.upload-plugin .install-help, .upload-theme .install-help,.form-wrap p, p.description,#screen-meta-links a, .contextual-help-tabs .active a{color:rgba(118,118,118,1.0) /*#767676*/;} 
@@ -3785,7 +3807,7 @@ a, .no-plugin-results a{color:rgba(50,50,58,1) /*#32323a*/;} a:hover, .no-plugin
  
  .plugins .active th.check-column{border-left-color:rgba(31,181,172,1.0) /*#1fb5ac*/;}
  
-#wp-fullscreen-buttons .mce-btn:focus, #wp-fullscreen-buttons .mce-btn:hover, .mce-toolbar .mce-btn-group .mce-btn:focus, .mce-toolbar .mce-btn-group .mce-btn:hover, .qt-fullscreen:focus, .qt-fullscreen:hover,.wrap .add-new-h2:hover { background: #1fb5ac !important;border-color: #1fb5ac !important;color: #ffffff !important;}.wrap .add-new-h2{background: #a9a9a9 !importantcolor: #ffffff !important;}.toplevel_page__ultraoptions #redux-header{border-color:#1fb5ac !important;background-color:#1fb5ac !important;}
+#wp-fullscreen-buttons .mce-btn:focus, #wp-fullscreen-buttons .mce-btn:hover, .mce-toolbar .mce-btn-group .mce-btn:focus, .mce-toolbar .mce-btn-group .mce-btn:hover, .qt-fullscreen:focus, .qt-fullscreen:hover,.wrap .add-new-h2:hover, .wrap .page-title-action:hover { background: #1fb5ac !important;border-color: #1fb5ac !important;color: #ffffff !important;}.wrap .add-new-h2, .wrap .page-title-action {background: #a9a9a9 !importantcolor: #ffffff !important;}.toplevel_page__ultraoptions #redux-header{border-color:#1fb5ac !important;background-color:#1fb5ac !important;}
 
 .media-progress-bar div{
 	background-color: #1fb5ac;

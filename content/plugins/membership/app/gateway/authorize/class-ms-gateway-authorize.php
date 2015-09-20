@@ -232,6 +232,20 @@ class MS_Gateway_Authorize extends MS_Gateway {
 			}
 		}
 
+		// Mask the credit card number before logging it to database.
+		$card_num = '';
+		if ( isset( $_POST['card_num'] ) ) {
+			// Card Num   6789765435678765
+			// Becomes    ************8765
+			$card_num = $_POST['card_num'];
+			$_POST['card_num'] = str_pad(
+				substr( $card_num, -4 ),
+				strlen( $card_num ),
+				'*',
+				STR_PAD_LEFT
+			);
+		}
+
 		do_action(
 			'ms_gateway_transaction_log',
 			self::ID, // gateway ID
@@ -240,8 +254,12 @@ class MS_Gateway_Authorize extends MS_Gateway {
 			$subscription->id, // subscription ID
 			$invoice->id, // invoice ID
 			$amount, // charged amount
-			$notes // Descriptive text
+			$notes, // Descriptive text
+			$external_id // External ID
 		);
+
+		// Restore the POST data in case it's used elsewhere.
+		$_POST['card_num'] = $card_num;
 
 		return $success;
 	}

@@ -137,7 +137,7 @@ class MS_Controller_Plugin extends MS_Controller {
 		$this->controllers['help']                 = MS_Factory::load( 'MS_Controller_Help' );
 
 		// API should be the last Controller to create.
-		$this->controllers['api']                  = MS_Factory::load( 'MS_Controller_Api' );
+		$this->controllers['api']                  = MS_Controller_Api::instance();
 
 		// Register all available styles and scripts. Nothing is enqueued.
 		$this->add_action( 'wp_loaded', 'wp_loaded' );
@@ -905,12 +905,12 @@ class MS_Controller_Plugin extends MS_Controller {
 
 		wp_register_script(
 			'jquery-plugins',
-			$plugin_url . 'app/assets/js/jquery.plugins.js',
+			$plugin_url . 'app/assets/js/jquery.m2.plugins.js',
 			array( 'jquery' ), $version
 		);
 		wp_register_script(
 			'jquery-validate',
-			$plugin_url . 'app/assets/js/jquery.validate.js',
+			$plugin_url . 'app/assets/js/jquery.m2.validate.js',
 			array( 'jquery' ), $version
 		);
 	}
@@ -960,12 +960,12 @@ class MS_Controller_Plugin extends MS_Controller {
 
 		wp_register_script(
 			'jquery-plugins',
-			$plugin_url . 'app/assets/js/jquery.plugins.js',
+			$plugin_url . 'app/assets/js/jquery.m2.plugins.js',
 			array( 'jquery' ), $version
 		);
 		wp_register_script(
 			'jquery-validate',
-			$plugin_url . 'app/assets/js/jquery.validate.js',
+			$plugin_url . 'app/assets/js/jquery.m2.validate.js',
 			array( 'jquery' ), $version
 		);
 	}

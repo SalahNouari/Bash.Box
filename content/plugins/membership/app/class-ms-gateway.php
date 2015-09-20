@@ -238,11 +238,14 @@ class MS_Gateway extends MS_Model_Option {
 	 * Overridden in child gateway classes.
 	 *
 	 * @since  1.0.0
+	 * @param  MS_Model_Transactionlog $log Optional. A transaction log item
+	 *         that will be updated instead of creating a new log entry.
 	 */
-	public function handle_return() {
+	public function handle_return( $log = false ) {
 		do_action(
 			'ms_gateway_handle_return',
-			$this
+			$this,
+			$log
 		);
 	}
 
@@ -368,11 +371,11 @@ class MS_Gateway extends MS_Model_Option {
 	 * @return string The return url.
 	 */
 	public function get_return_url() {
-		$return_url = home_url( '/ms-payment-return/' . $this->id );
+		$url = MS_Helper_Utility::home_url( '/ms-payment-return/' . $this->id );
 
 		return apply_filters(
 			'ms_gateway_get_return_url',
-			$return_url,
+			$url,
 			$this
 		);
 	}

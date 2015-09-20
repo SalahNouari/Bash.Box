@@ -2153,6 +2153,28 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
 .ms-wrap.ms-billing .billings .due-now:hover:after {
   display: block;
 }
+#wpwrap .ms-wrap.ms-billing .billings .is-paid,
+.ms-wrap.ms-billing .billings .is-paid {
+  color: #004080;
+  border-bottom: 1px dotted #DDD;
+  cursor: default;
+}
+#wpwrap .ms-wrap.ms-billing .billings .is-paid:after,
+.ms-wrap.ms-billing .billings .is-paid:after {
+  content: attr(title);
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 32px;
+  right: 0;
+  font-size: 11px;
+  z-index: 2;
+  color: #888;
+}
+#wpwrap .ms-wrap.ms-billing .billings .is-paid:hover:after,
+.ms-wrap.ms-billing .billings .is-paid:hover:after {
+  display: block;
+}
 #wpwrap .ms-wrap.ms-billing .billings .column-status,
 .ms-wrap.ms-billing .billings .column-status {
   width: 80px;
@@ -2177,17 +2199,25 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   position: relative;
 }
 #wpwrap .ms-wrap.ms-billing .transactions tr:hover td,
-.ms-wrap.ms-billing .transactions tr:hover td {
+#wpwrap .ms-wrap.ms-billing .transaction_matches tr:hover td,
+.ms-wrap.ms-billing .transactions tr:hover td,
+.ms-wrap.ms-billing .transaction_matches tr:hover td {
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1) inset, 0 -1px 0 0 rgba(0, 0, 0, 0.1) inset;
 }
 #wpwrap .ms-wrap.ms-billing .transactions td,
-.ms-wrap.ms-billing .transactions td {
+#wpwrap .ms-wrap.ms-billing .transaction_matches td,
+.ms-wrap.ms-billing .transactions td,
+.ms-wrap.ms-billing .transaction_matches td {
   padding: 6px;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .log-status,
 #wpwrap .ms-wrap.ms-billing .transactions .log-method,
+#wpwrap .ms-wrap.ms-billing .transaction_matches .log-status,
+#wpwrap .ms-wrap.ms-billing .transaction_matches .log-method,
 .ms-wrap.ms-billing .transactions .log-status,
-.ms-wrap.ms-billing .transactions .log-method {
+.ms-wrap.ms-billing .transactions .log-method,
+.ms-wrap.ms-billing .transaction_matches .log-status,
+.ms-wrap.ms-billing .transaction_matches .log-method {
   background-color: #888;
   color: #FFF;
   padding: 0;
@@ -2200,12 +2230,16 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   position: relative;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .log-method:hover,
-.ms-wrap.ms-billing .transactions .log-method:hover {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .log-method:hover,
+.ms-wrap.ms-billing .transactions .log-method:hover,
+.ms-wrap.ms-billing .transaction_matches .log-method:hover {
   background-color: #333;
   border-radius: 10px 0 0 10px;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .log-method:hover:after,
-.ms-wrap.ms-billing .transactions .log-method:hover:after {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .log-method:hover:after,
+.ms-wrap.ms-billing .transactions .log-method:hover:after,
+.ms-wrap.ms-billing .transaction_matches .log-method:hover:after {
   content: attr(data-info);
   background: #333;
   color: #FFF;
@@ -2220,26 +2254,36 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   white-space: nowrap;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-id,
-.ms-wrap.ms-billing .transactions .column-id {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-id,
+.ms-wrap.ms-billing .transactions .column-id,
+.ms-wrap.ms-billing .transaction_matches .column-id {
   width: 80px;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-date,
-.ms-wrap.ms-billing .transactions .column-date {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-date,
+.ms-wrap.ms-billing .transactions .column-date,
+.ms-wrap.ms-billing .transaction_matches .column-date {
   width: 150px;
   text-align: center;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-status,
-.ms-wrap.ms-billing .transactions .column-status {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-status,
+.ms-wrap.ms-billing .transactions .column-status,
+.ms-wrap.ms-billing .transaction_matches .column-status {
   width: 40px;
   text-align: center;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-method,
-.ms-wrap.ms-billing .transactions .column-method {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-method,
+.ms-wrap.ms-billing .transactions .column-method,
+.ms-wrap.ms-billing .transaction_matches .column-method {
   width: 40px;
   text-align: center;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-gateway,
-.ms-wrap.ms-billing .transactions .column-gateway {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-gateway,
+.ms-wrap.ms-billing .transactions .column-gateway,
+.ms-wrap.ms-billing .transaction_matches .column-gateway {
   width: 150px;
   white-space: nowrap;
   overflow: hidden;
@@ -2247,26 +2291,54 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   text-align: center;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-amount,
-.ms-wrap.ms-billing .transactions .column-amount {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-amount,
+.ms-wrap.ms-billing .transactions .column-amount,
+.ms-wrap.ms-billing .transaction_matches .column-amount {
   width: 80px;
   text-align: right;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .column-invoice,
-.ms-wrap.ms-billing .transactions .column-invoice {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .column-invoice,
+.ms-wrap.ms-billing .transactions .column-invoice,
+.ms-wrap.ms-billing .transaction_matches .column-invoice {
   width: 80px;
   text-align: center;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .detail-block,
-.ms-wrap.ms-billing .transactions .detail-block {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .detail-block,
+.ms-wrap.ms-billing .transactions .detail-block,
+.ms-wrap.ms-billing .transaction_matches .detail-block {
   min-width: 300px;
 }
 #wpwrap .ms-wrap.ms-billing .transactions .detail-block .actions,
-.ms-wrap.ms-billing .transactions .detail-block .actions {
+#wpwrap .ms-wrap.ms-billing .transaction_matches .detail-block .actions,
+.ms-wrap.ms-billing .transactions .detail-block .actions,
+.ms-wrap.ms-billing .transaction_matches .detail-block .actions {
   position: absolute;
-  right: 6px;
-  top: 6px;
+  right: 0px;
+  top: 1px;
   display: none;
   z-index: 5;
+  padding: 5px;
+  background-color: #FFF;
+}
+#wpwrap .ms-wrap.ms-billing .transaction-matching,
+.ms-wrap.ms-billing .transaction-matching {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  clear: both;
+  background-color: #FCFCFC;
+  border: 1px solid #E5E5E5;
+  padding: 10px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+#wpwrap .ms-wrap.ms-billing .transaction-matching .buttons,
+.ms-wrap.ms-billing .transaction-matching .buttons {
+  text-align: right;
+  border-top: 1px solid #E5E5E5;
+  margin: 10px -10px -10px;
+  padding: 5px;
+  background-color: #F8F8F8;
 }
 #wpwrap .ms-wrap.ms-billing .log-ok td,
 .ms-wrap.ms-billing .log-ok td {
@@ -2310,6 +2382,10 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   width: 16px;
   text-align: center;
 }
+#wpwrap .ms-wrap.ms-billing .more-details.no-post .wpmui-fa,
+.ms-wrap.ms-billing .more-details.no-post .wpmui-fa {
+  opacity: 0.5;
+}
 #wpwrap .ms-wrap.ms-billing .more-details .post-data,
 .ms-wrap.ms-billing .more-details .post-data {
   display: none;
@@ -2323,6 +2399,10 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   color: #EEE;
   text-align: left;
   white-space: pre;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .post-data .inner,
+.ms-wrap.ms-billing .more-details .post-data .inner {
+  overflow: auto;
 }
 #wpwrap .ms-wrap.ms-billing .more-details .post-data:before,
 .ms-wrap.ms-billing .more-details .post-data:before {
@@ -2341,6 +2421,43 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   right: 0px;
   top: -25px;
   height: 25px;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line .line-num,
+.ms-wrap.ms-billing .more-details .line .line-num {
+  display: inline-block;
+  width: 22px;
+  color: #999;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line .line-key:before,
+.ms-wrap.ms-billing .more-details .line .line-key:before {
+  content: '[ ';
+  color: #888;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line .line-key:after,
+.ms-wrap.ms-billing .more-details .line .line-key:after {
+  content: ' ]';
+  color: #888;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line .line-val,
+.ms-wrap.ms-billing .more-details .line .line-val {
+  white-space: nowrap;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line .line-val:before,
+.ms-wrap.ms-billing .more-details .line .line-val:before {
+  content: ' =  "';
+  color: #888;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line .line-val:after,
+.ms-wrap.ms-billing .more-details .line .line-val:after {
+  content: '"';
+  color: #888;
+}
+#wpwrap .ms-wrap.ms-billing .more-details .line.is-id .line-key,
+.ms-wrap.ms-billing .more-details .line.is-id .line-key {
+  color: #000;
+  background: #CC8;
+  padding: 0 2px;
+  display: inline-block;
 }
 #wpwrap .ms-wrap.ms-billing .more-details:hover .post-data,
 .ms-wrap.ms-billing .more-details:hover .post-data {
@@ -2426,6 +2543,10 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   border-radius: 4px;
   color: #FFF;
   background: #888;
+}
+
+.ms-payment-infos .wpmui-html-table th {
+  width: 140px;
 }
 
 /**
@@ -3285,4 +3406,4 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
 }
 
 
-/* 133620-1439138921-au */
+/* 133620-1442728675-au */

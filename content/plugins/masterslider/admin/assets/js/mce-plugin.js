@@ -1,16 +1,16 @@
 /* Master Slider plugin for tinymce */
 
 ( function () {
-	
+
 	// skip if sliders list is not available
 	if( ! __MS_EDITOR || ! __MS_EDITOR.sliders )
 		return;
 
-	
+
 	tinymce.PluginManager.add( 'msp_shortcodes_button', function( editor, url ) {
 
 		var menu_items = [],
-			item_label; 
+			item_label;
 
 		for ( slider_id in __MS_EDITOR.sliders ) {
 			item_label = __MS_EDITOR.sliders[ slider_id ] + " [#" + slider_id + "]";
@@ -26,7 +26,8 @@
 			type: 'menubutton',
 			menu: menu_items,
 			onselect: function(e) {
-                var slider_id = e.control._value;
+                console.log( e );
+                var slider_id = e.control.settings.value;
                 ed.selection.setContent( '[masterslider id="' + slider_id + '"]' );
             }
 		});
@@ -63,9 +64,9 @@
 			// options is empty in new api
 			options = options || this;
 
-			if( options.shortcode.attrs.named.masterslider && 
+			if( options.shortcode.attrs.named.masterslider &&
 			   	( 'on'   === options.shortcode.attrs.named.masterslider ||
-			   	  'true' === options.shortcode.attrs.named.masterslider 
+			   	  'true' === options.shortcode.attrs.named.masterslider
 			   	)
 			  ){
 				this.template = media.template( 'editor-master-gallery' );
@@ -85,11 +86,11 @@
 				self.render( true );
 			} );
 		}
-		
+
 	};
 
 	view[(newAPI ? 'getContent' : 'getHtml')] = function() {
-		
+
 		var attrs = this.shortcode.attrs.named,
 			attachments = false,
 			options;
@@ -119,7 +120,7 @@
 		};
 
 		this.content = this.template( options );
-		
+
 		return this.content;
 	};
 
@@ -173,8 +174,8 @@
 (function($) {
 
 	var media = wp.media,
-		
-		masterDefaults = { 
+
+		masterDefaults = {
 			'masterslider':false, 'loop':false, 'autoplay':false,
 			'thumbs':true, 'thumbs_align':'bottom', 'skin':'ms-skin-default',
 			'class':'', 'caption':true, 'auto_height':false
@@ -190,17 +191,17 @@
 			if ( superRender ) {
 				superRender.apply(this, arguments );
 			} else {
-				media.view.Settings.prototype.render.apply( this, arguments );	
+				media.view.Settings.prototype.render.apply( this, arguments );
 			}
 
 			// Append masterslider template (gallery-master-settings) and update the settings.
 			$el.append( media.template( 'gallery-master-settings' ) );
 
 			for( var msOpt in masterDefaults ){
-				
+
 				$setting = $el.find( '.msas-gallery-' + msOpt +' [data-setting]' );
 				setting_val = ( typeof this.model.attributes[msOpt] != 'undefined' ) ? this.model.attributes[msOpt] : masterDefaults[msOpt];
-				
+
 				if ( $setting.is('input[type="checkbox"]') ) {
 					$setting.prop('checked', setting_val );
 				} else {
@@ -218,12 +219,12 @@
 			var $el = this.$el,
 			    $ms_options = $el.find( '.msas-toggle' ),
 			    is_master_enabled = ( typeof this.model.attributes.masterslider != 'undefined' ) ? this.model.attributes.masterslider : media.gallery.defaults.masterslider;
-			
+
 			if( ! is_master_enabled ) {
 				setTimeout( function(){ $ms_options.hide(1); }, 10 );
 			}
-			
-			$el.find( '.msas-gallery-masterslider' ).on( 'click', '[data-setting]', function () { 
+
+			$el.find( '.msas-gallery-masterslider' ).on( 'click', '[data-setting]', function () {
 				this.checked ? $ms_options.show(1) : $ms_options.hide(1);
 			});
 		},

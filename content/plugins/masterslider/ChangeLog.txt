@@ -1,3 +1,8 @@
+Version 2.20.3 / (12.09.2015)
+============================
+- [Fix]: Addressed an issue with undefined IDs while adding shortcodes to WordPress editor
+- [New]: Russian translation by: "oharreg"
+
 Version 2.20.0 / (31.08.2015)
 ============================
 - [Fix]: Address an incompatibility issue with WordPress 4.3 which result in white screen of death for some clients

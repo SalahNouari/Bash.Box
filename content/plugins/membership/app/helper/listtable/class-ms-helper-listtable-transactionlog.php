@@ -115,7 +115,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 
 		$per_page = $this->get_items_per_page(
 			'transactionlog_per_page',
-			self::DEFAULT_PAGE_SIZE
+			50
 		);
 
 		$current_page = $this->get_pagenum();
@@ -123,18 +123,29 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 		$args = array(
 			'posts_per_page' => $per_page,
 			'offset' => ( $current_page - 1 ) * $per_page,
+			'meta_query' => array(),
 		);
 
 		if ( ! empty( $_GET['state'] ) ) {
 			$args['state'] = $_GET['state'];
 		}
 
+		if ( ! empty( $_GET['id'] ) ) {
+			$args['post__in'] = explode( ',', $_GET['id'] );
+		}
+
+		if ( ! empty( $_GET['invoice'] ) ) {
+			$args['meta_query']['invoice_id'] = array(
+				'key' => 'invoice_id',
+				'value' => explode( ',', $_GET['invoice'] ),
+				'compare' => 'IN',
+			);
+		}
+
 		if ( ! empty( $_GET['gateway_id'] ) ) {
-			$args['meta_query'] = array(
-				'gateway_id' => array(
-					'key' => '_gateway_id',
-					'value' => $_GET['gateway_id'],
-				),
+			$args['meta_query']['gateway_id'] = array(
+				'key' => 'gateway_id',
+				'value' => $_GET['gateway_id'],
 			);
 		}
 
@@ -171,16 +182,17 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 	 */
 	public function get_views() {
 		$views = array();
+		$base_url = remove_query_arg( array( 'state', 'id', 'invoice' ) );
 
 		$views['all'] = array(
 			'label' => __( 'All', MS_TEXT_DOMAIN ),
-			'url' => remove_query_arg( 'state' ),
+			'url' => $base_url,
 			'count' => MS_Model_Transactionlog::get_item_count(),
 		);
 
 		$views['ok'] = array(
 			'label' => __( 'Successful', MS_TEXT_DOMAIN ),
-			'url' => add_query_arg( 'state', 'ok' ),
+			'url' => add_query_arg( 'state', 'ok', $base_url ),
 			'count' => MS_Model_Transactionlog::get_item_count(
 				array( 'state' => 'ok' )
 			),
@@ -188,7 +200,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 
 		$views['err'] = array(
 			'label' => __( 'Failed', MS_TEXT_DOMAIN ),
-			'url' => add_query_arg( 'state', 'err' ),
+			'url' => add_query_arg( 'state', 'err', $base_url ),
 			'count' => MS_Model_Transactionlog::get_item_count(
 				array( 'state' => 'err' )
 			),
@@ -196,7 +208,7 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 
 		$views['ignore'] = array(
 			'label' => __( 'Ignored', MS_TEXT_DOMAIN ),
-			'url' => add_query_arg( 'state', 'ignore' ),
+			'url' => add_query_arg( 'state', 'ignore', $base_url ),
 			'count' => MS_Model_Transactionlog::get_item_count(
 				array( 'state' => 'ignore' )
 			),
@@ -360,45 +372,38 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 		$nonce_action = '';
 		$detail_lines = array();
 		$actions = array();
+		$ind = 0;
 
 		// 1. Prepare the "Additional Details" popup.
-		if ( $item->is_manual ) {
-			$detail_lines[] = __( 'Transaction state manually changed', MS_TEXT_DOMAIN );
-			$detail_lines[] = sprintf(
-				__( 'Modified on: %s', MS_TEXT_DOMAIN ),
-				$item->manual_date
-			);
-			$detail_lines[] = sprintf(
-				__( 'Modified by: %s', MS_TEXT_DOMAIN ),
-				$item->get_manual_user()->display_name
-			);
-		}
-
-		$item_post_info = $item->post;
-		if ( ! empty( $item_post_info ) ) {
-			if ( count( $detail_lines ) ) {
-				$detail_lines[] = '<hr>';
-			}
-			$detail_lines[] = __( 'POST data:', MS_TEXT_DOMAIN );
-			foreach ( $item_post_info as $key => $value ) {
-				$detail_lines[] = "[$key] = \"$value\"";
-			}
-		}
+		$detail_lines = self::get_details( $item );
 
 		if ( count( $detail_lines ) ) {
+			$icon_class = '';
+			$post_data = $item->post;
+			if ( ! $post_data ) {
+				$icon_class = 'no-post';
+			}
+
 			$extra_infos = sprintf(
-				'<div class="more-details">%2$s<div class="post-data">%1$s</div></div>',
+				'<div class="more-details %3$s">%2$s<div class="post-data"><div class="inner">%1$s</div></div></div>',
 				implode( '<br>', $detail_lines ),
-				'<i class="wpmui-fa wpmui-fa-info-circle"></i>'
+				'<i class="wpmui-fa wpmui-fa-info-circle"></i>',
+				$icon_class
 			);
 		}
 
 		// 2. Prepare the row actions.
 		if ( 'err' == $item->state ) {
 			$actions = array(
-				'action-ignore' => __( 'Ignore', MS_TEXT_DOMAIN ),
 				'action-link' => __( 'Link', MS_TEXT_DOMAIN ),
+				'action-ignore' => __( 'Ignore', MS_TEXT_DOMAIN ),
 			);
+
+			// We can only re-process the transaction if we have POST data.
+			$postdata = $item->post;
+			if ( is_array( $postdata ) && ! empty( $postdata ) ) {
+				$actions['action-retry'] = __( 'Retry', MS_TEXT_DOMAIN );
+			}
 		} elseif ( 'ignore' == $item->state && $item->is_manual ) {
 			$actions = array(
 				'action-clear' => __( 'Reset', MS_TEXT_DOMAIN ),
@@ -417,6 +422,12 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 			$nonces[] = wp_nonce_field(
 				MS_Controller_Billing::AJAX_ACTION_TRANSACTION_LINK,
 				'nonce_link',
+				false,
+				false
+			);
+			$nonces[] = wp_nonce_field(
+				MS_Controller_Import::AJAX_ACTION_RETRY,
+				'nonce_retry',
 				false,
 				false
 			);
@@ -439,13 +450,121 @@ class MS_Helper_ListTable_TransactionLog extends MS_Helper_ListTable {
 
 		// 3. Combine the prepared parts.
 		$html = sprintf(
-			'<div class="detail-block">%s %s %s</div>',
+			'<div class="detail-block">%s <span class="txt">%s</span> %s</div>',
 			$extra_infos,
 			$item->description,
 			$row_actions
 		);
 
 		return $html;
+	}
+
+	/**
+	 * Returns an array with additional details about the transaction.
+	 *
+	 * This function is used in the note-column and is shared in the objects for
+	 * TransactionLog and TransactionMatching.
+	 *
+	 * @since  1.0.1.2
+	 * @param  MS_Model_Transaction $item Transaction object.
+	 * @return array The transaction details.
+	 */
+	static public function get_details( $item ) {
+		$detail_lines = array();
+
+		if ( $item->is_manual ) {
+			$detail_lines[] = __( 'Transaction state manually changed', MS_TEXT_DOMAIN );
+			$detail_lines[] = sprintf(
+				__( 'Modified on: %s', MS_TEXT_DOMAIN ),
+				$item->manual_date
+			);
+			$detail_lines[] = sprintf(
+				__( 'Modified by: %s', MS_TEXT_DOMAIN ),
+				$item->get_manual_user()->display_name
+			);
+		}
+
+		$postdata = $item->post;
+		if ( ! empty( $postdata ) && is_array( $postdata ) ) {
+			$id_fields = array();
+			switch ( $item->gateway_id ) {
+				case MS_Gateway_Paypalstandard::ID:
+					if ( isset( $postdata['invoice'] ) ) {
+						$id_fields[] = 'invoice';
+					} elseif ( isset( $postdata['custom'] ) ) {
+						$id_fields[] = 'custom';
+						$detail_lines[] = __( 'Imported subscription from old Membership plugin.', MS_TEXT_DOMAIN );
+					} elseif ( isset( $postdata['btn_id'] ) ) {
+						$id_fields[] = 'btn_id';
+						$id_fields[] = 'payer_email';
+						$detail_lines[] = __( 'Payment via a PayPal Payment button.', MS_TEXT_DOMAIN );
+					} elseif ( isset( $postdata['txn_type'] ) ) {
+						// Highlight invalid transactions.
+						if ( 'send_money' == $postdata['txn_type'] ) {
+							$id_fields[] = 'txn_type';
+							$detail_lines[] = __( 'Someone sent you money inside PayPal.<br>Plugin did not attempt to match payment to a subscription.', MS_TEXT_DOMAIN );
+						}
+					}
+					break;
+			}
+
+			if ( count( $detail_lines ) ) {
+				$detail_lines[] = '<hr>';
+			}
+			ksort( $postdata );
+			$ind = 0;
+			$detail_lines[] = __( 'POST data:', MS_TEXT_DOMAIN );
+			foreach ( $postdata as $key => $value ) {
+				$ind += 1;
+
+				$line_class = '';
+				if ( in_array( $key, $id_fields ) ) {
+					$line_class = 'is-id';
+				}
+
+				$detail_lines[] = sprintf(
+					'<span class="line %s"><small class="line-num">%s</small> <span class="line-key">%s</span> <span class="line-val">%s</span></span>',
+					$line_class,
+					$ind,
+					$key,
+					$value
+				);
+			}
+		}
+
+		$headers = $item->headers;
+		if ( ! empty( $headers ) && is_array( $headers ) ) {
+			if ( count( $detail_lines ) ) {
+				$detail_lines[] = '<hr>';
+			}
+			ksort( $headers );
+			$ind = 0;
+			$detail_lines[] = __( 'HTTP Headers:', MS_TEXT_DOMAIN );
+			foreach ( $headers as $key => $value ) {
+				$ind += 1;
+
+				$detail_lines[] = sprintf(
+					'<span class="line"><small class="line-num">%s</small> <span class="line-key">%s</span> <span class="line-val">%s</span></span>',
+					$ind,
+					$key,
+					$value
+				);
+			}
+		}
+
+		$req_url = $item->url;
+		if ( ! empty( $req_url ) ) {
+			if ( count( $detail_lines ) ) {
+				$detail_lines[] = '<hr>';
+			}
+			$detail_lines[] = sprintf(
+				'<span class="line"><span class="line-key">%s</span> <span class="line-val">%s</span></span>',
+				__( 'Request URL', MS_TEXT_DOMAIN ),
+				$req_url
+			);
+		}
+
+		return $detail_lines;
 	}
 
 }

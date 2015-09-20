@@ -39,7 +39,7 @@ class TheLib_2_0_3_Net extends TheLib_2_0_3 {
 				$cur_url = $protocol;
 			}
 
-			$is_ssl = 'https' === $cur_url;
+			$is_ssl = (false !== strpos( $cur_url, 'https' ));
 			$cur_url .= '://';
 
 			if ( isset( $_SERVER['SERVER_NAME'] ) ) {

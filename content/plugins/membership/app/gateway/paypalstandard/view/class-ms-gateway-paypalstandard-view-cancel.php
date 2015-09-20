@@ -30,7 +30,7 @@ class MS_Gateway_Paypalstandard_View_Cancel extends MS_View {
 				if ( MS_Gateway::MODE_LIVE == $gateway->mode ) {
 					$cancel_url = 'https://www.paypal.com/cgi-bin/webscr';
 				} else {
-					$cancel_url = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+					$cancel_url = 'https://www.sandbox.paypal.com/cgi-bin/webscr';	   	 	 		 	  					  
 				}
 
 				$button = array(

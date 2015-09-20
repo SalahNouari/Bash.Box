@@ -30,6 +30,20 @@ class MS_Model_Upgrade extends MS_Model {
 		// This is a hidden feature available in the Settings > General page.
 		add_action( 'init', array( __CLASS__, 'maybe_reset' ) );
 
+		// Prevent WordPress from updating the Membership plugin when the
+		// WPMU DEV Dashboard is disabled.
+		if ( ! class_exists( 'WPMUDEV_Dashboard' ) ) {
+			add_filter(
+				'plugins_api',
+				array( __CLASS__, 'no_dash_plugins_api' ),
+				101, 3
+			);
+			add_filter(
+				'site_transient_update_plugins',
+				array( __CLASS__, 'no_dash_update_plugins' )
+			);
+		}
+
 		do_action( 'ms_model_upgrade_init' );
 	}
 
@@ -51,7 +65,7 @@ class MS_Model_Upgrade extends MS_Model {
 		if ( ! self::valid_user() ) { return; }
 
 		// Check for correct network-wide protection setup.
-		self::check_network_setup();
+		self::check_settings();
 
 		$settings = MS_Factory::load( 'MS_Model_Settings' );
 		$old_version = $settings->version; // Old: The version in DB.
@@ -132,6 +146,11 @@ class MS_Model_Upgrade extends MS_Model {
 				self::_upgrade_1_0_1_1();
 			}
 
+			// Upgrade from 1.0.1.x version to 1.0.2.0 or higher
+			if ( version_compare( $old_version, '1.0.2.0', 'lt' ) ) {
+				self::_upgrade_1_0_2_0();
+			}
+
 			/*
 			 * ----- General update logic, executed on every update ------------
 			 */
@@ -152,9 +171,60 @@ class MS_Model_Upgrade extends MS_Model {
 				$force
 			);
 
+			$addons = MS_Factory::load( 'MS_Model_Addon' );
+			$addons->flush_list();
+
 			// This will reload the current page.
 			MS_Plugin::flush_rewrite_rules();
 		}
+	}
+
+	/**
+	 * When WPMU DEV Dashboard is disabled this function will tell WordPress
+	 * to not update Membership 2.
+	 *
+	 * PRO ONLY!
+	 *
+	 * @since  1.0.1.2
+	 * @param  mixed $res False: Update plugin / True: WP ignores plugin.
+	 * @param  string $action
+	 * @param  object $args
+	 * @return mixed
+	 */
+	static public function no_dash_plugins_api( $res, $action, $args ) {
+		if ( ! empty( $args ) && is_object( $args ) ) {
+			if ( 'wpmudev_install-1003656' == $args->slug ) {
+				$res = true;
+			} elseif ( 'wpmudev_install-130' == $args->slug ) {
+				$res = true;
+			} elseif ( 'membership' == $args->slug ) {
+				$res = true;
+			}
+		}
+
+		return $res;
+	}
+
+	/**
+	 * Filter the site transient value right before it is returned by the
+	 * get_site_transient function.
+	 * We mark the Membership2 plugin for "no update".
+	 *
+	 * PRO ONLY!
+	 *
+	 * @since  1.0.1.2
+	 * @param  object $data
+	 * @return object
+	 */
+	static public function no_dash_update_plugins( $data ) {
+		if ( ! empty( $data ) && is_object( $data ) && ! empty( $data->response ) ) {
+			if ( isset( $data->response['membership/membership2.php'] ) ) {
+				$data->no_update['membership/membership2.php'] = $data->response['membership/membership2.php'];
+				unset( $data->response['membership/membership2.php'] );
+			}
+		}
+
+		return $data;
 	}
 
 
@@ -242,6 +312,31 @@ class MS_Model_Upgrade extends MS_Model {
 		// Execute all queued actions!
 		lib2()->updates->plugin( MS_TEXT_DOMAIN );
 		lib2()->updates->execute();
+	}
+
+	/**
+	 * Upgrade from 1.0.1.1 version to a higher version.
+	 */
+	static private function _upgrade_1_0_2_0() {
+		lib2()->updates->clear();
+
+		/*
+		 * Transaction logs are a bit messed up because some meta-keys have an
+		 * underscore as prefix while other do not have it. This query removes
+		 * the underscore from all transaction-log meta key names.
+		 */
+		{
+			global $wpdb;
+			$sql = "
+			UPDATE {$wpdb->postmeta}
+			INNER JOIN {$wpdb->posts} ON {$wpdb->postmeta}.post_id={$wpdb->posts}.ID
+			SET meta_key = SUBSTR(meta_key,2)
+			WHERE
+				{$wpdb->posts}.post_type = 'ms_transaction_log'
+				AND SUBSTR({$wpdb->postmeta}.meta_key,1,1) = '_'
+			";
+			$ids = $wpdb->query( $sql );
+		}
 	}
 
 	#
@@ -416,34 +511,54 @@ class MS_Model_Upgrade extends MS_Model {
 	}
 
 	/**
-	 * Makes sure that network-wide protection works by ensuring that the plugin
-	 * is also network-activated.
+	 * Checks several settings to make sure that M2 is fully working.
+	 *
+	 * A) Makes sure that network-wide protection works by ensuring that the
+	 *    plugin is also network-activated.
+	 * B) Checks if the permalink structure uses the post-name
 	 *
 	 * @since  1.0.0
 	 */
-	static private function check_network_setup() {
-		static $Network_Checked = false;
+	static private function check_settings() {
+		static $Setting_Check_Done = false;
 
-		if ( ! $Network_Checked ) {
-			$Network_Checked = true;
+		if ( ! $Setting_Check_Done ) {
+			$Setting_Check_Done = true;
 
-			// This is only relevant for multisite installations.
-			if ( ! is_multisite() ) { return; }
+			// A) Check plugin activation in network-wide mode.
+			if ( is_multisite() ) {
 
-			if ( MS_Plugin::is_network_wide() ) {
-				// This function does not exist in network admin
-				if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
-					require_once ABSPATH . '/wp-admin/includes/plugin.php';
-				}
+				if ( MS_Plugin::is_network_wide() ) {
+					// This function does not exist in network admin
+					if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+						require_once ABSPATH . '/wp-admin/includes/plugin.php';
+					}
 
-				if ( ! is_plugin_active_for_network( MS_PLUGIN ) ) {
-					activate_plugin( MS_PLUGIN, null, true );
-					lib2()->ui->admin_message(
-						__( 'Info: Membership2 is not activated network-wide', MS_TEXT_DOMAIN )
-					);
+					if ( ! is_plugin_active_for_network( MS_PLUGIN ) ) {
+						activate_plugin( MS_PLUGIN, null, true );
+						lib2()->ui->admin_message(
+							__( 'Info: Membership2 is not activated network-wide', MS_TEXT_DOMAIN )
+						);
+					}
 				}
 			}
+
+			// B) Check the Permalink settings.
+			if ( false === strpos( get_option( 'permalink_structure' ), '%postname%' ) ) {
+				lib2()->ui->admin_message(
+					sprintf(
+						__( 'Your %sPermalink structure%s should include the %sPost name%s to ensure Membership 2 is working correctly.', MS_TEXT_DOMAIN ),
+						'<a href="' . admin_url( 'options-permalink.php' ) . '">',
+						'</a>',
+						'<strong>',
+						'</strong>'
+					),
+					'err'
+				);
+			}
 		}
+
+		return;
 	}
 
 	/**
@@ -563,7 +678,13 @@ class MS_Model_Upgrade extends MS_Model {
 	 * @return bool True if all conditions are true
 	 */
 	static private function valid_user() {
-		if ( ! is_user_logged_in() ) { return false; }
+		/**
+		 * Determine user_id from request cookies.
+		 * @see wp-includes/pluggable.php wp_currentuserinfo()
+		 */
+		$user_id = apply_filters( 'determine_current_user', false );
+
+		if ( ! $user_id ) { return false; }
 		if ( ! is_admin() ) { return false; }
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) { return false; }
 		if ( defined( 'DOING_CRON' ) && DOING_CRON ) { return false; }
@@ -586,7 +707,7 @@ class MS_Model_Upgrade extends MS_Model {
 			if ( ! self::verify_token( 'reset' ) ) { return false; }
 
 			self::cleanup_db();
-			$msg = __( 'Your Membership2 data was reset!', MS_TEXT_DOMAIN );
+			$msg = __( 'Membership 2 successfully reset!', MS_TEXT_DOMAIN );
 			lib2()->ui->admin_message( $msg );
 
 			wp_safe_redirect( MS_Controller_Plugin::get_admin_url( 'MENU_SLUG' ) );

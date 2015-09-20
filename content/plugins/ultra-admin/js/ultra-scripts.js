@@ -186,6 +186,7 @@ jQuery(function($) {
             };
 
         $.post(ajaxurl, data, function(response) {
+             //console.log(response);
              location.reload();
             //console.log(response);
         });

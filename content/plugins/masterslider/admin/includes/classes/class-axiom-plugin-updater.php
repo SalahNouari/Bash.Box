@@ -226,11 +226,14 @@ if( ! class_exists('Axiom_Plugin_Updater') ) {
          */
         protected function get_downloaded_package_url() {
 
-            // include file system functions
-            require_once( ABSPATH . 'wp-admin/includes/file.php' );
-
-            WP_Filesystem();
+            /**
+             * Initialize the WP_Filesystem
+             */
             global $wp_filesystem;
+            if ( empty( $wp_filesystem ) ) {
+                require_once ( ABSPATH.'/wp-admin/includes/file.php' );
+                WP_Filesystem();
+            }
 
             //$this->skin->feedback('download_item_package');
 
@@ -333,7 +336,14 @@ if( ! class_exists('Axiom_Plugin_Updater') ) {
          * @return bool|WP_Error True if the upgrade was successful, false or a {@see WP_Error} object otherwise.
          */
         public function update_plugin() {
+            /**
+             * Initialize the WP_Filesystem
+             */
             global $wp_filesystem;
+            if ( empty( $wp_filesystem ) ) {
+                require_once ( ABSPATH.'/wp-admin/includes/file.php' );
+                WP_Filesystem();
+            }
 
             $plugin  = $this->plugin_slug;
 

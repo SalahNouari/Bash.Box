@@ -389,8 +389,8 @@ class MS_Controller_Billing extends MS_Controller {
 					$msg = MS_Helper_Billing::BILLING_MSG_UPDATED;
 					break;
 
-				case 'delete':
-					$invoice->delete();
+				case 'archive':
+					$invoice->archive();
 					$msg = MS_Helper_Billing::BILLING_MSG_DELETED;
 					break;
 
@@ -507,11 +507,18 @@ class MS_Controller_Billing extends MS_Controller {
 			wp_enqueue_script( 'jquery-validate' );
 
 			$data['ms_init'][] = 'view_billing_edit';
-		} elseif ( isset( $_GET['show'] ) && 'logs' == $_GET['show'] ) {
-			$data['ms_init'][] = 'view_billing_transactions';
-			$data['lang'] = array(
-				'link_title' => __( 'Link Transaction', MS_TEXT_DOMAIN ),
-			);
+		} else {
+			$module = '';
+			if ( isset( $_GET['show'] ) ) {
+				$module = $_GET['show'];
+			}
+
+			if ( 'logs' == $module || 'matching' == $module ) {
+				$data['ms_init'][] = 'view_billing_transactions';
+				$data['lang'] = array(
+					'link_title' => __( 'Link Transaction', MS_TEXT_DOMAIN ),
+				);
+			}
 		}
 
 		lib2()->ui->data( 'ms_data', $data );

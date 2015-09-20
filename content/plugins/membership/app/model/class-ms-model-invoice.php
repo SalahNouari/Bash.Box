@@ -45,6 +45,9 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 	// User confirmed payment but gateway returned some error (dispute, wrong amount, etc).
 	const STATUS_DENIED = 'denied';
 
+	// Archived invoices are hidden from invoice lists, i.e. "deleted"
+	const STATUS_ARCHIVED = 'archived';
+
 	/**
 	 * External transaction ID.
 	 *
@@ -84,6 +87,24 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 	 * @var int
 	 */
 	protected $user_id = 0;
+
+	/**
+	 * Log the users IP address once he visits the checkout page.
+	 * This way we can also see if the user visited the checkout page to pay the
+	 * invoice.
+	 *
+	 * @since  1.0.2.0
+	 * @var string
+	 */
+	protected $checkout_ip = '';
+
+	/**
+	 * Log the timestamp when the user visits the checkout page.
+	 *
+	 * @since  1.0.2.0
+	 * @var string
+	 */
+	protected $checkout_date = '';
 
 	/**
 	 * Membership Relationship ID.
@@ -192,7 +213,7 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 	/**
 	 * Invoice date.
 	 *
-	 * This is the date when the invoice was created. It may be differe than the
+	 * This is the date when the INVOICE WAS CREATED. It may be differe than the
 	 * due date if the subscription uses a trial period.
 	 *
 	 * @since  1.0.0
@@ -201,13 +222,24 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 	protected $invoice_date = '';
 
 	/**
-	 * Invoice due date.
+	 * Defines date WHEN PAYMENT IS DUE.
 	 * When invoice uses_trial is true then this is the first day that is paid.
 	 *
 	 * @since  1.0.0
 	 * @var string
 	 */
 	protected $due_date = '';
+
+	/**
+	 * Date when the invoice was MARKED AS PAID.
+	 *
+	 * Note that free invoices do not have a pay-date! The pay-date is only set
+	 * when something was actually paid ;)
+	 *
+	 * @since  1.0.2.0
+	 * @var string
+	 */
+	protected $pay_date = '';
 
 	/**
 	 * Invoice notes.
@@ -380,7 +412,18 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 
 		// Payment status filter.
 		if ( ! empty( $_REQUEST['status'] ) ) {
-			if ( 'open' === $_REQUEST['status'] ) {
+			if ( 'default' === $_REQUEST['status'] ) {
+				$args['meta_query']['status'] = array(
+					'key' => 'status',
+					'value' => array(
+						self::STATUS_BILLED,
+						self::STATUS_PENDING,
+						self::STATUS_PAID,
+						self::STATUS_DENIED,
+					),
+					'compare' => 'IN',
+				);
+			} elseif ( 'open' === $_REQUEST['status'] ) {
 				$args['meta_query']['status'] = array(
 					'key' => 'status',
 					'value' => array(
@@ -807,8 +850,37 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 	 * @since  1.0.0
 	 */
 	public function save() {
+		// Validate the pay_date attribute of the invoice.
+		$this->validate_pay_date();
+
 		parent::save();
 		parent::store_singleton();
+	}
+
+	/**
+	 * Move an invoice to tha archive - i.e. hide it from the user.
+	 *
+	 * @since  1.0.2.0
+	 */
+	public function archive() {
+		if ( $this->id ) {
+			$this->add_notes( '----------' );
+			$this->add_notes(
+				sprintf(
+					__( 'Archived on: %s', MS_TEXT_DOMAIN ),
+					MS_Helper_Period::current_date()
+				)
+			);
+			$this->add_notes(
+				sprintf(
+					__( 'Former status: %s', MS_TEXT_DOMAIN ),
+					$this->status
+				)
+			);
+
+			$this->status = self::STATUS_ARCHIVED;
+			$this->save();
+		}
 	}
 
 	/**
@@ -833,13 +905,22 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 
 		// Save details on the payment.
 		if ( 0 == $this->total || MS_Gateway_Free::ID == $gateway_id ) {
-			$is_paid = $subscription->add_payment( 0, MS_Gateway_Free::ID );
+			$is_paid = $subscription->add_payment(
+				0,
+				MS_Gateway_Free::ID,
+				'free'
+			);
 		} else {
-			$is_paid = $subscription->add_payment( $this->total, $gateway_id );
+			$is_paid = $subscription->add_payment(
+				$this->total,
+				$gateway_id,
+				$external_id
+			);
 		}
 
 		if ( $is_paid ) {
 			$this->status = self::STATUS_PAID;
+			$this->pay_date = MS_Helper_Period::current_date();
 		} else {
 			$this->status = self::STATUS_BILLED;
 		}
@@ -872,6 +953,27 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 	 */
 	public function is_paid() {
 		return $this->status == self::STATUS_PAID;
+	}
+
+	/**
+	 * Makes sure that the pay_date attribtue has a valid value.
+	 *
+	 * @since  1.0.2.0
+	 */
+	protected function validate_pay_date() {
+		if ( $this->is_paid() && $this->amount ) {
+			if ( ! $this->pay_date ) {
+				$subscription = $this->get_subscription();
+				$payments = $subscription->get_payments();
+				$last_payment = end( $payments );
+				$this->pay_date = $last_payment['date'];
+				if ( ! $this->pay_date ) {
+					$this->pay_date = $this->due_date;
+				}
+			}
+		} elseif ( $this->pay_date ) {
+			$this->pay_date = '';
+		}
 	}
 
 	/**
@@ -926,7 +1028,15 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 							);
 
 							if ( $move_from->is_valid() ) {
-								$move_from->cancel_membership();
+								/**
+								 * @since 1.0.1.2 The old subscription will be
+								 * deactivated instantly, and not cancelled.
+								 * When the subscription is cancelled the user
+								 * still has full access to the membership
+								 * contents. When it is deactivated he cannot
+								 * access protected content anymore (instantly).
+								 */
+								$move_from->deactivate_membership();
 							}
 						}
 
@@ -1380,6 +1490,11 @@ class MS_Model_Invoice extends MS_Model_CustomPostType {
 				if ( empty( $value ) ) {
 					$value = get_the_date( 'Y-m-d', $this->id );
 				}
+				break;
+
+			case 'pay_date':
+				$this->validate_pay_date();
+				$value = $this->pay_date;
 				break;
 
 			case 'tax':

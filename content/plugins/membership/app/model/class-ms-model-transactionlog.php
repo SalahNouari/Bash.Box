@@ -129,6 +129,14 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 	protected $post = null;
 
 	/**
+	 * A collection of all HTTP headers passed to the $url.
+	 *
+	 * @since 1.0.2.0
+	 * @var   array
+	 */
+	protected $headers = null;
+
+	/**
 	 * The manually overwritten state value.
 	 *
 	 * If this is empty then $state is the effective state value, otherwise this
@@ -154,6 +162,14 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 	 * @var   int
 	 */
 	protected $manual_user = 0;
+
+	/**
+	 * The external transaction ID provided by the gateway.
+	 *
+	 * @since 1.0.2.0
+	 * @var   string
+	 */
+	protected $external_id = '';
 
 
 	//
@@ -213,7 +229,7 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 	 */
 	public static function get_item_count( $args = null ) {
 		$args = lib2()->array->get( $args );
-		$args['posts_per_page'] = 0;
+		$args['posts_per_page'] = -1;
 		$items = self::get_items( $args );
 
 		$count = count( $items );
@@ -243,9 +259,7 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 		$items = array();
 
 		foreach ( $query->posts as $post_id ) {
-			if ( ! get_post_meta( $post_id, 'method', true ) &&
-				! get_post_meta( $post_id, 'method', true )
-			) {
+			if ( ! get_post_meta( $post_id, 'method', true ) ) {
 				// The log entry is incomplete. Do not load it.
 				continue;
 			}
@@ -281,15 +295,30 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 			'posts_per_page' => 20,
 		);
 
-		if ( ! empty( $args['meta_query'] ) ) {
-			if ( is_array( $args['meta_query']['gateway_id'] ) ) {
-				$args['meta_query']['gateway_id']['key'] = '_gateway_id';
+		if ( ! empty( $args['state'] ) ) {
+			$ids = self::get_state_ids( $args['state'] );
+			if ( ! empty( $args['post__in'] ) ) {
+				$ids = array_intersect( $args['post__in'], $ids );
+			}
+
+			if ( $ids ) {
+				$args['post__in'] = $ids;
+			} else {
+				$args['post__in'] = array( 0 );
 			}
 		}
 
-		if ( ! empty( $args['state'] ) ) {
-			$ids = self::get_state_ids( $args['state'] );
-			$args['post__in'] = $ids;
+		if ( ! empty( $args['source'] ) ) {
+			$ids = self::get_matched_ids( $args['source'][0], $args['source'][1] );
+			if ( ! empty( $args['post__in'] ) ) {
+				$ids = array_intersect( $args['post__in'], $ids );
+			}
+
+			if ( $ids ) {
+				$args['post__in'] = $ids;
+			} else {
+				$args['post__in'] = array( 0 );
+			}
 		}
 
 		$args = wp_parse_args( $args, $defaults );
@@ -315,11 +344,11 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 		FROM
 			{$wpdb->posts} p
 			LEFT JOIN {$wpdb->postmeta} state1 ON
-				state1.post_id = p.ID AND state1.meta_key IN ('_success', 'success')
+				state1.post_id = p.ID AND state1.meta_key = 'success'
 			LEFT JOIN {$wpdb->postmeta} state2 ON
-				state2.post_id = p.ID AND state2.meta_key IN ('_manual_state', 'manual_state')
+				state2.post_id = p.ID AND state2.meta_key = 'manual_state'
 			INNER JOIN {$wpdb->postmeta} method ON
-				method.post_id = p.ID AND method.meta_key IN ('_method', 'method')
+				method.post_id = p.ID AND method.meta_key = 'method'
 		WHERE
 			p.post_type = %s
 			AND LENGTH( method.meta_value ) > 0
@@ -362,6 +391,105 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 		return $ids;
 	}
 
+	/**
+	 * Returns a list of post_ids that have the specified source_id.
+	 *
+	 * This tries to find transactions for imported subscriptions.
+	 *
+	 * @since  1.0.1.2
+	 * @param  string $source_id Subscription ID before import; i.e. original ID.
+	 * @param  string $source The import source. Currently supported: 'm1'.
+	 * @return array List of post_ids.
+	 */
+	static public function get_matched_ids( $source_id, $source ) {
+		global $wpdb;
+
+		$sql = "
+		SELECT p.ID
+		FROM
+			{$wpdb->posts} p
+			LEFT JOIN {$wpdb->postmeta} form ON
+				form.post_id = p.ID AND form.meta_key = 'post'
+			LEFT JOIN {$wpdb->postmeta} gateway ON
+				gateway.post_id = p.ID AND gateway.meta_key = 'gateway_id'
+		WHERE
+			p.post_type = %s
+		";
+
+		$source_int = intval( $source_id );
+		$int_len = strlen( $source_int );
+
+		switch ( $source ) {
+			case 'm1':
+				$sql .= "
+				AND gateway.meta_value = 'paypalstandard'
+				AND form.meta_value LIKE '%%s:6:\"custom\";s:%%'
+				AND form.meta_value LIKE '%%:{$source_int}:%%'
+				";
+				break;
+
+			case 'pay_btn':
+				$sql .= "
+				AND gateway.meta_value = 'paypalstandard'
+				AND form.meta_value LIKE '%%s:6:\"btn_id\";s:{$int_len}:\"{$source_int}\";%%'
+				AND form.meta_value LIKE '%%s:11:\"payer_email\";%%'
+				";
+				break;
+		}
+
+		$sql = $wpdb->prepare( $sql, self::get_post_type() );
+		$ids = $wpdb->get_col( $sql );
+
+		if ( ! count( $ids ) ) {
+			$ids = array( 0 );
+		}
+
+		return $ids;
+	}
+
+	/**
+	 * Checks if the specified transaction was already successfully processed
+	 * to avoid duplicate payments.
+	 *
+	 * @since  1.0.2.0
+	 * @param  string $gateway The payment gateway ID.
+	 * @param  string $external_id The external transaction ID.
+	 * @return bool True if the transaction was processed/paid already.
+	 */
+	static public function was_processed( $gateway, $external_id ) {
+		global $wpdb;
+
+		$sql = "
+		SELECT COUNT(1)
+		FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->postmeta} gateway ON
+				gateway.post_id=p.ID AND gateway.meta_key='gateway_id'
+			INNER JOIN {$wpdb->postmeta} ext_id ON
+				ext_id.post_id=p.ID AND ext_id.meta_key='external_id'
+			LEFT JOIN {$wpdb->postmeta} state1 ON
+				state1.post_id = p.ID AND state1.meta_key = 'success'
+			LEFT JOIN {$wpdb->postmeta} state2 ON
+				state2.post_id = p.ID AND state2.meta_key = 'manual_state'
+		WHERE
+			p.post_type = %s
+			AND gateway.meta_value = %s
+			AND ext_id.meta_value = %s
+			AND (
+				state1.meta_value IN ('1','ok')
+				OR state2.meta_value IN ('1','ok')
+			)
+		";
+		$sql = $wpdb->prepare(
+			$sql,
+			self::get_post_type(),
+			$gateway,
+			$external_id
+		);
+		$res = intval( $wpdb->get_var( $sql ) );
+
+		return $res > 0;
+	}
+
 
 	//
 	//
@@ -370,15 +498,27 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 
 
 	/**
-	 * Constructor, initialize a new item.
+	 * Initializes variables right before saving the model.
 	 *
 	 * @since 1.0.1.0
 	 */
-	public function __construct() {
-		$this->url = lib2()->net->current_url();
-		$this->post = $_POST;
-		$this->user_id = get_current_user_id();
-		$this->title = 'Transaction Log';
+	public function before_save() {
+		// Translate a boolean success value to a string.
+		if ( true === $this->success ) {
+			$this->success = 'ok';
+		} elseif ( null === $this->success ) {
+			$this->success = 'ignore';
+		} elseif ( false === $this->success ) {
+			$this->success = 'err';
+		}
+
+		if ( ! $this->id ) {
+			$this->url = lib2()->net->current_url();
+			$this->post = $_POST;
+			$this->headers = $this->get_headers();
+			$this->user_id = get_current_user_id();
+			$this->title = 'Transaction Log';
+		}
 	}
 
 	/**
@@ -418,6 +558,30 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 	 */
 	public function load_post_data( $post ) {
 		$this->date = $post->post_date;
+	}
+
+	/**
+	 * Returns a list of all HTTP headers.
+	 *
+	 * @since  1.0.1.2
+	 * @return array List of all incoming HTTP headers.
+	 */
+	protected function get_headers() {
+		$headers = array();
+
+		if ( function_exists( 'getallheaders' ) ) {
+			$headers = getallheaders();
+		} else {
+			foreach ( $_SERVER as $key => $value ) {
+				if ( 'HTTP_' == substr( $key, 0, 5 ) ) {
+					$key = str_replace( '_', ' ', substr( $key, 5 ) );
+					$key = str_replace( ' ', '-', ucwords( strtolower( $key ) ) );
+					$headers[ $key ] = $value;
+				}
+			}
+		}
+
+		return $headers;
 	}
 
 	/**
@@ -520,7 +684,7 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 	 * Updates the subscription_id and member_id based on the specified ID.
 	 *
 	 * @since 1.0.1.0
-	 * @param int $id A valid subscriptin ID.
+	 * @param int $id A valid subscription ID.
 	 */
 	protected function set_subscription( $id ) {
 		$subscription = MS_Factory::load( 'MS_Model_Relationship', $id );
@@ -643,7 +807,7 @@ class MS_Model_Transactionlog extends MS_Model_CustomPostType {
 				$this->set_invoice( $value );
 				break;
 
-			case 'subscriptin_id':
+			case 'subscription_id':
 				$this->set_subscription( $value );
 				break;
 

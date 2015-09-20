@@ -4,7 +4,7 @@ class MS_Rule_Adminside_View extends MS_View {
 
 	public function to_html() {
 		$membership = MS_Model_Membership::get_base();
-		$rule = $membership->get_rule( MS_Rule_Adminside::RULE_ID );	   	 	 		 	  					  
+		$rule = $membership->get_rule( MS_Rule_Adminside::RULE_ID );
 
 		$rule_listtable = new MS_Rule_Adminside_ListTable( $rule );
 		$rule_listtable->prepare_items();

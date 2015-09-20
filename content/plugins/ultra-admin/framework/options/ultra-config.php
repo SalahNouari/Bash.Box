@@ -82,7 +82,7 @@
         // This is where your data is stored in the database and also becomes your global variable name.
         'display_name'         => 'Ultra Admin',
         // Name that appears at the top of your panel
-        'display_version'      => '5.2',
+        'display_version'      => '5.3',
         // Version that appears at the top of your panel
         'menu_type'            => $menu_type,
         //Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
@@ -1829,6 +1829,18 @@
                     array("title" => "Footer Version",
                         "desc" => "Select to show WordPress version info in footer area or not.",
                         "id" => "footer_version",
+                        "default" => '1',
+                        "type" => "switch"),
+
+                    array("title" => "Screen Option Tab",
+                        "desc" => "Select to show screen option tab in top right corner of admin screen",
+                        "id" => "screen_option_tab",
+                        "default" => '1',
+                        "type" => "switch"),
+
+                    array("title" => "Screen Help Tab",
+                        "desc" => "Select to show screen help tab in top right corner of admin screen",
+                        "id" => "screen_help_tab",
                         "default" => '1',
                         "type" => "switch"),
 

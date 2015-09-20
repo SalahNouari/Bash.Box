@@ -327,7 +327,7 @@
 
 		if ( need_insert ) {
 			if ( args['close'] ) {
-				btn_close = jQuery( '<a href="#" class="wpmui-close">&times;</a>' );
+				btn_close = jQuery( '<a href="#" class="notice-dismiss"></a>' );
 				btn_close.prependTo( msg_box );
 
 				btn_close.click( hide_message );
@@ -1921,7 +1921,7 @@
 		 */
 		this.extract_data = function extract_data( obj ) {
 			_data = obj;
-			return _get_data( '', false );
+			return _get_data( undefined, false );
 		};
 
 		/**
@@ -2183,7 +2183,7 @@
 					// http://stackoverflow.com/a/8407771/313501
 					var push_counters = {},
 						patterns = {
-							"validate": /^[a-zA-Z][a-zA-Z0-9_-]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
+							"validate": /^[a-zA-Z_][a-zA-Z0-9_-]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
 							"key":      /[a-zA-Z0-9_-]+|(?=\[\])/g,
 							"push":     /^$/,
 							"fixed":    /^\d+$/,
@@ -2288,10 +2288,12 @@
 				}
 			}
 
-			if ( data instanceof window.FormData ) {
-				data.append('action', action);
-			} else {
-				data.action = action;
+			if ( undefined !== action ) {
+				if ( data instanceof window.FormData ) {
+					data.append('action', action);
+				} else {
+					data.action = action;
+				}
 			}
 
 			return data;

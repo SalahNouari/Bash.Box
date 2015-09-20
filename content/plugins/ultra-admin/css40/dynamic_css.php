@@ -69,7 +69,7 @@ echo ultra_css_background("html, #ws_menu_editor .ws_editbox", "page-bg", "1.0")
 
 
 echo " \n/* -- Heading -- */\n";
-$ultrastr = " h1,h2,h3,h4,h5,h6, .wrap h2 , .welcome-panel .about-description";
+$ultrastr = " h1,h2,h3,h4,h5,h6, .wrap h2, .wrap h1 , .welcome-panel .about-description";
 echo ultra_css_color($ultrastr, "heading-color", "1.0") . "\n";
 
 
@@ -157,13 +157,13 @@ echo ultra_css_border_color($primary_border_left, "primary-color", "1.0","left")
 
 
 echo "#wp-fullscreen-buttons .mce-btn:focus, #wp-fullscreen-buttons .mce-btn:hover, .mce-toolbar .mce-btn-group .mce-btn:focus, .mce-toolbar .mce-btn-group .mce-btn:hover, .qt-fullscreen:focus, .qt-fullscreen:hover,"
-	.".wrap .add-new-h2:hover { "
+	.".wrap .add-new-h2:hover, .wrap .page-title-action:hover { "
 	."background: ".$ultraadmin['primary-color']." !important;"
 	."border-color: ".$ultraadmin['primary-color']." !important;"
 	."color: ".$ultraadmin['button-text-color']." !important;"
 	."}";
 
-echo ".wrap .add-new-h2{"
+echo ".wrap .add-new-h2, .wrap .page-title-action{"
 	."background: ".$ultraadmin['button-secondary-bg']." !important"
 	."color: ".$ultraadmin['button-text-color']." !important;"
 	."}";
@@ -526,7 +526,9 @@ $ultrastr = " #wpadminbar .quicklinks .menupop.hover ul li a:hover";
 echo ultra_css_border_color($ultrastr, "primary-color", "", "left") . "\n";
 
 $ultrastr = " #wpadminbar a.ab-item, #wpadminbar>#wp-toolbar span.ab-label, #wpadminbar>#wp-toolbar span.noticon,"
-			."#wpadminbar #adminbarsearch:before, #wpadminbar .ab-icon:before, #wpadminbar .ab-item:before";
+			."#wpadminbar #adminbarsearch:before, #wpadminbar .ab-icon:before, #wpadminbar .ab-item:before, "
+			."#wpadminbar .ab-top-menu>li.hover>.ab-item, #wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, #wpadminbar:not(.mobile) .ab-top-menu>li:hover>.ab-item, #wpadminbar:not(.mobile) .ab-top-menu>li>.ab-item:focus, "
+			."#wpadminbar:not(.mobile)>#wp-toolbar a:focus span.ab-label, #wpadminbar:not(.mobile)>#wp-toolbar li:hover span.ab-label, #wpadminbar>#wp-toolbar li.hover span.ab-label, #wpadminbar .ab-top-menu:hover .ab-item:before, #wpadminbar .ab-item:hover .ab-icon:before ";
 echo ultra_css_color($ultrastr, "topbar-menu-color", "1.0") . "\n";
 
 echo " \n/* -- Top bar Style -- */\n";
