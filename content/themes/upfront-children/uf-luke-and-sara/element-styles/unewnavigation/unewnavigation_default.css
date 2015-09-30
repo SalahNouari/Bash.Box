@@ -1,0 +1,200 @@
+div[data-style='horizontal'] ul.menu,  div[data-style='vertical'] ul.menu {
+    background: transparent;
+}
+div[data-style='horizontal'] ul.menu > li.menu-item,  div[data-style='vertical'] ul.menu > li.menu-item {
+    position: relative;
+}
+div[data-style='horizontal'] ul.menu li a,  div[data-style='vertical'] ul.menu li a {
+    transition: color 0.3s ease-in-out, border-color 0.4s ease-in-out;
+    -moz-transition: color 0.3s ease-in-out, border-color 0.4s ease-in-out;
+    -webkit-transition: color 0.3s ease-in-out, border-color 0.4s ease-in-out;
+}
+div[data-style='horizontal'] ul.menu > li.menu-item:after {
+    content: "|";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #00a384;
+    line-height: 1.2;
+}
+div[data-style='horizontal'] ul.menu > li.menu-item:last-child:after {
+    display: none;
+}
+div[data-style='horizontal'] ul.menu > li.menu-item > a {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    color: #333333;
+    font-size: 18px;
+    line-height: 1;
+    font-family: "Quattrocento";
+    text-rendering: geometricPrecision;
+}
+div[data-style='horizontal'] ul.menu > li.menu-item > a:hover, div[data-style='horizontal'] ul.menu > li.current-menu-item > a {
+    color: #01bc9d;
+}
+div[data-style='horizontal'] ul.sub-menu {
+    padding-top: 20px;
+}
+div[data-style='horizontal'] ul.sub-menu > li.menu-item > a {
+    padding: 12px 10px 10px;
+    border: 1px solid #d2d2d2;
+    border-bottom: 0;
+    background: #ffffff;
+    color: #333333;
+    font-size: 18px;
+    line-height: 1.2;
+    font-family: "Quattrocento";
+    font-weight: 400;
+    font-style: normal;
+    text-rendering: geometricPrecision;
+}
+div[data-style='horizontal'] ul.sub-menu > li.menu-item:last-child > a {
+    border-bottom: 1px solid #d2d2d2;
+}
+div[data-style='horizontal'] ul.sub-menu > li.menu-item > a:hover {
+    border-color: #0ba588;
+    color: #00a384;
+}
+ div[data-style='vertical'] ul.menu > li.menu-item > a {
+    position: relative;
+    padding-right: 0;
+    color: #333333;
+}
+ div[data-style='vertical'] ul.menu > li.menu-item > a:after {
+    content: "";
+    width: 20px;
+    height: 1px;
+    display: block;
+    position: absolute;
+    background: #d0d0d0;
+    right: 0;
+    bottom: 0;
+}
+ div[data-style='vertical'] ul.menu > li.menu-item:last-child > a:after {
+    display: none;
+}
+ div[data-style='vertical'] ul.menu > li.menu-item:hover > a,  div[data-style='vertical'] ul.menu > li.current-menu-item > a {
+    color: #00a384;
+}
+ div[data-style='vertical'] ul.menu > li.menu-item > a:hover:after,  div[data-style='vertical'] ul.menu > li.current-menu-item > a:after {
+    background: #00a384;
+}
+ div[data-style='vertical'] ul.sub-menu {
+    padding-left: 25px;
+}
+ div[data-style='vertical'] ul.sub-menu > li.menu-item > a {
+    border: 1px solid #d2d2d2;
+    border-bottom: 0;
+    background: #ffffff;
+    color: #333333;
+}
+ div[data-style='vertical'] ul.sub-menu > li.menu-item:last-child > a {
+    border-bottom: 1px solid #d2d2d2;
+}
+ div[data-style='vertical'] ul.sub-menu > li.menu-item > a:hover {
+    border-color: #0da78a;
+    color: #00a384;
+}
+ div.responsive_nav_toggler {
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 100%;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    background: url("UPFRONT_THEME_BASE/ui/sprites.png") #fec900;
+    background-image: url("UPFRONT_THEME_BASE/ui/sprites.svg"), none;
+    background-position: -856px -856px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    transform: scale(0.8);
+    -o-transform: scale(0.8);
+    -ms-transform: scale(0.8);
+    -moz-transform: scale(0.8);
+    -webkit-transform: scale(0.8);
+    transition: background-color 160ms ease-in-out, transform 300ms ease-in-out;
+    -o-transition: background-color 160ms ease-in-out, -o-transform 300ms ease-in-out;
+    -ms-transition: background-color 160ms ease-in-out, -ms-transform 300ms ease-in-out;
+    -moz-transition: background-color 160ms ease-in-out, -moz-transform 300ms ease-in-out;
+    -webkit-transition: background-color 160ms ease-in-out, -webkit-transform 300ms ease-in-out;
+}
+ div.responsive_nav_toggler:hover {
+    transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    background-color: #1bd6b7;
+}
+ div.responsive_nav_toggler > div {
+    display: none;
+}
+ div[data-style='burger'] ul.menu {
+    display: block;
+    padding: 0 !important;
+    padding-top: 8% !important;
+    border-bottom: 0 !important;
+    background-color: #ffffff !important;
+}
+ div[data-style='burger'] ul.menu > li.menu-item {
+    margin-bottom: -1px;
+    padding: 0 !important;
+    border: 0 !important;
+}
+ div[data-style='burger'] ul.menu > li.menu-item > a {
+    display: block;
+    position: relative;
+    padding: 15px;
+    border: 1px solid #dddddd;
+    border-left: 0;
+    border-right: 0;
+    background: transparent;
+    text-transform: uppercase;
+    transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+}
+ div[data-style='burger'] ul.menu > li.menu-item > a:hover {
+    border-color: #00a384;
+    background: #01bc9d;
+    color: #ffffff;
+}
+ div[data-style='burger'] i.burger_nav_close {
+    width: 52px;
+    height: 52px;
+    border: 0;
+    border-radius: 100%;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    background: url("http://ruby.localhost.com/wp-content/themes/uf-luke-and-sara/ui/sprites.png") #ea483e;
+    background-image: url("http://ruby.localhost.com/wp-content/themes/uf-luke-and-sara/ui/sprites.svg"), none;
+    background-position: -853px -204px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    text-indent: -9999px;
+    transform: scale(0.7);
+    -o-transform: scale(0.7);
+    -ms-transform: scale(0.7);
+    -moz-transform: scale(0.7);
+    -webkit-transform: scale(0.7);
+    transition: transform 300ms ease-in-out;
+    -o-transition: -o-transform 300ms ease-in-out;
+    -ms-transition: -ms-transform 300ms ease-in-out;
+    -moz-transition: -moz-transform 300ms ease-in-out;
+    -webkit-transition: -webkit-transform 300ms ease-in-out;
+}
+ div[data-style='burger'] i.burger_nav_close:hover {
+    transform: scale(0.9);
+    -o-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    -moz-transform: scale(0.9);
+    -webkit-transform: scale(0.9);
+}
+
+
+/* 133620-1443653849-ai */

@@ -1,0 +1,20 @@
+#page .plaintxt-table-price-tablet.upfront-plain_txt h1, #page .plaintxt-table-price-tablet .upfront-plain_txt h2, #page .plaintxt-table-price-tablet .upfront-plain_txt h3, #page .plaintxt-table-price-tablet .upfront-plain_txt h4, #page .plaintxt-table-price-tablet .upfront-plain_txt h5, #page .plaintxt-table-price-tablet .upfront-plain_txt h6, #page .plaintxt-table-price-tablet .upfront-plain_txt p {
+    position: relative;
+    font-family: "Quattrocento Sans";
+    font-weight: 400;
+    font-style: normal;
+}
+#page .plaintxt-table-price-tablet.upfront-plain_txt h1 {
+    line-height: 1em;
+}
+#page .plaintxt-table-price-tablet.upfront-plain_txt h1:after {
+    content: "$";
+    position: relative;
+    vertical-align: top;
+    color: #00a384;
+    font-size: 44px;
+    line-height: 1em;
+}
+
+
+/* 133620-1443653849-ai */

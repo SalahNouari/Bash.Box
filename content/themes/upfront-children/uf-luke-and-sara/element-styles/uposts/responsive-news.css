@@ -1,0 +1,14 @@
+#page .responsive-news.uposts-object li .thumbnail {
+    display: none;
+}
+#page .responsive-news.uposts-object li .title h3 {
+    line-height: 1em;
+}
+#page .responsive-news.uposts-object li .date_posted {
+    float: left;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+
+/* 133620-1443653849-ai */

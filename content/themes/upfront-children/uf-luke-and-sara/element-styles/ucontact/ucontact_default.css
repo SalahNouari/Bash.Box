@@ -1,0 +1,60 @@
+.ucontact-input {
+    display: block;
+    margin-bottom: 28px;
+    padding: 12px 10px 10px;
+    border: 1px solid #d0d0d0;
+    background: #ffffff;
+    color: #cccccc;
+    font-size: 16px;
+    line-height: 1.2em;
+    font-family: Quattrocento Sans;
+    font-weight: 400;
+    font-style: normal;
+    transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+}
+.ucontact-input:hover {
+    border-color: #1bd6b7;
+    color: #999999;
+}
+.ucontact-input:disabled {
+    border-color: #dcdcdc;
+}
+.textarea-field {
+    height: 220px;
+    margin-bottom: 10px;
+}
+.textarea-field:active {
+    border-color: #01bc9d;
+}
+.submit-field {
+    padding: 8px 58px 6px !important;
+    border: 2px solid #00a384;
+    background: transparent !important;
+    color: #00a384;
+    font-size: 16px;
+    line-height: 1.4em;
+    font-family: Quattrocento Sans;
+    font-weight: 400;
+    font-style: normal;
+    text-transform: uppercase;
+    transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+}
+.submit-field:hover {
+    border-color: #008a7a;
+    background: #00a384 !important;
+    color: #ffffff;
+}
+.submit-field:active {
+    border-color: #00a384;
+    background: #01bc9d !important;
+    box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.5);
+}
+
+
+/* 133620-1443653849-ai */

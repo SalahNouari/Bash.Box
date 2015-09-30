@@ -1,0 +1,80 @@
+#page .news-style.uposts-object li {
+    padding: 10px !important;
+}
+#page .news-style.uposts-object li > article {
+    padding-bottom: 22px;
+    margin-bottom: 35px;
+}
+#page .news-style.uposts-object li:last-child > article {
+    margin-bottom: 12px;
+}
+#page .news-style.uposts-object li .gravatar {
+    float: left;
+    display: inline-block;
+    margin-right: 22px;
+}
+#page .news-style.uposts-object li .title {
+    width: 100%;
+    max-width: 755px;
+    display: inline-block;
+    margin-bottom: 0;
+}
+#page .news-style.uposts-object li .title h3 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 0.8em;
+    letter-spacing: 0.3px;
+    text-rendering: geometricPrecision;
+}
+#page .news-style.uposts-object li .date_posted, #page .news-style.uposts-object li .author {
+    display: inline-block;
+    margin-top: 14px;
+}
+#page .news-style.uposts-object li .author:before {
+    content: "";
+    display: inline-block;
+    margin-left: 0px;
+}
+#page .news-style.uposts-object li .content, #page .news-style.uposts-object li .read_more {
+    display: block;
+}
+#page .news-style.uposts-object li .content {
+    margin-top: 4px;
+    margin-bottom: 0 !important;
+}
+#page .news-style.uposts-object li .content p {
+    margin-bottom: 0 !important;
+    margin-left: 45px;
+    line-height: 1.50em;
+    letter-spacing: 0.45px;
+}
+#page .news-style.uposts-object li .read_more {
+    margin-top: 8px;
+    margin-left: 45px;
+    letter-spacing: 0.9px;
+    text-transform: capitalize;
+}
+#page .news-style.uposts-object li .thumbnail {
+    margin-bottom: 40px;
+}
+#page .news-style.uposts-object li.noFeature article:before {
+    content: "";
+    width: 100%;
+    height: 468px;
+    display: block;
+    margin-bottom: 40px;
+    background: url("UPFRONT_THEME_BASE/ui/bg-nophoto.jpg") no-repeat center center #01bc9d;
+    background-size: cover;
+}
+#page .news-style.uposts-object li .dot-middle {
+    font-size: 26px;
+    line-height: 0.9;
+    vertical-align: top;
+}
+#page .news-style .uf-pagination {
+    margin-top: 30px;
+    margin-bottom: 115px !important;
+}
+
+
+/* 133620-1443653849-ai */

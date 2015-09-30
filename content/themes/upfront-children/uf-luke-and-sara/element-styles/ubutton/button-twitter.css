@@ -1,0 +1,22 @@
+#page .button-twitter.upfront-button a.upfront_cta {
+    z-index: 1;
+    width: 50px !important;
+    height: 50px;
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    background: url("UPFRONT_THEME_BASE/ui/sprites.png") no-repeat;
+    background-image: url("UPFRONT_THEME_BASE/ui/sprites.svg"), none;
+    background-position: -54px -695px;
+    text-align: center;
+    text-indent: -9999px;
+    transition: none;
+    -moz-transition: none;
+    -webkit-transition: none;
+}
+#page .button-twitter.upfront-button a.upfront_cta:hover {
+    background-position: -214px -695px;
+}
+
+
+/* 133620-1443653849-ai */

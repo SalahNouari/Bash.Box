@@ -1,0 +1,15 @@
+#page .title-pricing.upfront-plain_txt h1 {
+    position: relative;
+    letter-spacing: 0px;
+}
+#page .title-pricing.upfront-plain_txt h1:after {
+    content: "$";
+    display: inline-block;
+    vertical-align: top;
+    color: #00a384;
+    font-size: 28px;
+    line-height: 1em;
+}
+
+
+/* 133620-1443653849-ai */
