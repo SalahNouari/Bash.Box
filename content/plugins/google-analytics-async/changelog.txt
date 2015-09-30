@@ -6,6 +6,10 @@ Contributors: Ivan Shaovchev, Andrey Shipilov
 
 == Changelog ==
 
+= 3.1.5.1 =
+* Fixed Google App compatibility issues
+* Fixed widget notice
+
 = 3.1.5 =
 * Added "Most popular posts(beta)" widget
 
@@ -155,4 +159,4 @@ Contributors: Ivan Shaovchev, Andrey Shipilov
 
 
 
-133620-1434914429-au
+133620-1443654394-au

@@ -4,4 +4,4 @@ https://github.com/AuthorizeNet/sdk-php
 This library has manual modifications that must be implemented on every update
 
 
-133620-1442728675-au
+133620-1443654417-au

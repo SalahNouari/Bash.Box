@@ -2,7 +2,7 @@
 /*  Copyright Maniu, Carson McDonald */
 include_once 'externals/OAuth.php';
 
-class Google_Analytics_Async_Dashboard {
+class GAPGoogle_Analytics_Async_Dashboard {
 
     var $text_domain;
     var $plugin_url;
@@ -119,7 +119,7 @@ class Google_Analytics_Async_Dashboard {
             return;
 
         include_once 'class-widget-ga-most-popular-content.php';
-        add_action( 'widgets_init', create_function( '', 'return register_widget("Google_Analytics_Async_Frontend_Widget");' ) );
+        add_action( 'widgets_init', create_function( '', 'return register_widget("GAPGoogle_Analytics_Async_Frontend_Widget");' ) );
     }
 
     function admin_init() {
@@ -288,9 +288,9 @@ class Google_Analytics_Async_Dashboard {
                 'xoauth_displayname' => 'Google Analytics'
             );
 
-            $method = new Google_Analytics_OAuthSignatureMethod_HMAC_SHA1();
-            $consumer = new Google_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
-            $request = Google_Analytics_OAuthRequest::from_consumer_and_token($consumer, NULL, 'GET', 'https://www.google.com/accounts/OAuthGetRequestToken', $parameters);
+            $method = new GAPGoogle_Analytics_OAuthSignatureMethod_HMAC_SHA1();
+            $consumer = new GAPGoogle_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
+            $request = GAPGoogle_Analytics_OAuthRequest::from_consumer_and_token($consumer, NULL, 'GET', 'https://www.google.com/accounts/OAuthGetRequestToken', $parameters);
             $request->sign_request($method, $consumer, NULL);
 
             $response = wp_remote_get($request->to_url(), array('sslverify' => false));
@@ -323,10 +323,10 @@ class Google_Analytics_Async_Dashboard {
 
             $parameters = array('oauth_verifier' => $_REQUEST['oauth_verifier']);
 
-            $method = new Google_Analytics_OAuthSignatureMethod_HMAC_SHA1();
-            $consumer = new Google_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
-            $upgrade_token = new Google_Analytics_OAuthConsumer($google_login_temp['token'], $google_login_temp['token_secret']);
-            $request = Google_Analytics_OAuthRequest::from_consumer_and_token($consumer, $upgrade_token, 'GET', 'https://www.google.com/accounts/OAuthGetAccessToken', $parameters);
+            $method = new GAPGoogle_Analytics_OAuthSignatureMethod_HMAC_SHA1();
+            $consumer = new GAPGoogle_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
+            $upgrade_token = new GAPGoogle_Analytics_OAuthConsumer($google_login_temp['token'], $google_login_temp['token_secret']);
+            $request = GAPGoogle_Analytics_OAuthRequest::from_consumer_and_token($consumer, $upgrade_token, 'GET', 'https://www.google.com/accounts/OAuthGetAccessToken', $parameters);
             $request->sign_request($method, $consumer, $upgrade_token);
 
             $response = wp_remote_get($request->to_url(), array('sslverify' => false));
@@ -392,7 +392,7 @@ class Google_Analytics_Async_Dashboard {
 
         include_once 'externals/google/autoload.php';
 
-        $this->google_client = new Google_Client();
+        $this->google_client = new GAPGoogle_Client();
         $this->google_client->setScopes(array('https://www.googleapis.com/auth/analytics.readonly', 'https://www.googleapis.com/auth/userinfo.profile'));
         $this->google_client->setAccessType('offline');
 
@@ -442,7 +442,7 @@ class Google_Analytics_Async_Dashboard {
 
                     $this->google_client->setAccessToken($token);
 
-                    $google_user_info = new Google_Service_Oauth2($this->google_client);
+                    $google_user_info = new GAPGoogle_Service_Oauth2($this->google_client);
                     $google_user_id = $google_user_info->userinfo->get();
                     $google_user_id = $google_user_id->id;
 
@@ -466,10 +466,10 @@ class Google_Analytics_Async_Dashboard {
 
                     wp_redirect(add_query_arg(array('dmsg' => urlencode(__('You are successfuly logged in.', $this->text_domain)), 'type' => 'success', 'gaplus_loggedin' => false, 'code' => false)));
                     exit();
-                } catch (Google_IO_Exception $e) {
+                } catch (GAPGoogle_IO_Exception $e) {
                     wp_redirect(add_query_arg(array('dmsg' => urlencode(esc_html($e)), 'type' => 'error')));
                     exit();
-                } catch (Google_Service_Exception $e) {
+                } catch (GAPGoogle_Service_Exception $e) {
                     wp_redirect(add_query_arg(array('dmsg' => urlencode(esc_html("(" . $e->getCode() . ") " . $e->getMessage())), 'type' => 'error', 'gaplus_loggedin' => false, 'code' => false)));
                     exit();
                 } catch (Exception $e) {
@@ -527,7 +527,7 @@ class Google_Analytics_Async_Dashboard {
                         }
 
                         $google_analytics_async->save_options(array('google_login' => $this->google_login), $source);
-                    } catch (Google_IO_Exception $e) {
+                    } catch (GAPGoogle_IO_Exception $e) {
                         $token = false;
                         $google_analytics_async->save_options(array('google_login' => array()), $source);
                     } catch (Exception $e) {
@@ -553,10 +553,10 @@ class Google_Analytics_Async_Dashboard {
             $headers['Authorization'] = $orginal_token_object->token_type.' '.$token_object->access_token;
         }
         else {
-            $signature_method = new Google_Analytics_OAuthSignatureMethod_HMAC_SHA1();
-            $consumer = new Google_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
-            $token = new Google_Analytics_OAuthConsumer($this->oauth_token, $this->oauth_secret);
-            $oauth_req = Google_Analytics_OAuthRequest::from_consumer_and_token($consumer, $token, 'GET', $url, array());
+            $signature_method = new GAPGoogle_Analytics_OAuthSignatureMethod_HMAC_SHA1();
+            $consumer = new GAPGoogle_Analytics_OAuthConsumer('anonymous', 'anonymous', NULL);
+            $token = new GAPGoogle_Analytics_OAuthConsumer($this->oauth_token, $this->oauth_secret);
+            $oauth_req = GAPGoogle_Analytics_OAuthRequest::from_consumer_and_token($consumer, $token, 'GET', $url, array());
             $oauth_req->sign_request($signature_method, $consumer, $token);
 
             $headers = $oauth_req->to_header();
@@ -1301,4 +1301,4 @@ class Google_Analytics_Async_Dashboard {
 }
 
 global $google_analytics_async_dashboard;
-$google_analytics_async_dashboard = new Google_Analytics_Async_Dashboard();
+$google_analytics_async_dashboard = new GAPGoogle_Analytics_Async_Dashboard();

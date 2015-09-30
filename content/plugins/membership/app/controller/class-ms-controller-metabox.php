@@ -75,7 +75,7 @@ class MS_Controller_Metabox extends MS_Controller {
 	public function __construct() {
 		parent::__construct();
 
-		$this->metabox_title = __( 'Membership Access', MS_TEXT_DOMAIN );
+		$this->metabox_title = __( 'Membership Access', 'membership2' );
 
 		$post_types = array_merge(
 			array( 'page', 'post', 'attachment' ),
@@ -393,12 +393,12 @@ class MS_Controller_Metabox extends MS_Controller {
 
 		if ( ! $Message ) {
 			$Message = true;
-			lib2()->ui->admin_message(
+			lib3()->ui->admin_message(
 				__(
 					'<strong>Tipp</strong>:<br />' .
 					'The page content is reset to the default content but is <em>not saved yet</em>!<br />' .
 					'You can simply close this page to keep your current page contents.',
-					MS_TEXT_DOMAIN
+					'membership2'
 				)
 			);
 		}
@@ -417,7 +417,7 @@ class MS_Controller_Metabox extends MS_Controller {
 		if ( in_array( $post_type, $this->post_types )
 			&& ! $this->is_read_only( $post_type )
 		) {
-			lib2()->ui->data( 'ms_data', array( 'ms_init' => array( 'metabox' ) ) );
+			lib3()->ui->data( 'ms_data', array( 'ms_init' => array( 'metabox' ) ) );
 			wp_enqueue_script( 'ms-admin' );
 		}
 	}

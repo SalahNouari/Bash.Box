@@ -121,6 +121,11 @@ div.action-links {
 
 .available-plugin {
 	padding: 20px 20px 0 0 !important;
+	display: inline-block;
+	margin-right: 10px;
+	overflow: hidden;
+	vertical-align: top;
+	width: 300px;
 }
 .available-plugin .screenshot {
 	position: relative;
@@ -189,4 +194,4 @@ color: #999;
 }
 
 
-/* 133620-1423010562-ai */
+/* 133620-1443654439-au */

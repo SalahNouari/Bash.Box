@@ -18,7 +18,7 @@
 /**
  * A class to contain the library configuration for the Google API client.
  */
-class Google_Config
+class GAPGoogle_Config
 {
   const GZIP_DISABLED = true;
   const GZIP_ENABLED = false;
@@ -31,7 +31,7 @@ class Google_Config
   protected $configuration;
 
   /**
-   * Create a new Google_Config. Can accept an ini file location with the
+   * Create a new GAPGoogle_Config. Can accept an ini file location with the
    * local configuration. For example:
    *     application_name="My App"
    *
@@ -44,10 +44,10 @@ class Google_Config
       'application_name' => '',
 
       // Which Authentication, Storage and HTTP IO classes to use.
-      'auth_class'    => 'Google_Auth_OAuth2',
+      'auth_class'    => 'GAPGoogle_Auth_OAuth2',
       'io_class'      => self::USE_AUTO_IO_SELECTION,
-      'cache_class'   => 'Google_Cache_File',
-      'logger_class'  => 'Google_Logger_Null',
+      'cache_class'   => 'GAPGoogle_Cache_File',
+      'logger_class'  => 'GAPGoogle_Logger_Null',
 
       // Don't change these unless you're working against a special development
       // or testing environment.
@@ -55,21 +55,21 @@ class Google_Config
 
       // Definition of class specific values, like file paths and so on.
       'classes' => array(
-        'Google_IO_Abstract' => array(
+        'GAPGoogle_IO_Abstract' => array(
           'request_timeout_seconds' => 100,
         ),
-        'Google_Logger_Abstract' => array(
+        'GAPGoogle_Logger_Abstract' => array(
           'level' => 'debug',
           'log_format' => "[%datetime%] %level%: %message% %context%\n",
           'date_format' => 'd/M/Y:H:i:s O',
           'allow_newlines' => true
         ),
-        'Google_Logger_File' => array(
+        'GAPGoogle_Logger_File' => array(
           'file' => 'php://stdout',
           'mode' => 0640,
           'lock' => false,
         ),
-        'Google_Http_Request' => array(
+        'GAPGoogle_Http_Request' => array(
           // Disable the use of gzip on calls if set to true. Defaults to false.
           'disable_gzip' => self::GZIP_ENABLED,
 
@@ -81,7 +81,7 @@ class Google_Config
         ),
         // If you want to pass in OAuth 2.0 settings, they will need to be
         // structured like this.
-        'Google_Auth_OAuth2' => array(
+        'GAPGoogle_Auth_OAuth2' => array(
           // Keys for OAuth 2.0 access, see the API console at
           // https://developers.google.com/console
           'client_id' => '',
@@ -104,7 +104,7 @@ class Google_Config
           'federated_signon_certs_url' =>
               'https://www.googleapis.com/oauth2/v1/certs',
         ),
-        'Google_Task_Runner' => array(
+        'GAPGoogle_Task_Runner' => array(
           // Delays are specified in seconds
           'initial_delay' => 1,
           'max_delay' => 60,
@@ -117,7 +117,7 @@ class Google_Config
           // Maximum number of retries allowed
           'retries' => 0
         ),
-        'Google_Service_Exception' => array(
+        'GAPGoogle_Service_Exception' => array(
           'retry_map' => array(
             '500' => self::TASK_RETRY_ALWAYS,
             '503' => self::TASK_RETRY_ALWAYS,
@@ -125,7 +125,7 @@ class Google_Config
             'userRateLimitExceeded' => self::TASK_RETRY_ALWAYS
           )
         ),
-        'Google_IO_Exception' => array(
+        'GAPGoogle_IO_Exception' => array(
           'retry_map' => !extension_loaded('curl') ? array() : array(
             CURLE_COULDNT_RESOLVE_HOST => self::TASK_RETRY_ALWAYS,
             CURLE_COULDNT_CONNECT => self::TASK_RETRY_ALWAYS,
@@ -135,8 +135,8 @@ class Google_Config
           )
         ),
         // Set a default directory for the file cache.
-        'Google_Cache_File' => array(
-          'directory' => sys_get_temp_dir() . '/Google_Client'
+        'GAPGoogle_Cache_File' => array(
+          'directory' => sys_get_temp_dir() . '/GAPGoogle_Client'
         )
       ),
     );
@@ -154,7 +154,7 @@ class Google_Config
 
   /**
    * Set configuration specific to a given class.
-   * $config->setClassConfig('Google_Cache_File',
+   * $config->setClassConfig('GAPGoogle_Cache_File',
    *   array('directory' => '/tmp/cache'));
    * @param $class string The class name for the configuration
    * @param $config string key or an array of configuration values
@@ -383,7 +383,7 @@ class Google_Config
    * restrict sign-in to accounts at that domain.
    *
    * This should not be used to ensure security on your application - check
-   * the hd values within an id token (@see Google_Auth_LoginTicket) after sign
+   * the hd values within an id token (@see GAPGoogle_Auth_LoginTicket) after sign
    * in to ensure that the user is from the domain you were expecting.
    *
    * @param $hd string - the domain to use.

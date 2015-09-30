@@ -1,8 +1,23 @@
 <?php
+function domainmapping_is_dm_active(){
+    global $wpdb;
+    $dmmd_active_plugins = wp_cache_get("dmmd_active_plugins");
+    if( !$dmmd_active_plugins ){
+        $dmmd_active_plugins = unserialize( $wpdb->get_var("SELECT `meta_value` FROM " . $wpdb->sitemeta ." WHERE `meta_key`='active_sitewide_plugins'") );
+        wp_cache_set("dm_active_plugins", $dmmd_active_plugins);
+    }
+
+    return is_array($dmmd_active_plugins) ? in_array("domain-mapping/domain-mapping.php", array_keys($dmmd_active_plugins)) : false;
+}
+
+
+if( !domainmapping_is_dm_active() ) return;
+
 define( 'DOMAINMAPPING_SUNRISE_VERSION', '1.0.3.1' );
+global $wpdb;
 
 // domain mapping plugin to handle VHOST and non VHOST installation
-global $wpdb;
+
 $wpdb->dmtable = ( isset( $wpdb->base_prefix ) ? $wpdb->base_prefix : $wpdb->prefix ) . 'domain_mapping';
 
 if ( defined( 'COOKIE_DOMAIN' ) ) {
@@ -15,15 +30,17 @@ define( 'COOKIE_DOMAIN', $using_domain );
 $s_e = $wpdb->suppress_errors();
 
 // Check for the domain with and without the www. prefix
-$mapped_id = $wpdb->get_var( $wpdb->prepare( "SELECT blog_id FROM {$wpdb->dmtable} WHERE active=1 AND ( domain = %s OR domain = %s ) LIMIT 1", $using_domain, "www.{$using_domain}" ) );	     	 	  	 	 			
+$mapped = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->dmtable} WHERE active=1 AND ( domain = %s OR domain = %s ) LIMIT 1", $using_domain, "www.{$using_domain}" ), OBJECT );
 
 $wpdb->suppress_errors( $s_e );
 
-if ( !empty( $mapped_id ) ) {
-    $current_blog = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->blogs} WHERE blog_id = %d LIMIT 1", $mapped_id ) );
+if ( !empty( $mapped ) ) {
+    $GLOBALS['dm_mapped'] = $mapped;
+
+    $current_blog = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->blogs} WHERE blog_id = %d LIMIT 1", $mapped->blog_id ) );
     $current_blog->domain = $_SERVER['HTTP_HOST'];
 
-    $blog_id = $mapped_id;
+    $blog_id = $mapped->blog_id;
     $site_id = $current_blog->site_id;
 
 
@@ -58,4 +75,4 @@ if ( !empty( $mapped_id ) ) {
 }
 
 // clean up temporary variables
-unset( $s_e, $using_domain, $mapped_id );
+unset( $s_e, $using_domain );

@@ -159,8 +159,8 @@ class MS_Addon_Attributes extends MS_Addon {
 	 */
 	public function register( $list ) {
 		$list[ self::ID ] = (object) array(
-			'name' => __( 'Membership Attributes', MS_TEXT_DOMAIN ),
-			'description' => __( 'Add custom attributes to your memberships that you can use in shortcodes and code.', MS_TEXT_DOMAIN ),
+			'name' => __( 'Membership Attributes', 'membership2' ),
+			'description' => __( 'Add custom attributes to your memberships that you can use in shortcodes and code.', 'membership2' ),
 			'icon' => 'wpmui-fa wpmui-fa-tags',
 		);
 		return $list;
@@ -187,7 +187,7 @@ class MS_Addon_Attributes extends MS_Addon {
 		$res = false;
 
 		// Sanitize new field data.
-		lib2()->array->equip( $field, 'title', 'slug', 'type', 'info' );
+		lib3()->array->equip( $field, 'title', 'slug', 'type', 'info' );
 		$field = (object) $field;
 
 		$field->title = html_entity_decode( trim( $field->title ) );
@@ -203,7 +203,7 @@ class MS_Addon_Attributes extends MS_Addon {
 		// Load existing fields.
 		$settings = MS_Plugin::instance()->settings;
 		$fields = $settings->get_custom_setting( self::ID, 'fields' );
-		$fields = lib2()->array->get( $fields );
+		$fields = lib3()->array->get( $fields );
 
 		// Check for duplicates.
 		$duplicate = false;
@@ -252,7 +252,7 @@ class MS_Addon_Attributes extends MS_Addon {
 		// Load existing fields.
 		$settings = MS_Plugin::instance()->settings;
 		$fields = $settings->get_custom_setting( self::ID, 'fields' );
-		$fields = lib2()->array->get( $fields );
+		$fields = lib3()->array->get( $fields );
 
 		// Find the field and remove it.
 		foreach ( $fields as $index => $saved_field ) {
@@ -284,7 +284,7 @@ class MS_Addon_Attributes extends MS_Addon {
 
 		$settings = MS_Plugin::instance()->settings;
 		$fields = $settings->get_custom_setting( self::ID, 'fields' );
-		$fields = lib2()->array->get( $fields );
+		$fields = lib3()->array->get( $fields );
 
 		foreach ( $fields as $field ) {
 			if ( $field->slug == $slug ) {
@@ -305,7 +305,7 @@ class MS_Addon_Attributes extends MS_Addon {
 	static public function list_field_def() {
 		$settings = MS_Plugin::instance()->settings;
 		$fields = $settings->get_custom_setting( self::ID, 'fields' );
-		$fields = lib2()->array->get( $fields );
+		$fields = lib3()->array->get( $fields );
 
 		return $fields;
 	}
@@ -336,7 +336,7 @@ class MS_Addon_Attributes extends MS_Addon {
 
 			switch ( $field->type ) {
 				case 'bool':
-					$res = lib2()->is_true( $res );
+					$res = lib3()->is_true( $res );
 					break;
 
 				case 'number':
@@ -396,7 +396,7 @@ class MS_Addon_Attributes extends MS_Addon {
 	 */
 	public function add_settings_tab( $tabs ) {
 		$tabs[ self::ID ] = array(
-			'title' => __( 'Membership Attributes', MS_TEXT_DOMAIN ),
+			'title' => __( 'Membership Attributes', 'membership2' ),
 			'url' => MS_Controller_Plugin::get_admin_url(
 				'settings',
 				array( 'tab' => self::ID )
@@ -438,15 +438,15 @@ class MS_Addon_Attributes extends MS_Addon {
 
 		$data = array(
 			'lang' => array(
-				'edit_title' => __( 'Edit Attribute', MS_TEXT_DOMAIN ),
+				'edit_title' => __( 'Edit Attribute', 'membership2' ),
 			),
 		);
 
-		lib2()->ui->data( 'ms_data', $data );
-		lib2()->ui->add( 'jquery-ui' );
-		lib2()->ui->add( 'jquery-ui-sortable' );
-		lib2()->ui->add( $addon_url . 'assets/js/settings.js' );
-		lib2()->ui->add( $addon_url . 'assets/css/attributes.css' );
+		lib3()->ui->data( 'ms_data', $data );
+		lib3()->ui->add( 'jquery-ui' );
+		lib3()->ui->add( 'jquery-ui-sortable' );
+		lib3()->ui->add( $addon_url . 'assets/js/settings.js' );
+		lib3()->ui->add( $addon_url . 'assets/css/attributes.css' );
 	}
 
 	/**
@@ -459,8 +459,8 @@ class MS_Addon_Attributes extends MS_Addon {
 		$fields = array( 'title', 'slug', 'type' );
 
 		if ( self::validate_required( $fields ) && $this->verify_nonce() ) {
-			lib2()->array->equip_post( 'info', 'old_slug' );
-			lib2()->array->strip_slashes( $_POST, 'name', 'info' );
+			lib3()->array->equip_post( 'info', 'old_slug' );
+			lib3()->array->strip_slashes( $_POST, 'name', 'info' );
 			$field = array(
 				'title' => esc_attr( $_POST['title'] ),
 				'old_slug' => sanitize_html_class( $_POST['old_slug'] ),
@@ -524,7 +524,7 @@ class MS_Addon_Attributes extends MS_Addon {
 	 */
 	public function add_membership_tab( $tabs ) {
 		$tabs[ self::ID ] = array(
-			'title' => __( 'Membership Attributes', MS_TEXT_DOMAIN ),
+			'title' => __( 'Membership Attributes', 'membership2' ),
 		);
 
 		return $tabs;
@@ -560,7 +560,7 @@ class MS_Addon_Attributes extends MS_Addon {
 	public function enqueue_membership_scripts() {
 		$addon_url = MS_Plugin::instance()->url . '/app/addon/attributes/';
 
-		lib2()->ui->add( $addon_url . 'assets/css/attributes.css' );
+		lib3()->ui->add( $addon_url . 'assets/css/attributes.css' );
 	}
 
 	/**
@@ -634,7 +634,7 @@ class MS_Addon_Attributes extends MS_Addon {
 			}
 
 			// Prepare the field title.
-			if ( lib2()->is_true( $data['title'] ) ) {
+			if ( lib3()->is_true( $data['title'] ) ) {
 				$title = '<span class="ms-title">' . $field->title . '</span> ';
 			}
 		}
@@ -666,47 +666,47 @@ class MS_Addon_Attributes extends MS_Addon {
 		<div id="<?php echo self::SHORTCODE; ?>" class="ms-help-box">
 			<h3><code>[<?php echo self::SHORTCODE; ?>]</code></h3>
 
-			<?php _ex( 'Output the value of a Custom Membership Attribute.', 'help', MS_TEXT_DOMAIN ); ?>
-			<div class="ms-help-toggle"><?php _ex( 'Expand', 'help', MS_TEXT_DOMAIN ); ?></div>
+			<?php _ex( 'Output the value of a Custom Membership Attribute.', 'help', 'membership2' ); ?>
+			<div class="ms-help-toggle"><?php _ex( 'Expand', 'help', 'membership2' ); ?></div>
 			<div class="ms-help-details" style="display:none">
 				<ul>
 					<li>
 						<code>slug</code>
-						<?php _ex( '(Text)', 'help', MS_TEXT_DOMAIN ); ?>
-						<strong><?php _ex( 'Required', 'help', MS_TEXT_DOMAIN ); ?></strong>.
-						<?php _ex( 'Slug of the custom attribute', 'help', MS_TEXT_DOMAIN ); ?>.
+						<?php _ex( '(Text)', 'help', 'membership2' ); ?>
+						<strong><?php _ex( 'Required', 'help', 'membership2' ); ?></strong>.
+						<?php _ex( 'Slug of the custom attribute', 'help', 'membership2' ); ?>.
 					</li>
 					<li>
 						<code>id</code>
-						<?php _ex( '(Single ID)', 'help', MS_TEXT_DOMAIN ); ?>
-						<?php _ex( 'The membership ID', 'help', MS_TEXT_DOMAIN ); ?>.
+						<?php _ex( '(Single ID)', 'help', 'membership2' ); ?>
+						<?php _ex( 'The membership ID', 'help', 'membership2' ); ?>.
 						<span class="ms-help-default">
-							<?php _ex( 'Default:', 'help', MS_TEXT_DOMAIN ); ?>
-							<?php _e( 'Automatic detection', MS_TEXT_DOMAIN ); ?>
+							<?php _ex( 'Default:', 'help', 'membership2' ); ?>
+							<?php _e( 'Automatic detection', 'membership2' ); ?>
 						</span><br />
-						<em><?php _ex( 'If not specified the plugin attempts to identify the currently displayed membership by examining the URL, request data and subscriptions of the current member', 'help', MS_TEXT_DOMAIN ); ?></em>.
+						<em><?php _ex( 'If not specified the plugin attempts to identify the currently displayed membership by examining the URL, request data and subscriptions of the current member', 'help', 'membership2' ); ?></em>.
 					</li>
 					<li>
 						<code>title</code>
-						<?php _ex( '(yes|no)', 'help', MS_TEXT_DOMAIN ); ?>
-						<?php _ex( 'Prefix the field title to the output', 'help', MS_TEXT_DOMAIN ); ?>.
+						<?php _ex( '(yes|no)', 'help', 'membership2' ); ?>
+						<?php _ex( 'Prefix the field title to the output', 'help', 'membership2' ); ?>.
 						<span class="ms-help-default">
-							<?php _ex( 'Default:', 'help', MS_TEXT_DOMAIN ); ?>
+							<?php _ex( 'Default:', 'help', 'membership2' ); ?>
 							no
 						</span>
 					</li>
 					<li>
 						<code>default</code>
-						<?php _ex( '(Text)', 'help', MS_TEXT_DOMAIN ); ?>
-						<?php _ex( 'Default value to display if no membership was found or the membership did not define the attribute', 'help', MS_TEXT_DOMAIN ); ?>.
+						<?php _ex( '(Text)', 'help', 'membership2' ); ?>
+						<?php _ex( 'Default value to display if no membership was found or the membership did not define the attribute', 'help', 'membership2' ); ?>.
 						<span class="ms-help-default">
-							<?php _ex( 'Default:', 'help', MS_TEXT_DOMAIN ); ?>
+							<?php _ex( 'Default:', 'help', 'membership2' ); ?>
 							""
 						</span>
 					</li>
 				</ul>
 
-				<p><em><?php _ex( 'Example:', 'help', MS_TEXT_DOMAIN ); ?></em></p>
+				<p><em><?php _ex( 'Example:', 'help', 'membership2' ); ?></em></p>
 				<p><code>[<?php echo self::SHORTCODE; ?> slug="intro"]</code></p>
 				<p><code>[<?php echo self::SHORTCODE; ?> slug="intro" id="5" default="An awesome offer!"]</code></p>
 			</div>

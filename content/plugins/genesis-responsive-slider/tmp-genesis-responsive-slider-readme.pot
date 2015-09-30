@@ -1,0 +1,90 @@
+msgid ""
+msgstr "MIME-Version: 1.0\n"
+
+#. Name.
+msgid "Genesis Responsive Slider"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "This plugin allows you to create a simple responsive slider that displays the featured image, along with the title and excerpt from each post."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "It includes options for the maximum dimensions of your slideshow, allows you to choose to display posts or pages, what category to pull from, and even the specific post IDs of the posts you want to display. It includes next/previous arrows and a pager along with the option to turn both on or off. Finally, you can place the slider into a widget area."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "The slideshow is also responsive and will automatically adjust for the screen it is being displayed on."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Note: This plugin only supports Genesis child themes."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Upload the entire <code>genesis-responsive-slider</code> folder to the <code>/wp-content/plugins/</code> directory"
+msgstr ""
+
+#. Found in installation list item.
+msgid "DO NOT change the name of the <code>genesis-responsive-slider</code> folder"
+msgstr ""
+
+#. Found in installation list item.
+msgid "Activate the plugin through the 'Plugins' menu in WordPress"
+msgstr ""
+
+#. Found in installation list item.
+msgid "Navigate to the <code>Genesis &gt; Slider Settings</code> menu"
+msgstr ""
+
+#. Found in installation list item.
+msgid "Configure the slider"
+msgstr ""
+
+#. Found in installation list item.
+msgid "In the \"Widgets\" screen, drag the \"Genesis Responsive Slider\" widget to the widget area of your choice"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Update POT file."
+msgstr ""
+
+#. Found in changelog list item.
+msgid "add alt attribute to images for validation"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix image links"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix slider HTML markup for validation"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix SSL mixed cotent warning"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Add setting to turn off image links"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix Excerpt More filter to only apply to slides"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "UI text changes"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Beta Release"
+msgstr ""
+
+#. Found in remaining content header.
+msgid "Child Theme Integration"
+msgstr ""
+
+#. Found in remaining content paragraph.
+msgid "To adjust the slider defaults for a child theme use a filter simiar to the following:"
+msgstr ""

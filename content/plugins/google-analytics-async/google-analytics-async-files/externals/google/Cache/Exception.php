@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-if (!class_exists('Google_Client')) {
+if (!class_exists('GAPGoogle_Client')) {
   require_once dirname(__FILE__) . '/../autoload.php';
 }
 
-class Google_Cache_Exception extends Google_Exception
+class GAPGoogle_Cache_Exception extends GAPGoogle_Exception
 {
 }

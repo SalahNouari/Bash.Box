@@ -161,11 +161,16 @@ class MP_Store_Settings_General {
 			jQuery( document ).ready( function( $ ) {
 				var $currency = $( 'select[name="currency"]' );
 
+				$currency.select2( {
+					dropdownAutoWidth : false,
+					width : "300px"
+				} );
+
 				$currency.on( 'change', function( e ) {
 					var data = [
 						{
 							"name": "currency",
-							"value": e.val
+							"value": $(this).val()
 						}, {
 							"name": "action",
 							"value": "mp_update_currency"
@@ -175,12 +180,13 @@ class MP_Store_Settings_General {
 						}
 					];
 
-					$currency.select2( 'enable', false ).isWorking( true );
+					$currency.isWorking( true );
 
 					$.get( ajaxurl, $.param( data ) ).done( function( resp ) {
-						$currency.select2( 'enable', true ).isWorking( false );
+						$currency.isWorking( false );
 
 						if ( resp.success ) {
+							console.log(resp.data);
 							$( '.mp-currency-symbol' ).html( resp.data );
 						}
 					} );
@@ -204,17 +210,27 @@ class MP_Store_Settings_General {
 				var $country = $( 'select[name="base_country"]' ),
 					$state = $( 'select[name="base_province"]' );
 
+				$country.select2( {
+					dropdownAutoWidth : false,
+					width : "300px"
+				} );
+
+				$state.select2( {
+					dropdownAutoWidth : false,
+					width : "300px"
+				} );
+
 				$country.on( 'change', function() {
 					var data = {
 						country: $country.val(),
 						action: "mp_update_states_dropdown"
 					};
 
-					$country.select2( 'enable', false ).isWorking( true );
+					$country.isWorking( true );
 					$state.select2( 'enable', false );
 
 					$.post( ajaxurl, data ).done( function( resp ) {
-						$country.select2( 'enable', true ).isWorking( false );
+						$country.isWorking( false );
 						$state.select2( 'enable', true );
 
 						if ( resp.success ) {
@@ -331,6 +347,23 @@ class MP_Store_Settings_General {
 			'desc'		 => __( 'This option turns MarketPress into more of a product listing plugin, disabling shopping carts, checkout, and order management. This is useful if you simply want to list items you can buy in a store somewhere else, optionally linking the "Buy Now" buttons to an external site. Some examples are a car dealership, or linking to songs/albums in itunes, or linking to products on another site with your own affiliate links.', 'mp' ),
 			'message'	 => __( 'Yes', 'mp' ),
 		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'       => 'show_orders',
+			'label'      => array( 'text' => __( 'Show admin Orders page?', 'mp' ) ),
+			'desc'		 => __( 'If unchecked your Orders admin page will be hidden', 'mp' ),
+			'message'	 => __( 'Yes', 'mp' ),
+			'conditional' => array(
+				'name'   => 'disable_cart',
+				'value'  => '1',
+				'action' => 'show',
+			),
+		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'		 => 'disable_minicart',
+			'label'		 => array( 'text' => __( 'Disable Mini Cart?', 'mp' ) ),
+			'desc'		 => __( 'This option hide floating Mini Cart in top right corner.', 'mp' ),
+			'message'	 => __( 'Yes', 'mp' ),
+		) );
 		$metabox->add_field( 'radio_group', array(
 			'name'			 => 'ga_ecommerce',
 			'label'			 => array( 'text' => __( 'Google Analytics Ecommerce Tracking', 'mp' ) ),
@@ -405,6 +438,17 @@ class MP_Store_Settings_General {
 				'eu'	 => '1.123,45',
 				'frc'	 => '1 123,45',
 				'frd'	 => '1 123.45',
+			),
+		) );
+
+		$metabox->add_field( 'radio_group', array(
+			'name'			 => 'curr_decimal',
+			'label'			 => array( 'text' => __( 'Show Decimal in Prices', 'mp' ) ),
+			'default_value'	 => '1',
+			'orientation'	 => 'horizontal',
+			'options'		 => array(
+				'0'	 => '100',
+				'1'	 => '100.00',
 			),
 		) );
 	}

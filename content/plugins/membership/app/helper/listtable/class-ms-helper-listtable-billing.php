@@ -8,7 +8,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	protected $id = 'billing';
 
-	public function __construct(){
+	public function __construct() {
 		parent::__construct(
 			array(
 				'singular' => 'billing',
@@ -25,13 +25,13 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			'ms_helper_listtable_billing_columns',
 			array(
 				'cb' => '<input type="checkbox" />',
-				'invoice' => __( 'Invoice #', MS_TEXT_DOMAIN ),
-				'user' => __( 'User', MS_TEXT_DOMAIN ),
-				'membership' => __( 'Membership', MS_TEXT_DOMAIN ),
-				'status' => __( 'Status', MS_TEXT_DOMAIN ),
-				'total' => __( 'Total', MS_TEXT_DOMAIN ),
-				'due_date' => __( 'Due date', MS_TEXT_DOMAIN ),
-				'gateway_id' => __( 'Gateway', MS_TEXT_DOMAIN ),
+				'invoice' => __( 'Invoice #', 'membership2' ),
+				'user' => __( 'User', 'membership2' ),
+				'membership' => __( 'Membership', 'membership2' ),
+				'status' => __( 'Status', 'membership2' ),
+				'total' => __( 'Total', 'membership2' ),
+				'due_date' => __( 'Due date', 'membership2' ),
+				'gateway_id' => __( 'Gateway', 'membership2' ),
 			)
 		);
 
@@ -95,7 +95,10 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			MS_Model_Invoice::get_invoices( $args )
 		);
 
-		$per_page = $this->get_items_per_page( 'invoice_per_page', self::DEFAULT_PAGE_SIZE );
+		$per_page = $this->get_items_per_page(
+			'invoice_per_page',
+			self::DEFAULT_PAGE_SIZE
+		);
 		$this->set_pagination_args(
 			array(
 				'total_items' => $total_items,
@@ -106,9 +109,12 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	private function get_query_args() {
 		$defaults = MS_Model_Invoice::get_query_args();
-		lib2()->array->equip_request( 's' );
+		lib3()->array->equip_request( 's' );
 
-		$per_page = $this->get_items_per_page( 'invoice_per_page', self::DEFAULT_PAGE_SIZE );
+		$per_page = $this->get_items_per_page(
+			'invoice_per_page',
+			self::DEFAULT_PAGE_SIZE
+		);
 		$current_page = $this->get_pagenum();
 
 		$args = array(
@@ -144,7 +150,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		$actions['view'] = sprintf(
 			'<a href="%s">%s</a>',
 			get_permalink( $item->id ),
-			__( 'View', MS_TEXT_DOMAIN )
+			__( 'View', 'membership2' )
 		);
 
 		if ( MS_Gateway_Manual::ID == $item->gateway_id && ! $item->is_paid() ) {
@@ -160,7 +166,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			$actions['pay_it'] = sprintf(
 				'<a href="%s">%s</a>',
 				$action_url,
-				__( 'Mark as paid', MS_TEXT_DOMAIN )
+				__( 'Mark as paid', 'membership2' )
 			);
 		}
 
@@ -255,7 +261,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 				$currency
 			);
 		} else {
-			$html = __( 'Free', MS_TEXT_DOMAIN );
+			$html = __( 'Free', 'membership2' );
 		}
 
 		return $html;
@@ -281,7 +287,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			$html = sprintf(
 				'<span class="due-now" title="%2$s">%1$s</span>',
 				$due_date,
-				__( 'Payment is overdue', MS_TEXT_DOMAIN )
+				__( 'Payment is overdue', 'membership2' )
 			);
 		} elseif ( $item->pay_date ) {
 			$pay_date = MS_Helper_Period::format_date( $item->pay_date, 'M j, Y' );
@@ -289,7 +295,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 				'<span class="is-paid" title="%2$s">%1$s</span>',
 				$due_date,
 				sprintf(
-					__( 'Paid: %s', MS_TEXT_DOMAIN ),
+					__( 'Paid: %s', 'membership2' ),
 					$pay_date
 				)
 			);
@@ -320,7 +326,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 
 	public function get_bulk_actions() {
 		$bulk_actions = array(
-			'archive' => __( 'Remove', MS_TEXT_DOMAIN ),
+			'archive' => __( 'Remove', 'membership2' ),
 		);
 
 		return apply_filters(
@@ -331,7 +337,12 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 	}
 
 	public function get_views() {
-		$all_status = MS_Model_Invoice::get_status_types();
+		$all_status = array(
+			MS_Model_Invoice::STATUS_PAID => __( 'Paid', 'membership2' ),
+			MS_Model_Invoice::STATUS_NEW => __( 'Draft', 'membership2' ),
+			MS_Model_Invoice::STATUS_DENIED => __( 'Denied', 'membership2' ),
+		);
+
 		$views = array();
 		$orig_status = '';
 
@@ -345,7 +356,7 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		$count = MS_Model_Invoice::get_invoice_count( $args );
 		$views['all'] = array(
 			'url' => $base_url,
-			'label' => __( 'Default', MS_TEXT_DOMAIN ),
+			'label' => __( 'Default', 'membership2' ),
 			'count' => $count,
 		);
 
@@ -359,14 +370,11 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 		$count = MS_Model_Invoice::get_invoice_count( $args );
 		$views['open'] = array(
 			'url' => $url,
-			'label' => __( 'Billed or Pending', MS_TEXT_DOMAIN ),
+			'label' => __( 'Billed or Pending', 'membership2' ),
 			'count' => $count,
 		);
 
 		foreach ( $all_status as $status => $desc ) {
-			if ( 'billed' == $status ) { continue; }
-			if ( 'pending' == $status ) { continue; }
-
 			$args = $this->get_query_args();
 			$args['meta_query']['status']['value'] = $status;
 			$count = MS_Model_Invoice::get_invoice_count( $args );
@@ -381,6 +389,9 @@ class MS_Helper_ListTable_Billing extends MS_Helper_ListTable {
 			} else {
 				$status_url = false;
 				$desc .= ' (0)';
+				if ( MS_Model_Invoice::STATUS_DENIED != $status ) {
+					$desc .= ' |';
+				}
 				$count = false;
 			}
 

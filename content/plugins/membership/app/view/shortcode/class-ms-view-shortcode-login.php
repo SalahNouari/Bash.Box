@@ -26,6 +26,8 @@ class MS_View_Shortcode_Login extends MS_View {
 				$form = 'logout';
 			} elseif ( isset( $action ) && 'resetpass' === $action ) {
 				$form = 'reset';
+			} elseif ( 'lostpass' == $_GET['show'] ) {
+				$form = 'lost';
 			} else {
 				$form = 'login';
 			}
@@ -108,7 +110,7 @@ class MS_View_Shortcode_Login extends MS_View {
 					$link = sprintf(
 						'<a href="%1$s">%2$s</a>',
 						MS_Controller_Frontend::get_registration_url( 'register' ),
-						__( 'Register', MS_TEXT_DOMAIN )
+						__( 'Register', 'membership2' )
 					);
 
 					/**
@@ -121,12 +123,12 @@ class MS_View_Shortcode_Login extends MS_View {
 			// Load the ajax script that handles the Ajax login functions.
 			wp_enqueue_script( 'ms-ajax-login' );
 
-			lib2()->ui->data(
+			lib3()->ui->data(
 				'ms_ajax_login',
 				array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'loadingmessage' => __( 'Please wait...', MS_TEXT_DOMAIN ),
-					'errormessage' => __( 'Request failed, please try again.', MS_TEXT_DOMAIN ),
+					'loadingmessage' => __( 'Please wait...', 'membership2' ),
+					'errormessage' => __( 'Request failed, please try again.', 'membership2' ),
 				)
 			);
 		}
@@ -165,7 +167,7 @@ class MS_View_Shortcode_Login extends MS_View {
 		<legend><?php echo esc_html( $title ); ?></legend>
 		<?php if ( $show_note ) : ?>
 		<div class="ms-alert-box ms-alert-error">
-			<?php _e( 'Please log in to access this page.', MS_TEXT_DOMAIN ); ?>
+			<?php _e( 'Please log in to access this page.', 'membership2' ); ?>
 		</div>
 		<?php endif;
 
@@ -183,15 +185,15 @@ class MS_View_Shortcode_Login extends MS_View {
 	private function login_form( $redirect_to = null ) {
 		if ( empty( $redirect_to ) ) {
 			// Default redirect is back to the current page
-			$redirect_to = lib2()->net->current_url();
+			$redirect_to = lib3()->net->current_url();
 		}
 
 		$defaults = array(
 			'redirect_login' => $redirect_to,
-			'label_username' => __( 'Username', MS_TEXT_DOMAIN ),
-			'label_password' => __( 'Password', MS_TEXT_DOMAIN ),
-			'label_remember' => __( 'Remember Me', MS_TEXT_DOMAIN ),
-			'label_log_in' => __( 'Log In', MS_TEXT_DOMAIN ),
+			'label_username' => __( 'Username', 'membership2' ),
+			'label_password' => __( 'Password', 'membership2' ),
+			'label_remember' => __( 'Remember Me', 'membership2' ),
+			'label_log_in' => __( 'Log In', 'membership2' ),
 			'id_login_form' => 'loginform',
 			'id_username' => 'user_login',
 			'id_password' => 'user_pass',
@@ -278,7 +280,7 @@ class MS_View_Shortcode_Login extends MS_View {
 				<?php if ( 'top' === $nav_pos ) : ?>
 					<div class="nav">
 						<p><a class="lost" href="#lostpassword">
-							<?php _e( 'Lost your password?', MS_TEXT_DOMAIN ); ?>
+							<?php _e( 'Lost your password?', 'membership2' ); ?>
 						</a></p>
 					</div>
 				<?php endif; ?>
@@ -310,7 +312,7 @@ class MS_View_Shortcode_Login extends MS_View {
 				<div class="status" style="display:none"></div>
 			</div>
 			<div class="nav">
-				<p><a class="lost" href="#lostpassword"><?php _e( 'Lost your password?', MS_TEXT_DOMAIN ); ?></a></p>
+				<p><a class="lost" href="#lostpassword"><?php _e( 'Lost your password?', 'membership2' ); ?></a></p>
 			<?php endif; ?>
 			</div>
 		</form>
@@ -329,8 +331,8 @@ class MS_View_Shortcode_Login extends MS_View {
 	 */
 	private function lostpass_form() {
 		$defaults = array(
-			'label_lost_username' => __( 'Username or E-mail', MS_TEXT_DOMAIN ),
-			'label_lostpass' => __( 'Reset Password', MS_TEXT_DOMAIN ),
+			'label_lost_username' => __( 'Username or E-mail', 'membership2' ),
+			'label_lostpass' => __( 'Reset Password', 'membership2' ),
 			'id_lost_form' => 'lostpasswordform',
 			'id_lost_username' => 'user_login',
 			'id_lostpass' => 'wp-submit',
@@ -392,7 +394,7 @@ class MS_View_Shortcode_Login extends MS_View {
 				<?php echo apply_filters( 'lostpass_form_middle', '', $args ); ?>
 				<?php if ( 'top' === $nav_pos ) : ?>
 					<div class="nav">
-						<p><a class="login" href="#login"><?php _e( 'Log in', MS_TEXT_DOMAIN ); ?></a></p>
+						<p><a class="login" href="#login"><?php _e( 'Log in', 'membership2' ); ?></a></p>
 					</div>
 				<?php endif; ?>
 				<?php
@@ -415,7 +417,7 @@ class MS_View_Shortcode_Login extends MS_View {
 				<div class="status" style="display:none"></div>
 			</div>
 			<div class="nav">
-				<p><a class="login" href="#login"><?php _e( 'Log in', MS_TEXT_DOMAIN ); ?></a></p>
+				<p><a class="login" href="#login"><?php _e( 'Log in', 'membership2' ); ?></a></p>
 			<?php endif; ?>
 			</div>
 		</form>
@@ -444,7 +446,7 @@ class MS_View_Shortcode_Login extends MS_View {
 		}
 
 		$yourname = sprintf(
-			__( 'You are logged in as %s.', MS_TEXT_DOMAIN ),
+			__( 'You are logged in as %s.', 'membership2' ),
 			ucfirst( $member->name )
 		);
 
@@ -456,7 +458,7 @@ class MS_View_Shortcode_Login extends MS_View {
 
 		$logout_text = apply_filters(
 			'ms_shortcode_logout_link_text',
-			__( 'Logout', MS_TEXT_DOMAIN ),
+			__( 'Logout', 'membership2' ),
 			$member
 		);
 
@@ -494,96 +496,144 @@ class MS_View_Shortcode_Login extends MS_View {
 	 * @return string
 	 */
 	private function reset_form() {
-		ob_start();
+		static $Reset_Result = null;
 
-		lib2()->array->equip_get( 'login', 'key' );
-		$rp_login = wp_unslash( $_GET['login'] );
-		$rp_key = wp_unslash( $_GET['key'] );
-		$err_msg = new WP_Error();
+		if ( null === $Reset_Result ) {
+			lib3()->array->equip_get( 'login', 'key' );
+			lib3()->array->equip_post( 'pass1', 'pass2' );
+			$rp_login = wp_unslash( $_GET['login'] );
+			$rp_key = wp_unslash( $_GET['key'] );
+			$err_msg = new WP_Error();
+			$fatal_error = false;
 
-		// Get the user object and validate the key.
-		if ( $rp_login && $rp_key ) {
-			$user = check_password_reset_key( $rp_key, $rp_login );
-		} else {
-			$user = false;
-		}
+			lib3()->array->strip_slashes( $_POST, 'pass1', 'pass2' );
+			$pass1 = $_POST['pass1'];
+			$pass2 = $_POST['pass2'];
 
-		lib2()->array->strip_slashes( $_POST, 'pass1', 'pass2' );
-
-		// If the user was not found then redirect to an error page.
-		if ( ! $user || is_wp_error( $user ) ) {
-			if ( $user && 'expired_key' == $user->get_error_code() ) {
-				$err_msg->add( 'password_expired_key', __( 'The password-reset key is already expired.', MS_TEXT_DOMAIN ) );
+			// Get the user object and validate the key.
+			if ( $rp_login && $rp_key ) {
+				$user = check_password_reset_key( $rp_key, $rp_login );
 			} else {
-				$err_msg->add( 'password_invalid_key', __( 'The password-reset key is invalid or missing.', MS_TEXT_DOMAIN ) );
+				$user = false;
 			}
-			$url = esc_url_raw(
-				remove_query_arg( array( 'action', 'key', 'login' ) )
-			);
 
-			return sprintf(
-				'<p>%s</p><p><a href="%s">%s</a>',
-				$err_msg,
-				$url,
-				__( 'Request a new password-reset key', MS_TEXT_DOMAIN )
-			);
-		} else {
-			// If the user provided a new password, then check it now.
-			if ( isset( $_POST['pass1'] ) && $_POST['pass1'] != $_POST['pass2'] ) {
-				$err_msg->add( 'password_reset_mismatch', __( 'The passwords do not match.', MS_TEXT_DOMAIN ) );
+			if ( ! $user || is_wp_error( $user ) ) {
+				// If the user was not found then show an error message.
+				if ( $user && 'expired_key' == $user->get_error_code() ) {
+					$fatal_error = true;
+					$err_msg->add(
+						'password_expired_key',
+						__( 'Sorry, this reset-key is not valid anymore. Please request a new reset email and try again.', 'membership2' )
+					);
+				} else {
+					$fatal_error = true;
+					$err_msg->add(
+						'password_invalid_key',
+						__( 'Sorry, we did not find a valid reset-key. Please request a new reset email and try again.', 'membership2' )
+					);
+				}
+			} else {
+				// If the user provided a new password, then check it now.
+				if ( $pass1 && $pass1 != $pass2 ) {
+					$pass1 = false;
+					$err_msg->add(
+						'password_reset_mismatch',
+						__( 'The passwords do not match, try again.', 'membership2' )
+					);
+				}
 			}
+
+			if ( $fatal_error && count( $err_msg->errors ) ) {
+				$url = esc_url_raw(
+					add_query_arg(
+						array( 'show' => 'lostpass' ),
+						remove_query_arg( array( 'action', 'key', 'login' ) )
+					)
+				);
+
+				$Reset_Result = sprintf(
+					'[ms-note type="warning"]%s[/ms-note]<a href="%s">%s</a>',
+					$err_msg->get_error_message(),
+					$url,
+					__( 'Request a new password-reset key', 'membership2' )
+				);
+			} elseif ( $pass1 ) {
+				// This action is documented in wp-login.php
+				do_action( 'validate_password_reset', $err_msg, $user );
+
+				reset_password( $user, $_POST['pass1'] );
+
+				// All done! Show success message and link to login form
+				$url = esc_url_raw(
+					remove_query_arg( array( 'action', 'key', 'login' ) )
+				);
+
+				$Reset_Result = sprintf(
+					'[ms-note type="info"]%s[/ms-note]<a href="%s">%s</a>',
+					__( 'Your Password has been reset.', 'membership2' ),
+					$url,
+					__( 'Login with your new password', 'membership2' )
+				);
+			} else {
+				// This action is documented in wp-login.php
+				do_action( 'validate_password_reset', $err_msg, $user );
+
+				wp_enqueue_script( 'utils' );
+				wp_enqueue_script( 'user-profile' );
+
+				ob_start();
+				if ( count( $err_msg->errors ) ) {
+					printf(
+						'[ms-note type="warning"]%s[/ms-note]',
+						implode( '<br>', $err_msg->get_error_messages() )
+					);
+				}
+				?>
+				<form name="resetpassform" id="resetpassform"
+					action="" method="post" autocomplete="off" class="ms-form">
+					<input type="hidden" id="user_login"
+						value="<?php echo esc_attr( $rp_login ); ?>" autocomplete="off"/>
+
+					<p class="user-pass1-wrap">
+						<label for="pass1"><?php _e('New password') ?></label><br />
+						<div class="wp-pwd">
+							<span class="password-input-wrapper">
+								<input type="password" data-reveal="1" data-pw="<?php echo esc_attr( wp_generate_password( 16 ) ); ?>" name="pass1" id="pass1" class="input" size="20" value="" autocomplete="off" aria-describedby="pass-strength-result" />
+							</span>
+							<div id="pass-strength-result" class="hide-if-no-js" aria-live="polite"><?php _e( 'Strength indicator' ); ?></div>
+						</div>
+					</p>
+					<p class="user-pass2-wrap">
+						<label for="pass2"><?php _e('Confirm new password') ?></label><br />
+						<input type="password" name="pass2" id="pass2" class="input" size="20" value="" autocomplete="off" />
+					</p>
+
+					<p class="description indicator-hint"><?php echo wp_get_password_hint(); ?></p>
+
+					<br class="clear"/>
+
+					<?php
+					// This action is documented in wp-login.php
+					do_action( 'resetpass_form', $user );
+					?>
+					<p class="submit">
+						<input type="hidden" name="rp_key" value="<?php echo esc_attr( $rp_key ); ?>" />
+
+						<button type="submit" name="wp-submit" id="wp-submit"
+						class="button button-primary button-large">
+						<?php _e( 'Reset Password', 'membership2' ); ?>
+						</button>
+					</p>
+				</form>
+				<?php
+				$html = ob_get_clean();
+				$Reset_Result = apply_filters( 'ms_compact_code', $html );
+			}
+
+			$Reset_Result = do_shortcode( $Reset_Result );
 		}
 
-		// This action is documented in wp-login.php
-		do_action( 'validate_password_reset', $err_msg, $user );
-
-		if ( ! count( $err_msg->errors )
-			&& isset( $_POST['pass1'] ) && ! empty( $_POST['pass1'] )
-		) {
-			reset_password( $user, $_POST['pass1'] );
-
-			// All done!
-			return __( 'Your Password has been reset.', MS_TEXT_DOMAIN );
-		}
-
-		wp_enqueue_script( 'utils' );
-		wp_enqueue_script( 'user-profile' );
-
-		if ( count( $err_msg->errors ) ) {
-			echo '<p class="error">' . implode( '<br/>', $err_msg->get_error_messages() ) . '</p>';
-		}
-		?>
-		<form name="resetpassform" id="resetpassform" action="" method="post" autocomplete="off">
-			<input type="hidden" id="user_login" value="<?php echo esc_attr( $rp_login ); ?>" autocomplete="off"/>
-
-			<p>
-				<label for="pass1"><?php _e( 'New password', MS_TEXT_DOMAIN ) ?><br/>
-					<input type="password" name="pass1" id="pass1" class="input" size="20" value="" autocomplete="off"/></label>
-			</p>
-
-			<p>
-				<label for="pass2"><?php _e( 'Confirm new password', MS_TEXT_DOMAIN ) ?><br/>
-					<input type="password" name="pass2" id="pass2" class="input" size="20" value="" autocomplete="off"/></label>
-			</p>
-
-			<div id="pass-strength-result"
-				class="hide-if-no-js"><?php _e( 'Strength indicator', MS_TEXT_DOMAIN ); ?></div>
-			<p class="description indicator-hint"><?php _e( 'Hint: The password should be at least seven characters long. To make it stronger, use upper and lower case letters, numbers, and symbols like ! " ? $ % ^ &amp; ).', MS_TEXT_DOMAIN ); ?></p>
-
-			<br class="clear"/>
-
-			<?php
-			// This action is documented in wp-login.php
-			do_action( 'resetpass_form', $user );
-			?>
-			<p class="submit"><input type="submit" name="wp-submit" id="wp-submit"
-				class="button button-primary button-large"
-				value="<?php esc_attr_e( 'Reset Password' ); ?>"/></p>
-		</form>
-		<?php
-		$html = ob_get_clean();
-		$html = apply_filters( 'ms_compact_code', $html );
-
-		return $html;
+		return $Reset_Result;
 	}
+
 }

@@ -208,7 +208,8 @@ class MS_Controller_Frontend extends MS_Controller {
 					break;
 
 				case MS_Model_Pages::MS_PAGE_REGISTER:
-					if ( MS_Model_Member::is_logged_in() ) {
+					$step = $this->get_signup_step();
+					if ( self::STEP_CHOOSE_MEMBERSHIP == $step && MS_Model_Member::is_logged_in() ) {
 						wp_safe_redirect(
 							MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_MEMBERSHIPS )
 						);
@@ -436,7 +437,7 @@ class MS_Controller_Frontend extends MS_Controller {
 			);
 		}
 
-		lib2()->array->equip_request( 'step', 'membership_id' );
+		lib3()->array->equip_request( 'step', 'membership_id' );
 
 		if ( in_array( $_REQUEST['step'], $Valid_Steps ) ) {
 			$step = $_REQUEST['step'];
@@ -501,7 +502,7 @@ class MS_Controller_Frontend extends MS_Controller {
 	public function register_form( $content ) {
 		// Check if the WordPress settings allow user registration.
 		if ( ! MS_Model_Member::can_register() ) {
-			return __( 'Registration is currently not allowed.', MS_TEXT_DOMAIN );
+			return __( 'Registration is currently not allowed.', 'membership2' );
 		}
 
 		// Do not parse the form when building the excerpt
@@ -646,7 +647,7 @@ class MS_Controller_Frontend extends MS_Controller {
 		$member = MS_Model_Member::get_current_member();
 		$membership_id = 0;
 
-		lib2()->array->equip_request( 'membership_id', 'move_from_id', 'ms_relationship_id' );
+		lib3()->array->equip_request( 'membership_id', 'move_from_id', 'ms_relationship_id' );
 
 		if ( ! empty( $_POST['ms_relationship_id'] ) ) {
 			// Error path, showing payment table again with error msg
@@ -658,7 +659,7 @@ class MS_Controller_Frontend extends MS_Controller {
 			$membership_id = $membership->id;
 
 			if ( ! empty( $_POST['error'] ) ) {
-				lib2()->array->strip_slashes( $_POST, 'error' );
+				lib3()->array->strip_slashes( $_POST, 'error' );
 				$data['error'] = $_POST['error'];
 			}
 		} elseif ( ! empty( $_REQUEST['membership_id'] ) ) {
@@ -966,19 +967,19 @@ class MS_Controller_Frontend extends MS_Controller {
 		if ( $is_ms_page ) {
 			$data = array(
 				'ms_init' => array( 'shortcode' ),
-				'cancel_msg' => __( 'Are you sure you want to cancel?', MS_TEXT_DOMAIN ),
+				'cancel_msg' => __( 'Are you sure you want to cancel?', 'membership2' ),
 			);
 
-			lib2()->ui->css( 'ms-styles' );
-			lib2()->ui->js( 'jquery-validate' );
-			lib2()->ui->js( 'ms-public' );
+			lib3()->ui->css( 'ms-styles' );
+			lib3()->ui->js( 'jquery-validate' );
+			lib3()->ui->js( 'ms-public' );
 			MS_Controller_Plugin::translate_jquery_validator();
 
 			if ( $is_profile ) {
 				$data['ms_init'][] = 'frontend_profile';
 			}
 
-			lib2()->ui->data( 'ms_data', $data );
+			lib3()->ui->data( 'ms_data', $data );
 		}
 	}
 }

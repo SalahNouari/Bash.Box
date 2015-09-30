@@ -4,7 +4,7 @@
  *
  * @since  1.1.0
  */
-class TheLib_2_0_3 {
+abstract class TheLib {
 
 	/**
 	 * Internal data collection used to pass arguments to callback functions.
@@ -16,7 +16,7 @@ class TheLib_2_0_3 {
 	static protected $data = array();
 
 	/**
-	 * Back-reference to the main component: TheLib_x_y_z_Core
+	 * Back-reference to the main component: TheLib_Core
 	 *
 	 * @var TheLib_Core
 	 * @internal
@@ -111,6 +111,28 @@ class TheLib_2_0_3 {
 
 		if ( ! session_id() ) {
 			if ( ! headers_sent() ) {
+				/**
+				 * Fix for IE: This is a privacy policy which states, that we do
+				 * not collect personal contact information without consent.
+				 * Without this declaraion IE might not save our session!
+				 *
+				 * Note that other plugins that output this header later will
+				 * overwrite it! So this is a default value if no other file
+				 * sends the P3P header.
+				 *
+				 * @since  3.0.0
+				 */
+				if ( WDEV_SEND_P3P ) {
+					$p3p_done = false;
+					foreach ( headers_list() as $header ) {
+						if ( false !== stripos( $header, 'P3P:' ) ) {
+							$p3p_done = true;
+							break;
+						}
+					}
+					if ( ! $p3p_done ) { header( 'P3P:' . WDEV_SEND_P3P ); }
+				}
+
 				session_start();
 				self::$_have_session = true;
 			}
@@ -203,7 +225,33 @@ class TheLib_2_0_3 {
 	 * @internal
 	 */
 	public function __construct() {
+		self::_init_const();
 		self::_sess_init();
+	}
+
+	/**
+	 * Initializes missing module-flags with default values.
+	 *
+	 * @since  3.0.0
+	 * @internal
+	 */
+	static protected function _init_const() {
+		if ( ! defined( 'WDEV_UNMINIFIED' ) ) {
+			define( 'WDEV_UNMINIFIED', false );
+		}
+		if ( ! defined( 'WDEV_DEBUG' ) ) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				define( 'WDEV_DEBUG', true );
+			} else {
+				define( 'WDEV_DEBUG', false );
+			}
+		}
+		if ( ! defined( 'WDEV_AJAX_DEBUG' ) ) {
+			define( 'WDEV_AJAX_DEBUG', WDEV_DEBUG );
+		}
+		if ( ! defined( 'WDEV_SEND_P3P' ) ) {
+			define( 'WDEV_SEND_P3P', 'CP="NOI"' );
+		}
 	}
 
 	/**
@@ -218,7 +266,7 @@ class TheLib_2_0_3 {
 	protected function _css_url( $file ) {
 		static $Url = null;
 
-		if ( defined( 'WDEV_UNMINIFIED' ) && WDEV_UNMINIFIED ) {
+		if ( WDEV_UNMINIFIED ) {
 			$file = str_replace( '.min.css', '.css', $file );
 		}
 		if ( null === $Url ) {
@@ -240,7 +288,7 @@ class TheLib_2_0_3 {
 	protected function _js_url( $file ) {
 		static $Url = null;
 
-		if ( defined( 'WDEV_UNMINIFIED' ) && WDEV_UNMINIFIED ) {
+		if ( WDEV_UNMINIFIED ) {
 			$file = str_replace( '.min.js', '.js', $file );
 		}
 		if ( null === $Url ) {
@@ -291,4 +339,4 @@ class TheLib_2_0_3 {
 		}
 	}
 
-};
+}

@@ -179,8 +179,9 @@ class MS_Controller_Billing extends MS_Controller {
 			$invoice_id = ! empty( $_GET['invoice_id'] ) ? $_GET['invoice_id'] : 0;
 			$data['invoice'] = MS_Factory::load( 'MS_Model_Invoice', $_GET['invoice_id'] );
 			$data['action'] = $_GET['action'];
-			$data['users'] = MS_Model_Member::get_usernames( null, MS_Model_Member::SEARCH_ALL_USERS );
-			$data['memberships'] = MS_Model_Membership::get_membership_names( null );
+			$data['memberships'] = MS_Model_Membership::get_membership_names(
+				array( 'include_guest' => 0 )
+			);
 			$view = MS_Factory::create( 'MS_View_Billing_Edit' );
 			$view->data = apply_filters( 'ms_view_billing_edit_data',  $data );
 			$view->render();
@@ -259,7 +260,6 @@ class MS_Controller_Billing extends MS_Controller {
 				$data['member'] = false;
 			}
 			$data['log'] = $log;
-			$data['users'] = MS_Model_Member::get_usernames( null, MS_Model_Member::SEARCH_ALL_USERS );
 
 			$view = MS_Factory::create( 'MS_View_Billing_Link' );
 			$view->data = apply_filters( 'ms_view_billing_link_data', $data );
@@ -290,7 +290,7 @@ class MS_Controller_Billing extends MS_Controller {
 			if ( 'subscriptions' == $type ) {
 				$member = MS_Factory::load( 'MS_Model_Member', $id );
 
-				$resp[0] = __( 'Select a subscription', MS_TEXT_DOMAIN );
+				$resp[0] = __( 'Select a subscription', 'membership2' );
 				$active = array();
 				$inactive = array();
 				foreach ( $member->subscriptions as $subscription ) {
@@ -298,7 +298,7 @@ class MS_Controller_Billing extends MS_Controller {
 
 					$membership = $subscription->get_membership();
 					if ( $membership->is_free() ) {
-						$price = __( 'Free', MS_TEXT_DOMAIN );
+						$price = __( 'Free', 'membership2' );
 					} else {
 						$price = sprintf(
 							'%s %s',
@@ -307,7 +307,7 @@ class MS_Controller_Billing extends MS_Controller {
 						);
 					}
 					$line = sprintf(
-						__( 'Membership: %s, Base price: %s', MS_TEXT_DOMAIN ),
+						__( 'Membership: %s, Base price: %s', 'membership2' ),
 						$membership->name,
 						$price
 					);
@@ -318,25 +318,25 @@ class MS_Controller_Billing extends MS_Controller {
 					}
 				}
 				if ( ! count( $active ) && ! count( $inactive ) ) {
-					$resp[0] = __( 'No subscriptions found', MS_TEXT_DOMAIN );
+					$resp[0] = __( 'No subscriptions found', 'membership2' );
 				} else {
 					if ( count( $active ) ) {
-						$resp[__( 'Active Subscriptions', MS_TEXT_DOMAIN )] = $active;
+						$resp[__( 'Active Subscriptions', 'membership2' )] = $active;
 					}
 					if ( count( $inactive ) ) {
-						$resp[__( 'Expired Subscriptions', MS_TEXT_DOMAIN )] = $inactive;
+						$resp[__( 'Expired Subscriptions', 'membership2' )] = $inactive;
 					}
 				}
 			} elseif ( 'invoices' == $type ) {
 				$subscription = MS_Factory::load( 'MS_Model_Relationship', $id );
 				$invoices = $subscription->get_invoices();
 
-				$resp[0] = __( 'Select an invoice', MS_TEXT_DOMAIN );
+				$resp[0] = __( 'Select an invoice', 'membership2' );
 				$unpaid = array();
 				$paid = array();
 				foreach ( $invoices as $invoice ) {
 					$line = sprintf(
-						__( 'Invoice: %s from %s (%s)', MS_TEXT_DOMAIN ),
+						__( 'Invoice: %s from %s (%s)', 'membership2' ),
 						$invoice->get_invoice_number(),
 						$invoice->due_date,
 						$invoice->currency . ' ' .
@@ -349,13 +349,13 @@ class MS_Controller_Billing extends MS_Controller {
 					}
 				}
 				if ( ! count( $unpaid ) && ! count( $paid ) ) {
-					$resp[0] = __( 'No invoices found', MS_TEXT_DOMAIN );
+					$resp[0] = __( 'No invoices found', 'membership2' );
 				} else {
 					if ( count( $unpaid ) ) {
-						$resp[__( 'Unpaid Invoices', MS_TEXT_DOMAIN )] = $unpaid;
+						$resp[__( 'Unpaid Invoices', 'membership2' )] = $unpaid;
 					}
 					if ( count( $paid ) ) {
-						$resp[__( 'Paid Invoices', MS_TEXT_DOMAIN )] = $paid;
+						$resp[__( 'Paid Invoices', 'membership2' )] = $paid;
 					}
 				}
 			}
@@ -488,7 +488,7 @@ class MS_Controller_Billing extends MS_Controller {
 		}
 
 		if ( 'edit' == $action ) {
-			lib2()->ui->add( 'jquery-ui' );
+			lib3()->ui->add( 'jquery-ui' );
 		}
 	}
 
@@ -516,12 +516,12 @@ class MS_Controller_Billing extends MS_Controller {
 			if ( 'logs' == $module || 'matching' == $module ) {
 				$data['ms_init'][] = 'view_billing_transactions';
 				$data['lang'] = array(
-					'link_title' => __( 'Link Transaction', MS_TEXT_DOMAIN ),
+					'link_title' => __( 'Link Transaction', 'membership2' ),
 				);
 			}
 		}
 
-		lib2()->ui->data( 'ms_data', $data );
+		lib3()->ui->data( 'ms_data', $data );
 		wp_enqueue_script( 'ms-admin' );
 	}
 

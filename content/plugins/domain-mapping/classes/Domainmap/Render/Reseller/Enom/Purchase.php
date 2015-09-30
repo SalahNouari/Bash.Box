@@ -317,7 +317,7 @@ class Domainmap_Render_Reseller_Enom_Purchase extends Domainmap_Render_Reseller_
 			$required = $required_ast = '';
 			if ( $attribute['Required'] > 0 ) :
 				$required = ' required';
-				$required_ast = ' <span class="domainmapping-field-required">*</span>';
+				$required_ast = ' <span class="domainmapping-field-required">*</span>';	     	 	  	 	 			
 			endif;
 
 			?><p>

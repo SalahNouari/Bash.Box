@@ -53,7 +53,7 @@ class MS_Addon_BuddyPress extends MS_Addon {
 		$this->collission_check();
 
 		if ( self::is_active() ) {
-			$this->buddypress_registration = lib2()->is_true(
+			$this->buddypress_registration = lib3()->is_true(
 				$this->get_setting( 'buddypress_registration' )
 			);
 
@@ -101,6 +101,8 @@ class MS_Addon_BuddyPress extends MS_Addon {
 				'bp_core_signup_user',
 				'disable_validation'
 			);
+		} else {
+			$this->buddypress_registration = false;
 		}
 	}
 
@@ -138,7 +140,7 @@ class MS_Addon_BuddyPress extends MS_Addon {
 			$msg = sprintf(
 				'%s<br><br>%s',
 				sprintf(
-					__( 'BuddyPress uses a page that is also used as a Membership page by Membership 2.<br>Please assign a different page for either %sMembership 2%s or %sBuddyPress%s to avoid conflicts.', MS_TEXT_DOMAIN ),
+					__( 'BuddyPress uses a page that is also used as a Membership page by Membership 2.<br>Please assign a different page for either %sMembership 2%s or %sBuddyPress%s to avoid conflicts.', 'membership2' ),
 					'<a href="' . MS_Controller_Plugin::get_admin_url( 'settings' ) . '">',
 					'</a>',
 					'<a href="' . admin_url( 'admin.php?page=bp-page-settings' ) . '">',
@@ -146,7 +148,7 @@ class MS_Addon_BuddyPress extends MS_Addon {
 				),
 				implode( '<br>', $duplicates )
 			);
-			lib2()->ui->admin_message( $msg, 'error' );
+			lib3()->ui->admin_message( $msg, 'error' );
 		}
 	}
 
@@ -159,23 +161,23 @@ class MS_Addon_BuddyPress extends MS_Addon {
 	 */
 	public function register( $list ) {
 		$list[ self::ID ] = (object) array(
-			'name' => __( 'BuddyPress Integration', MS_TEXT_DOMAIN ),
-			'description' => __( 'Integrate BuddyPress with Membership 2.', MS_TEXT_DOMAIN ),
+			'name' => __( 'BuddyPress Integration', 'membership2' ),
+			'description' => __( 'Integrate BuddyPress with Membership 2.', 'membership2' ),
 			'icon' => 'dashicons dashicons-groups',
 			'details' => array(
 				array(
 					'type' => MS_Helper_Html::TYPE_HTML_TEXT,
-					'title' => __( 'Protection Rules', MS_TEXT_DOMAIN ),
-					'desc' => __( 'Adds BuddyPress rules in the "Protection Rules" page.', MS_TEXT_DOMAIN ),
+					'title' => __( 'Protection Rules', 'membership2' ),
+					'desc' => __( 'Adds BuddyPress rules in the "Protection Rules" page.', 'membership2' ),
 				),
 				array(
 					'id' => 'buddypress_registration',
 					'type' => MS_Helper_Html::INPUT_TYPE_RADIO_SLIDER,
-					'title' => __( 'Use BuddyPress Registration', MS_TEXT_DOMAIN ),
+					'title' => __( 'Use BuddyPress Registration', 'membership2' ),
 					'desc' =>
-						__( 'Enable this option to use the BuddyPress registration page instead of the Membership 2 registration page.', MS_TEXT_DOMAIN ) .
+						__( 'Enable this option to use the BuddyPress registration page instead of the Membership 2 registration page.', 'membership2' ) .
 						'<br />' .
-						__( 'New users are automatically activated by Membership 2 and no confirmation email is sent to the user!', MS_TEXT_DOMAIN ),
+						__( 'New users are automatically activated by Membership 2 and no confirmation email is sent to the user!', 'membership2' ),
 					'value' => $this->buddypress_registration,
 					'ajax_data' => array(
 						'action' => $this->ajax_action(),
@@ -188,7 +190,7 @@ class MS_Addon_BuddyPress extends MS_Addon {
 		if ( ! self::buddypress_active() ) {
 			$list[ self::ID ]->description .= sprintf(
 				'<br /><b>%s</b>',
-				__( 'Activate BuddyPress to use this Add-on', MS_TEXT_DOMAIN )
+				__( 'Activate BuddyPress to use this Add-on', 'membership2' )
 			);
 			$list[ self::ID ]->action = '-';
 		}

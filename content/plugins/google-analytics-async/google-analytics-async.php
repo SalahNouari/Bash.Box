@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/google-analytics-for-wordpress-mu
 Description: Enables Google Analytics for your site with statistics inside WordPress admin panel. Single and multi site compatible!
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
-Version: 3.1.5
+Version: 3.1.5.1
 WDP ID: 51
 License: GNU General Public License (Version 2 - GPLv2)
 */
@@ -105,7 +105,7 @@ class Google_Analytics_Async {
         $this->current_settings = is_network_admin() ? $this->network_settings : $this->settings;
         if(is_multisite() && !is_network_admin() && (!isset($this->network_settings['track_settings']['capability_reports_overwrite']) || (isset($this->network_settings['track_settings']['capability_reports_overwrite']) && !$this->network_settings['track_settings']['capability_reports_overwrite']))) {
             $this->current_settings['track_settings']['minimum_capability_reports'] = isset($this->network_settings['track_settings']['minimum_capability_reports']) ? $this->network_settings['track_settings']['minimum_capability_reports'] : '';
-            $this->current_settings['track_settings']['minimum_role_capability_reports'] = isset($this->network_settings['track_settings']['minimum_role_capability_reports']) ? $this->network_settings['track_settings']['minimum_role_capability_reports'] : '';
+            $this->current_settings['track_settings']['minimum_role_capability_reports'] = isset($this->network_settings['track_settings']['minimum_role_capability_reports']) ? $this->network_settings['track_settings']['minimum_role_capability_reports'] : '';	     	 	   	  			
         }
 
         /* Set plugin directory path */

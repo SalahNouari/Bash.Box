@@ -48,7 +48,9 @@ $post = $unit->details;
                     ?>
                 </div>
                 <?php
-                Unit_Module::get_modules_front($unit->details->ID);
+                $modules = new Unit_Module();
+
+                $modules->get_modules_front($unit->details->ID);
                 ?>
             </article>
         <?php endwhile; // end of the loop. ?>

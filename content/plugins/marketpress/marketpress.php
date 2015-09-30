@@ -1,33 +1,33 @@
 <?php
 /*
-  Plugin Name: MarketPress
-  Version: 3.0.0.2
-  Plugin URI: https://premium.wpmudev.org/project/e-commerce/
-  Description: The complete WordPress ecommerce plugin - works perfectly with BuddyPress and Multisite too to create a social marketplace, where you can take a percentage! Activate the plugin, adjust your settings then add some products to your store.
-  Author: WPMU DEV
-  Author URI: http://premium.wpmudev.org
-  Text Domain: mp
-  WDP ID: 144
+Plugin Name: MarketPress
+Version: 3.0.0.3
+Plugin URI: https://premium.wpmudev.org/project/e-commerce/
+Description: The complete WordPress ecommerce plugin - works perfectly with BuddyPress and Multisite too to create a social marketplace, where you can take a percentage! Activate the plugin, adjust your settings then add some products to your store.
+Author: WPMU DEV
+Author URI: http://premium.wpmudev.org
+Text Domain: mp
+WDP ID: 144
 
-  Copyright 2009-2015 Incsub (http://incsub.com)
+Copyright 2009-2015 Incsub (http://incsub.com)
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License (Version 2 - GPLv2) as
-  published by the Free Software Foundation.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License (Version 2 - GPLv2) as
+published by the Free Software Foundation.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
-  GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
 
-  Plugin Authors: Marko Miljus (Incsub), Aaron Edwards (Incsub), Hoang Ngo (Incsub), Jonathan Cowher (Incsub)
+Plugin Authors: Marko Miljus (Incsub), Aaron Edwards (Incsub), Hoang Ngo (Incsub), Jonathan Cowher (Incsub), Ricardo Freitas (Incsub), Cvetan Cvetanov (Incsub), Julien Zerbib (Incsub)
  */
 
-define( 'MP_VERSION', '3.0.0.2' );
+define( 'MP_VERSION', '3.0.0.3' );
 
 class Marketpress {
 
@@ -386,14 +386,31 @@ class Marketpress {
 		add_action( 'admin_menu', array( &$this, 'add_menu_items' ), 9 );
 
 		$this->load_widgets();
+
+		$this->localization();
 	}
 
 	function add_menu_items() {
 		add_submenu_page( 'edit.php?post_type=' . MP_Product::get_post_type(), __( 'Add a Product', 'mp' ), __( 'Add a Product', 'mp' ), apply_filters( 'mp_add_new_product_capability', 'manage_options' ), 'post-new.php?post_type=product' );
 	}
 
+	function localization() {
+		// Load up the localization file if we're using WordPress in a different language
+		// Place it in this plugin's "languages" folder and name it "mp-[value in wp-config].mo"
+
+		$mu_plugins	 = wp_get_mu_plugins();
+		$lang_dir	 = dirname( plugin_basename( $this->_plugin_file ) ) . '/languages/';
+
+		if ( in_array( $this->_plugin_file, $mu_plugins ) ) {
+			load_muplugin_textdomain( 'mp', $lang_dir );
+		} else {
+			load_plugin_textdomain( 'mp', false, $lang_dir );
+		}
+	}
+
 	function load_widgets() {
 
+		require_once( $this->plugin_dir( 'includes/admin/widgets/cart.php' ) );
 		require_once( $this->plugin_dir( 'includes/admin/widgets/categories.php' ) );
 		require_once( $this->plugin_dir( 'includes/admin/widgets/product-list.php' ) );
 		require_once( $this->plugin_dir( 'includes/admin/widgets/product-tag-cloud.php' ) );
@@ -401,11 +418,12 @@ class Marketpress {
 		//Multisite Widgets
 		require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-product-list.php' ) );
 		require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-tag-cloud.php' ) );
+		require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-categories.php' ) );
 	}
 
 	function post_thumbnail_html5( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
 		$post_type = get_post_type( $post_id );
-		if ( $post_type == MP_Product::get_post_type() || $post_type == MP_Product::get_variations_post_type() ) {
+		if ( class_exists( 'MP_Product' ) && ( $post_type == MP_Product::get_post_type() || $post_type == MP_Product::get_variations_post_type() ) ) {
 			$html = str_replace( "/>", ">", $html );
 		}
 
@@ -719,12 +737,14 @@ class Marketpress {
 		require_once $this->plugin_dir( 'includes/common/class-mp-installer.php' );
 		require_once $this->plugin_dir( 'includes/common/class-mp-cart.php' );
 		require_once $this->plugin_dir( 'includes/common/template-functions.php' );
+		require_once $this->plugin_dir( 'includes/common/class-mp-backward-compatibility.php' );
+		//require_once $this->plugin_dir( 'includes/common/class-mp-taxes.php' );
 
 		if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 			require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 		}
 
-		if ( is_multisite() && is_plugin_active_for_network( 'marketpress/marketpress.php' ) ) {
+		if ( is_multisite() && is_plugin_active_for_network( mp_get_plugin_slug() ) ) {
 			require_once $this->plugin_dir( 'includes/multisite/class-mp-multisite.php' );
 			require_once $this->plugin_dir( 'includes/multisite/template-functions.php' );
 			if ( is_admin() ) {

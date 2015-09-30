@@ -46,6 +46,7 @@ class MP_Short_Codes {
 		add_shortcode( 'mp_product_meta', array( &$this, 'mp_product_meta_sc' ) );
 		add_shortcode( 'mp_product_sku', array( &$this, 'mp_product_sku_sc' ) );
 		add_shortcode( 'mp_cart', array( &$this, 'mp_cart_sc' ) );
+		add_shortcode( 'mp_cart_widget', array( &$this, 'mp_cart_widget_sc' ) );
 		add_shortcode( 'mp_checkout', array( &$this, 'mp_checkout_sc' ) );
 		add_shortcode( 'mp_order_status', array( &$this, 'mp_order_status_sc' ) );
 		add_shortcode( 'mp_order_lookup_form', array( &$this, 'mp_order_lookup_form_sc' ) );
@@ -81,6 +82,8 @@ class MP_Short_Codes {
 
 		wp_enqueue_script( 'lightslider', mp_plugin_url( 'ui/lightslider/js/lightslider.js' ), array( 'jquery' ), MP_VERSION );
 		wp_enqueue_style( 'lightslider', mp_plugin_url( 'ui/lightslider/css/lightslider.css' ), array(), MP_VERSION );
+		wp_enqueue_script( 'lightgallery', mp_plugin_url( 'ui/lightgallery/js/lightgallery.js' ), array( 'jquery' ), MP_VERSION );
+		wp_enqueue_style( 'lightgallery', mp_plugin_url( 'ui/lightgallery/css/lightgallery.css' ), array(), MP_VERSION );
 // CSS
 		wp_register_style( 'jquery-ui', mp_plugin_url( 'ui/css/jquery-ui.min.css' ), false, MP_VERSION );
 		wp_enqueue_style( 'mp-frontend', mp_plugin_url( 'ui/css/frontend.css' ), array( 'jquery-ui' ), MP_VERSION );
@@ -204,6 +207,20 @@ class MP_Short_Codes {
 		$this->shortcodes_frontend_styles_scripts();
 		$atts[ 'echo' ] = false;
 		return MP_Cart::get_instance()->display( $atts );
+	}
+
+	/**
+	 * Display a cart widget.
+	 *
+	 * The list of arguments is below:
+	 *     "title" (string) - Text to display as title.
+	 *     "custom_text" (string) - Custom text to display before cart.
+	 *
+	 */
+	function mp_cart_widget_sc( $atts ) {
+		$this->shortcodes_frontend_styles_scripts();
+		$atts = $this->_parse_atts( $atts );
+		return mp_cart_widget( false, $atts );
 	}
 
 	/**

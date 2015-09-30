@@ -54,6 +54,16 @@ class domain_map {
 	 */
 	const FLUSHED_REWRITE_RULES = 'domainmap-flushed-rules-';
 
+    /**
+     * Key to cache force ssl state
+     *
+     * @since 4.4.0.10
+     * @param string  FORCE_SSL_KEY_PREFIX
+     */
+    const FORCE_SSL_KEY_PREFIX = 'dm_force_ssl_';
+
+    private $_http;
+
 	function __construct() {
 		global $wpdb, $dm_cookie_style_printed, $dm_logout, $dm_authenticated;
 
@@ -63,7 +73,8 @@ class domain_map {
 
 		$this->db = $wpdb;
 		$this->dmtable = DOMAINMAP_TABLE_MAP;
-
+        $this->_http = new CHttpRequest();
+        $this->_http->init();
 		// Set up the plugin
 		add_action( 'init', array( $this, 'setup_plugin' ) );
 
@@ -150,7 +161,14 @@ class domain_map {
          * If admin ssl is forced and user is viewing admin page, then force https
          * Other than the above set scheme based on the current viewed scheme
          */
-         return $this->options['map_force_admin_ssl'] && is_admin() ? set_url_scheme($admin_url, "https") :  set_url_scheme( $admin_url, is_ssl() ? 'https' : 'http' );
+        $scheme = "http";
+        if( $this->is_mapped_domain( $admin_url ) ){
+            $scheme = self::force_ssl_on_mapped_domain() ? "https" : $scheme;
+        }else{
+            $scheme = $this->options['map_force_admin_ssl'] ? "https" : ( is_ssl() ? 'https' : 'http'  );
+        }
+
+         return set_url_scheme($admin_url, $scheme);
 
 	}
 
@@ -411,6 +429,10 @@ class domain_map {
      * @return bool true if it's original domain, false if not
      */
     protected function is_original_domain( $domain = null ){
+
+        $this->_http = new CHttpRequest();
+        $this->_http->init();
+
         $domain = parse_url( is_null( $domain ) ? $this->_http->hostinfo : $domain  , PHP_URL_HOST );
 
         /** MULTI DOMAINS INTEGRATION */
@@ -425,8 +447,8 @@ class domain_map {
             }
         }
 
-        $is_oroginal_domain = $domain === $this->get_original_domain() || strpos($domain, "." . $this->get_original_domain());
-        return apply_filters("dm_is_original_domain", $is_oroginal_domain, $domain);
+        $is_original_domain = $domain === $this->get_original_domain() || strpos($domain, "." . $this->get_original_domain());
+        return apply_filters("dm_is_original_domain", $is_original_domain, $domain);
     }
 
     /**
@@ -451,6 +473,8 @@ class domain_map {
      */
     protected function is_login(){
         global $pagenow;
+		$this->_http = new CHttpRequest();
+		$this->_http->init();
         $needle = isset( $pagenow ) ? $pagenow : str_replace("/", "", $this->_http->getRequestUri() );
         $is_login = in_array( $needle, array( 'wp-login.php', 'wp-register.php' ) );
         return apply_filters("dm_is_login", $is_login, $needle, $pagenow) ;
@@ -478,10 +502,25 @@ class domain_map {
      * @return bool
      */
     public static function force_ssl_on_mapped_domain( $domain = "" ){
-        global $wpdb;
+        global $wpdb, $dm_mapped;
+
         $current_domain = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
         $domain = $domain === "" ? $current_domain  : $domain;
-        $force_ssl_on_mapped_domain = (int) $wpdb->get_var( $wpdb->prepare("SELECT `scheme` FROM `" . DOMAINMAP_TABLE_MAP . "` WHERE `domain`=%s", $domain) );
+        $transient_key = self::FORCE_SSL_KEY_PREFIX . $domain;
+
+        if( is_object( $dm_mapped )  && $dm_mapped->domain === $domain ){ // use from the global dm_domain
+            $force_ssl_on_mapped_domain = (int) $dm_mapped->scheme;
+        }else{
+            $force = get_transient( $transient_key );
+
+            if( $force === false ){
+                $force_ssl_on_mapped_domain = (int) $wpdb->get_var( $wpdb->prepare("SELECT `scheme` FROM `" . DOMAINMAP_TABLE_MAP . "` WHERE `domain`=%s", $domain) );
+                set_transient($transient_key, $force_ssl_on_mapped_domain, 30 * MINUTE_IN_SECONDS);
+            }else{
+                $force_ssl_on_mapped_domain = $force;
+            }
+        }
+
         return apply_filters("dm_force_ssl_on_mapped_domain", $force_ssl_on_mapped_domain) ;
     }
 

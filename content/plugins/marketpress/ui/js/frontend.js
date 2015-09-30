@@ -206,13 +206,15 @@ var marketpress = { };
          */
         initSelect2: function( ) {
             $( 'select.mp_select2' ).not( '.select2-offscreen' ).select2( {
-	            "dropdownCssClass": "mp_select2",
-                "dropdownAutoWidth": 1,
-                "minimumResultsForSearch": -1	// hide the search box
+	            containerCssClass: ':all:',
+	            dropdownCssClass: 'mp_select2-dropdown',
+                dropdownAutoWidth: true,
+                minimumResultsForSearch: -1	// hide the search box
             } );
             $( 'select.mp_select2_search' ).not( '.select2-offscreen' ).select2( {
-	            "dropdownCssClass": "mp_select2",
-                "dropdownAutoWidth": 1
+	            containerCssClass: ':all:',
+	            dropdownCssClass: 'mp_select2-dropdown',
+                dropdownAutoWidth: true
             } );
         },
         /**
@@ -270,7 +272,7 @@ var marketpress = { };
          */
         initProductTabs: function( ) {
 
-            $( '.mp_product_meta a.more-link' ).live( 'click', function( e ) {
+            $( 'body' ).on( 'click', '.mp_product_meta a.more-link', function( e ) {
                 e.preventDefault( );
                 $( '#mp-single-product a.mp_product_tab_label_link.mp-product-overview' ).click( );
                 $( 'html, body' ).animate( {
@@ -500,8 +502,20 @@ var marketpress = { };
             var $form = $( '#mp_global_product_list_refine' );
             $form.on( 'change', 'select', function( e ) {
                 var $this = $( this );
-                //we don't filter by taxonomy in global, so just bypass
-                marketpress.updateGlobalProductList( );
+                // Redirect if product category dropdown changed
+                if ( 'product_category' == $this.attr( 'name' ) ) {
+                    var val = $this.val( );
+                    marketpress.loadingOverlay( 'show' );
+                    if ( typeof ( mp_global.cat_urls[ val ] ) == 'undefined' ) {
+                        window.location.href = mp_global.cat_url;
+                    } else {
+                        window.location.href = mp_global.cat_urls[ val ];
+                    }
+
+                    return;
+                } else {
+                    marketpress.updateGlobalProductList( );
+                }
             } );
         },
         /**
@@ -518,7 +532,7 @@ var marketpress = { };
             $.post( url, data ).done( function( resp ) {
                 marketpress.loadingOverlay( 'hide' );
                 $( '.mp_listings_nav' ).remove( );
-                $( '#mp-products' ).replaceWith( resp );
+                $( '.mp_global_product_list_widget .mp_products' ).replaceWith( resp );
                 mp_cart.initCartListeners( );
             } );
         },

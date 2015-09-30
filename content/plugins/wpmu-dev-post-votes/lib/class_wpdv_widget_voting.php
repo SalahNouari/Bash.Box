@@ -6,7 +6,7 @@ class Wdpv_WidgetVoting extends WP_Widget {
 
 	function Wdpv_WidgetVoting () {
 		$widget_ops = array('classname' => __CLASS__, 'description' => __('Shows "Vote" box for current post/page with number of votes.', 'wdpv'));
-		parent::WP_Widget(__CLASS__, __('Voting Widget', 'wdpv'), $widget_ops);
+		parent::__construct(__CLASS__, __('Voting Widget', 'wdpv'), $widget_ops);
 	}
 
 	function form($instance) {
@@ -44,7 +44,7 @@ class Wdpv_WidgetVoting extends WP_Widget {
 
 		$html .= '<p>';
 		$html .= '<label for="' . $this->get_field_id('show_vote_result') . '">' . __('Show voting results:', 'wdpv') . '</label>';
-		$html .= '<input type="checkbox" name="' . $this->get_field_name('show_vote_result') . '" id="' . $this->get_field_id('show_vote_result') . '" value="1" ' . ($show_vote_result ? 'checked="checked"' : '') . ' />';	     	 	 		 		 		
+		$html .= '<input type="checkbox" name="' . $this->get_field_name('show_vote_result') . '" id="' . $this->get_field_id('show_vote_result') . '" value="1" ' . ($show_vote_result ? 'checked="checked"' : '') . ' />';
 		$html .= '</p>';
 
 		echo $html;

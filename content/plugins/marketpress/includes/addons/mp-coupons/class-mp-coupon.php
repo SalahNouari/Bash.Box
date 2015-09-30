@@ -132,7 +132,7 @@ class MP_Coupon {
 			$b_id            = $this->where_coupon_belong( $this );
 			if ( $b_id ) {
 				switch_to_blog( $b_id );
-				mp_cart()->set_id($b_id);
+				mp_cart()->set_id( $b_id );
 			}
 		}
 		$discount    = $this->get_meta( 'discount' );
@@ -143,7 +143,7 @@ class MP_Coupon {
 		//$product_ids = array_keys( $product_ids );
 
 		foreach ( $product_ids as $product_id ) {
-			$product       = new MP_Product( $product_id );
+			$product = new MP_Product( $product_id );
 
 			$product_price = $product->get_price( 'before_coupon' );
 
@@ -152,12 +152,11 @@ class MP_Coupon {
 			} else {
 				$discount_amt += ( ( $this->get_price( $product_price ) - $product_price ) * mp_cart()->get_item_qty( $product_id ) );
 			}
-
 		}
 
 		if ( mp_cart()->is_global ) {
 			switch_to_blog( $current_blog_id );
-			mp_cart()->set_id($current_blog_id);
+			mp_cart()->set_id( $current_blog_id );
 		}
 
 		if ( $format ) {
@@ -272,7 +271,7 @@ class MP_Coupon {
 			$new_price = ( $price - abs( $discount ) );
 		}
 
-		return (float) $new_price;
+		return (float) round( $new_price, 2 );
 	}
 
 	/**
@@ -413,6 +412,14 @@ class MP_Coupon {
 		} elseif ( array() == $this->get_products( true ) ) {
 			$is_valid = false;
 		} else {
+			if ( $this->get_meta( 'applies_to' ) == 'user' ) {
+				$user = $this->get_meta( 'user' );
+
+				if ( !in_array( get_current_user_id(), $user ) ) {
+					$is_valid = false;
+				}
+			}
+
 			if ( ! $this->get_meta( 'can_be_combined' ) ) {
 				$applied = mp_coupons_addon()->get_applied();
 

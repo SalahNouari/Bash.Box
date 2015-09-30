@@ -23,7 +23,7 @@
     top: 80%;
     max-width:300px;
     background: rgba( 0, 0, 0, 0.7 );
-    -webkit-box-shadow: 0 15px 10px rgba( 0,0,0, 0.7 );									   	 	   		
+    -webkit-box-shadow: 0 15px 10px rgba( 0,0,0, 0.7 );
     -moz-box-shadow: 0 15px 10px rgba( 0, 0, 0, 0.7 );
     box-shadow: 0 15px 10px rgba( 0, 0, 0, 0.7 );
     -webkit-transform: rotate( -3deg );
@@ -210,4 +210,4 @@ a .remove-btn{
 }
 
 
-/* 133620-1441812995-au */
+/* 133620-1443654384-au */

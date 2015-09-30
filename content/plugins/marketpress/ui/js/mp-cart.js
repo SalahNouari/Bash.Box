@@ -90,44 +90,35 @@ var mp_cart = { };
             mp_cart.addItem( $this, $this.find( '[name="product_id"]' ).val() );
         } );
     };
-
-
+	
+	/**
+     * Initialize cart buttons listeners
+     *
+     * @since 3.0
+     */
+    mp_cart.initCartButtonListeners = function() {
+        $( '.mp_button-widget-cart-empty' ).on( 'click', function( e ) {
+            e.preventDefault();
+            mp_cart.emptyCart();
+        } );
+    };
+	
 
     mp_cart.initShortcodeProductListeners = function() {
+		var me = this;
+		
         $( '.mp-shortcode-wrap' ).on( 'change', '[name^="product_attr_"]', this.updateProductAttributes );
-        $( '.mp-shortcode-wrap' ).find( '.mp_form-buy-product' )
-            .on( 'mp_cart/before_add_item', function( e, item, qty ) {
-                marketpress.loadingOverlay( 'show' );
-            } )
-            .on( 'mp_cart/after_add_item', function( e, resp, item, qty ) {
-                marketpress.loadingOverlay( 'hide' );
-            } )
-            .validate( this.productFormValidationArgs );
-        /*$( '.mp-shortcode-wrap' ).on( 'submit', '.mp_form-buy-product', function( e ) {
-         e.preventDefault();
-         $( '.mp_ajax_loader' ).remove();
-         
-         var $this = $( this );
-         
-         $this.on( 'mp_cart/before_add_item', function( e, item, qty ) {
-         $this.addClass( 'invisible' );
-         //$( 'body' ).children( '.mp_ajax_loader' ).clone().insertAfter( $this ).show();
-         if ( $( ".mp_ajax_loader" ).length ) {
-         
-         } else {
-         $( mp_cart_i18n.ajax_loader ).insertAfter( $this ).show();
-         }
-         //marketpress.loadingOverlay( 'show' );
-         } );
-         
-         $this.on( 'mp_cart/after_add_item', function( e, resp, item, qty ) {
-         $this.removeClass( 'invisible' );//.next( '.mp_ajax_loader' ).remove();
-         $( '.mp_ajax_loader' ).remove();
-         //marketpress.loadingOverlay( 'hide' );
-         } );
-         
-         mp_cart.addItem( $this, $this.find( '[name="product_id"]' ).val() );
-         } );*/
+		
+		//We should loop through each form else jQuery validation is passing correct form ID
+		$( '.mp-shortcode-wrap' ).find( '.mp_form-buy-product' ).each(function(){
+			$(this).on( 'mp_cart/before_add_item', function( e, item, qty ) {
+				marketpress.loadingOverlay( 'show' );
+			} )
+			.on( 'mp_cart/after_add_item', function( e, resp, item, qty ) {
+				marketpress.loadingOverlay( 'hide' );
+			} )
+			.validate(me.productFormValidationArgs);
+		});
     };
     /**
      * Initalize single product listeners
@@ -156,7 +147,7 @@ var mp_cart = { };
             .on( 'change', 'select[name^="mp_cart_item-qty"]', function( e ) {
                 var $this = $( this ),
                     itemId = $this.attr( 'name' ).match( /[0-9]+/ig ),
-                    qty = e.val;
+                    qty = $(this).val();
 
                 mp_cart.updateItemQty( itemId[0], qty, $( '#mp-cart-form' ) );
             } );
@@ -173,6 +164,7 @@ var mp_cart = { };
         mp_cart.initShortcodeProductListeners();
         mp_cart.initCartFormListeners();
         mp_cart.initProductOptionsLightbox();
+		mp_cart.initCartButtonListeners();
     };
 
     /**
@@ -233,9 +225,30 @@ var mp_cart = { };
             if ( resp.success ) {
 
                 //console.log( resp.data );
-                if ( resp.data.image ) {
-                    $container.find( '.mp_product_image_single' ).attr( 'src', resp.data.image );
-                    $container.find( '.mp_product_image_link' ).attr( 'href', resp.data.image );
+                if (resp.data.image) {
+                    if ($container.find('.mp_product_image_link').size() == 0) {
+                        $('.mp_single_product_images').html(
+                            $('<a/>').attr({
+                                'class': 'mp_product_image_link mp_lightbox cboxElement',
+                                'rel': 'lightbox enclosure',
+                                'href': resp.data.image
+                            }).html($('<img/>').attr({
+                                'class': 'mp_product_image_single photo',
+                                'src': resp.data.image
+                            }))
+                        );
+                        //reinit the lightbox
+                        $( '.mp_product_image_link' ).filter( '.mp_lightbox' ).colorbox( {
+                            maxWidth: "90%",
+                            maxHeight: "90%",
+                            close: "&times;"
+                        } );
+                    } else {
+                        $container.find('.mp_product_image_single').attr('src', resp.data.image);
+                        $container.find('.mp_product_image_link').attr('href', resp.data.image);
+                    }
+                }else{
+                    $('.mp_product_image_link').remove();
                 }
 
                 //if ( resp.data.description ) {
@@ -357,7 +370,11 @@ var mp_cart = { };
                     }
 
                     mp_cart.update( resp.data.minicart );
-
+					mp_cart.update_widget( resp.data.widgetcart );
+					
+					//Init button listeners when ajax loaded
+					mp_cart.initCartButtonListeners();
+					
                     $form.get( 0 ).reset();
 
                     setTimeout( function() {
@@ -413,6 +430,26 @@ var mp_cart = { };
             $( window ).trigger( 'resize' );
         } );
     }
+	
+	/**
+     * Remove all items from the shopping cart
+     *
+     * @since 3.0
+     */
+    mp_cart.emptyCart = function() {
+        var url = mp_cart_i18n.ajaxurl + '?action=mp_update_cart';
+        var data = {
+            "cart_action": "empty_cart"
+        };
+
+        $.post( url, data ).done( function( resp ) {
+            if ( resp.success ) {
+                if ( resp.data.item_count == 0 ) {
+                    window.location.href = window.location.href;
+                }
+            }
+        } );
+    }
 
     /**
      * Update the cart html
@@ -423,6 +460,16 @@ var mp_cart = { };
     mp_cart.update = function( html ) {
         $( '#mp-floating-cart' ).replaceWith( html );
         this.initCartAnimation();
+    };
+	
+	/**
+     * Update the cart widget html
+     *
+     * @since 3.0
+     * @param string html The cart html.
+     */
+    mp_cart.update_widget = function( html ) {
+        $( '#mp-cart-widget' ).html( html );
     };
 
     /**

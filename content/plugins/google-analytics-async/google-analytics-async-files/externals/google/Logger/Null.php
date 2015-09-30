@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-if (!class_exists('Google_Client')) {
+if (!class_exists('GAPGoogle_Client')) {
   require_once dirname(__FILE__) . '/../autoload.php';
 }
 
@@ -24,7 +24,7 @@ if (!class_exists('Google_Client')) {
  *
  * This logger simply discards all messages.
  */
-class Google_Logger_Null extends Google_Logger_Abstract
+class GAPGoogle_Logger_Null extends GAPGoogle_Logger_Abstract
 {
   /**
    * {@inheritdoc}

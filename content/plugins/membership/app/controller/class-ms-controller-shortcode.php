@@ -192,7 +192,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 	public function membership_register_user( $atts ) {
 		MS_Helper_Shortcode::did_shortcode( MS_Helper_Shortcode::SCODE_REGISTER_USER );
 
-		lib2()->array->equip_request(
+		lib3()->array->equip_request(
 			'first_name',
 			'last_name',
 			'username',
@@ -209,20 +209,20 @@ class MS_Controller_Shortcode extends MS_Controller {
 					'username' => substr( trim( $_REQUEST['username'] ), 0, 50 ),
 					'email' => substr( trim( $_REQUEST['email'] ), 0, 50 ),
 					'membership_id' => trim( $_REQUEST['membership_id'] ),
-					'label_first_name' => __( 'First Name', MS_TEXT_DOMAIN ),
-					'label_last_name' => __( 'Last Name', MS_TEXT_DOMAIN ),
-					'label_username' => __( 'Choose a Username', MS_TEXT_DOMAIN ),
-					'label_email' => __( 'Email Address', MS_TEXT_DOMAIN ),
-					'label_password' => __( 'Password', MS_TEXT_DOMAIN ),
-					'label_password2' => __( 'Confirm Password', MS_TEXT_DOMAIN ),
-					'label_register' => __( 'Register My Account', MS_TEXT_DOMAIN ),
+					'label_first_name' => __( 'First Name', 'membership2' ),
+					'label_last_name' => __( 'Last Name', 'membership2' ),
+					'label_username' => __( 'Choose a Username', 'membership2' ),
+					'label_email' => __( 'Email Address', 'membership2' ),
+					'label_password' => __( 'Password', 'membership2' ),
+					'label_password2' => __( 'Confirm Password', 'membership2' ),
+					'label_register' => __( 'Register My Account', 'membership2' ),
 					'hint_first_name' => '',
 					'hint_last_name' => '',
 					'hint_username' => '',
 					'hint_email' => '',
 					'hint_password' => '',
 					'hint_password2' => '',
-					'title' => __( 'Create an Account', MS_TEXT_DOMAIN ),
+					'title' => __( 'Create an Account', 'membership2' ),
 					'loginlink' => true,
 					'errors' => '',
 				),
@@ -231,7 +231,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 		);
 		$data['action'] = 'register_user';
 		$data['step'] = MS_Controller_Frontend::STEP_REGISTER_SUBMIT;
-		$data['loginlink'] = lib2()->is_true( $data['loginlink'] );
+		$data['loginlink'] = lib3()->is_true( $data['loginlink'] );
 
 		$view = MS_Factory::create( 'MS_View_Shortcode_RegisterUser' );
 		$view->data = apply_filters( 'ms_view_shortcode_registeruser_data', $data, $this );
@@ -253,11 +253,11 @@ class MS_Controller_Shortcode extends MS_Controller {
 			'ms_controller_shortcode_membership_signup_atts',
 			shortcode_atts(
 				array(
-					MS_Helper_Membership::MEMBERSHIP_ACTION_SIGNUP . '_text' => __( 'Signup', MS_TEXT_DOMAIN ),
-					MS_Helper_Membership::MEMBERSHIP_ACTION_MOVE . '_text' => __( 'Change', MS_TEXT_DOMAIN ),
-					MS_Helper_Membership::MEMBERSHIP_ACTION_CANCEL . '_text' => __( 'Cancel', MS_TEXT_DOMAIN ),
-					MS_Helper_Membership::MEMBERSHIP_ACTION_RENEW . '_text' => __( 'Renew', MS_TEXT_DOMAIN ),
-					MS_Helper_Membership::MEMBERSHIP_ACTION_PAY . '_text' => __( 'Complete Payment', MS_TEXT_DOMAIN ),
+					MS_Helper_Membership::MEMBERSHIP_ACTION_SIGNUP . '_text' => __( 'Signup', 'membership2' ),
+					MS_Helper_Membership::MEMBERSHIP_ACTION_MOVE . '_text' => __( 'Change', 'membership2' ),
+					MS_Helper_Membership::MEMBERSHIP_ACTION_CANCEL . '_text' => __( 'Cancel', 'membership2' ),
+					MS_Helper_Membership::MEMBERSHIP_ACTION_RENEW . '_text' => __( 'Renew', 'membership2' ),
+					MS_Helper_Membership::MEMBERSHIP_ACTION_PAY . '_text' => __( 'Complete Payment', 'membership2' ),
 				),
 				$atts
 			)
@@ -352,7 +352,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 			shortcode_atts(
 				array(
 					'id' => 0,
-					'label' => __( 'Membership title:', MS_TEXT_DOMAIN ),
+					'label' => __( 'Membership title:', 'membership2' ),
 					'title' => '', // deprecated @since  1.0.0
 				),
 				$atts
@@ -405,7 +405,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 				array(
 					'id' => 0,
 					'currency' => true,
-					'label' => __( 'Membership price:', MS_TEXT_DOMAIN ),
+					'label' => __( 'Membership price:', 'membership2' ),
 				),
 				$atts
 			)
@@ -413,7 +413,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 		extract( $data );
 
 		if ( ! empty( $id ) ) {
-			if ( lib2()->is_true( $currency ) ) {
+			if ( lib3()->is_true( $currency ) ) {
 				$settings = MS_Factory::load( 'MS_Model_Settings' );
 				$currency = $settings->currency;
 			} else {
@@ -463,7 +463,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 			shortcode_atts(
 				array(
 					'id' => 0,
-					'label' => __( 'Signup', MS_TEXT_DOMAIN ),
+					'label' => __( 'Signup', 'membership2' ),
 				),
 				$atts
 			)
@@ -516,7 +516,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 			shortcode_atts(
 				array(
 					'id' => 0,
-					'label' => __( 'Membership details:', MS_TEXT_DOMAIN ),
+					'label' => __( 'Membership details:', 'membership2' ),
 				),
 				$atts
 			)
@@ -635,10 +635,10 @@ class MS_Controller_Shortcode extends MS_Controller {
 
 					// form="login"
 					'show_remember'   => true,
-					'label_username'  => __( 'Username', MS_TEXT_DOMAIN ),
-					'label_password'  => __( 'Password', MS_TEXT_DOMAIN ),
-					'label_remember'  => __( 'Remember Me', MS_TEXT_DOMAIN ),
-					'label_log_in'    => __( 'Log In', MS_TEXT_DOMAIN ),
+					'label_username'  => __( 'Username', 'membership2' ),
+					'label_password'  => __( 'Password', 'membership2' ),
+					'label_remember'  => __( 'Remember Me', 'membership2' ),
+					'label_log_in'    => __( 'Log In', 'membership2' ),
 					'id_login_form'   => 'loginform',
 					'id_username'     => 'user_login',
 					'id_password'     => 'user_pass',
@@ -648,8 +648,8 @@ class MS_Controller_Shortcode extends MS_Controller {
 					'value_remember'  => false,
 
 					// form="lost"
-					'label_lost_username' => __( 'Username or E-mail', MS_TEXT_DOMAIN ),
-					'label_lostpass'      => __( 'Reset Password', MS_TEXT_DOMAIN ),
+					'label_lost_username' => __( 'Username or E-mail', 'membership2' ),
+					'label_lostpass'      => __( 'Reset Password', 'membership2' ),
 					'id_lost_form'        => 'lostpasswordform',
 					'id_lost_username'    => 'user_login',
 					'id_lostpass'         => 'wp-submit',
@@ -659,13 +659,13 @@ class MS_Controller_Shortcode extends MS_Controller {
 			)
 		);
 
-		$data['header'] = lib2()->is_true( $data['header'] );
-		$data['register'] = lib2()->is_true( $data['register'] );
-		$data['show_note'] = lib2()->is_true( $data['show_note'] );
-		$data['show_labels'] = lib2()->is_true( $data['show_labels'] );
-		$data['show_remember'] = lib2()->is_true( $data['show_remember'] );
-		$data['value_remember'] = lib2()->is_true( $data['value_remember'] );
-		$data['autofocus'] = lib2()->is_true( $data['autofocus'] );
+		$data['header'] = lib3()->is_true( $data['header'] );
+		$data['register'] = lib3()->is_true( $data['register'] );
+		$data['show_note'] = lib3()->is_true( $data['show_note'] );
+		$data['show_labels'] = lib3()->is_true( $data['show_labels'] );
+		$data['show_remember'] = lib3()->is_true( $data['show_remember'] );
+		$data['value_remember'] = lib3()->is_true( $data['value_remember'] );
+		$data['autofocus'] = lib3()->is_true( $data['autofocus'] );
 
 		$view = MS_Factory::create( 'MS_View_Shortcode_Login' );
 		$view->data = apply_filters( 'ms_view_shortcode_login_data', $data, $this );
@@ -721,35 +721,35 @@ class MS_Controller_Shortcode extends MS_Controller {
 				array(
 					'show_membership' => true,
 					'show_membership_change' => true,
-					'membership_title' => __( 'Your Membership', MS_TEXT_DOMAIN ),
-					'membership_change_label' => __( 'Change', MS_TEXT_DOMAIN ),
+					'membership_title' => __( 'Your Membership', 'membership2' ),
+					'membership_change_label' => __( 'Change', 'membership2' ),
 					'show_profile' => true,
 					'show_profile_change' => true,
-					'profile_title' => __( 'Personal details', MS_TEXT_DOMAIN ),
-					'profile_change_label' => __( 'Edit', MS_TEXT_DOMAIN ),
+					'profile_title' => __( 'Personal details', 'membership2' ),
+					'profile_change_label' => __( 'Edit', 'membership2' ),
 					'show_invoices' => true,
 					'limit_invoices' => 10,
 					'show_all_invoices' => true,
-					'invoices_title' => __( 'Invoices', MS_TEXT_DOMAIN ),
-					'invoices_details_label' => __( 'View all', MS_TEXT_DOMAIN ),
+					'invoices_title' => __( 'Invoices', 'membership2' ),
+					'invoices_details_label' => __( 'View all', 'membership2' ),
 					'show_activity' => true,
 					'limit_activities' => 10,
 					'show_all_activities' => true,
-					'activity_title' => __( 'Activities', MS_TEXT_DOMAIN ),
-					'activity_details_label' => __( 'View all', MS_TEXT_DOMAIN ),
+					'activity_title' => __( 'Activities', 'membership2' ),
+					'activity_details_label' => __( 'View all', 'membership2' ),
 				),
 				$atts
 			)
 		);
 
-		$data['show_membership'] = lib2()->is_true( $data['show_membership'] );
-		$data['show_membership_change'] = lib2()->is_true( $data['show_membership_change'] );
-		$data['show_profile'] = lib2()->is_true( $data['show_profile'] );
-		$data['show_profile_change'] = lib2()->is_true( $data['show_profile_change'] );
-		$data['show_invoices'] = lib2()->is_true( $data['show_invoices'] );
-		$data['show_all_invoices'] = lib2()->is_true( $data['show_all_invoices'] );
-		$data['show_activity'] = lib2()->is_true( $data['show_activity'] );
-		$data['show_all_activities'] = lib2()->is_true( $data['show_all_activities'] );
+		$data['show_membership'] = lib3()->is_true( $data['show_membership'] );
+		$data['show_membership_change'] = lib3()->is_true( $data['show_membership_change'] );
+		$data['show_profile'] = lib3()->is_true( $data['show_profile'] );
+		$data['show_profile_change'] = lib3()->is_true( $data['show_profile_change'] );
+		$data['show_invoices'] = lib3()->is_true( $data['show_invoices'] );
+		$data['show_all_invoices'] = lib3()->is_true( $data['show_all_invoices'] );
+		$data['show_activity'] = lib3()->is_true( $data['show_activity'] );
+		$data['show_all_activities'] = lib3()->is_true( $data['show_all_activities'] );
 
 		$data['limit_invoices'] = absint( $data['limit_invoices'] );
 		$data['limit_activities'] = absint( $data['limit_activities'] );
@@ -813,7 +813,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 			'ms_controller_shortcode_membership_account_link_atts',
 			shortcode_atts(
 				array(
-					'label' => __( 'Visit your account page for more information.', MS_TEXT_DOMAIN ),
+					'label' => __( 'Visit your account page for more information.', 'membership2' ),
 				),
 				$atts
 			)
@@ -926,7 +926,7 @@ class MS_Controller_Shortcode extends MS_Controller {
 		$content = sprintf(
 			'<p class="ms-alert-box %1$s">%2$s</p> ',
 			$class,
-			__( $content, MS_TEXT_DOMAIN )
+			__( $content, 'membership2' )
 		);
 
 		$content = do_shortcode( $content );
@@ -1173,11 +1173,11 @@ class MS_Controller_Shortcode extends MS_Controller {
 				'<p class="ms-alert-box ms-alert-error ms-unprotected">%s<br /><br /><em>(%s)</em></p>',
 				__(
 					'Content Protection is disabled. Please enable the protection to see this shortcode.',
-					MS_TEXT_DOMAIN
+					'membership2'
 				),
 				__(
 					'This message is only displayed to Site Administrators',
-					MS_TEXT_DOMAIN
+					'membership2'
 				)
 			);
 		} else {

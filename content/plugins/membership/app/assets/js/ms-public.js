@@ -1,4 +1,4 @@
-/*! Membership 2 Pro - v1.0.21
+/*! Membership 2 Pro - v1.0.22
  * https://premium.wpmudev.org/project/membership/
  * Copyright (c) 2015; * Licensed GPLv2+ */
 /*global window:false */
@@ -99,7 +99,7 @@ window.ms_init.gateway_authorize = function init () {
 		}
 	};
 
-	jQuery( '.chosen-select' ).select2();
+	jQuery( '.ms-select' ).wpmuiSelect();
 
 	if ( jQuery( '#ms-authorize-cim-profiles-wrapper' ).is(':visible') ) {
 		jQuery( 'input[name="profile"]').change( function() {

@@ -1,11 +1,11 @@
 <?php
 /**
  * The UI component.
- * Access via function `lib2()->ui`.
+ * Access via function `lib3()->ui`.
  *
  * @since  1.1.4
  */
-class TheLib_2_0_3_Ui extends TheLib_2_0_3 {
+class TheLib_Ui extends TheLib {
 
 	/**
 	 * Class constructor
@@ -28,7 +28,6 @@ class TheLib_2_0_3_Ui extends TheLib_2_0_3 {
 	 *
 	 * Defined modules:
 	 *  - core
-	 *  - scrollbar
 	 *  - select
 	 *  - vnav
 	 *  - card-list
@@ -48,33 +47,33 @@ class TheLib_2_0_3_Ui extends TheLib_2_0_3 {
 	public function add( $module = 'core', $onpage = 'all' ) {
 		switch ( $module ) {
 			case 'core':
-				$this->css( $this->_css_url( 'wpmu-ui.2.min.css' ), $onpage );
-				$this->js( $this->_js_url( 'wpmu-ui.2.min.js' ), $onpage );
+				$this->css( $this->_css_url( 'wpmu-ui.3.min.css' ), $onpage );
+				$this->js( $this->_js_url( 'wpmu-ui.3.min.js' ), $onpage );
 				break;
 
-			case 'scrollbar':
-				$this->js( $this->_js_url( 'tiny-scrollbar.2.min.js' ), $onpage );
+			case 'animate':
+				$this->css( $this->_css_url( 'animate.3.min.css' ), $onpage );
 				break;
 
 			case 'select':
-				$this->css( $this->_css_url( 'select2.2.min.css' ), $onpage );
-				$this->js( $this->_js_url( 'select2.2.min.js' ), $onpage );
+				$this->css( $this->_css_url( 'select2.3.min.css' ), $onpage );
+				$this->js( $this->_js_url( 'select2.3.min.js' ), $onpage );
 				break;
 
 			case 'vnav':
-				$this->css( $this->_css_url( 'wpmu-vnav.2.min.css' ), $onpage );
-				$this->js( $this->_js_url( 'wpmu-vnav.2.min.js' ), $onpage );
+				$this->css( $this->_css_url( 'wpmu-vnav.3.min.css' ), $onpage );
+				$this->js( $this->_js_url( 'wpmu-vnav.3.min.js' ), $onpage );
 				break;
 
 			case 'card-list':
 			case 'card_list':
-				$this->css( $this->_css_url( 'wpmu-card-list.2.min.css' ), $onpage );
-				$this->js( $this->_js_url( 'wpmu-card-list.2.min.js' ), $onpage );
+				$this->css( $this->_css_url( 'wpmu-card-list.3.min.css' ), $onpage );
+				$this->js( $this->_js_url( 'wpmu-card-list.3.min.js' ), $onpage );
 				break;
 
 			case 'html-element':
 			case 'html_element':
-				$this->css( $this->_css_url( 'wpmu-html.2.min.css' ), $onpage );
+				$this->css( $this->_css_url( 'wpmu-html.3.min.css' ), $onpage );
 				break;
 
 			case 'media':
@@ -82,20 +81,20 @@ class TheLib_2_0_3_Ui extends TheLib_2_0_3 {
 				break;
 
 			case 'fontawesome':
-				$this->css( $this->_css_url( 'fontawesome.2.min.css' ), $onpage );
+				$this->css( $this->_css_url( 'fontawesome.3.min.css' ), $onpage );
 				break;
 
 			case 'jquery-ui':
 				$this->js( 'jquery-ui-core', $onpage );
 				$this->js( 'jquery-ui-datepicker', $onpage );
 				$this->js( 'jquery-ui-draggable', $onpage );
-				$this->css( $this->_css_url( 'jquery-ui.wpmui.2.min.css' ), $onpage );
+				$this->css( $this->_css_url( 'jquery-ui.wpmui.3.min.css' ), $onpage );
 				break;
 
 			default:
 				$ext = strrchr( $module, '.' );
 
-				if ( defined( 'WDEV_UNMINIFIED' ) && WDEV_UNMINIFIED ) {
+				if ( WDEV_UNMINIFIED ) {
 					$module = str_replace( '.min' . $ext, $ext, $module );
 				}
 				if ( '.css' === $ext ) {
@@ -511,4 +510,4 @@ class TheLib_2_0_3_Ui extends TheLib_2_0_3 {
 		}
 	}
 
-};
+}

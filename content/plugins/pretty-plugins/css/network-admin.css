@@ -22,7 +22,7 @@ table.plugins {
 .setting-disabled span.title {
 	color: #999;
 }
-.setting-disabled span.input-text-wrap input, .setting-disabled textarea {
+.setting-disabled span.input-text-wrap input, .setting-disabled textarea {				    	 					 			 
 	background: #ededed;
 }
 .inline-edit-row fieldset label textarea.plugin_description {
@@ -30,4 +30,4 @@ table.plugins {
 }
 
 
-/* 133620-1423010562-ai */
+/* 133620-1443654439-au */

@@ -52,7 +52,7 @@ function avatars_upgrade_39() {
 				$fileslist = $wp_filesystem->dirlist( WP_CONTENT_DIR . '/blogs.dir/avatars/blog/' . $folder );
 
 				foreach ( $fileslist as $file => $file_atts ) {
-					$wp_filesystem->copy( WP_CONTENT_DIR . '/blogs.dir/avatars/blog/' . $folder . '/' . $file, $blog_avatar_dir . $folder . '/' . $file );	     	  								 
+					$wp_filesystem->copy( WP_CONTENT_DIR . '/blogs.dir/avatars/blog/' . $folder . '/' . $file, $blog_avatar_dir . $folder . '/' . $file );
 				}
 
 			}

@@ -4,6 +4,23 @@ Author: Philipp Stracker, Fabio Jun, Rheinard Khorf
 Change Log:
 ----------------------------------------------------------------------
 
+1.0.2.2
+----------------------------------------------------------------------
+- Improve the shortcode column in the admin membership list
+- Improve layout of [ms-note] messages on front-end and select lists in admin pages
+- Improve performance of the billings page, show additional details in edit-invoice screen
+- Fix wrong registration workflow that showed membership list instead of payment form
+- Fix the Reset Password workflow
+- Fix issue in WP 4.3 that sent password-reset emails during user registration
+- Fix incompatibility with MarketPress 3
+- Fix problem with user registration when the password fields were hidden via Profile Fields Add-on
+- Fix ms-protect-content shortcode: Resolve shortcodes in protected content also for admin users
+- Fix bug in setup-wizard that sometimes did not finish after creating the first membership
+- Fix issue where Manual Payment displayed price multiple times (e.g. when using Yoast SEO)
+- Fix an issue with Internet Explorer privacy settings that caused IE to reject M2 cookies
+- Replace text-domain constant MS_TEXT_DOMAIN with string 'membership2' to comply with WordPress standards
+- Update several background libraries (mainly select2, fontawesome, jQueryUI)
+
 1.0.2.1
 ----------------------------------------------------------------------
 - Fix parse error during user registration in older PHP versions
@@ -432,4 +449,4 @@ Membership2 1.0.0.0
 - Initial version.
 
 
-133620-1442728675-au
+133620-1443654417-au

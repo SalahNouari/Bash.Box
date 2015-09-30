@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-if (!class_exists('Google_Client')) {
+if (!class_exists('GAPGoogle_Client')) {
   require_once dirname(__FILE__) . '/../autoload.php';
 }
 
@@ -27,7 +27,7 @@ if (!class_exists('Google_Client')) {
  *
  * @see https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
  */
-abstract class Google_Logger_Abstract
+abstract class GAPGoogle_Logger_Abstract
 {
   /**
    * Default log format
@@ -118,22 +118,22 @@ abstract class Google_Logger_Abstract
   protected $allowNewLines = false;
 
   /**
-   * @param Google_Client $client  The current Google client
+   * @param GAPGoogle_Client $client  The current Google client
    */
-  public function __construct(Google_Client $client)
+  public function __construct(GAPGoogle_Client $client)
   {
     $this->setLevel(
-        $client->getClassConfig('Google_Logger_Abstract', 'level')
+        $client->getClassConfig('GAPGoogle_Logger_Abstract', 'level')
     );
 
-    $format = $client->getClassConfig('Google_Logger_Abstract', 'log_format');
+    $format = $client->getClassConfig('GAPGoogle_Logger_Abstract', 'log_format');
     $this->logFormat = $format ? $format : self::DEFAULT_LOG_FORMAT;
 
-    $format = $client->getClassConfig('Google_Logger_Abstract', 'date_format');
+    $format = $client->getClassConfig('GAPGoogle_Logger_Abstract', 'date_format');
     $this->dateFormat = $format ? $format : self::DEFAULT_DATE_FORMAT;
 
     $this->allowNewLines = (bool) $client->getClassConfig(
-        'Google_Logger_Abstract',
+        'GAPGoogle_Logger_Abstract',
         'allow_newlines'
     );
   }
@@ -382,7 +382,7 @@ abstract class Google_Logger_Abstract
    *
    * @param  mixed $level   The logging level
    * @return integer $level The normalized level
-   * @throws Google_Logger_Exception If $level is invalid
+   * @throws GAPGoogle_Logger_Exception If $level is invalid
    */
   protected function normalizeLevel($level)
   {
@@ -394,7 +394,7 @@ abstract class Google_Logger_Abstract
       return self::$levels[$level];
     }
 
-    throw new Google_Logger_Exception(
+    throw new GAPGoogle_Logger_Exception(
         sprintf("Unknown LogLevel: '%s'", $level)
     );
   }

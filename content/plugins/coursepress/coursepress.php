@@ -6,7 +6,7 @@ Description: CoursePress Pro turns WordPress into a powerful online learning pla
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 Developers: Marko Miljus ( https://twitter.com/markomiljus ), Rheinard Korf ( https://twitter.com/rheinardkorf )
-Version: 1.2.6.2
+Version: 1.2.6.3
 TextDomain: cp
 Domain Path: /languages/
 WDP ID: 913071
@@ -47,8 +47,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 	 */
 	class CoursePress {
 
-		//public $mp_file = '128762_marketpress-ecommerce-2.9.6.2.zip';
-		public $mp_file = '20150903_marketpress-3.0.zip';
+		public $mp_file = '128762_marketpress-ecommerce-3.0.0.2.zip';
 
 		/**
 		 * Current running instance of CoursePress.
@@ -65,7 +64,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 		 * @since 1.0.0
 		 * @var string
 		 */
-		public $version = '1.2.6.2';
+		public $version = '1.2.6.3';
 
 		/**
 		 * Plugin friendly name.
@@ -203,6 +202,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			 */
 			require_once( $this->plugin_dir . 'includes/classes/class.coursepress-integration.php' );
 
+
 			if ( CoursePress_Capabilities::is_pro() && ! CoursePress_Capabilities::is_campus() ) {
 				// Prepare WPMUDev Dashboard Notifications
 				global $wpmudev_notices;
@@ -227,6 +227,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 				 */
 				include_once( $this->plugin_dir . 'includes/external/dashboard/wpmudev-dash-notification.php' );
 			}
+			//
 
 			// Define custom theme directory for CoursePress theme
 			if ( ! CoursePress_Capabilities::is_campus() ) {
@@ -247,6 +248,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			 */
 			require_once( $this->plugin_dir . 'includes/classes/class.coursepress-campus.php' );
 
+
 			/**
 			 * Basic certificates
 			 * This is Pro only, by changing this flag in the free version you will break it!
@@ -254,6 +256,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			if ( CoursePress_Capabilities::is_pro() ) {
 				require_once( $this->plugin_dir . 'includes/classes/class.basic.certificate.php' );
 			}
+			//
 
 			//Administration area
 			if ( is_admin() ) {
@@ -2970,7 +2973,6 @@ if ( ! class_exists( 'CoursePress' ) ) {
 						$pg = new CoursePress_Virtual_Page( $args );
 					}
 				} else {
-
 					if ( $theme_file != '' ) {
 						global $wp;
 						do_shortcode( '[course_unit_single unit_id="' . $vars['unit_id'] . '"]' ); //required for getting unit results
@@ -2981,7 +2983,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 						$args = array(
 							'slug'        => $wp->request,
 							// 'title' => $unit->details->post_title,
-							'title'       => get_the_title( $unit->details->post_parent ),
+							'title'       => isset( $unit->details ) ? get_the_title( $unit->details->post_parent ) : '',
 							'content'     => $this->get_template_details( $this->plugin_dir . 'includes/templates/course-units-single.php', $vars ),
 							'type'        => 'unit',
 							'is_page'     => true,

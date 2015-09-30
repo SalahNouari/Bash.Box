@@ -1,3 +1,8 @@
+Version 2.20.4 / (30.09.2015)
+============================
+- [Improvement]: SEO improvement for gallery slider
+- [Improvement]: Now the slide info sections with no conent are no longer visible
+
 Version 2.20.3 / (12.09.2015)
 ============================
 - [Fix]: Addressed an issue with undefined IDs while adding shortcodes to WordPress editor

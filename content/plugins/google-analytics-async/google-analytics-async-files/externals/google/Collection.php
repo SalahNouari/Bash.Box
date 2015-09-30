@@ -1,15 +1,15 @@
 <?php
 
-if (!class_exists('Google_Client')) {
+if (!class_exists('GAPGoogle_Client')) {
   require_once dirname(__FILE__) . '/../autoload.php';
 }
 
 /**
- * Extension to the regular Google_Model that automatically
+ * Extension to the regular GAPGoogle_Model that automatically
  * exposes the items array for iteration, so you can just
  * iterate over the object rather than a reference inside.
  */
-class Google_Collection extends Google_Model implements Iterator, Countable
+class GAPGoogle_Collection extends GAPGoogle_Model implements Iterator, Countable
 {
   protected $collection_key = 'items';
 

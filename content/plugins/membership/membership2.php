@@ -2,7 +2,7 @@
 /**
 Plugin Name: Membership 2 Pro
 Plugin URI:  https://premium.wpmudev.org/project/membership/
-Version:     1.0.2.1
+Version:     1.0.2.2
 Description: The most powerful, easy to use and flexible membership plugin for WordPress sites available.
 Author:      WPMU DEV
 Author URI:  http://premium.wpmudev.org/
@@ -41,14 +41,14 @@ Text Domain: membership2
  * @since  1.0.0
  */
 function membership2_init_pro_app() {
-	if ( defined( 'MS_TEXT_DOMAIN' ) ) {
+	if ( defined( 'MS_PLUGIN' ) ) {
 		if ( is_admin() ) {
 			// Can happen in Multisite installs where a sub-site has activated the
 			// plugin and then the plugin is also activated in network-admin.
 			printf(
 				'<div class="notice error"><p><strong>%s</strong>: %s</p></div>',
 				sprintf(
-					__( 'Could not load the plugin %s, because another version of the plugin is already loaded', MS_TEXT_DOMAIN ),
+					__( 'Could not load the plugin %s, because another version of the plugin is already loaded', 'membership2' ),
 					'Membership 2 Pro'
 				),
 				MS_PLUGIN . ' (v' . MS_PLUGIN_VERSION . ')'
@@ -62,14 +62,7 @@ function membership2_init_pro_app() {
 	 *
 	 * @since  1.0.0
 	 */
-	define( 'MS_PLUGIN_VERSION', '1.0.2.1' );
-
-	/**
-	 * Plugin text domain.
-	 *
-	 * @since  1.0.0
-	 */
-	define( 'MS_TEXT_DOMAIN', 'membership2' );
+	define( 'MS_PLUGIN_VERSION', '1.0.2.2' );
 
 	/**
 	 * Plugin identifier constant.
@@ -113,24 +106,20 @@ function membership2_init_pro_app() {
 	}
 
 	/**
-	 * translate_plugin adds correct hook to translate the plugin via the
-	 * WordPress function `load_text_domain`.
+	 * Translation.
 	 *
 	 * Tipp:
 	 *   The translation files must have the filename [TEXT-DOMAIN]-[locale].mo
 	 *   Example: membership2-en_EN.mo  /  membership2-de_DE.mo
-	 *
-	 * Important:
-	 *   This function must be called instantly (i.e. BEFORE the hook
-	 *   `plugins_loaded` is fired!)
-	 *
-	 * @param  string $domain The plugins text-domain.
-	 * @param  string $rel_dir Translation directory, relative to WP_PLUGIN_DIR.
 	 */
-	lib2()->translate_plugin(
-		MS_TEXT_DOMAIN,
-		dirname( plugin_basename( __FILE__ ) ) . '/languages'
-	);
+	function membership2_translate_plugin() {
+		load_plugin_textdomain(
+			'membership2',
+			false,
+			dirname( plugin_basename( __FILE__ ) ) . '/languages'
+		);
+	}
+	add_action( 'plugins_loaded', 'membership2_translate_plugin' );
 
 	/**
 	 * Create an instance of the plugin object.
@@ -523,7 +512,7 @@ class MS_Plugin {
 	 */
 	public function plugin_activation() {
 		// Prevent recursion during plugin activation.
-		$refresh = lib2()->session->get( 'refresh_url_rules' );
+		$refresh = lib3()->session->get( 'refresh_url_rules' );
 		if ( $refresh ) { return; }
 
 		// Update the Membership2 database entries after activation.
@@ -543,12 +532,12 @@ class MS_Plugin {
 		if ( isset( $_GET['ms_flushed'] ) && 'yes' == $_GET['ms_flushed'] ) {
 			$refresh = true;
 		} else {
-			$refresh = lib2()->session->get( 'refresh_url_rules' );
+			$refresh = lib3()->session->get( 'refresh_url_rules' );
 		}
 
 		if ( $refresh ) { return; }
 
-		lib2()->session->add( 'refresh_url_rules', true );
+		lib3()->session->add( 'refresh_url_rules', true );
 
 		// The URL param is only to avoid cache.
 		$url = esc_url_raw(
@@ -564,7 +553,7 @@ class MS_Plugin {
 	 * @since  1.0.0
 	 */
 	public function maybe_flush_rewrite_rules() {
-		$refresh = lib2()->session->get_clear( 'refresh_url_rules' );
+		$refresh = lib3()->session->get_clear( 'refresh_url_rules' );
 		if ( ! $refresh ) { return; }
 
 		// Set up the plugin specific rewrite rules again.
@@ -681,7 +670,7 @@ class MS_Plugin {
 	 */
 	public function plugin_settings_link( $links ) {
 		if ( ! is_network_admin() ) {
-			$text = __( 'Settings', MS_TEXT_DOMAIN );
+			$text = __( 'Settings', 'membership2' );
 			$url = MS_Controller_Plugin::get_admin_url( 'settings' );
 
 			if ( $this->settings->initial_setup ) {

@@ -192,7 +192,7 @@ class Domainmap_Module extends domain_map{
 		$request = wp_remote_head(  $this->_http->getHostInfo("https") );
 
 		if( is_wp_error( $request ) ){
-			if( isset( $request->errors['http_request_failed'] ) && isset( $request->errors['http_request_failed'][0] ) && strpos($request->errors['http_request_failed'][0], "SSL") !== false)
+			if( isset( $request->errors['http_request_failed'] ) && isset( $request->errors['http_request_failed'][0] ) && ( strpos($request->errors['http_request_failed'][0], "SSL") !== false || strpos($request->errors['http_request_failed'][0], "ssl") !== false) )
 				return true;
 
 			return false;
@@ -221,7 +221,7 @@ class Domainmap_Module extends domain_map{
 	 * @return mixed
 	 */
 	protected function get_main_ajax_url( $scheme = 'admin'  ){
-		return  $this->_replace_last_occurence('network/', '', network_admin_url( 'admin-ajax.php', $scheme ) );
+		return  $this->_replace_last_occurrence('network/', '', network_admin_url( 'admin-ajax.php', $scheme ) );
 	}
 
 	/**
@@ -235,7 +235,7 @@ class Domainmap_Module extends domain_map{
 	 *
 	 * @return mixed
 	 */
-	private function _replace_last_occurence($search, $replace, $string)
+	private function _replace_last_occurrence($search, $replace, $string)
 	{
 		$pos = strrpos($string, $search);
 

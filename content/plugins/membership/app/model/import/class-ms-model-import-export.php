@@ -158,11 +158,11 @@ class MS_Model_Import_Export extends MS_Model {
 		$data->plugin_version = MS_PLUGIN_VERSION;
 		$data->export_time = date( 'Y-m-d H:i' );
 		$data->notes = array(
-			__( 'Exported data:', MS_TEXT_DOMAIN ),
-			__( '- Memberships (without protection rules)', MS_TEXT_DOMAIN ),
-			__( '- Members (including Stripe/Authorize payment settings)', MS_TEXT_DOMAIN ),
-			__( '- Subscriptions (link between Members and Memberships)', MS_TEXT_DOMAIN ),
-			__( '- Invoices', MS_TEXT_DOMAIN ),
+			__( 'Exported data:', 'membership2' ),
+			__( '- Memberships (without protection rules)', 'membership2' ),
+			__( '- Members (including Stripe/Authorize payment settings)', 'membership2' ),
+			__( '- Subscriptions (link between Members and Memberships)', 'membership2' ),
+			__( '- Invoices', 'membership2' ),
 		);
 
 		$data->memberships = array();
@@ -197,7 +197,7 @@ class MS_Model_Import_Export extends MS_Model {
 			$data->coupons[] = $this->export_coupon( $coupon->id );
 		}
 
-		lib2()->net->file_download( json_encode( $data ), 'membership2-export.json' );
+		lib3()->net->file_download( json_encode( $data ), 'membership2-export.json' );
 	}
 
 	/**
@@ -416,7 +416,7 @@ class MS_Model_Import_Export extends MS_Model {
 		static $Counter = 10000;
 		static $Ids = array();
 
-		$Ids[$type] = lib2()->array->get( $Ids[$type] );
+		$Ids[$type] = lib3()->array->get( $Ids[$type] );
 		if ( ! isset( $Ids[$type][$internal_id] ) ) {
 			$Ids[$type][$internal_id] = $Counter;
 			$Counter += 1;

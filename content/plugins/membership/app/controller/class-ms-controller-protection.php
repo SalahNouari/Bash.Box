@@ -110,7 +110,7 @@ class MS_Controller_Protection extends MS_Controller {
 		if ( $this->verify_nonce( 'bulk' ) ) {
 			// Bulk-edit
 
-			lib2()->array->equip_post( 'action', 'action2', 'item', 'rule_type' );
+			lib3()->array->equip_post( 'action', 'action2', 'item', 'rule_type' );
 			$action = $_POST['action'];
 			if ( empty( $action ) || $action == '-1' ) {
 				$action = $_POST['action2'];
@@ -300,7 +300,7 @@ class MS_Controller_Protection extends MS_Controller {
 				$tabs[MS_Rule_MemberCaps::RULE_ID] = false;
 			}
 
-			lib2()->array->equip( $_GET, 'page' );
+			lib3()->array->equip( $_GET, 'page' );
 
 			// Allow Add-ons to add or remove rule tabs
 			$tabs = apply_filters(
@@ -393,7 +393,7 @@ class MS_Controller_Protection extends MS_Controller {
 	 * @since  1.0.0
 	 */
 	public function enqueue_styles() {
-		lib2()->ui->add( 'jquery-ui' );
+		lib3()->ui->add( 'jquery-ui' );
 
 		do_action( 'ms_controller_protection_enqueue_styles', $this );
 	}
@@ -416,7 +416,7 @@ class MS_Controller_Protection extends MS_Controller {
 		$data = array(
 			'ms_init' => array(),
 			'lang' => array(
-				'quickedit_error' => __( 'Error while saving changes.', MS_TEXT_DOMAIN ),
+				'quickedit_error' => __( 'Error while saving changes.', 'membership2' ),
 			),
 			'dripped' => $dripped,
 		);
@@ -425,9 +425,9 @@ class MS_Controller_Protection extends MS_Controller {
 
 		switch ( $this->get_active_tab() ) {
 			case 'url':
-				$data['valid_rule_msg'] = __( 'Valid', MS_TEXT_DOMAIN );
-				$data['invalid_rule_msg'] = __( 'Invalid', MS_TEXT_DOMAIN );
-				$data['empty_msg'] = __( 'Before testing you have to first enter one or more Page URLs above.', MS_TEXT_DOMAIN );
+				$data['valid_rule_msg'] = __( 'Valid', 'membership2' );
+				$data['invalid_rule_msg'] = __( 'Invalid', 'membership2' );
+				$data['empty_msg'] = __( 'Before testing you have to first enter one or more Page URLs above.', 'membership2' );
 				$data['ms_init'][] = 'view_membership_urlgroup';
 				break;
 
@@ -437,7 +437,7 @@ class MS_Controller_Protection extends MS_Controller {
 				break;
 		}
 
-		lib2()->ui->data( 'ms_data', $data );
+		lib3()->ui->data( 'ms_data', $data );
 		wp_enqueue_script( 'ms-admin' );
 
 		do_action( 'ms_controller_protection_enqueue_scripts', $this );

@@ -43,9 +43,9 @@ class MS_Gateway_Manual extends MS_Gateway {
 		parent::after_load();
 
 		$this->id = self::ID;
-		$this->name = __( 'Manual Payment Gateway', MS_TEXT_DOMAIN );
-		$this->description = __( '(Bank orders, cash, etc)', MS_TEXT_DOMAIN );
-		$this->group = __( 'Manual Payment', MS_TEXT_DOMAIN );
+		$this->name = __( 'Manual Payment Gateway', 'membership2' );
+		$this->description = __( '(Bank orders, cash, etc)', 'membership2' );
+		$this->group = __( 'Manual Payment', 'membership2' );
 		$this->manual_payment = true; // Recurring billed/paid manually
 		$this->pro_rate = true;
 
@@ -62,64 +62,76 @@ class MS_Gateway_Manual extends MS_Gateway {
 	 *
 	 * Returns a default messsage if gateway is not configured.
 	 *
-	 * * Hooks Actions: *
-	 * * ms_controller_gateway_purchase_info_content
+	 * @hook ms_controller_gateway_purchase_info_content
 	 *
 	 * @since  1.0.0
 	 * @return string The payment info.
 	 */
 	public function purchase_info_content() {
-		do_action(
-			'ms_gateway_manual_purchase_info_content_before',
-			$this
-		);
+		static $Processed = false;
 
-		if ( empty( $this->payment_info ) ) {
-			$link = MS_Controller_Plugin::get_admin_url( 'settings' );
-			ob_start();
-			?>
-				<?php _e( 'This is only an example of manual payment gateway instructions', MS_TEXT_DOMAIN ); ?>
-				<br />
-				<?php
-				printf(
-					__( 'Edit it %shere%s', MS_TEXT_DOMAIN ),
-					'<a href="' . $link . '">',
-					'</a>'
-				);
+		/**
+		 * If some plugin calls `the_content()` multiple times then this
+		 * function will also run multiple times.
+		 * We want to process the details only once, so we have this condition!
+		 */
+		if ( ! $Processed ) {
+			$Processed = true;
+
+			do_action(
+				'ms_gateway_manual_purchase_info_content_before',
+				$this
+			);
+
+			if ( empty( $this->payment_info ) ) {
+				$link = MS_Controller_Plugin::get_admin_url( 'settings' );
+				ob_start();
 				?>
-				<br /><br />
-				<?php _e( 'Name: Example name.', MS_TEXT_DOMAIN ); ?>
-				<br />
-				<?php _e( 'Bank: Example bank.', MS_TEXT_DOMAIN ); ?>
-				<br />
-				<?php _e( 'Bank account: Example bank account 1234.', MS_TEXT_DOMAIN ); ?>
-				<br />
-			<?php
-			$this->payment_info = ob_get_clean();
-		}
+					<?php _e( 'This is only an example of manual payment gateway instructions', 'membership2' ); ?>
+					<br />
+					<?php
+					printf(
+						__( 'Edit it %shere%s', 'membership2' ),
+						'<a href="' . $link . '">',
+						'</a>'
+					);
+					?>
+					<br /><br />
+					<?php _e( 'Name: Example name.', 'membership2' ); ?>
+					<br />
+					<?php _e( 'Bank: Example bank.', 'membership2' ); ?>
+					<br />
+					<?php _e( 'Bank account: Example bank account 1234.', 'membership2' ); ?>
+					<br />
+				<?php
+				$this->payment_info = ob_get_clean();
+			}
 
-		if ( ! empty( $_POST['ms_relationship_id'] ) ) {
-			$subscription = MS_Factory::load(
-				'MS_Model_Relationship',
-				$_POST['ms_relationship_id']
-			);
-			$invoice = $subscription->get_current_invoice();
-			$this->payment_info .= sprintf(
-				'<br />%s: %s%s',
-				__( 'Total value', MS_TEXT_DOMAIN ),
-				$invoice->currency,
-				$invoice->total
-			);
+			$this->payment_info = wpautop( $this->payment_info );
 
-			// The user did make his intention to pay the invoice. Set status
-			// to billed.
-			$invoice->status = MS_Model_Invoice::STATUS_BILLED;
-			$invoice->save();
+			if ( ! empty( $_POST['ms_relationship_id'] ) ) {
+				$subscription = MS_Factory::load(
+					'MS_Model_Relationship',
+					$_POST['ms_relationship_id']
+				);
+				$invoice = $subscription->get_current_invoice();
+				$this->payment_info .= sprintf(
+					'<div class="ms-manual-price">%s: <span class="ms-price">%s%s</span></div>',
+					__( 'Total value', 'membership2' ),
+					$invoice->currency,
+					$invoice->total
+				);
+
+				// The user did make his intention to pay the invoice. Set status
+				// to billed.
+				$invoice->status = MS_Model_Invoice::STATUS_BILLED;
+				$invoice->save();
+			}
 		}
 
 		return apply_filters(
 			'ms_gateway_manual_purchase_info_content',
-			wpautop( $this->payment_info )
+			$this->payment_info
 		);
 	}
 

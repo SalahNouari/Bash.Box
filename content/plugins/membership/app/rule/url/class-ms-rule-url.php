@@ -23,7 +23,7 @@ class MS_Rule_Url extends MS_Controller {
 			MS_Model_Rule::register_rule(
 				self::RULE_ID,
 				__CLASS__,
-				__( 'URL Restrictions', MS_TEXT_DOMAIN ),
+				__( 'URL Restrictions', 'membership2' ),
 				0
 			);
 		}
@@ -99,7 +99,7 @@ class MS_Rule_Url extends MS_Controller {
 
 		switch ( $action ) {
 			case self::ACTION_ADD:
-				lib2()->array->strip_slashes( $_POST, 'url_value' );
+				lib3()->array->strip_slashes( $_POST, 'url_value' );
 
 				$url = $_POST['url_value'];
 				$base = MS_Model_Membership::get_base();

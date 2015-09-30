@@ -139,7 +139,7 @@ jQuery(document).ready(function($){
 		 * @param object $this Refers to the current field object
 		 */
 		$value = apply_filters('wpmudev_field/format_value', $value, $post_id, $this);
-		return apply_filters('wpmudev_field/format_value/' . $this->args['name'], $value, $post_id, $this);
+		return apply_filters('wpmudev_field/format_value/' . $this->args['name'], $value, $post_id, $this);	     	 	 	    	  
 	}
 
 	/**

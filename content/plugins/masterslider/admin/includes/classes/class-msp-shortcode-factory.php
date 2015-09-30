@@ -157,13 +157,17 @@ class MSP_Shortcode_Factory {
 
 
 
-	public function get_ms_slide_info_shortcode( $the_content = '' ){
+    public function get_ms_slide_info_shortcode( $the_content = '' ){
 
-		if( empty( $the_content ) )
-			return '';
+        if( empty( $the_content ) )
+            return '';
 
-		return sprintf( '[%1$s]%2$s[/%1$s]', 'ms_slide_info', $the_content )."\n";
-	}
+        if( "&nbsp;" == $the_content ){
+            $css_class = 'ms-info-empty';
+        }
+
+        return sprintf( '[%1$s css_class="%3$s"]%2$s[/%1$s]', 'ms_slide_info', $the_content, $css_class )."\n";
+    }
 
 
 

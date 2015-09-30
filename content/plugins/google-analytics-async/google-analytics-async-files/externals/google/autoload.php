@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-function google_api_php_client_autoload($className)
+function gapgoogle_api_php_client_autoload($className)
 {
   $classPath = explode('_', $className);
-  if ($classPath[0] != 'Google') {
+  if ($classPath[0] != 'GAPGoogle') {
     return;
   }
   // Drop 'Google', and maximum class file path depth in this project is 3.
@@ -30,4 +30,4 @@ function google_api_php_client_autoload($className)
   }
 }
 
-spl_autoload_register('google_api_php_client_autoload');
+spl_autoload_register('gapgoogle_api_php_client_autoload');

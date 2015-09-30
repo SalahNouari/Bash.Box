@@ -650,7 +650,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The product to show related items for.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" class="mp-select-product" name="product_id" />
+					<select class="mp-select-product" name="product_id"></select>
 				</td>
 			</tr>
 			<tr>
@@ -794,7 +794,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The ID of the product to display.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" name="product_id" data-default="" class="mp-select-product" />
+					<select name="product_id" data-default="" class="mp-select-product"> </select>
 				</td>
 			</tr>
 			<tr>
@@ -845,7 +845,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The ID of the product.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" name="product_id" data-default="" class="mp-select-product" />
+					<select name="product_id" data-default="" class="mp-select-product"></select>
 				</td>
 			</tr>
 			<tr>
@@ -889,7 +889,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The ID of the product.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" name="product_id" data-default="" class="mp-select-product" />
+					<select name="product_id" data-default="" class="mp-select-product"></select>
 				</td>
 			</tr>
 			<tr>
@@ -915,7 +915,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The ID of the product.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" name="product_id" data-default="" class="mp-select-product" />
+					<select name="product_id" data-default="" class="mp-select-product"></select
 				</td>
 			</tr>
 			<!--<tr>
@@ -940,7 +940,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The ID of the product.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" name="product_id" data-default="" class="mp-select-product" />
+					<select name="product_id" data-default="" class="mp-select-product"></select>
 				</td>
 			</tr>
 		</table>
@@ -959,7 +959,7 @@ class MP_Shortcode_Builder {
 			<tr>
 				<th scope="row"><span class="mp-tooltip dashicons dashicons-editor-help"><span><?php _e( 'The ID of the product.', 'mp' ); ?></span></span> product_id</th>
 				<td>
-					<input type="text" name="product_id" data-default="" class="mp-select-product" />
+					<select name="product_id" data-default="" class="mp-select-product"></select>
 				</td>
 			</tr>
 			<!--<tr>
@@ -1076,19 +1076,38 @@ class MP_Shortcode_Builder {
 	 * @access public
 	 */
 	public function enqueue_styles_scripts() {
-		//wp_enqueue_script( 'chosen', mp_plugin_url( 'includes/admin/ui/chosen/chosen.jquery.min.js' ), array( 'jquery' ), MP_VERSION );
-		wp_enqueue_script( 'select2', mp_plugin_url( 'ui/select2/select2.min.js' ), false, MP_VERSION );
+		if ( isset( $_GET['page'] ) ) {
+			$page = isset( $_GET['page'] );
+		} else {
+			$page = '';
+		}
 
-		wp_enqueue_style( 'colorbox', mp_plugin_url( 'includes/admin/ui/colorbox/colorbox.css' ), false, MP_VERSION );
-		wp_enqueue_script( 'colorbox', mp_plugin_url( 'ui/js/jquery.colorbox-min.js' ), false, MP_VERSION );
+		$screenpage = get_current_screen();
 
-		wp_enqueue_style( 'select2', mp_plugin_url( 'ui/select2/select2.css' ), false, MP_VERSION );
-		wp_enqueue_script( 'select2', mp_plugin_url( 'ui/select2/select2.min.js' ), false, MP_VERSION );
+		if ( $page == 'store-settings'
+			|| $page == 'store-settings-presentation'
+			|| $page == 'store-settings-notifications'
+			|| $page == 'store-settings-shipping'
+			|| $page == 'store-settings-payments'
+			|| $page == 'store-settings-productattributes'
+			|| $page == 'store-settings-capabilities'
+			|| $page == 'store-settings-addons'
+			|| ( isset( $_GET['taxonomy'] ) && ($_GET['taxonomy'] == 'product_category' || $_GET['taxonomy'] == 'product_tag') )
+			|| ( isset( $_GET['post_type'] ) && ($_GET['post_type'] == 'mp_coupon' || $_GET['post_type'] == 'mp_order' || $_GET['post_type'] == 'product' || $_GET['post_type'] == 'page') )
+			|| ( isset( $screenpage->post_type ) && ($screenpage->post_type == "post" || $screenpage->post_type == "mp_order" || $screenpage->post_type == "mp_coupon" || $screenpage->post_type == "page") ) )  {
 
-		wp_enqueue_script( 'mp-shortcode-builder', mp_plugin_url( 'includes/admin/ui/js/shortcode-builder.js', array( 'colorbox', 'chosen' ), MP_VERSION ) );
-		wp_localize_script( 'mp-shortcode-builder', 'MP_ShortCode_Builder', array(
-			'select_product' => __( 'Select a Product', 'mp' ),
-		) );
+			wp_enqueue_style( 'colorbox', mp_plugin_url( 'includes/admin/ui/colorbox/colorbox.css' ), false, MP_VERSION );
+			wp_enqueue_script( 'colorbox', mp_plugin_url( 'ui/js/jquery.colorbox-min.js' ), false, MP_VERSION );
+
+			wp_enqueue_style( 'select2', mp_plugin_url( 'ui/select2/select2.css' ), false, MP_VERSION );
+			wp_enqueue_script( 'select2', mp_plugin_url( 'ui/select2/select2.min.js' ), false, MP_VERSION );
+
+			wp_enqueue_script( 'mp-shortcode-builder', mp_plugin_url( 'includes/admin/ui/js/shortcode-builder.js', array( 'colorbox', 'chosen' ), MP_VERSION ) );
+			wp_localize_script( 'mp-shortcode-builder', 'MP_ShortCode_Builder', array(
+				'select_product' => __( 'Select a Product', 'mp' ),
+			) );
+
+		}
 	}
 
 	/**

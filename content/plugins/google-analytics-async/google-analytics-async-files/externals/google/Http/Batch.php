@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-if (!class_exists('Google_Client')) {
+if (!class_exists('GAPGoogle_Client')) {
   require_once dirname(__FILE__) . '/../autoload.php';
 }
 
 /**
  * Class to handle batched requests to the Google API service.
  */
-class Google_Http_Batch
+class GAPGoogle_Http_Batch
 {
   /** @var string Multipart Boundary. */
   private $boundary;
@@ -30,14 +30,14 @@ class Google_Http_Batch
   /** @var array service requests to be executed. */
   private $requests = array();
 
-  /** @var Google_Client */
+  /** @var GAPGoogle_Client */
   private $client;
 
   private $expected_classes = array();
 
   private $base_path;
 
-  public function __construct(Google_Client $client, $boundary = false)
+  public function __construct(GAPGoogle_Client $client, $boundary = false)
   {
     $this->client = $client;
     $this->base_path = $this->client->getBasePath();
@@ -46,7 +46,7 @@ class Google_Http_Batch
     $this->boundary = str_replace('"', '', $boundary);
   }
 
-  public function add(Google_Http_Request $request, $key = false)
+  public function add(GAPGoogle_Http_Request $request, $key = false)
   {
     if (false == $key) {
       $key = mt_rand();
@@ -59,7 +59,7 @@ class Google_Http_Batch
   {
     $body = '';
 
-    /** @var Google_Http_Request $req */
+    /** @var GAPGoogle_Http_Request $req */
     foreach ($this->requests as $key => $req) {
       $body .= "--{$this->boundary}\n";
       $body .= $req->toBatchString($key) . "\n";
@@ -70,7 +70,7 @@ class Google_Http_Batch
     $body .= "\n--{$this->boundary}--";
 
     $url = $this->base_path . '/batch';
-    $httpRequest = new Google_Http_Request($url, 'POST');
+    $httpRequest = new GAPGoogle_Http_Request($url, 'POST');
     $httpRequest->setRequestHeaders(
         array('Content-Type' => 'multipart/mixed; boundary=' . $this->boundary)
     );
@@ -81,7 +81,7 @@ class Google_Http_Batch
     return $this->parseResponse($response);
   }
 
-  public function parseResponse(Google_Http_Request $response)
+  public function parseResponse(GAPGoogle_Http_Request $response)
   {
     $contentType = $response->getResponseHeader('content-type');
     $contentType = explode(';', $contentType);
@@ -110,7 +110,7 @@ class Google_Http_Batch
           $status = $status[1];
 
           list($partHeaders, $partBody) = $this->client->getIo()->ParseHttpResponse($part, false);
-          $response = new Google_Http_Request("");
+          $response = new GAPGoogle_Http_Request("");
           $response->setResponseHttpCode($status);
           $response->setResponseHeaders($partHeaders);
           $response->setResponseBody($partBody);
@@ -125,9 +125,9 @@ class Google_Http_Batch
           }
 
           try {
-            $response = Google_Http_REST::decodeHttpResponse($response, $this->client);
+            $response = GAPGoogle_Http_REST::decodeHttpResponse($response, $this->client);
             $responses[$key] = $response;
-          } catch (Google_Service_Exception $e) {
+          } catch (GAPGoogle_Service_Exception $e) {
             // Store the exception as the response, so successful responses
             // can be processed.
             $responses[$key] = $e;

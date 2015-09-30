@@ -3,11 +3,11 @@
 
 /* Generic exception class
  */
-class Google_Analytics_OAuthException extends Exception {
+class GAPGoogle_Analytics_OAuthException extends Exception {
   // pass
 }
 
-class Google_Analytics_OAuthConsumer {
+class GAPGoogle_Analytics_OAuthConsumer {
   public $key;
   public $secret;
 
@@ -22,7 +22,7 @@ class Google_Analytics_OAuthConsumer {
   }
 }
 
-class Google_Analytics_OAuthToken {
+class GAPGoogle_Analytics_OAuthToken {
   // access tokens and request tokens
   public $key;
   public $secret;
@@ -42,9 +42,9 @@ class Google_Analytics_OAuthToken {
    */
   function to_string() {
     return "oauth_token=" .
-           Google_Analytics_OAuthUtil::urlencode_rfc3986($this->key) .
+           GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($this->key) .
            "&oauth_token_secret=" .
-           Google_Analytics_OAuthUtil::urlencode_rfc3986($this->secret);
+           GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($this->secret);
   }
 
   function __toString() {
@@ -53,10 +53,10 @@ class Google_Analytics_OAuthToken {
 }
 
 /**
- * A class Google_Analytics_for implementing a Signature Method
+ * A class GAPGoogle_Analytics_for implementing a Signature Method
  * See section 9 ("Signing Requests") in the spec
  */
-abstract class Google_Analytics_OAuthSignatureMethod {
+abstract class GAPGoogle_Analytics_OAuthSignatureMethod {
   /**
    * Needs to return the name of the Signature Method (ie HMAC-SHA1)
    * @return string
@@ -112,7 +112,7 @@ abstract class Google_Analytics_OAuthSignatureMethod {
  * character (ASCII code 38) even if empty.
  *   - Chapter 9.2 ("HMAC-SHA1")
  */
-class Google_Analytics_OAuthSignatureMethod_HMAC_SHA1 extends Google_Analytics_OAuthSignatureMethod {
+class GAPGoogle_Analytics_OAuthSignatureMethod_HMAC_SHA1 extends GAPGoogle_Analytics_OAuthSignatureMethod {
   function get_name() {
     return "HMAC-SHA1";
   }
@@ -126,7 +126,7 @@ class Google_Analytics_OAuthSignatureMethod_HMAC_SHA1 extends Google_Analytics_O
       ($token) ? $token->secret : ""
     );
 
-    $key_parts = Google_Analytics_OAuthUtil::urlencode_rfc3986($key_parts);
+    $key_parts = GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($key_parts);
     $key = implode('&', $key_parts);
 
     return base64_encode(hash_hmac('sha1', $base_string, $key, true));
@@ -138,7 +138,7 @@ class Google_Analytics_OAuthSignatureMethod_HMAC_SHA1 extends Google_Analytics_O
  * over a secure channel such as HTTPS. It does not use the Signature Base String.
  *   - Chapter 9.4 ("PLAINTEXT")
  */
-class Google_Analytics_OAuthSignatureMethod_PLAINTEXT extends Google_Analytics_OAuthSignatureMethod {
+class GAPGoogle_Analytics_OAuthSignatureMethod_PLAINTEXT extends GAPGoogle_Analytics_OAuthSignatureMethod {
   public function get_name() {
     return "PLAINTEXT";
   }
@@ -158,7 +158,7 @@ class Google_Analytics_OAuthSignatureMethod_PLAINTEXT extends Google_Analytics_O
       ($token) ? $token->secret : ""
     );
 
-    $key_parts = Google_Analytics_OAuthUtil::urlencode_rfc3986($key_parts);
+    $key_parts = GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($key_parts);
     $key = implode('&', $key_parts);
     $request->base_string = $key;
 
@@ -174,7 +174,7 @@ class Google_Analytics_OAuthSignatureMethod_PLAINTEXT extends Google_Analytics_O
  * specification.
  *   - Chapter 9.3 ("RSA-SHA1")
  */
-abstract class Google_Analytics_OAuthSignatureMethod_RSA_SHA1 extends Google_Analytics_OAuthSignatureMethod {
+abstract class GAPGoogle_Analytics_OAuthSignatureMethod_RSA_SHA1 extends GAPGoogle_Analytics_OAuthSignatureMethod {
   public function get_name() {
     return "RSA-SHA1";
   }
@@ -233,7 +233,7 @@ abstract class Google_Analytics_OAuthSignatureMethod_RSA_SHA1 extends Google_Ana
   }
 }
 
-class Google_Analytics_OAuthRequest {
+class GAPGoogle_Analytics_OAuthRequest {
   protected $parameters;
   protected $http_method;
   protected $http_url;
@@ -244,7 +244,7 @@ class Google_Analytics_OAuthRequest {
 
   function __construct($http_method, $http_url, $parameters=NULL) {
     $parameters = ($parameters) ? $parameters : array();
-    $parameters = array_merge( Google_Analytics_OAuthUtil::parse_parameters(parse_url($http_url, PHP_URL_QUERY)), $parameters);
+    $parameters = array_merge( GAPGoogle_Analytics_OAuthUtil::parse_parameters(parse_url($http_url, PHP_URL_QUERY)), $parameters);
     $this->parameters = $parameters;
     $this->http_method = $http_method;
     $this->http_url = $http_url;
@@ -271,10 +271,10 @@ class Google_Analytics_OAuthRequest {
     // parsed parameter-list
     if (!$parameters) {
       // Find request headers
-      $request_headers = Google_Analytics_OAuthUtil::get_headers();
+      $request_headers = GAPGoogle_Analytics_OAuthUtil::get_headers();
 
       // Parse the query-string to find GET parameters
-      $parameters = Google_Analytics_OAuthUtil::parse_parameters($_SERVER['QUERY_STRING']);
+      $parameters = GAPGoogle_Analytics_OAuthUtil::parse_parameters($_SERVER['QUERY_STRING']);
 
       // It's a POST request of the proper content-type, so parse POST
       // parameters and add those overriding any duplicates from GET
@@ -283,7 +283,7 @@ class Google_Analytics_OAuthRequest {
           && strstr($request_headers['Content-Type'],
                      'application/x-www-form-urlencoded')
           ) {
-        $post_data = Google_Analytics_OAuthUtil::parse_parameters(
+        $post_data = GAPGoogle_Analytics_OAuthUtil::parse_parameters(
           file_get_contents(self::$POST_INPUT)
         );
         $parameters = array_merge($parameters, $post_data);
@@ -292,7 +292,7 @@ class Google_Analytics_OAuthRequest {
       // We have a Authorization-header with OAuth data. Parse the header
       // and add those overriding any duplicates from GET or POST
       if (isset($request_headers['Authorization']) && substr($request_headers['Authorization'], 0, 6) == 'OAuth ') {
-        $header_parameters = Google_Analytics_OAuthUtil::split_header(
+        $header_parameters = GAPGoogle_Analytics_OAuthUtil::split_header(
           $request_headers['Authorization']
         );
         $parameters = array_merge($parameters, $header_parameters);
@@ -308,16 +308,16 @@ class Google_Analytics_OAuthRequest {
    */
   public static function from_consumer_and_token($consumer, $token, $http_method, $http_url, $parameters=NULL) {
     $parameters = ($parameters) ?  $parameters : array();
-    $defaults = array("oauth_version" => Google_Analytics_OAuthRequest::$version,
-                      "oauth_nonce" => Google_Analytics_OAuthRequest::generate_nonce(),
-                      "oauth_timestamp" => Google_Analytics_OAuthRequest::generate_timestamp(),
+    $defaults = array("oauth_version" => GAPGoogle_Analytics_OAuthRequest::$version,
+                      "oauth_nonce" => GAPGoogle_Analytics_OAuthRequest::generate_nonce(),
+                      "oauth_timestamp" => GAPGoogle_Analytics_OAuthRequest::generate_timestamp(),
                       "oauth_consumer_key" => $consumer->key);
     if ($token)
       $defaults['oauth_token'] = $token->key;
 
     $parameters = array_merge($defaults, $parameters);
 
-    return new Google_Analytics_OAuthRequest($http_method, $http_url, $parameters);
+    return new GAPGoogle_Analytics_OAuthRequest($http_method, $http_url, $parameters);
   }
 
   public function set_parameter($name, $value, $allow_duplicates = true) {
@@ -361,7 +361,7 @@ class Google_Analytics_OAuthRequest {
       unset($params['oauth_signature']);
     }
 
-    return Google_Analytics_OAuthUtil::build_http_query($params);
+    return GAPGoogle_Analytics_OAuthUtil::build_http_query($params);
   }
 
   /**
@@ -378,7 +378,7 @@ class Google_Analytics_OAuthRequest {
       $this->get_signable_parameters()
     );
 
-    $parts = Google_Analytics_OAuthUtil::urlencode_rfc3986($parts);
+    $parts = GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($parts);
 
     return implode('&', $parts);
   }
@@ -425,7 +425,7 @@ class Google_Analytics_OAuthRequest {
    * builds the data one would send in a POST request
    */
   public function to_postdata() {
-    return Google_Analytics_OAuthUtil::build_http_query($this->parameters);
+    return GAPGoogle_Analytics_OAuthUtil::build_http_query($this->parameters);
   }
 
   /**
@@ -434,7 +434,7 @@ class Google_Analytics_OAuthRequest {
   public function to_header($realm=null) {
     $first = true;
 	if($realm) {
-      $out = 'Authorization: OAuth realm="' . Google_Analytics_OAuthUtil::urlencode_rfc3986($realm) . '"';
+      $out = 'Authorization: OAuth realm="' . GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($realm) . '"';
       $first = false;
     } else
       $out = 'Authorization: OAuth';
@@ -443,12 +443,12 @@ class Google_Analytics_OAuthRequest {
     foreach ($this->parameters as $k => $v) {
       if (substr($k, 0, 5) != "oauth") continue;
       if (is_array($v)) {
-        throw new Google_Analytics_OAuthException('Arrays not supported in headers');
+        throw new GAPGoogle_Analytics_OAuthException('Arrays not supported in headers');
       }
       $out .= ($first) ? ' ' : ',';
-      $out .= Google_Analytics_OAuthUtil::urlencode_rfc3986($k) .
+      $out .= GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($k) .
               '="' .
-              Google_Analytics_OAuthUtil::urlencode_rfc3986($v) .
+              GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986($v) .
               '"';
       $first = false;
     }
@@ -493,7 +493,7 @@ class Google_Analytics_OAuthRequest {
   }
 }
 
-class Google_Analytics_OAuthServer {
+class GAPGoogle_Analytics_OAuthServer {
   protected $timestamp_threshold = 300; // in seconds, five minutes
   protected $version = '1.0';             // hi blaine
   protected $signature_methods = array();
@@ -576,7 +576,7 @@ class Google_Analytics_OAuthServer {
       $version = '1.0';
     }
     if ($version !== $this->version) {
-      throw new Google_Analytics_OAuthException("OAuth version '$version' not supported");
+      throw new GAPGoogle_Analytics_OAuthException("OAuth version '$version' not supported");
     }
     return $version;
   }
@@ -585,19 +585,19 @@ class Google_Analytics_OAuthServer {
    * figure out the signature with some defaults
    */
   private function get_signature_method($request) {
-    $signature_method = $request instanceof Google_Analytics_OAuthRequest
+    $signature_method = $request instanceof GAPGoogle_Analytics_OAuthRequest
         ? $request->get_parameter("oauth_signature_method")
         : NULL;
 
     if (!$signature_method) {
       // According to chapter 7 ("Accessing Protected Ressources") the signature-method
       // parameter is required, and we can't just fallback to PLAINTEXT
-      throw new Google_Analytics_OAuthException('No signature method parameter. This parameter is required');
+      throw new GAPGoogle_Analytics_OAuthException('No signature method parameter. This parameter is required');
     }
 
     if (!in_array($signature_method,
                   array_keys($this->signature_methods))) {
-      throw new Google_Analytics_OAuthException(
+      throw new GAPGoogle_Analytics_OAuthException(
         "Signature method '$signature_method' not supported " .
         "try one of the following: " .
         implode(", ", array_keys($this->signature_methods))
@@ -610,17 +610,17 @@ class Google_Analytics_OAuthServer {
    * try to find the consumer for the provided request's consumer key
    */
   private function get_consumer($request) {
-    $consumer_key = $request instanceof Google_Analytics_OAuthRequest
+    $consumer_key = $request instanceof GAPGoogle_Analytics_OAuthRequest
         ? $request->get_parameter("oauth_consumer_key")
         : NULL;
 
     if (!$consumer_key) {
-      throw new Google_Analytics_OAuthException("Invalid consumer key");
+      throw new GAPGoogle_Analytics_OAuthException("Invalid consumer key");
     }
 
     $consumer = $this->data_store->lookup_consumer($consumer_key);
     if (!$consumer) {
-      throw new Google_Analytics_OAuthException("Invalid consumer");
+      throw new GAPGoogle_Analytics_OAuthException("Invalid consumer");
     }
 
     return $consumer;
@@ -630,7 +630,7 @@ class Google_Analytics_OAuthServer {
    * try to find the token for the provided request's token key
    */
   private function get_token($request, $consumer, $token_type="access") {
-    $token_field = $request instanceof Google_Analytics_OAuthRequest
+    $token_field = $request instanceof GAPGoogle_Analytics_OAuthRequest
          ? $request->get_parameter('oauth_token')
          : NULL;
 
@@ -638,7 +638,7 @@ class Google_Analytics_OAuthServer {
       $consumer, $token_type, $token_field
     );
     if (!$token) {
-      throw new Google_Analytics_OAuthException("Invalid $token_type token: $token_field");
+      throw new GAPGoogle_Analytics_OAuthException("Invalid $token_type token: $token_field");
     }
     return $token;
   }
@@ -649,10 +649,10 @@ class Google_Analytics_OAuthServer {
    */
   private function check_signature($request, $consumer, $token) {
     // this should probably be in a different method
-    $timestamp = $request instanceof Google_Analytics_OAuthRequest
+    $timestamp = $request instanceof GAPGoogle_Analytics_OAuthRequest
         ? $request->get_parameter('oauth_timestamp')
         : NULL;
-    $nonce = $request instanceof Google_Analytics_OAuthRequest
+    $nonce = $request instanceof GAPGoogle_Analytics_OAuthRequest
         ? $request->get_parameter('oauth_nonce')
         : NULL;
 
@@ -670,7 +670,7 @@ class Google_Analytics_OAuthServer {
     );
 
     if (!$valid_sig) {
-      throw new Google_Analytics_OAuthException("Invalid signature");
+      throw new GAPGoogle_Analytics_OAuthException("Invalid signature");
     }
   }
 
@@ -679,14 +679,14 @@ class Google_Analytics_OAuthServer {
    */
   private function check_timestamp($timestamp) {
     if( ! $timestamp )
-      throw new Google_Analytics_OAuthException(
+      throw new GAPGoogle_Analytics_OAuthException(
         'Missing timestamp parameter. The parameter is required'
       );
 
     // verify that timestamp is recentish
     $now = time();
     if (abs($now - $timestamp) > $this->timestamp_threshold) {
-      throw new Google_Analytics_OAuthException(
+      throw new GAPGoogle_Analytics_OAuthException(
         "Expired timestamp, yours $timestamp, ours $now"
       );
     }
@@ -697,7 +697,7 @@ class Google_Analytics_OAuthServer {
    */
   private function check_nonce($consumer, $token, $nonce, $timestamp) {
     if( ! $nonce )
-      throw new Google_Analytics_OAuthException(
+      throw new GAPGoogle_Analytics_OAuthException(
         'Missing nonce parameter. The parameter is required'
       );
 
@@ -709,13 +709,13 @@ class Google_Analytics_OAuthServer {
       $timestamp
     );
     if ($found) {
-      throw new Google_Analytics_OAuthException("Nonce already used: $nonce");
+      throw new GAPGoogle_Analytics_OAuthException("Nonce already used: $nonce");
     }
   }
 
 }
 
-class Google_Analytics_OAuthDataStore {
+class GAPGoogle_Analytics_OAuthDataStore {
   function lookup_consumer($consumer_key) {
     // implement me
   }
@@ -741,10 +741,10 @@ class Google_Analytics_OAuthDataStore {
 
 }
 
-class Google_Analytics_OAuthUtil {
+class GAPGoogle_Analytics_OAuthUtil {
   public static function urlencode_rfc3986($input) {
   if (is_array($input)) {
-    return array_map(array('Google_Analytics_OAuthUtil', 'urlencode_rfc3986'), $input);
+    return array_map(array('GAPGoogle_Analytics_OAuthUtil', 'urlencode_rfc3986'), $input);
   } else if (is_scalar($input)) {
     return str_replace(
       '+',
@@ -773,7 +773,7 @@ class Google_Analytics_OAuthUtil {
     $params = array();
     if (preg_match_all('/('.($only_allow_oauth_parameters ? 'oauth_' : '').'[a-z_-]*)=(:?"([^"]*)"|([^,]*))/', $header, $matches)) {
       foreach ($matches[1] as $i => $h) {
-        $params[$h] = Google_Analytics_OAuthUtil::urldecode_rfc3986(empty($matches[3][$i]) ? $matches[4][$i] : $matches[3][$i]);
+        $params[$h] = GAPGoogle_Analytics_OAuthUtil::urldecode_rfc3986(empty($matches[3][$i]) ? $matches[4][$i] : $matches[3][$i]);
       }
       if (isset($params['realm'])) {
         unset($params['realm']);
@@ -839,8 +839,8 @@ class Google_Analytics_OAuthUtil {
     $parsed_parameters = array();
     foreach ($pairs as $pair) {
       $split = explode('=', $pair, 2);
-      $parameter = Google_Analytics_OAuthUtil::urldecode_rfc3986($split[0]);
-      $value = isset($split[1]) ? Google_Analytics_OAuthUtil::urldecode_rfc3986($split[1]) : '';
+      $parameter = GAPGoogle_Analytics_OAuthUtil::urldecode_rfc3986($split[0]);
+      $value = isset($split[1]) ? GAPGoogle_Analytics_OAuthUtil::urldecode_rfc3986($split[1]) : '';
 
       if (isset($parsed_parameters[$parameter])) {
         // We have already recieved parameter(s) with this name, so add to the list
@@ -864,8 +864,8 @@ class Google_Analytics_OAuthUtil {
     if (!$params) return '';
 
     // Urlencode both keys and values
-    $keys = Google_Analytics_OAuthUtil::urlencode_rfc3986(array_keys($params));
-    $values = Google_Analytics_OAuthUtil::urlencode_rfc3986(array_values($params));
+    $keys = GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986(array_keys($params));
+    $values = GAPGoogle_Analytics_OAuthUtil::urlencode_rfc3986(array_values($params));
     $params = array_combine($keys, $values);
 
     // Parameters are sorted by name, using lexicographical byte value ordering.

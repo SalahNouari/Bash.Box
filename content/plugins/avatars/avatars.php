@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/avatars
 Description: Allows users to upload 'user avatars' and 'blog avatars' which then can appear in comments and blog / user listings around the site
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
-Version: 4.1.1
+Version: 4.1.2
 Network: true
 Text Domain: avatars
 WDP ID: 10
@@ -1411,8 +1411,6 @@ class Avatars {
 	 * Return blog avatar.
 	 **/
 	function get_blog_avatar( $id, $size = '96', $default = '', $alt = '' ) {
-		global $current_site;
-
 		if ( false === $alt )
 			$safe_alt = '';
 		else
@@ -1422,6 +1420,17 @@ class Avatars {
 			$size = '96';
 		}
 		$size = $this->size_map( $size );
+
+		$avatar_url = $this->get_blog_avatar_url( $id, $size, $default );
+
+		$class = apply_filters( 'avatars_img_class', "avatar avatar-" . $size );
+		$avatar = "<img alt='{$safe_alt}' src='{$avatar_url}' class='{$class}' height='{$size}' width='{$size}' />";
+
+		return $avatar;
+	}
+
+	function get_blog_avatar_url( $id, $size = 96, $default = '' ) {
+		global $current_site;
 
 		$_default = $default;
 
@@ -1477,12 +1486,17 @@ class Avatars {
 			} else {
 				$path = $default;
 			}
-			$avatar = "<img alt='{$safe_alt}' src='{$path}' class='avatar avatar-{$size}' height='{$size}' width='{$size}' />";
-		} else {
-			$avatar = "<img alt='{$safe_alt}' src='{$default}' class='avatar avatar-{$size} avatar-default' height='{$size}' width='{$size}' />";
-		}
 
-		return $avatar;
+			return $path;
+
+		} else {
+			add_filter( 'avatars_img_class', 'add_default_img_class' );
+			return $default;
+		}
+	}
+
+	function add_default_img_class( $class ) {
+		return $class . ' avatar-default';
 	}
 
 	/**

@@ -15,7 +15,7 @@ class MS_Controller_Dialog extends MS_Controller {
 	 * Prepare the Dialog manager.
 	 *
 	 * @since  1.0.0
-	 * @access public
+	 * @internal
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -26,9 +26,9 @@ class MS_Controller_Dialog extends MS_Controller {
 		// Listen to Ajax requests that submit form data.
 		$this->add_ajax_action( 'ms_submit', 'ajax_submit' );
 
-		// Login.
-		$this->add_ajax_action( 'ms_login', 'ajax_login', false, true );
-		$this->add_ajax_action( 'ms_lostpass', 'ajax_lostpass', false, true );
+		// Login. For IE this hook is listening to guests + logged in users.
+		$this->add_ajax_action( 'ms_login', 'ajax_login', true, true );
+		$this->add_ajax_action( 'ms_lostpass', 'ajax_lostpass', true, true );
 	}
 
 	/**
@@ -36,7 +36,7 @@ class MS_Controller_Dialog extends MS_Controller {
 	 * The process is terminated after this handler.
 	 *
 	 * @since  1.0.0
-	 * @access public
+	 * @internal
 	 */
 	public function ajax_dialog() {
 		$data = '';
@@ -65,7 +65,7 @@ class MS_Controller_Dialog extends MS_Controller {
 	 * Typically this form is displayed inside a popup.
 	 *
 	 * @since  1.0.0
-	 * @access public
+	 * @internal
 	 */
 	public function ajax_submit() {
 		$data = '';
@@ -83,7 +83,7 @@ class MS_Controller_Dialog extends MS_Controller {
 	 * Ajax handler. Used by shortcode `ms-membership-login` to login via ajax.
 	 *
 	 * @since  1.0.0
-	 * @access public
+	 * @internal
 	 */
 	public function ajax_login() {
 		$resp = array();
@@ -97,7 +97,7 @@ class MS_Controller_Dialog extends MS_Controller {
 		 * - password or pwd
 		 * - remember or rememberme
 		 */
-		lib2()->array->equip_post(
+		lib3()->array->equip_post(
 			'username',
 			'password',
 			'remember',
@@ -116,8 +116,8 @@ class MS_Controller_Dialog extends MS_Controller {
 			$_POST['remember'] = $_POST['rememberme'];
 		}
 
-		lib2()->array->equip_post( 'username', 'password', 'remember' );
-		lib2()->array->strip_slashes( $_POST, 'password' );
+		lib3()->array->equip_post( 'username', 'password', 'remember' );
+		lib3()->array->strip_slashes( $_POST, 'password' );
 
 		// Nonce is checked, get the POST data and sign user on
 		$info = array(
@@ -128,7 +128,7 @@ class MS_Controller_Dialog extends MS_Controller {
 
 		$user_signon = wp_signon( $info, false );
 		if ( is_wp_error( $user_signon ) ) {
-			$resp['error'] = __( 'Wrong username or password', MS_TEXT_DOMAIN );
+			$resp['error'] = __( 'Wrong username or password', 'membership2' );
 		} else {
 			$member = MS_Factory::load( 'MS_Model_Member', $user_signon->ID );
 
@@ -139,7 +139,7 @@ class MS_Controller_Dialog extends MS_Controller {
 			do_action( 'ms_model_member_signon_user', $user_signon, $member );
 
 			$resp['loggedin'] = true;
-			$resp['success'] = __( 'Logging in...', MS_TEXT_DOMAIN );
+			$resp['success'] = __( 'Logging in...', 'membership2' );
 
 			/**
 			 * Allows a custom redirection after login.
@@ -157,7 +157,7 @@ class MS_Controller_Dialog extends MS_Controller {
 	 * Ajax handler. Used by shortcode `ms-membership-login` to recover password
 	 *
 	 * @since  1.0.0
-	 * @access public
+	 * @internal
 	 */
 	public function ajax_lostpass() {
 		global $wpdb, $wp_hasher;
@@ -170,11 +170,11 @@ class MS_Controller_Dialog extends MS_Controller {
 		$errors = new WP_Error();
 
 		if ( empty( $_POST['user_login'] ) ) {
-			$resp['error'] = __( 'Enter a username or e-mail address.', MS_TEXT_DOMAIN );
+			$resp['error'] = __( 'Enter a username or e-mail address.', 'membership2' );
 		} else if ( strpos( $_POST['user_login'], '@' ) ) {
 			$user_data = get_user_by( 'email', trim( $_POST['user_login'] ) );
 			if ( empty( $user_data ) ) {
-				$resp['error'] = __( 'There is no user registered with that email address.', MS_TEXT_DOMAIN );
+				$resp['error'] = __( 'There is no user registered with that email address.', 'membership2' );
 			}
 		} else {
 			$login = trim( $_POST['user_login'] );
@@ -188,7 +188,7 @@ class MS_Controller_Dialog extends MS_Controller {
 		}
 
 		if ( ! $user_data ) {
-			$resp['error'] = __( 'Invalid username or e-mail.', MS_TEXT_DOMAIN );
+			$resp['error'] = __( 'Invalid username or e-mail.', 'membership2' );
 			$this->respond( $resp );
 		}
 
@@ -202,7 +202,7 @@ class MS_Controller_Dialog extends MS_Controller {
 		$allow = apply_filters( 'allow_password_reset', true, $user_data->ID );
 
 		if ( ! $allow ) {
-			$resp['error'] = __( 'Password reset is not allowed for this user', MS_TEXT_DOMAIN );
+			$resp['error'] = __( 'Password reset is not allowed for this user', 'membership2' );
 			$this->respond( $resp );
 		} else if ( is_wp_error( $allow ) ) {
 			return $allow;
@@ -213,13 +213,18 @@ class MS_Controller_Dialog extends MS_Controller {
 
 		do_action( 'retrieve_password_key', $user_login, $key );
 
-		// Now insert the key, hashed, into the DB.
+		// Now insert a hashed version of the key into the DB.
+		// Important: The has needs to include the time() value!
 		if ( empty( $wp_hasher ) ) {
 			require_once ABSPATH . WPINC . '/class-phpass.php';
 			$wp_hasher = new PasswordHash( 8, true );
 		}
-		$hashed = $wp_hasher->HashPassword( $key );
-		$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) );
+		$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
+		$wpdb->update(
+			$wpdb->users,
+			array( 'user_activation_key' => $hashed ),
+			array( 'user_login' => $user_login )
+		);
 
 		MS_Model_Pages::create_missing_pages();
 		$reset_url = MS_Model_Pages::get_page_url( MS_Model_Pages::MS_PAGE_ACCOUNT );
@@ -236,12 +241,12 @@ class MS_Controller_Dialog extends MS_Controller {
 
 		$schema = is_ssl() ? 'https' : 'http';
 
-		$message = __( 'Someone requested that the password be reset for the following account:' ) . "\r\n\r\n";
-		$message .= network_home_url( '/', $schema ) . "\r\n\r\n";
-		$message .= sprintf( __( 'Username: %s' ), $user_login ) . "\r\n\r\n";
-		$message .= __( 'If this was a mistake, just ignore this email and nothing will happen.' ) . "\r\n\r\n";
-		$message .= __( 'To reset your password, visit the following address:' ) . "\r\n\r\n";
-		$message .= '<' . $reset_url . ">\r\n";
+		$message = sprintf(
+			__( 'Someone requested that the password be reset for the following account: %sIf this was a mistake, just ignore this email and nothing will happen.%s', 'membership2' ),
+			"<br>\r\n<br>\r\n" . network_home_url( '/', $schema ) . "<br>\r\n" .
+			sprintf( __( 'Your username: %s', 'membership2' ), $user_login ) . "<br>\r\n<br>\r\n",
+			"<br>\r\n<br>\r\n" . '<a href="' . $reset_url . '">' . __( 'Click here to reset your password', 'membership2' ) . "</a><br>\r\n" . $reset_url . "<br>\r\n"
+		);
 
 		if ( is_multisite() ) {
 			$blogname = $GLOBALS['current_site']->site_name;
@@ -258,7 +263,7 @@ class MS_Controller_Dialog extends MS_Controller {
 			$resp['error'] = __( 'The e-mail could not be sent.' ) . '<br />' .
 				__( 'Possible reason: your host may have disabled the mail() function.' );
 		} else {
-			$resp['success'] = __( 'Check your e-mail for the confirmation link.', MS_TEXT_DOMAIN );
+			$resp['success'] = __( 'Check your e-mail for the confirmation link.', 'membership2' );
 		}
 
 		$this->respond( $resp );

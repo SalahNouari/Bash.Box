@@ -86,7 +86,7 @@ class MS_Controller_Import extends MS_Controller {
 			$match_id = $_POST['match_with'];
 
 			if ( MS_Model_Import::match_with_source( $match_id, $source_id, $source ) ) {
-				$res = 'OK:' . __( 'Matching details saved. Future transactions are automatically processed from now on!', MS_TEXT_DOMAIN );
+				$res = 'OK:' . __( 'Matching details saved. Future transactions are automatically processed from now on!', 'membership2' );
 			}
 		}
 
@@ -174,7 +174,7 @@ class MS_Controller_Import extends MS_Controller {
 	protected function process_item( $item, $source ) {
 		$res = false;
 
-		lib2()->array->equip( $item, 'task', 'data' );
+		lib3()->array->equip( $item, 'task', 'data' );
 		$task = $item['task'];
 		$data = $item['data'];
 		$model = MS_Factory::create( 'MS_Model_Import' );
@@ -186,8 +186,8 @@ class MS_Controller_Import extends MS_Controller {
 		// Possible tasks are defined in ms-view-settings-import.js
 		switch ( $task ) {
 			case 'start':
-				lib2()->array->equip( $item, 'clear' );
-				$clear = lib2()->is_true( $item['clear'] );
+				lib3()->array->equip( $item, 'clear' );
+				$clear = lib3()->is_true( $item['clear'] );
 				$model->start( $clear );
 				$res = true;
 				break;
@@ -207,7 +207,7 @@ class MS_Controller_Import extends MS_Controller {
 				break;
 
 			case 'import-settings':
-				lib2()->array->equip( $item, 'setting', 'value' );
+				lib3()->array->equip( $item, 'setting', 'value' );
 				$setting = $item['setting'];
 				$value = $item['value'];
 				$model->import_setting( $setting, $value );
@@ -241,7 +241,7 @@ class MS_Controller_Import extends MS_Controller {
 	 * @since  1.0.0
 	 */
 	public function process() {
-		lib2()->array->equip_post( 'action', 'import_source' );
+		lib3()->array->equip_post( 'action', 'import_source' );
 		$action = $_POST['action'];
 
 		if ( isset( $_POST['submit'] ) ) {
@@ -264,7 +264,7 @@ class MS_Controller_Import extends MS_Controller {
 				} catch( Exception $ex ) {
 					self::_message(
 						'error',
-						__( 'Coming soon: This import source is not supported yet...', MS_TEXT_DOMAIN )
+						__( 'Coming soon: This import source is not supported yet...', 'membership2' )
 					);
 				}
 
@@ -301,18 +301,18 @@ class MS_Controller_Import extends MS_Controller {
 		$data = array(
 			'ms_init' => array( 'view_settings_import' ),
 			'lang' => array(
-				'progress_title' => __( 'Importing data...', MS_TEXT_DOMAIN ),
-				'close_progress' => __( 'Okay', MS_TEXT_DOMAIN ),
-				'import_done' => __( 'All done!', MS_TEXT_DOMAIN ),
-				'task_start' => __( 'Preparing...', MS_TEXT_DOMAIN ),
-				'task_done' => __( 'Cleaning up...', MS_TEXT_DOMAIN ),
-				'task_import_member' => __( 'Importing Member', MS_TEXT_DOMAIN ),
-				'task_import_membership' => __( 'Importing Membership', MS_TEXT_DOMAIN ),
-				'task_import_settings' => __( 'Importing Settings', MS_TEXT_DOMAIN ),
+				'progress_title' => __( 'Importing data...', 'membership2' ),
+				'close_progress' => __( 'Okay', 'membership2' ),
+				'import_done' => __( 'All done!', 'membership2' ),
+				'task_start' => __( 'Preparing...', 'membership2' ),
+				'task_done' => __( 'Cleaning up...', 'membership2' ),
+				'task_import_member' => __( 'Importing Member', 'membership2' ),
+				'task_import_membership' => __( 'Importing Membership', 'membership2' ),
+				'task_import_settings' => __( 'Importing Settings', 'membership2' ),
 			),
 		);
 
-		lib2()->ui->data( 'ms_data', $data );
+		lib3()->ui->data( 'ms_data', $data );
 		wp_enqueue_script( 'ms-admin' );
 	}
 

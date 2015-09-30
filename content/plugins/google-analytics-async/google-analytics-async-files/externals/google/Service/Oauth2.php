@@ -28,7 +28,7 @@
  *
  * @author Google, Inc.
  */
-class Google_Service_Oauth2 extends Google_Service
+class GAPGoogle_Service_Oauth2 extends GAPGoogle_Service
 {
   /** Know your basic profile info and list of people in your circles.. */
   const PLUS_LOGIN =
@@ -50,16 +50,16 @@ class Google_Service_Oauth2 extends Google_Service
   /**
    * Constructs the internal representation of the Oauth2 service.
    *
-   * @param Google_Client $client
+   * @param GAPGoogle_Client $client
    */
-  public function __construct(Google_Client $client)
+  public function __construct(GAPGoogle_Client $client)
   {
     parent::__construct($client);
     $this->servicePath = '';
     $this->version = 'v2';
     $this->serviceName = 'oauth2';
 
-    $this->userinfo = new Google_Service_Oauth2_Userinfo_Resource(
+    $this->userinfo = new GAPGoogle_Service_Oauth2_Userinfo_Resource(
         $this,
         $this->serviceName,
         'userinfo',
@@ -73,7 +73,7 @@ class Google_Service_Oauth2 extends Google_Service
           )
         )
     );
-    $this->userinfo_v2_me = new Google_Service_Oauth2_UserinfoV2Me_Resource(
+    $this->userinfo_v2_me = new GAPGoogle_Service_Oauth2_UserinfoV2Me_Resource(
         $this,
         $this->serviceName,
         'me',
@@ -87,7 +87,7 @@ class Google_Service_Oauth2 extends Google_Service
           )
         )
     );
-    $this->base_methods = new Google_Service_Resource(
+    $this->base_methods = new GAPGoogle_Service_Resource(
         $this,
         $this->serviceName,
         '',
@@ -119,13 +119,13 @@ class Google_Service_Oauth2 extends Google_Service
    * (getCertForOpenIdConnect)
    *
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Oauth2_Jwk
+   * @return GAPGoogle_Service_Oauth2_Jwk
    */
   public function getCertForOpenIdConnect($optParams = array())
   {
     $params = array();
     $params = array_merge($params, $optParams);
-    return $this->base_methods->call('getCertForOpenIdConnect', array($params), "Google_Service_Oauth2_Jwk");
+    return $this->base_methods->call('getCertForOpenIdConnect', array($params), "GAPGoogle_Service_Oauth2_Jwk");
   }
   /**
    * (tokeninfo)
@@ -134,13 +134,13 @@ class Google_Service_Oauth2 extends Google_Service
    *
    * @opt_param string access_token
    * @opt_param string id_token
-   * @return Google_Service_Oauth2_Tokeninfo
+   * @return GAPGoogle_Service_Oauth2_Tokeninfo
    */
   public function tokeninfo($optParams = array())
   {
     $params = array();
     $params = array_merge($params, $optParams);
-    return $this->base_methods->call('tokeninfo', array($params), "Google_Service_Oauth2_Tokeninfo");
+    return $this->base_methods->call('tokeninfo', array($params), "GAPGoogle_Service_Oauth2_Tokeninfo");
   }
 }
 
@@ -149,24 +149,24 @@ class Google_Service_Oauth2 extends Google_Service
  * The "userinfo" collection of methods.
  * Typical usage is:
  *  <code>
- *   $oauth2Service = new Google_Service_Oauth2(...);
+ *   $oauth2Service = new GAPGoogle_Service_Oauth2(...);
  *   $userinfo = $oauth2Service->userinfo;
  *  </code>
  */
-class Google_Service_Oauth2_Userinfo_Resource extends Google_Service_Resource
+class GAPGoogle_Service_Oauth2_Userinfo_Resource extends GAPGoogle_Service_Resource
 {
 
   /**
    * (userinfo.get)
    *
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Oauth2_Userinfoplus
+   * @return GAPGoogle_Service_Oauth2_Userinfoplus
    */
   public function get($optParams = array())
   {
     $params = array();
     $params = array_merge($params, $optParams);
-    return $this->call('get', array($params), "Google_Service_Oauth2_Userinfoplus");
+    return $this->call('get', array($params), "GAPGoogle_Service_Oauth2_Userinfoplus");
   }
 }
 
@@ -174,11 +174,11 @@ class Google_Service_Oauth2_Userinfo_Resource extends Google_Service_Resource
  * The "v2" collection of methods.
  * Typical usage is:
  *  <code>
- *   $oauth2Service = new Google_Service_Oauth2(...);
+ *   $oauth2Service = new GAPGoogle_Service_Oauth2(...);
  *   $v2 = $oauth2Service->v2;
  *  </code>
  */
-class Google_Service_Oauth2_UserinfoV2_Resource extends Google_Service_Resource
+class GAPGoogle_Service_Oauth2_UserinfoV2_Resource extends GAPGoogle_Service_Resource
 {
 }
 
@@ -186,36 +186,36 @@ class Google_Service_Oauth2_UserinfoV2_Resource extends Google_Service_Resource
  * The "me" collection of methods.
  * Typical usage is:
  *  <code>
- *   $oauth2Service = new Google_Service_Oauth2(...);
+ *   $oauth2Service = new GAPGoogle_Service_Oauth2(...);
  *   $me = $oauth2Service->me;
  *  </code>
  */
-class Google_Service_Oauth2_UserinfoV2Me_Resource extends Google_Service_Resource
+class GAPGoogle_Service_Oauth2_UserinfoV2Me_Resource extends GAPGoogle_Service_Resource
 {
 
   /**
    * (me.get)
    *
    * @param array $optParams Optional parameters.
-   * @return Google_Service_Oauth2_Userinfoplus
+   * @return GAPGoogle_Service_Oauth2_Userinfoplus
    */
   public function get($optParams = array())
   {
     $params = array();
     $params = array_merge($params, $optParams);
-    return $this->call('get', array($params), "Google_Service_Oauth2_Userinfoplus");
+    return $this->call('get', array($params), "GAPGoogle_Service_Oauth2_Userinfoplus");
   }
 }
 
 
 
 
-class Google_Service_Oauth2_Jwk extends Google_Collection
+class GAPGoogle_Service_Oauth2_Jwk extends GAPGoogle_Collection
 {
   protected $collection_key = 'keys';
   protected $internal_gapi_mappings = array(
   );
-  protected $keysType = 'Google_Service_Oauth2_JwkKeys';
+  protected $keysType = 'GAPGoogle_Service_Oauth2_JwkKeys';
   protected $keysDataType = 'array';
 
 
@@ -229,7 +229,7 @@ class Google_Service_Oauth2_Jwk extends Google_Collection
   }
 }
 
-class Google_Service_Oauth2_JwkKeys extends Google_Model
+class GAPGoogle_Service_Oauth2_JwkKeys extends GAPGoogle_Model
 {
   protected $internal_gapi_mappings = array(
   );
@@ -291,7 +291,7 @@ class Google_Service_Oauth2_JwkKeys extends Google_Model
   }
 }
 
-class Google_Service_Oauth2_Tokeninfo extends Google_Model
+class GAPGoogle_Service_Oauth2_Tokeninfo extends GAPGoogle_Model
 {
   protected $internal_gapi_mappings = array(
         "accessType" => "access_type",
@@ -376,7 +376,7 @@ class Google_Service_Oauth2_Tokeninfo extends Google_Model
   }
 }
 
-class Google_Service_Oauth2_Userinfoplus extends Google_Model
+class GAPGoogle_Service_Oauth2_Userinfoplus extends GAPGoogle_Model
 {
   protected $internal_gapi_mappings = array(
         "familyName" => "family_name",

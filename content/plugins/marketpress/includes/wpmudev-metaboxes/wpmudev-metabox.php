@@ -287,7 +287,7 @@ class WPMUDEV_Metabox {
 		$this->args = apply_filters( 'wpmudev_metabox/init_args', $this->args );
 
 		$this->nonce_action = 'wpmudev_metabox_' . str_replace( '-', '_', $this->args['id'] ) . '_save_fields';
-		$this->nonce_name   = $this->nonce_action . '_nonce';
+		$this->nonce_name   = md5( $this->nonce_action . '_nonce' );
 
 		// These only need to be run once
 		if ( ! self::$did_run_once ) {
@@ -549,6 +549,7 @@ class WPMUDEV_Metabox {
 	 */
 	public function maybe_save_fields( $post_id ) {
 		if ( ! $this->is_active() ) {
+
 			return;
 		}
 
@@ -578,7 +579,7 @@ class WPMUDEV_Metabox {
 	 * @access public
 	 */
 	public function maybe_render( $post = null ) {
-		if ( ! $this->is_active() ) {
+		if ( ! $this->is_active( true ) ) {
 			return false;
 		}
 
@@ -1083,6 +1084,28 @@ class WPMUDEV_Metabox {
 				$this->is_active = true;
 			} elseif ( $post_id && $pagenow == 'post.php' && $post_type == $this->args['post_type'] ) {
 				$this->is_active = true;
+			}
+
+			//some case, in edit mode the $post different fom the current editing post, we will have to validate
+			if ( $this->is_active == false && is_object( $post ) && isset( $_GET['post'] ) && $pagenow == 'post.php' ) {
+				$get_post_id = $_GET['post'];
+				if ( $get_post_id > 0 && $get_post_id != $post->ID ) {
+					//we will need to use the $get_ppost_id
+					$actual_post = get_post( $get_post_id );
+					if ( is_object( $actual_post ) && $actual_post->post_type == $this->args['post_type'] ) {
+						$this->is_active = true;
+					}
+				}
+			}
+
+			if ( $this->is_active == false && $_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST['post_ID'] ) && $_POST['post_ID'] != 0 && $_POST['action'] == 'editpost' ) {
+				$post_post_id = $_POST['post_ID'];
+				if (!is_object($post) || $post_post_id != $post->ID ) {
+					$actual_post = get_post( $post_post_id );
+					if ( is_object( $actual_post ) && $actual_post->post_type == $this->args['post_type'] ) {
+						$this->is_active = true;
+					}
+				}
 			}
 		}
 

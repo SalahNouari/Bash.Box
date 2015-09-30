@@ -168,8 +168,8 @@ class MS_Addon_Coupon extends MS_Addon {
 	 */
 	public function register( $list ) {
 		$list[ self::ID ] = (object) array(
-			'name' => __( 'Coupon', MS_TEXT_DOMAIN ),
-			'description' => __( 'Enable discount coupons.', MS_TEXT_DOMAIN ),
+			'name' => __( 'Coupon', 'membership2' ),
+			'description' => __( 'Enable discount coupons.', 'membership2' ),
 			'icon' => 'wpmui-fa wpmui-fa-ticket',
 		);
 
@@ -191,11 +191,11 @@ class MS_Addon_Coupon extends MS_Addon {
 		if ( ! $limited_mode ) {
 			$menu_item = array(
 				self::ID => array(
-					'title' => __( 'Coupons', MS_TEXT_DOMAIN ),
+					'title' => __( 'Coupons', 'membership2' ),
 					'slug' => self::SLUG,
 				)
 			);
-			lib2()->array->insert( $items, 'before', 'addon', $menu_item );
+			lib3()->array->insert( $items, 'before', 'addon', $menu_item );
 		}
 
 		return $items;
@@ -346,7 +346,7 @@ class MS_Addon_Coupon extends MS_Addon {
 			// Edit action view page request
 			$coupon_id = ! empty( $_GET['coupon_id'] ) ? $_GET['coupon_id'] : 0;
 			$data['coupon'] = MS_Factory::load( 'MS_Addon_Coupon_Model', $coupon_id );
-			$data['memberships'] = array( __( 'Any', MS_TEXT_DOMAIN ) );
+			$data['memberships'] = array( __( 'Any', 'membership2' ) );
 			$data['memberships'] += MS_Model_Membership::get_membership_names();
 			$data['action'] = $_GET['action'];
 
@@ -402,7 +402,7 @@ class MS_Addon_Coupon extends MS_Addon {
 	 */
 	public function enqueue_styles() {
 		if ( isset( $_GET['action'] ) && 'edit' == $_GET['action'] ) {
-			lib2()->ui->add( 'jquery-ui' );
+			lib3()->ui->add( 'jquery-ui' );
 		}
 
 		do_action( 'ms_addon_coupon_enqueue_styles', $this );
@@ -418,7 +418,7 @@ class MS_Addon_Coupon extends MS_Addon {
 			$plugin_url = MS_Plugin::instance()->url;
 
 			wp_enqueue_script( 'jquery-validate' );
-			lib2()->ui->add( 'jquery-ui' );
+			lib3()->ui->add( 'jquery-ui' );
 
 			wp_enqueue_script(
 				'ms-view-coupon-edit',
@@ -440,11 +440,11 @@ class MS_Addon_Coupon extends MS_Addon {
 	 */
 	public function billing_columns( $columns, $currency ) {
 		$new_columns = array(
-			//'amount' => __( 'Amount', MS_TEXT_DOMAIN ),
-			'discount' => __( 'Discount', MS_TEXT_DOMAIN ),
+			//'amount' => __( 'Amount', 'membership2' ),
+			'discount' => __( 'Discount', 'membership2' ),
 		);
 
-		lib2()->array->insert( $columns, 'after', 'status', $new_columns );
+		lib3()->array->insert( $columns, 'after', 'status', $new_columns );
 
 		return $columns;
 	}
@@ -508,7 +508,7 @@ class MS_Addon_Coupon extends MS_Addon {
 				'remove_coupon_code' => array(
 					'id' => 'remove_coupon_code',
 					'type' => MS_Helper_Html::INPUT_TYPE_SUBMIT,
-					'value' => __( 'Remove', MS_TEXT_DOMAIN ),
+					'value' => __( 'Remove', 'membership2' ),
 					'label_class' => 'inline-label',
 					'title' => $coupon->coupon_message,
 					'button_value' => 1,
@@ -524,7 +524,7 @@ class MS_Addon_Coupon extends MS_Addon {
 				'apply_coupon_code' => array(
 					'id' => 'apply_coupon_code',
 					'type' => MS_Helper_Html::INPUT_TYPE_SUBMIT,
-					'value' => __( 'Apply Coupon', MS_TEXT_DOMAIN ),
+					'value' => __( 'Apply Coupon', 'membership2' ),
 				),
 			);
 			$coupon_message = $coupon->coupon_message;
@@ -566,7 +566,7 @@ class MS_Addon_Coupon extends MS_Addon {
 					<div class="coupon-entry">
 						<?php if ( ! isset( $data['coupon_valid'] ) ) : ?>
 							<div class="coupon-question"><?php
-							_e( 'Have a coupon code?', MS_TEXT_DOMAIN );
+							_e( 'Have a coupon code?', 'membership2' );
 							?></div>
 						<?php endif;
 
@@ -624,7 +624,7 @@ class MS_Addon_Coupon extends MS_Addon {
 
 			if ( ! empty( $_POST['remove_coupon_code'] ) ) {
 				$note = sprintf(
-					__( 'Remove Coupon "%s"', MS_TEXT_DOMAIN ),
+					__( 'Remove Coupon "%s"', 'membership2' ),
 					$coupon->code
 				);
 				$invoice->add_notes( $note );
@@ -641,7 +641,7 @@ class MS_Addon_Coupon extends MS_Addon {
 			$invoice->discount = $discount;
 
 			$note = sprintf(
-				__( 'Apply Coupon "%s": Discount %s %s!', MS_TEXT_DOMAIN ),
+				__( 'Apply Coupon "%s": Discount %s %s!', 'membership2' ),
 				$coupon->code,
 				$invoice->currency,
 				$discount
