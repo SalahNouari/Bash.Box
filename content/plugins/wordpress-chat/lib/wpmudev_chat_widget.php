@@ -24,7 +24,7 @@ if (!class_exists('WPMUDEVChatWidget')) {
 			);
 
 			$widget_ops = array('classname' => __CLASS__, 'description' => __('WordPress Chat Widget.', $wpmudev_chat->translation_domain));
-			parent::WP_Widget(__CLASS__, __('WordPress Chat Widget', $wpmudev_chat->translation_domain), $widget_ops);
+			parent::__construct(__CLASS__, __('WordPress Chat Widget', $wpmudev_chat->translation_domain), $widget_ops);
 		}
 
 		function WPMUDEVChatWidget () {
@@ -264,7 +264,7 @@ if (!class_exists('WPMUDEVChatFriendsWidget')) {
 			// Set defaults
 			// ...
 			$widget_ops = array('classname' => __CLASS__, 'description' => __('Shows Chat Friends and status. (Friends plugin required)', $wpmudev_chat->translation_domain));
-			parent::WP_Widget(__CLASS__, __('WordPress Chat Friends Widget', $wpmudev_chat->translation_domain), $widget_ops);
+			parent::__construct(__CLASS__, __('WordPress Chat Friends Widget', $wpmudev_chat->translation_domain), $widget_ops);
 		}
 
 		function WPMUDEVChatFriendsWidget () {
@@ -481,7 +481,7 @@ if (!class_exists('WPMUDEVChatRoomsWidget')) {
 			// Set defaults
 			// ...
 			$widget_ops = array('classname' => __CLASS__, 'description' => __('Shows Active Chats Sessions across site.', $wpmudev_chat->translation_domain));
-			parent::WP_Widget(__CLASS__, __('WordPress Chat Rooms', $wpmudev_chat->translation_domain), $widget_ops);
+			parent::__construct(__CLASS__, __('WordPress Chat Rooms', $wpmudev_chat->translation_domain), $widget_ops);
 		}
 
 		function WPMUDEVChatRoomsWidget () {
@@ -703,7 +703,7 @@ if (!class_exists('WPMUDEVChatStatusWidget')) {
 			);
 
 			$widget_ops = array('classname' => __CLASS__, 'description' => __('This widget allows WordPress users to set their Chat status via a sidebar widget.', $wpmudev_chat->translation_domain));
-			parent::WP_Widget(__CLASS__, __('WordPress Chat Status', $wpmudev_chat->translation_domain), $widget_ops);
+			parent::__construct(__CLASS__, __('WordPress Chat Status', $wpmudev_chat->translation_domain), $widget_ops);
 		}
 
 		function WPMUDEVChatStatusWidget () {

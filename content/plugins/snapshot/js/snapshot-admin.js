@@ -71,7 +71,6 @@ jQuery(document).ready( function($) {
 
 		var snapshot_log_position = 0;
 		var snapshot_log_viewer_polling = setInterval(function() {
-
 			if (jQuery('#TB_window').length) {
 								
 				var data = {
@@ -88,9 +87,10 @@ jQuery(document).ready( function($) {
 			        data: data,
 					dataType: 'json',
 			    	error: function(jqXHR, textStatus, errorThrown) {
-						clearInterval(snapshot_log_viewer_polling);				
+						clearInterval(snapshot_log_viewer_polling);
 					},
 				    success: function(reply_data) {
+                        console.log( reply_data );
 						if ((reply_data != undefined) && (reply_data['payload'] != undefined)) {
 							if (snapshot_log_position == 0) {
 								jQuery('#snapshot-log-viewer').html(reply_data['payload']);							
@@ -119,7 +119,7 @@ jQuery(document).ready( function($) {
 			    	}
 				});
 			} else {
-				clearInterval(snapshot_log_viewer_polling);				
+				clearInterval(snapshot_log_viewer_polling);
 			}
 		}, 1000);
 
@@ -486,9 +486,9 @@ jQuery(document).ready( function($) {
                             blog_name = reply_data['blog']['blogname']+" ("+reply_data['blog']['domain'];
                         }
 
-						if (reply_data['mapped_domain'] != undefined) {
-							blog_name += " / "+reply_data['mapped_domain']+" ";
-						}
+                        if (reply_data['mapped_domain'] != undefined) {
+                            blog_name += " / "+reply_data['mapped_domain']+" ";
+                        }
 
                         if( false != reply_data['blog']['blogname'] ) {
                             blog_name += ")";
@@ -925,19 +925,20 @@ jQuery(document).ready( function($) {
 							jQuery( "#snapshot-ajax-error" ).html(jqXHR['responseText']);
 							jQuery( "#snapshot-ajax-error" ).show();
 						} else {
-							jQuery( "#snapshot-ajax-error" ).html('<p>An unknown response returned from Snapshot backup attempt. Aborting. Double check Snapshot settings.</p>');
+							console.log( jqXHR );
+							jQuery( "#snapshot-ajax-error" ).html('<p>AAA An unknown response returned from Snapshot backup attempt. Aborting. Double check Snapshot settings.</p>');
 							jQuery( "#snapshot-ajax-error" ).show();																					
 						}
 					},
 			        success: function(reply_data) {
 
 						if ((reply_data == undefined) || (reply_data['errorStatus'] == undefined)) {
-							jQuery( "#snapshot-ajax-error" ).html('<p>An unknown response returned from Snapshot backup attempt. Aborting. Double check Snapshot settings.</p>');
+							jQuery( "#snapshot-ajax-error" ).html('<p>BBB An unknown response returned from Snapshot backup attempt. Aborting. Double check Snapshot settings.</p>');
 							jQuery( "#snapshot-ajax-error" ).show();
 																					
 						} else if (reply_data['errorStatus'] != false) {
 							if (reply_data['errorText'] == undefined) {
-								jQuery( "#snapshot-ajax-error" ).html('<p>An unknown response returned from Snapshot backup attempt. Aborting. Double check Snapshot settings.</p>');
+								jQuery( "#snapshot-ajax-error" ).html('<p>CCC An unknown response returned from Snapshot backup attempt. Aborting. Double check Snapshot settings.</p>');
 								jQuery( "#snapshot-ajax-error" ).show();														
 							} else {
 								jQuery( "#snapshot-ajax-error" ).append(reply_data['errorText']);
@@ -1288,8 +1289,8 @@ jQuery(document).ready( function($) {
 		/* From the form grab the Name and Notes field values. */
 		var snapshot_item_key = jQuery('input[name="item"]').val();
         var snapshot_blog_search = jQuery('input[name="snapshot-blog-id-search"]').val();
-		
-		var snapshot_restore_plugin = jQuery('input#snapshot-restore-option-plugins', this).attr('checked');
+
+        var snapshot_restore_plugin = jQuery('input#snapshot-restore-option-plugins', this).attr('checked');
 		if (snapshot_restore_plugin == "checked") {
 			snapshot_restore_plugin = "yes";
 		} else {
@@ -1384,7 +1385,7 @@ jQuery(document).ready( function($) {
 					'snapshot-files-sections': snapshot_form_files_sections,
 					'snapshot-tables-option': snapshot_form_tables_option,
 					'snapshot-tables-array': snapshot_form_tables_array,
-                    'snapshot_blog_search': snapshot_blog_search,
+                    'snapshot_blog_search': snapshot_blog_search
 				};
 
 			    snapshot_ajax_hdl_xhr = jQuery.ajax({
@@ -1492,7 +1493,7 @@ jQuery(document).ready( function($) {
 						'snapshot-blog-id': snapshot_form_blog_id,						
 						'snapshot_table': table_name,
 						'table_data': table_data,
-                        'snapshot_blog_search': snapshot_blog_search,
+                        'snapshot_blog_search': snapshot_blog_search
 					};
 				
 					snapshot_ajax_hdl_xhr = jQuery.ajax({

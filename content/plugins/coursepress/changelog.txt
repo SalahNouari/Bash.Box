@@ -5,6 +5,9 @@ CHANGE LOG
 =================================================
 
 == Changelog ==
+= 1.2.6.4 =
+* Fixed: Unit completion issues.
+* Fixed: Certificate creation issues.
 
 = 1.2.6.3 =
 * Updated: Improvements for 'Submit different answer' workflow.
@@ -453,4 +456,4 @@ CHANGE LOG
 * 1.0 First Release.
 
 
-133620-1443654384-au
+133620-1444352731-au

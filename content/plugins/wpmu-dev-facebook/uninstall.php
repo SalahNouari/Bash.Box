@@ -37,7 +37,7 @@ $wdfb_option_keys = array(
 foreach ( $wdfb_option_keys as $key ) {
 	if ( is_multisite() ) {
 		global $wpdb;
-		$blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A );	     	 	 		 		   
+		$blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A );
 		if ( $blogs ) {
 			foreach ( $blogs as $blog ) {
 				switch_to_blog( $blog['blog_id'] );

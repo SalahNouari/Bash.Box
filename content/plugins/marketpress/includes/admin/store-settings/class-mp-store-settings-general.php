@@ -57,6 +57,7 @@ class MP_Store_Settings_General {
 
 		add_filter( 'wpmudev_field/format_value/tax[rate]', array( &$this, 'format_tax_rate_value' ), 10, 2 );
 		add_filter( 'wpmudev_field/sanitize_for_db/tax[rate]', array( &$this, 'save_tax_rate_value' ), 10, 3 );
+
 		foreach ( mp()->canadian_provinces as $key => $value ) {
 			add_filter( 'wpmudev_field/format_value/tax[canada_rate][' . $key . ']', array( &$this, 'format_tax_rate_value' ), 10, 2 );
 			add_filter( 'wpmudev_field/sanitize_for_db/tax[canada_rate][' . $key . ']', array( &$this, 'save_tax_rate_value' ), 10, 3 );
@@ -161,11 +162,6 @@ class MP_Store_Settings_General {
 			jQuery( document ).ready( function( $ ) {
 				var $currency = $( 'select[name="currency"]' );
 
-				$currency.select2( {
-					dropdownAutoWidth : false,
-					width : "300px"
-				} );
-
 				$currency.on( 'change', function( e ) {
 					var data = [
 						{
@@ -180,13 +176,12 @@ class MP_Store_Settings_General {
 						}
 					];
 
-					$currency.isWorking( true );
+					$currency.mp_select2( 'enable', false ).isWorking( true );
 
 					$.get( ajaxurl, $.param( data ) ).done( function( resp ) {
-						$currency.isWorking( false );
+						$currency.mp_select2( 'enable', true ).isWorking( false );
 
 						if ( resp.success ) {
-							console.log(resp.data);
 							$( '.mp-currency-symbol' ).html( resp.data );
 						}
 					} );
@@ -210,28 +205,18 @@ class MP_Store_Settings_General {
 				var $country = $( 'select[name="base_country"]' ),
 					$state = $( 'select[name="base_province"]' );
 
-				$country.select2( {
-					dropdownAutoWidth : false,
-					width : "300px"
-				} );
-
-				$state.select2( {
-					dropdownAutoWidth : false,
-					width : "300px"
-				} );
-
 				$country.on( 'change', function() {
 					var data = {
 						country: $country.val(),
 						action: "mp_update_states_dropdown"
 					};
 
-					$country.isWorking( true );
-					$state.select2( 'enable', false );
+					$country.mp_select2( 'enable', false ).isWorking( true );
+					$state.mp_select2( 'enable', false );
 
 					$.post( ajaxurl, data ).done( function( resp ) {
-						$country.isWorking( false );
-						$state.select2( 'enable', true );
+						$country.mp_select2( 'enable', true ).isWorking( false );
+						$state.mp_select2( 'enable', true );
 
 						if ( resp.success ) {
 							$state.html( resp.data.states );
@@ -514,6 +499,17 @@ class MP_Store_Settings_General {
 			'label'		 => array( 'text' => __( 'Enter Prices Inclusive of Tax?', 'mp' ) ),
 			'desc'		 => __( 'Enabling this option allows you to enter and show all prices inclusive of tax, while still listing the tax total as a line item in shopping carts. Please see your local tax laws.', 'mp' ),
 			'message'	 => __( 'Yes', 'mp' ),
+		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'		 => 'tax[include_tax]',
+			'label'		 => array( 'text' => __( 'Show Price + Tax?', 'mp' ) ),
+			'desc'		 => __( 'Enabling this option will show Price + Tax, eg. if your price is 100 and your tax 20, your price will be 120', 'mp' ),
+			'message'	 => __( 'Yes', 'mp' ),
+			'conditional' => array(
+				'name'   => 'tax[tax_inclusive]',
+				'value'  => '1',
+				'action' => 'hide',
+			),
 		) );
 		$metabox->add_field( 'checkbox', array(
 			'name'		 => 'tax[tax_digital]',

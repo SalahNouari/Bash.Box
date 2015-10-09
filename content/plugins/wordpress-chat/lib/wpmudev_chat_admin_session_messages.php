@@ -374,7 +374,7 @@ if ( ! class_exists( 'WPMUDEVChat_Session_Messages_Table' ) ) {
 			} else {
 				$chat_user_moderator_class = '';
 			}
-			echo '<span class="chat-user-avatar ' . $chat_user_moderator_class . '">' . get_avatar( $item->avatar, 32 ) . '</span><span class="chat-user-name ' . $chat_user_moderator_class . '">' . $item->name . '</span><br /><span class="chat-ip-address ' . $chat_user_moderator_class . '">' . $item->ip_address . '</span>';
+			echo '<span class="chat-user-avatar ' . $chat_user_moderator_class . '">' . get_avatar( $item->avatar, 32 ) . '</span><span class="chat-user-name ' . $chat_user_moderator_class . '">' . $item->name . '</span><br /><span class="chat-ip-address ' . $chat_user_moderator_class . '">' . $item->ip_address . '</span>';	     	 	 	  	  		
 		}
 
 		function column_status( $item ) {

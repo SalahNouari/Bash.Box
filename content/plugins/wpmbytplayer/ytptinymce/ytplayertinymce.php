@@ -17,7 +17,7 @@ if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
     <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset; ?>" />
-        <title><?php _e('Add a shortcode for mb.YTPlayer', 'mbYTPlayer'); ?></title>
+        <title><?php _e('Add a shortcode for mb.YTPlayer', 'wpmbytplayer'); ?></title>
         <link rel="stylesheet" type="text/css" href="<?php echo $plugins_url.'/wpmbytplayer/ytptinymce/bootstrap-1.4.0.min.css?v='.$plugin_version; ?>"/>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
         <script type="text/javascript" src="<?php echo $includes_url.'js/tinymce/tiny_mce_popup.js?v='.$plugin_version; ?>"></script>
@@ -60,14 +60,14 @@ if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
     <div id="donate" style="display: none">
         <div id="donateContent">
             <h2>mb.YTPlayer</h2>
-            <p ><?php _e('If you like it and you are using it then you should consider a donation <br> (€15,00 or more) :-)', 'mbYTPlayer'); ?></p>
+            <p ><?php _e('If you like it and you are using it then you should consider a donation <br> (€15,00 or more) :-)', 'wpmbytplayer'); ?></p>
             <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=V6ZS8JPMZC446&lc=GB&item_name=mb%2eideas&item_number=MBIDEAS&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG_global%2egif%3aNonHosted" target="_blank" onclick="donate();">
                     <img border="0" alt="PayPal" src="https://www.paypalobjects.com/en_US/IT/i/btn/btn_donateCC_LG.gif">
                 </a></p>
             <p id="timer">&nbsp;</p>
             <br>
             <br>
-            <button onclick="donate()"><?php _e('I already donate', 'mbYTPlayer'); ?></button>
+            <button onclick="donate()"><?php _e('I already donate', 'wpmbytplayer'); ?></button>
         </div>
     </div>
     <script type="text/javascript">
@@ -127,147 +127,147 @@ if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
 
     <form class="form-stacked" action="#">
         <fieldset>
-            <legend><?php _e('mb.YTPlayer video parameters:', 'mbYTPlayer'); ?></legend>
+            <legend><?php _e('mb.YTPlayer video parameters:', 'wpmbytplayer'); ?></legend>
 
 
 
             <label>
-                <span class="label"><?php _e('Video url', 'mbYTPlayer'); ?> <span style="color:red">*</span>: </span>
+                <span class="label"><?php _e('Video url', 'wpmbytplayer'); ?> <span style="color:red">*</span>: </span>
                 <textarea type="text" name="url" class="span5"></textarea><br>
-                <span class="help-inline"><?php _e('YouTube video URLs (comma separated)', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('YouTube video URLs (comma separated)', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Opacity', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Opacity', 'wpmbytplayer'); ?>:</span>
                 <select name="opacity">
                     <option value="1">1</option>
                     <option value=".8">0.8</option>
                     <option value=".5">0.5</option>
                     <option value=".3">0.3</option>
                 </select>
-                <span class="help-inline"><?php _e('YouTube video opacity', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('YouTube video opacity', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Quality', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Quality', 'wpmbytplayer'); ?>:</span>
                 <select name="quality">
-                    <option value="default"><?php _e('auto detect', 'mbYTPlayer'); ?></option>
-                    <option value="small"><?php _e('small', 'mbYTPlayer'); ?></option>
-                    <option value="medium" selected="selected"><?php _e('medium', 'mbYTPlayer'); ?></option>
-                    <option value="large"><?php _e('large', 'mbYTPlayer'); ?></option>
-                    <option value="hd720"><?php _e('hd720', 'mbYTPlayer'); ?></option>
-                    <option value="hd1080"><?php _e('hd1080', 'mbYTPlayer'); ?></option>
-                    <option value="highres"><?php _e('highres', 'mbYTPlayer'); ?></option>
+                    <option value="default"><?php _e('auto detect', 'wpmbytplayer'); ?></option>
+                    <option value="small"><?php _e('small', 'wpmbytplayer'); ?></option>
+                    <option value="medium" selected="selected"><?php _e('medium', 'wpmbytplayer'); ?></option>
+                    <option value="large"><?php _e('large', 'wpmbytplayer'); ?></option>
+                    <option value="hd720"><?php _e('hd720', 'wpmbytplayer'); ?></option>
+                    <option value="hd1080"><?php _e('hd1080', 'wpmbytplayer'); ?></option>
+                    <option value="highres"><?php _e('highres', 'wpmbytplayer'); ?></option>
                 </select>
-                <span class="help-inline"><?php _e('YouTube video quality', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('YouTube video quality', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Aspect ratio', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Aspect ratio', 'wpmbytplayer'); ?>:</span>
                 <select name="ratio">
-                    <option value="auto" selected="selected"><?php _e('auto detect', 'mbYTPlayer'); ?></option>
-                    <option value="4/3"><?php _e('4/3', 'mbYTPlayer'); ?></option>
-                    <option value="16/9"><?php _e('16/9', 'mbYTPlayer'); ?></option>
+                    <option value="auto" selected="selected"><?php _e('auto detect', 'wpmbytplayer'); ?></option>
+                    <option value="4/3"><?php _e('4/3', 'wpmbytplayer'); ?></option>
+                    <option value="16/9"><?php _e('16/9', 'wpmbytplayer'); ?></option>
                 </select>
                 <span class="help-inline"><?php _e('YouTube video aspect ratio'); ?>.</span>
-                <br><span class="help-inline"> <?php _e('If "auto" the plug in will try to get it from Youtube', 'mbYTPlayer'); ?>.</span>
+                <br><span class="help-inline"> <?php _e('If "auto" the plug in will try to get it from Youtube', 'wpmbytplayer'); ?>.</span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Is inline', 'mbYTPlayer'); ?>: </span>
+                <span class="label"><?php _e('Is inline', 'wpmbytplayer'); ?>: </span>
                 <input type="checkbox" name="isinline" value="true" onchange="isInline()" />
-                <span class="help-inline"><?php _e('Show the player inline', 'mbYTPlayer'); ?></span><br>
+                <span class="help-inline"><?php _e('Show the player inline', 'wpmbytplayer'); ?></span><br>
             </label>
 
             <div id="inlinePlayer" style="">
-                <span class="label"><?php _e('Player width', 'mbYTPlayer'); ?> *: </span>
+                <span class="label"><?php _e('Player width', 'wpmbytplayer'); ?> *: </span>
                 <input type="text" name="playerwidth" class="span5" style="width: 60px" onblur="suggestedHeight()"/> px
-                <span class="help-inline"><?php _e('Set the width of the inline player', 'mbYTPlayer'); ?></span><br><br>
-                <span class="label"><?php _e('Aspect ratio', 'mbYTPlayer'); ?>:</span>
+                <span class="help-inline"><?php _e('Set the width of the inline player', 'wpmbytplayer'); ?></span><br><br>
+                <span class="label"><?php _e('Aspect ratio', 'wpmbytplayer'); ?>:</span>
                 <select name="inLine_ratio" style="width: 60px" onchange="suggestedHeight()">
-                    <option value="4/3"><?php _e('4/3', 'mbYTPlayer'); ?></option>
-                    <option value="16/9"><?php _e('16/9', 'mbYTPlayer'); ?></option>
+                    <option value="4/3"><?php _e('4/3', 'wpmbytplayer'); ?></option>
+                    <option value="16/9"><?php _e('16/9', 'wpmbytplayer'); ?></option>
                 </select>
-                <span class="help-inline"><?php _e('To get the suggested height for the player', 'mbYTPlayer'); ?></span><br><br>
+                <span class="help-inline"><?php _e('To get the suggested height for the player', 'wpmbytplayer'); ?></span><br><br>
 
-                <span class="label"><?php _e('Player height', 'mbYTPlayer'); ?> *: </span>
+                <span class="label"><?php _e('Player height', 'wpmbytplayer'); ?> *: </span>
                 <input type="text" name="playerheight" class="span5" style="width: 60px" /> px
-                <span class="help-inline"><?php _e('Set the height of the inline player', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('Set the height of the inline player', 'wpmbytplayer'); ?></span>
                 <br>
                 <span class="help-inline">* Add % to the unit if the width is set as percentage.</span>
             </div>
 
             <label>
-                <span class="label"><?php _e('Show controls', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Show controls', 'wpmbytplayer'); ?>:</span>
                 <input type="checkbox" name="showcontrols" value="true" onchange="showControlBox()"/>
-                <span class="help-inline"><?php _e('show controls for this player', 'mbYTPlayer'); ?></span><br>
+                <span class="help-inline"><?php _e('show controls for this player', 'wpmbytplayer'); ?></span><br>
             </label>
 
             <div id="controlBox">
-                <span class="label"><?php _e('full screen', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('full screen', 'wpmbytplayer'); ?>:</span>
                 <input type="radio" name="realfullscreen" value="true" checked/>
-                <span class="help-inline"><?php _e('Full screen containment is the screen', 'mbYTPlayer'); ?></span><br>
+                <span class="help-inline"><?php _e('Full screen containment is the screen', 'wpmbytplayer'); ?></span><br>
 
                 <span class="label"></span>
                 <input type="radio" name="realfullscreen" value="false"/>
-                <span class="help-inline"><?php _e('Full screen containment is the browser window', 'mbYTPlayer'); ?></span><br><br>
+                <span class="help-inline"><?php _e('Full screen containment is the browser window', 'wpmbytplayer'); ?></span><br><br>
 
                 <input type="checkbox" name="printurl" value="true" checked/>
-                <span class="help-inline"><?php _e('show the link to the original YouTube® video', 'mbYTPlayer'); ?>.</span>
+                <span class="help-inline"><?php _e('show the link to the original YouTube® video', 'wpmbytplayer'); ?>.</span>
             </div>
 
             <label>
-                <span class="label"><?php _e('Autoplay', 'mbYTPlayer'); ?>: </span>
+                <span class="label"><?php _e('Autoplay', 'wpmbytplayer'); ?>: </span>
                 <input type="checkbox" name="autoplay" value="true" checked/>
-                <span class="help-inline"><?php _e('The player starts on page load', 'mbYTPlayer'); ?></span><br>
+                <span class="help-inline"><?php _e('The player starts on page load', 'wpmbytplayer'); ?></span><br>
             </label>
 
             <label>
-                <span class="label"><?php _e('Start at', 'mbYTPlayer'); ?>: </span>
+                <span class="label"><?php _e('Start at', 'wpmbytplayer'); ?>: </span>
                 <input type="text" name="startat" class="span5" style="width: 60px" /> sec.
-                <span class="help-inline"><?php _e('Set the seconds you want the player starts at', 'mbYTPlayer'); ?></span><br>
+                <span class="help-inline"><?php _e('Set the seconds you want the player starts at', 'wpmbytplayer'); ?></span><br>
             </label>
 
             <label>
-                <span class="label"><?php _e('stop at', 'mbYTPlayer'); ?>: </span>
+                <span class="label"><?php _e('stop at', 'wpmbytplayer'); ?>: </span>
                 <input type="text" name="stopat" class="span5" style="width: 60px" /> sec.
-                <span class="help-inline"><?php _e('Set the seconds you want the player stops at', 'mbYTPlayer'); ?></span><br>
+                <span class="help-inline"><?php _e('Set the seconds you want the player stops at', 'wpmbytplayer'); ?></span><br>
             </label>
 
             <label>
-                <span class="label"><?php _e('Audio volume', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Audio volume', 'wpmbytplayer'); ?>:</span>
                 <input type="text" name="volume" value="50" style="width: 60px"/>
-                <span class="help-inline"><?php _e('Set the audio volume (from 0 to 100)', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('Set the audio volume (from 0 to 100)', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Mute video', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Mute video', 'wpmbytplayer'); ?>:</span>
                 <input type="checkbox" name="mute" value="true"/>
-                <span class="help-inline"><?php _e('mute the audio of the video', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('mute the audio of the video', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Loop video', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Loop video', 'wpmbytplayer'); ?>:</span>
                 <input type="checkbox" name="loop" value="true"/>
-                <span class="help-inline"><?php _e('loop the video once ended', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('loop the video once ended', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Add raster', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Add raster', 'wpmbytplayer'); ?>:</span>
                 <input type="checkbox" name="addraster" value="true"/>
-                <span class="help-inline"><?php _e('add a raster effect', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('add a raster effect', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('pause on window blur', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('pause on window blur', 'wpmbytplayer'); ?>:</span>
                 <input type="checkbox" name="stopmovieonblur" value="true"/>
-                <span class="help-inline"><?php _e('pause the player on window blur', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('pause the player on window blur', 'wpmbytplayer'); ?></span>
             </label>
 
             <label>
-                <span class="label"><?php _e('Add Google Analytics', 'mbYTPlayer'); ?>:</span>
+                <span class="label"><?php _e('Add Google Analytics', 'wpmbytplayer'); ?>:</span>
                 <input type="checkbox" name="gaTrack" value="true"/>
-                <span class="help-inline"><?php _e('add the event "play" on Google Analytics track', 'mbYTPlayer'); ?></span>
+                <span class="help-inline"><?php _e('add the event "play" on Google Analytics track', 'wpmbytplayer'); ?></span>
             </label>
 
         </fieldset>

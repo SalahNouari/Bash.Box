@@ -448,11 +448,8 @@ class MP_Gateway_Paypal_Express extends MP_Gateway_API {
 			if ( ! mp_get_setting( 'tax->tax_inclusive' ) ) {
 				$tax_total                                 = $vcart->tax_total( false );
 				$request["PAYMENTREQUEST_{$index}_TAXAMT"] = $tax_total;
-			} else {
-				//incase of inclusive, we will have to submit the shipping tax
-				$tax_total                                 = $vcart->shipping_tax_total( false );
-				$request["PAYMENTREQUEST_{$index}_TAXAMT"] = round( $tax_total, 2 );
 			}
+
 			//order details
 			$request["PAYMENTREQUEST_{$index}_DESC"]             = $this->trim_name( sprintf( __( '%s Store Purchase - Order ID: %s', 'mp' ), get_bloginfo( 'name' ), $order_id ) );
 			$request["PAYMENTREQUEST_{$index}_AMT"]              = $vcart->total( false );

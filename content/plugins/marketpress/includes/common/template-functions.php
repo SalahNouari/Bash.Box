@@ -765,11 +765,15 @@ if ( ! function_exists( 'mp_buy_button' ) ) :
 	 * @param string $context Options are list or single
 	 * @param int $post_id The post_id for the product. Optional if in the loop.
 	 */
-	function mp_buy_button( $echo = true, $context = 'list', $post_id = null ) {
+	function mp_buy_button( $echo = true, $context = 'list', $product_id = null ) {
 		//_deprecated_function( 'mp_buy_button', '3.0', 'MP_Product::buy_button' );
 
-		$product = new MP_Product( $post_id );
-		$button  = $product->buy_button( false, $context );
+		$product = new MP_Product( $product_id );
+		if ( ! $product->exists() ) {
+			return;
+		}
+
+		$button  = $product->buy_button( false, $context, array(), true );
 
 		if ( $echo ) {
 			echo $button;
@@ -1583,6 +1587,17 @@ if ( ! function_exists( 'mp_get_order_history' ) ) :
 			$orders = maybe_unserialize( mp_get_cookie_value( $key, array() ) );
 		}
 
+		foreach ( $orders as $key => $order ) {
+			if ( ! empty( $order['id'] ) ) {
+				$mp_order = get_post( $order['id'] );
+
+				// if order is deleted or trashed, unset it
+				if ( empty( $mp_order ) || 'trash' === $mp_order->post_status ) {
+					unset( $orders[ $key ] );
+				}
+			}
+		}
+
 		/**
 		 * Filter the user's order history
 		 *
@@ -1911,6 +1926,8 @@ if ( ! function_exists( 'mp_list_products' ) ) :
 				$query['paged'] = intval( $args['page'] );
 			} elseif ( get_query_var( 'paged' ) != '' ) {
 				$query['paged'] = $args['page'] = intval( get_query_var( 'paged' ) );
+			} elseif ( get_query_var( 'page' ) != '' ) {
+				$query['paged'] = $args['page'] = intval( get_query_var( 'page' ) );
 			}
 
 			//Get session values for order and order_by
@@ -2291,6 +2308,13 @@ if ( ! function_exists( 'mp_product' ) ) {
 					break;
 				}
 			}
+
+			// if ( ! $has_image ) {
+			// 	$values = get_post_meta( $product->ID, 'mp_product_images', true );
+			// 	if ( $values ) {
+			// 		$has_image = true;
+			// 	}
+			// }
 		}
 
 		$image_alignment = mp_get_setting( 'image_alignment_single' );
@@ -2358,7 +2382,7 @@ if ( ! function_exists( 'mp_product' ) ) {
 							} else {
 								//$img_url = wp_get_attachment_image_src( $value, $size );
 								$original_image = wp_get_attachment_image_src( $value, 'full' );
-								$img_url        = mp_resize_image( $original_image[0], $size );
+								$img_url        = mp_resize_image( $value, $original_image[0], $size );
 							}
 
 							$return .= '<li data-thumb="' . $img_url[0] . '" data-src ="' . $original_image[0] . '"><img src="' . $img_url[0] . '"></li>';
@@ -2370,7 +2394,7 @@ if ( ! function_exists( 'mp_product' ) ) {
 								$img_url = array( esc_url( $values[ 0 ] ) );
 							} else {
 								$original_image = wp_get_attachment_image_src( $values[ 0 ], 'full' );
-								$img_url        = mp_resize_image( $original_image[0], $size );
+								$img_url        = mp_resize_image( $values[ 0 ], $original_image[0], $size );
 							}
 
 							$return .= '<li data-thumb="' . $img_url[0] . '" data-src ="' . $original_image[0] . '"><img src="' . $img_url[0] . '"></li>';
@@ -2382,9 +2406,8 @@ if ( ! function_exists( 'mp_product' ) ) {
 					$return .= '</div><!-- end mp_single_product_images -->';
 				}
 			} else {
-
 				$return .= '<div class="mp_single_product_images">';
-				$return .= ( $variation ) ? $variation->image( false, $image, $size, $image_alignment ) : $product->image( false, $image, $size, $image_alignment );
+				$return .= ( $variation ) ? $variation->image( false, $image, $size, $image_alignment ) : $product->image( false, 'single', $size, $image_alignment );
 				$return .= '</div><!-- end mp_single_product_images -->';
 			}
 		}
@@ -3023,3 +3046,122 @@ if ( ! function_exists( 'mp_get_plugin_slug' ) ) {
 		}
 	}
 }
+
+if (!function_exists('mp_product_title')) :
+/*
+ * function mp_product_title
+ * Displays a title of a single product according to preference
+ *
+ * @param bool $echo Optional, whether to echo or return
+ * @param int $product_id the ID of the product to display
+ * @param bool $link Whether to display title with or without a link
+ * @param bool $formated Whether to display formated text (i.e h3 with a class) or not (just pure text)
+ * @param string $html_tag title surrounding HTML tag (i.e. <h3>title</h3>)
+ * @param string $css_class add custom css class to the title
+ * @param string $microdata add additional information to HTML content which is more descriptive and suitable for search engines (learn more here http://schema.org/docs/gs.html)
+ */
+
+function mp_product_title($product_id, $echo = true, $link = false, $formated = true, $html_tag = 'h3', $css_class = 'mp_product_name', $microdata = 'itemprop="name"') {
+	global $mp;
+
+	$post = get_post($product_id);
+
+	if ($link) {
+			$title = '<a href="' . get_permalink($post->ID) . '">' . $post->post_title . '</a>';
+	} else {
+			$title = $post->post_title;
+	}
+
+	if ($formated) {
+			$before_title = '<' . $html_tag . ' ' . $microdata . ' class="entry-title ' . $css_class . '">';
+			$after_title = '</' . $html_tag . '>';
+	} else {
+			$before_title = '<span class="entry-title">';
+			$after_title = '</span>';
+	}
+
+	$return = apply_filters('mp_product_title', $before_title . $title . $after_title, $product_id, $link, $formated, $html_tag, $css_class, $microdata);
+
+	if ($echo)
+			echo $return;
+	else
+			return $return;
+}
+endif;
+
+
+if (!function_exists('mp_product_description')) :
+/*
+ * function mp_product_description
+ * Displays a title of a single product according to preference
+ *
+ * @param bool $echo Optional, whether to echo or return
+ * @param int $product_id the ID of the product to display
+ * @param bool/string $content Whether and what type of content to display. Options are false, 'full', or 'excerpt'. Default 'full'
+ * @param string $html_tag title surrounding HTML tag (i.e. <div>title</div>)
+ * @param string $css_class add custom css class to the description
+ * @param string $microdata add additional information to HTML content which is more descriptive and suitable for search engines (learn more here http://schema.org/docs/gs.html)
+ */
+
+function mp_product_description($product_id, $echo = true, $content = 'full', $html_tag = true, $css_class = 'mp_product_content', $microdata = 'itemprop="description"') {
+	global $mp;
+
+	$post = get_post($product_id);
+	$description = '';
+
+	if ($content == 'excerpt') {
+			$description .= $post->post_excerpt;
+	} else {
+			$description .= apply_filters('the_content', $post->post_content);
+	}
+
+	if ($html_tag) {
+			$before_description = '<div ' . $microdata . ' class="' . $css_class . '">';
+			$after_description = '</div>';
+	} else {
+			$before_description = '';
+			$after_description = '';
+	}
+
+	$return = apply_filters('mp_product_description', $before_description . $description . $after_description, $product_id, $content, $html_tag, $css_class, $microdata);
+
+	if ($echo)
+			echo $return;
+	else
+			return $return;
+}
+endif;
+
+
+if (!function_exists('mp_product_meta')) :
+/*
+ * function mp_product_meta
+ * Displays the product meta box
+ *
+ * @param bool $echo Optional, whether to echo or return
+ * @param string $context Options are list or single
+ * @param int $product_id The post_id for the product. Optional if in the loop
+ * @param sting $label A label to prepend to the price. Defaults to "Price: "
+ * @param string $html_tag title surrounding HTML tag (i.e. <div>title</div>)
+ * @param string $css_class add custom css class to the description
+ */
+
+function mp_product_meta($echo = true, $context = 'context', $label = true, $product_id = null, $html_tag = true, $css_class = 'mp_product_meta') {
+
+	if ($html_tag) {
+			$content = '<div class="'.$css_class.'">';
+	}
+	$content .= mp_product_price(false, $product_id, $label);
+	$content .= mp_buy_button(false, $context, $product_id);
+	if ($html_tag) {
+			$content .= '</div>';
+	}
+
+	$content = apply_filters('mp_product_meta', $content, $context, $label, $product_id, $html_tag, $css_class);
+
+	if ($echo)
+			echo $content;
+	else
+			return $content;
+}
+endif;

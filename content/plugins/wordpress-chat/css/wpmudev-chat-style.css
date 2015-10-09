@@ -118,10 +118,14 @@ div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-m
 }
 
 div.wpmudev-chat-box div.wpmudev-chat-module-message-area ul.wpmudev-chat-send-meta li.wpmudev-chat-send-input-emoticons ul.wpmudev-chat-emoticons-list li {
+    cursor: pointer;
     margin: 2px 3px;
     padding: 0;
 }
-
+ul.wpmudev-chat-emoticons-list li img {
+    height: 0.5em !important;
+    width: 0.5em !important;
+}
 div.wpmudev-chat-box span.chat-auth-button {
     margin-right: 5px;
 }
@@ -340,7 +344,7 @@ div.wpmudev-chat-box-moderator div.wpmudev-chat-module-messages-list div.wpmudev
     text-decoration: line-through;
 }
 
-div.wpmudev-chat-box-moderator div.wpmudev-chat-module-messages-list div.wpmudev-chat-row.wpmudev-chat-row-user-blocked ul.wpmudev-chat-row-footer li.wpmudev-chat-admin-actions-item a.wpmudev-chat-admin-actions-item-block-user span.action {
+div.wpmudev-chat-box-moderator div.wpmudev-chat-module-messages-list div.wpmudev-chat-row.wpmudev-chat-row-user-blocked ul.wpmudev-chat-row-footer li.wpmudev-chat-admin-actions-item a.wpmudev-chat-admin-actions-item-block-user span.action {	     	 	 	  	  		
     background-color: red;
     text-decoration: line-through;
 }
@@ -873,4 +877,4 @@ select.wpmudev-chat-status-widget option.available {
 }
 
 
-/* 133620-1437262963-au */
+/* 133620-1444352759-au */

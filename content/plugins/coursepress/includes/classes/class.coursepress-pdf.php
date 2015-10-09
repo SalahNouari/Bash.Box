@@ -232,6 +232,7 @@ class CoursePress_PDF extends TCPDF {
 			$html = make_clickable( wpautop( $html ) );
 		}
 
+
 		if( isset( $args['style'] ) ) {
 			$html = $args['style'] . $html;
 		}

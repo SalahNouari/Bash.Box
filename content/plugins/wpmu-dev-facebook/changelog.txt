@@ -1,10 +1,14 @@
 Plugin Name: Ultimate Facebook
 Author: Ve Bailovity (Incsub)
-Contributor: Umesh Kumar
+Contributors: Umesh Kumar, Julien Zerbib
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.8.1 - 2015-10-02 - Julien Zerbib
+- Added: Editor can chose the FB account he is publishing in
+- Added: Publishing Title, Account and Publish are saved when the post has a draft status
 
 2.7.9.6 - 2015-07-22 - Umesh Kumar
 - Fixed: Permissions issue for new APP
@@ -448,4 +452,4 @@ Change Log:
 - Added date threshold parameter for Facebook Events widget.
 
 
-133620-1437694578-au
+133620-1444352758-au

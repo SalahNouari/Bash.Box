@@ -37,7 +37,7 @@ if ( ( isset( $_GET['wpmudev-chat-key'] ) ) && ( ! empty( $_GET['wpmudev-chat-ke
 				padding: 0;
 			}
 
-			body.wpmudev-chat-pop-out div#wpmudev-chat-box- <?php echo $chat_session['id'] ?> {
+			body.wpmudev-chat-pop-out div#wpmudev-chat-box-<?php echo $chat_session['id'] ?> {
 				width: 99%;
 				height: 99%;
 				position: fixed !important;

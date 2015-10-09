@@ -514,7 +514,7 @@ class MP_Cart {
 					break;
 
 				case 'title' :
-					$column_html = '<h2 class="mp_cart_item_title">' . sprintf( '<a target="_blank" href="%s">%s</a>', $product->url( false ), $product->title( false ) ) . '</h2>';
+					$column_html = '<h2 class="mp_cart_item_title">' . sprintf( '<a href="%s">%s</a>', $product->url( false ), $product->title( false ) ) . '</h2>';
 					if ( ! $this->is_editable && $product->is_download() && mp_is_shop_page( 'order_status' ) ) {
 						$column_html .= '<a target="_blank" href="' . $product->download_url( get_query_var( 'mp_order_id' ), false ) . '">' . __( 'Download', 'mp' ) . '</a>';
 					}
@@ -653,7 +653,7 @@ class MP_Cart {
 		 */
 		$html .= apply_filters( 'mp_cart/cart_meta/shipping_total', $line, $this );
 
-		if ( mp_get_setting( 'tax->tax_inclusive' ) ) {
+		if ( 0 < $this->tax_total( false, true ) ) {
 			$line = '
 					<div class="mp_cart_resume_item mp_cart_resume_item-estimated-tax">
 						<span class="mp_cart_resume_item_label">' . ( ( $this->is_editable ) ? sprintf( __( 'Estimated %s', 'mp' ), mp_get_setting( 'tax->label' ) ) : mp_get_setting( 'tax->label' ) ) . '</span>
@@ -1398,7 +1398,7 @@ class MP_Cart {
 			$items = $this->get_items();
 
 			foreach ( $items as $item_id => $qty ) {
-				$numitems += $qty;
+				$numitems += intval($qty);
 			}
 
 			if ( ( $this->is_global && false === current( $blog_ids ) ) || ! $this->is_global ) {
@@ -1526,6 +1526,7 @@ class MP_Cart {
 				 * @param MP_Cart The current cart object.
 				 * @param array The current cart items.
 				 */
+
 				$this->_total['product_original'] += (float) apply_filters( 'mp_cart/product_original_total', $total, $items );
 
 				if ( ( $this->is_global && false === current( $blog_ids ) ) || ! $this->is_global ) {
@@ -1818,9 +1819,10 @@ class MP_Cart {
 	 *
 	 * @return string/float
 	 */
-	public function tax_total( $format = false, $estimate = false, $include_shipping_tax = true ) {
+	public function tax_total( $format = false, $estimate = false ) {
 		if ( false === mp_arr_get_value( 'tax', $this->_total ) ) {
 			$tax_amt = 0;
+			$include_shipping_tax = mp_get_setting( 'tax->tax_shipping' );
 
 			//get address
 			$state   = mp_get_user_address_part( 'state', 'shipping' );
@@ -1864,6 +1866,7 @@ class MP_Cart {
 
 					if ( ( $special_tax_amt = $item->special_tax_amt() ) !== false ) {
 						$special_total += $special_tax_amt * $item->qty;
+
 					} else {
 						$total += $item->before_tax_price() * $item->qty;
 					}
@@ -1879,7 +1882,7 @@ class MP_Cart {
 				// Add in special tax
 				$tax_amt += $special_total;
 
-				if($include_shipping_tax) {
+				if ( $include_shipping_tax ) {
 					// Add in shipping?
 					$tax_amt += $this->shipping_tax_total();
 				}
@@ -1927,6 +1930,7 @@ class MP_Cart {
 	public function total( $format = false ) {
 		if ( false === mp_arr_get_value( 'total', $this->_total ) ) {
 			$total = ( $this->product_total() + $this->tax_total() + $this->shipping_total() );
+
 			/**
 			 * Filter the total
 			 *
@@ -1937,9 +1941,17 @@ class MP_Cart {
 			 * @param MP_Cart The current cart object.
 			 */
 			if ( mp_get_setting( 'tax->tax_inclusive' ) ) {
-				$total = $this->product_total() + $this->shipping_total() + $this->shipping_tax_total();
-				//$tax_rate  = mp_tax_rate();
-				//$total     = $pre_total / ( 1 + $tax_rate ) + ($this->tax_total( false, false ));
+				$pre_total = $this->product_total();
+				$tax_rate  = mp_tax_rate();
+				$total     = $pre_total / ( 1 + $tax_rate ) + $this->tax_total();
+
+				$shipping_pre_total = $this->shipping_total();
+				if( mp_get_setting( 'tax->tax_shipping' ) ) {
+					$shipping_pre_total = $shipping_pre_total - $this->shipping_tax_total();
+				}
+
+				//Shipping price should be added after products price calculation
+				$total     = $total + $shipping_pre_total;
 			}
 
 			$total = apply_filters( 'mp_cart/total', $total, $this->_total, $this );
