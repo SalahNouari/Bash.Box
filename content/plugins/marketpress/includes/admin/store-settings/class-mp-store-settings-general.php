@@ -349,6 +349,26 @@ class MP_Store_Settings_General {
 			'desc'		 => __( 'This option hide floating Mini Cart in top right corner.', 'mp' ),
 			'message'	 => __( 'Yes', 'mp' ),
 		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'          => 'show_product_image',
+			'label'         => array( 'text' => __( 'Show product image on Mini Cart?', 'mp' ) ),
+			'desc'          => __( 'Do you want to display the product image on floating Mini Cart.', 'mp' ),
+			'message'       => __( 'Yes', 'mp' ),
+			'default_value' => true,
+		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'          => 'show_product_qty',
+			'label'         => array( 'text' => __( 'Show product quantity on Mini Cart?', 'mp' ) ),
+			'desc'          => __( 'Do you want to display the product quantity on floating Mini Cart.', 'mp' ),
+			'message'       => __( 'Yes', 'mp' ),
+			'default_value' => true,
+		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'          => 'show_product_price',
+			'label'         => array( 'text' => __( 'Show product price on Mini Cart?', 'mp' ) ),
+			'desc'          => __( 'Do you want to display the product price on floating Mini Cart.', 'mp' ),
+			'message'       => __( 'Yes', 'mp' ),
+		) );
 		$metabox->add_field( 'radio_group', array(
 			'name'			 => 'ga_ecommerce',
 			'label'			 => array( 'text' => __( 'Google Analytics Ecommerce Tracking', 'mp' ) ),
@@ -505,11 +525,12 @@ class MP_Store_Settings_General {
 			'label'		 => array( 'text' => __( 'Show Price + Tax?', 'mp' ) ),
 			'desc'		 => __( 'Enabling this option will show Price + Tax, eg. if your price is 100 and your tax 20, your price will be 120', 'mp' ),
 			'message'	 => __( 'Yes', 'mp' ),
-			'conditional' => array(
-				'name'   => 'tax[tax_inclusive]',
-				'value'  => '1',
-				'action' => 'hide',
-			),
+		) );
+		$metabox->add_field( 'checkbox', array(
+			'name'		 => 'tax[tax_label]',
+			'label'		 => array( 'text' => __( 'Display tax label?', 'mp' ) ),
+			'desc'		 => __( 'Enabling this option will display label `excl. tax` or `incl. tax` after price', 'mp' ),
+			'message'	 => __( 'Yes', 'mp' ),
 		) );
 		$metabox->add_field( 'checkbox', array(
 			'name'		 => 'tax[tax_digital]',

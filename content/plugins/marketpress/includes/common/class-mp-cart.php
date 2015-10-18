@@ -275,13 +275,17 @@ class MP_Cart {
 			wp_send_json_error();
 		}
 
+		$show_product_image = mp_get_setting( 'show_product_image' ) == '1' ? true : false;
+		$show_product_qty   = mp_get_setting( 'show_product_qty' ) == '1' ? true : false;
+		$show_product_price = mp_get_setting( 'show_product_price' ) == '1' ? true : false;
+
 		switch ( mp_get_post_value( 'cart_action' ) ) {
 			case 'add_item' :
 				$cart_updated = $this->add_item( $item_id, $qty );
 				//wp_send_json_success( $this->floating_cart_html() );
 				wp_send_json_success( array(
 					'minicart'     => $this->floating_cart_html(),
-					'widgetcart'   => $this->cart_products_html( 'widget' ),
+					'widgetcart'   => $this->cart_products_html( 'widget', $show_product_image, $show_product_qty, $show_product_price ),
 					'cart_updated' => $cart_updated,
 				) );
 				break;
@@ -938,6 +942,24 @@ class MP_Cart {
 			 */
 			$button_classes = apply_filters( 'mp_cart/checkout_button/classes', $button_classes, $editable );
 
+			/**
+			 * Filter the Continue Shopping button classes
+			 *
+			 * @since 3.0
+			 *
+			 * @param array The current button classes.
+			 */
+			$continue_shopping_button_classes = array(
+				'mp_button',
+				'mp_button-continue-shopping',
+				'mp_button-large',
+			);
+			$continue_shopping_button_classes = apply_filters( 'mp_cart/continue_shopping_button/classes', $continue_shopping_button_classes );
+
+			// Continue shopping button
+			$html .= '
+					<a href="' . mp_store_page_url( 'products', false ) . '" class="' . implode( ' ', $continue_shopping_button_classes ) . '">' . __( 'Continue Shopping?', 'mp'  ) . '</a>';
+
 			if ( $editable ) {
 				$html .= '
 						<a class="' . implode( ' ', $button_classes ) . '" href="' . mp_store_page_url( 'checkout', false ) . '">' . $button_text . '</a>';
@@ -1128,7 +1150,8 @@ class MP_Cart {
 		wp_localize_script( 'mp-cart', 'mp_cart_i18n', array(
 			'ajaxurl'                  => admin_url( 'admin-ajax.php' ),
 			'ajax_loader'              => '<span class="mp_ajax_loader"><img src="' . mp_plugin_url( 'ui/images/ajax-loader.gif' ) . '" alt=""> ' . __( 'Adding...', 'mp' ) . '</span>',
-			'cart_updated_error_limit' => __( 'Cart update notice: this item has a limit per order.', 'mp' )
+			'cart_updated_error_limit' => __( 'Cart update notice: this item has a limit per order.', 'mp' ),
+			'is_cart_page'             => mp_is_shop_page( 'cart' )
 		) );
 	}
 
@@ -1162,6 +1185,9 @@ class MP_Cart {
 			}
 		}
 
+		$show_product_image = mp_get_setting( 'show_product_image' ) == '1' ? true : false;
+		$show_product_qty   = mp_get_setting( 'show_product_qty' ) == '1' ? true : false;
+		$show_product_price = mp_get_setting( 'show_product_price' ) == '1' ? true : false;
 
 		$html = '
 		<!-- MP Floating Cart / Mini-Cart -->
@@ -1171,7 +1197,7 @@ class MP_Cart {
 			</div>
 			<div class="mp_mini_cart_content">';
 
-		$html .= $this->cart_products_html();
+		$html .= $this->cart_products_html( null, $show_product_image, $show_product_qty, $show_product_price);
 
 		$html .= '
 			</div><!-- end mp_mini_cart_content -->
@@ -1195,8 +1221,11 @@ class MP_Cart {
 	 * @access public
 	 *
 	 * @param string $context Cart context widget or floating.
+	 * @param bool   $show_product_image Display product image or not.
+	 * @param bool   $show_product_qty Display product quantity or not.
+	 * @param bool   $show_product_price Display product price or not.
 	 */
-	public function cart_products_html( $context = null ) {
+	public function cart_products_html( $context = null, $show_product_image = true, $show_product_qty = true, $show_product_price = false ) {
 		$html = '';
 		if ( $this->has_items() ) {
 			$blog_ids = $this->get_blog_ids();
@@ -1216,7 +1245,7 @@ class MP_Cart {
 				$items = $this->get_items();
 
 				foreach ( $items as $item => $qty ) {
-					$html .= $this->floating_cart_line_item_html( $item, $qty );
+					$html .= $this->floating_cart_line_item_html( $item, $qty, $show_product_image, $show_product_qty, $show_product_price );
 				}
 
 				if ( ( $this->is_global && false === current( $blog_ids ) ) || ! $this->is_global ) {
@@ -1230,8 +1259,8 @@ class MP_Cart {
 
 			if ( $context == "widget" ) {
 				$html .= '
-					<a class="mp_button mp_button-remove mp_button-widget-cart mp_button-widget-cart-empty" href="' . mp_store_page_url( 'cart', false ) . '">' . __( 'Empty Cart', 'mp' ) . '</a>
-					<a class="mp_button mp_button-checkout mp_button-widget-cart" href="' . mp_store_page_url( 'checkout', false ) . '">' . __( 'Checkout', 'mp' ) . '</a>';
+					<a class="mp_button mp_button-remove mp_button-widget-cart mp_button-widget-cart-empty" href="#">' . __( 'Empty Cart', 'mp' ) . '</a>
+					<a class="mp_button mp_button-checkout mp_button-widget-cart" href="' . mp_store_page_url( 'cart', false ) . '">' . __( 'Checkout', 'mp' ) . '</a>';
 			} else {
 				$html .= '
 					<a class="mp_button mp_button-mini-cart" href="' . $this->cart_url() . '">' . __( 'View Cart', 'mp' ) . '</a>';
@@ -1255,16 +1284,45 @@ class MP_Cart {
 	 *
 	 * @param int $item_id The product's ID.
 	 * @param int $qty The quantity of the product in the cart.
+	 * @param bool   $show_product_image Display product image or not.
+	 * @param bool   $show_product_qty Display product quantity or not.
+	 * @param bool   $show_product_price Display product price or not.
 	 */
-	public function floating_cart_line_item_html( $item_id, $qty ) {
+	public function floating_cart_line_item_html( $item_id, $qty, $show_product_image = true, $show_product_qty = true, $show_product_price = false ) {
 		$product = new MP_Product( $item_id );
 
+		$classes = array(
+			'mp_mini_cart_item',
+			$show_product_image ? 'mp_mini_cart_item-has-image' : '',
+			$show_product_qty ? 'mp_mini_cart_item-has-qty' : '',
+			$show_product_price ? 'mp_mini_cart_item-has-price' : '',
+			$show_product_qty || $show_product_price ? 'mp_mini_cart_item-has-attributes' : '',
+		);
+
 		$html = '
-			<li class="mp_mini_cart_item" id="mp-floating-cart-item-' . $product->ID . '">
-				<a class="mp_mini_cart_item-link" href="' . $product->url( false ) . '">' . $product->image( false, 'floating-cart', 50 ) . '
+			<li class="' . implode( ' ', $classes) . '" id="mp-floating-cart-item-' . $product->ID . '">
+				<a class="mp_mini_cart_item-link" href="' . $product->url( false ) . '">';
+
+		// Display product image
+		if ( $show_product_image ) {
+			$html .= $product->image( false, 'floating-cart', 50 );
+		}
+
+		$html .= '
 					<div class="mp_mini_cart_item-content">
-						<h3 class="mp_mini_cart_item-title">' . $product->title( false ) . '</h3>
-						<span class="mp_mini_cart_item-attribute"><strong>' . __( 'Quantity', 'mp' ) . ':</strong> <em>' . $qty . '</em></span>';
+						<h3 class="mp_mini_cart_item-title">' . $product->title( false ) . '</h3>';
+
+		// Display price
+		if ( $show_product_qty ) {
+			$html .= '
+						<span class="mp_mini_cart_item-attribute mp_mini_cart_item_attribute-qty"><strong>' . __( 'Quantity', 'mp' ) . ':</strong> <em>' . $qty . '</em></span>';
+		}
+
+		// Display price
+		if ( $show_product_price ) {
+			$html .= '
+						<span class="mp_mini_cart_item-attribute mp_mini_cart_item_attribute-price"><strong>' . __( 'Price', 'mp' ) . ':</strong> <em>' . $product->display_price( false ) . '</em></span>';
+		}
 
 		// Display attributes
 		if ( $product->is_variation() ) {
@@ -1787,7 +1845,7 @@ class MP_Cart {
 			$products = $this->get_items_as_objects();
 
 			foreach ( $products as $product ) {
-				$weight += $product->get_weight();
+				$weight += $product->get_weight() * $product->qty;
 			}
 
 			if ( ( $this->is_global && false === current( $blog_ids ) ) || ! $this->is_global ) {
@@ -2061,10 +2119,11 @@ class MP_Cart {
 				$product = new MP_Product( $id );
 				if ( ! $product->is_variation() ) {
 					$data[ $id ][] = array(
+						'SKU'              => $product->get_meta( 'sku' ),
 						'name'             => $product->title( false ),
 						'url'              => get_permalink( $id ),
 						'price'            => $product->get_price( 'lowest' ),
-						'quantity'         => $product->qty,
+						'quantity'         => $this->get_item_qty( $id ),
 						'download'         => $product->is_download(),
 						'before_tax_price' => $product->before_tax_price()
 					);
@@ -2075,7 +2134,7 @@ class MP_Cart {
 						'name'             => $product->title( false ),
 						'url'              => get_permalink( $id ),
 						'price'            => $product->get_price( 'lowest' ),
-						'quantity'         => $product->qty,
+						'quantity'         => $this->get_item_qty( $id ),
 						'download'         => $product->is_download(),
 						'before_tax_price' => $product->before_tax_price()
 					);

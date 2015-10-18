@@ -43,7 +43,7 @@ if ( is_user_logged_in() ) {
 					if ( $course->is_user_purchased_course( $course->details->marketpress_product, get_current_user_ID() ) ) {
 						//Enroll student in
 						if ( $student->enroll_in_course( $course_id ) ) {
-							printf( __( 'Congratulations, you have successfully enrolled in "%s" course! Check your %s for more info.', 'cp' ), '<strong>' . $course->details->post_title . '</strong>', '<a href="' . $this->get_student_dashboard_slug( true ) . '">' . __( 'Dashboard', 'cp' ) . '</a>' );									   	 	   		
+							printf( __( 'Congratulations, you have successfully enrolled in "%s" course! Check your %s for more info.', 'cp' ), '<strong>' . $course->details->post_title . '</strong>', '<a href="' . $this->get_student_dashboard_slug( true ) . '">' . __( 'Dashboard', 'cp' ) . '</a>' );
 						} else {
 							_e( 'Something went wrong during the enrollment process. Please try again later.', 'cp' );
 						}

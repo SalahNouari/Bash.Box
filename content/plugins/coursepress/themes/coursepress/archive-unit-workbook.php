@@ -6,6 +6,7 @@
  */
 global $coursepress;
 $course_id = do_shortcode('[get_parent_course_id]');
+$course_id = (int) $course_id;
 $progress = do_shortcode('[course_progress course_id="' . $course_id . '"]');
 //redirect to the parent course page if not enrolled
 $coursepress->check_access($course_id);
@@ -78,7 +79,7 @@ add_thickbox();
                 <?php if ( do_shortcode('[course_unit_details field="input_modules_count"]') > 0 ) { ?>
                                                                                                                                                                                                                                                         <span class="unit-archive-single-module-status"><?php echo do_shortcode('[course_unit_details field="student_module_responses"]'); ?> <?php _e('of', 'cp'); ?> <?php echo do_shortcode('[course_unit_details field="mandatory_input_modules_count"]'); ?> <?php _e('mandatory elements completed', 'cp'); ?> | <?php echo do_shortcode('[course_unit_details field="student_unit_modules_graded" unit_id="' . get_the_ID() . '"]'); ?> <?php _e('of', 'cp'); ?> <?php echo do_shortcode('[course_unit_details field="input_modules_count"]'); ?> <?php _e('elements graded', 'cp'); ?></span>
                 <?php } else { ?>
-                                                                                                                                                                                                                                                        <span class="unit-archive-single-module-status read-only-module"><?php _e('Read only'); ?></span>
+                                                                                                                                                                                                                                                        <span class="unit-archive-single-module-status read-only-module"><?php _e('Read only','cp'); ?></span>
                 <?php } ?>
                                                                                                                                                                         </div>
                                                                                                                                                                     </li>
@@ -90,7 +91,7 @@ add_thickbox();
             <?php
         } else {
             ?>
-                    <h1 class="zero-course-units"><?php _e("0 units in the course currently. Please check back later."); ?></h1>
+                    <h1 class="zero-course-units"><?php _e("0 units in the course currently. Please check back later.",'cp'); ?></h1>
             <?php
         }
         ?>

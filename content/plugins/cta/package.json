@@ -4,7 +4,8 @@
   "description": "call to action plugin",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "commit": "git-cz"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "homepage": "https://github.com/inboundnow/cta",
   "dependencies": {},
   "devDependencies": {
+    "autoprefixer-core": "^5.2.1",
     "grunt-wp-readme-to-markdown": "^0.8.0",
     "gulp": "^3.8.5",
     "gulp-clean": "^0.2.4",
@@ -34,13 +36,24 @@
     "gulp-karma": "0.0.4",
     "gulp-markdox": "^0.1.0",
     "gulp-plumber": "~0.6.2",
+    "gulp-postcss": "^5.1.10",
     "gulp-rename": "~1.1.0",
+    "gulp-strip-css-comments": "^1.2.0",
     "gulp-uglify": "~0.3.0",
     "jshint-stylish": "^0.2.0",
     "karma": "^0.12.16",
     "karma-chrome-launcher": "^0.1.5",
     "karma-jasmine": "~0.2.0",
     "karma-phantomjs-launcher": "^0.1.4",
-    "karma-spec-reporter": "0.0.13"
+    "karma-spec-reporter": "0.0.13",
+    "postcss-focus": "^0.1.1",
+    "postcss-mixins": "^0.4.0",
+    "postcss-nested": "^0.3.2",
+    "postcss-simple-vars": "^0.3.0",
+    "commitizen": "1.0.4",
+    "cz-conventional-changelog": "1.1.0"
+  },
+  "czConfig": {
+     "path": "node_modules/cz-conventional-changelog"
   }
 }

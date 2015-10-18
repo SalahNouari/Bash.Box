@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: MarketPress
-Version: 3.0.0.5
+Version: 3.0.0.6
 Plugin URI: https://premium.wpmudev.org/project/e-commerce/
 Description: The complete WordPress ecommerce plugin - works perfectly with BuddyPress and Multisite too to create a social marketplace, where you can take a percentage! Activate the plugin, adjust your settings then add some products to your store.
 Author: WPMU DEV
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
 Plugin Authors: Marko Miljus (Incsub), Aaron Edwards (Incsub), Hoang Ngo (Incsub), Jonathan Cowher (Incsub), Ricardo Freitas (Incsub), Cvetan Cvetanov (Incsub), Julien Zerbib (Incsub)
  */
 
-define( 'MP_VERSION', '3.0.0.5' );
+define( 'MP_VERSION', '3.0.0.6' );
 
 class Marketpress {
 
@@ -416,9 +416,11 @@ class Marketpress {
 		require_once( $this->plugin_dir( 'includes/admin/widgets/product-tag-cloud.php' ) );
 
 		//Multisite Widgets
-		require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-product-list.php' ) );
-		require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-tag-cloud.php' ) );
-		require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-categories.php' ) );
+		if( is_multisite() ) {
+			require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-product-list.php' ) );
+			require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-tag-cloud.php' ) );
+			require_once( $this->plugin_dir( 'includes/admin/widgets/ms-global-categories.php' ) );
+		}
 	}
 
 	function post_thumbnail_html5( $html, $post_id, $post_thumbnail_id, $size, $attr ) {
@@ -559,6 +561,12 @@ class Marketpress {
 				'class'	 => 'MP_Prosites_Addon',
 				'path'	 => mp_plugin_dir( 'includes/addons/mp-prosites/class-mp-prosites-addon.php' ),
 			) );
+			//auto assign
+			if ( mp_addons()->is_addon_enabled( 'MP_Prosites_Addon' ) == false ) {
+				mp_addons()->enable( array(
+					'MP_Prosites_Addon'
+				) );
+			}
 		}
 
 		mp_register_addon( array(
@@ -931,11 +939,15 @@ class Marketpress {
 $GLOBALS[ 'mp' ] = Marketpress::get_instance();
 
 register_activation_hook( __FILE__, 'mp_plugin_activate' );
-add_action( 'admin_init', 'mp_plugin_redirect' );
+add_action( 'admin_init', 'mp_plugin_redirect', 99 );
 
 function mp_plugin_activate() {
 	if ( get_option( 'mp_plugin_do_activation_redirect', '1' ) == '1' ) {
 		update_option( 'mp_plugin_do_activation_redirect', '1' );
+	}
+
+	if ( get_option( 'mp_needs_quick_setup' ) == false ) {
+		add_option( 'mp_needs_quick_setup', 1 );
 	}
 }
 

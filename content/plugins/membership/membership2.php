@@ -2,7 +2,7 @@
 /**
 Plugin Name: Membership 2 Pro
 Plugin URI:  https://premium.wpmudev.org/project/membership/
-Version:     1.0.2.2
+Version:     1.0.2.3
 Description: The most powerful, easy to use and flexible membership plugin for WordPress sites available.
 Author:      WPMU DEV
 Author URI:  http://premium.wpmudev.org/
@@ -62,7 +62,7 @@ function membership2_init_pro_app() {
 	 *
 	 * @since  1.0.0
 	 */
-	define( 'MS_PLUGIN_VERSION', '1.0.2.2' );
+	define( 'MS_PLUGIN_VERSION', '1.0.2.3' );
 
 	/**
 	 * Plugin identifier constant.
@@ -99,27 +99,48 @@ function membership2_init_pro_app() {
 	$externals = array(
 		dirname( __FILE__ ) . '/lib/wpmudev-dashboard/wpmudev-dash-notification.php',
 		dirname( __FILE__ ) . '/lib/wpmu-lib/core.php',
+		dirname( __FILE__ ) . '/lib/wdev-frash/module.php',
 	);
 
 	foreach ( $externals as $path ) {
 		require_once $path;
 	}
 
+	// Register the current plugin.
+	do_action(
+		'wdev-register-plugin',
+		/*             Plugin ID */ plugin_basename( __FILE__ ),
+		/*          Plugin Title */ 'Membership 2 Pro',
+		/* https://wordpress.org */ '/plugins/membership/',
+		/*      Email Button CTA */ false,
+		/*  getdrip Plugin param */ false
+	);
+
+	function _membership2_rating_message() {
+		return __( "Hey %s, you've been using %s for a while now, and we hope you're happy with it.", 'membership2' ) .
+			'<br />' .
+			__( "We're constantly working to improve our plugins, and it helps a lot when members just like you share feedback!", 'membership2' );
+	}
+	add_filter(
+		'wdev-rating-message-' . plugin_basename( __FILE__ ),
+		'_membership2_rating_message'
+	);
+
 	/**
 	 * Translation.
 	 *
-	 * Tipp:
+	 * Tip:
 	 *   The translation files must have the filename [TEXT-DOMAIN]-[locale].mo
 	 *   Example: membership2-en_EN.mo  /  membership2-de_DE.mo
 	 */
-	function membership2_translate_plugin() {
+	function _membership2_translate_plugin() {
 		load_plugin_textdomain(
 			'membership2',
 			false,
 			dirname( plugin_basename( __FILE__ ) ) . '/languages'
 		);
 	}
-	add_action( 'plugins_loaded', 'membership2_translate_plugin' );
+	add_action( 'plugins_loaded', '_membership2_translate_plugin' );
 
 	/**
 	 * Create an instance of the plugin object.

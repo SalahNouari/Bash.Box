@@ -10,7 +10,7 @@ class MS_Rule_Category_View extends MS_View {
 		$rule_listtable->prepare_items();
 
 		$header_data = array();
-		$header_data['title'] = __( 'Choose which Categories you want to protect', 'membership2' );	   	 	 		 	  					  
+		$header_data['title'] = __( 'Choose which Categories you want to protect', 'membership2' );
 		$header_data['desc'] = '';
 
 		$header_data = apply_filters(

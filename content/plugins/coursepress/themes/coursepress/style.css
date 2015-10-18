@@ -1597,6 +1597,10 @@ input[type="submit"].apply-button-finished,
     clear: both;
 }
 
+.clearfix{
+    clear:both;
+}
+
 .single-course .clearfix{
     height: 1px;
     display: block;
@@ -1876,10 +1880,21 @@ li.submenu-workbook a{
     color: #808080;
 }
 
+li.submenu-certificate a{
+    background: url( 'images/icon-certificate.svg' );
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px;
+    color: #808080;
+}
+
 li.submenu-active{
     /*background-color: #f3f6f8;  */
 }
 
+.units-archive-list {
+    clear: both;
+}
 .units-archive-list li{
     background-color: #f3f6f8;
     display: block;
@@ -2314,6 +2329,11 @@ select.units_dropdown::-ms-expand {
     margin-top: 38px;
 }
 
+.discussion-archive-list li {
+    clear: both;
+}
+
+
 .discussion-archive-single-meta{
     float: left;
     width: 90px;
@@ -2435,6 +2455,32 @@ h1.discussion-title{
     width: 15px;
     height: 11px;
     padding: 20px;
+}
+
+/* DISCUSSION ARCHIVE FIXES */
+.discussion-archive-single-meta {
+    clear:both;
+}
+
+.discussion-archive-list .discussion-archive-single {
+    width: 80%;
+}
+
+.discussion-archive-list .discussion-archive-single-meta {
+    width: 10%;
+}
+
+.discussion-comments .comment-list > li {
+    list-style: none;
+}
+
+.notification-archive-list .notification-archive-single-meta {
+    width: 10%;
+}
+
+.notification-archive-list .notification-archive-single {
+    width: 80%;
+    margin-top: 20px;
 }
 
 #answer_the_question_button{
@@ -2676,7 +2722,7 @@ li.current_page_item a{
 }
 
 .post-type-archive-course .quick-course-info .course-cost{
-    width: 17%;
+    width: 20%;
 }
 
 .dashboard-random-courses .featured-course-title {
@@ -2748,6 +2794,24 @@ li.current_page_item a{
 .post-type-archive-course .quick-course-info .course-cost .mp_product_price {
     background-position: -872px -232px;
 }
+
+.post-type-archive-course .quick-course-info .course-cost .mp_product_price .mp_product_price-sale,
+.post-type-archive-course .quick-course-info .course-cost .mp_special_price .mp_current_price {
+    font-weight: normal;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-tranform: scale(1);
+    transform: scale(1);
+    margin: 0;
+    padding:0;
+}
+
+.post-type-archive-course .quick-course-info .course-cost .mp_product_price-sale + .mp_product_price-normal,
+.post-type-archive-course .quick-course-info .course-cost del.mp_old_price {
+    display: none;
+}
+
 .module_description ol{
     list-style: decimal;
     padding:0;
@@ -2869,6 +2933,20 @@ li.current_page_item a{
     text-shadow: none;
     text-transform: uppercase;
     white-space: nowrap;
+}
+
+.entry-content ul{
+    list-style: outside none disc;
+    margin-left: 48px;
+}
+
+
+.course-unit-page-title {
+    margin: 20px 0;
+}
+
+.course-title {
+    font-size: 30px;
 }
 
 /*
@@ -3084,4 +3162,4 @@ RESPONSIVE
 }
 
 
-/* 133620-1444352731-au */
+/* 133620-1445126712-au */

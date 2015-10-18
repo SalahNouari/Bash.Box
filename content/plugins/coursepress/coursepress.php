@@ -6,7 +6,7 @@ Description: CoursePress Pro turns WordPress into a powerful online learning pla
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 Developers: Marko Miljus ( https://twitter.com/markomiljus ), Rheinard Korf ( https://twitter.com/rheinardkorf )
-Version: 1.2.6.4
+Version: 1.2.6.5
 TextDomain: cp
 Domain Path: /languages/
 WDP ID: 913071
@@ -47,7 +47,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 	 */
 	class CoursePress {
 
-		public $mp_file = '128762_marketpress-ecommerce-3.0.0.2.zip';
+		public $mp_file; // Set in constructor
 
 		/**
 		 * Current running instance of CoursePress.
@@ -61,10 +61,13 @@ if ( ! class_exists( 'CoursePress' ) ) {
 		/**
 		 * Current plugin version.
 		 *
+		 * NOTE: This should be the same version as set above in the plugin header and should also be set in
+		 * Gruntfile.js
+		 *
 		 * @since 1.0.0
 		 * @var string
 		 */
-		public $version = '1.2.6.4';
+		public $version = '1.2.6.5';
 
 		/**
 		 * Plugin friendly name.
@@ -156,6 +159,11 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			// Setup CoursePress properties
 			$this->init_vars();
 
+
+			$this->mp_file = '128762_marketpress-ecommerce-3.0.0.2.zip';
+
+
+
 			// Initiate sessions
 			if ( ! session_id() ) {
 				session_start();
@@ -180,6 +188,11 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			 * Better handling of session data using WP_Session_Tokens introduced in 4.0.
 			 */
 			require_once( $this->plugin_dir . 'includes/classes/class.session.php' );
+
+			/**
+			 * CoursePress custom non-persistent cache.
+			 */
+			require_once( $this->plugin_dir . 'includes/classes/class.coursepress-cache.php' );
 
 			/**
 			 * CoursePress Object Class.
@@ -227,7 +240,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 				 */
 				include_once( $this->plugin_dir . 'includes/external/dashboard/wpmudev-dash-notification.php' );
 			}
-			//
+
 
 			// Define custom theme directory for CoursePress theme
 			if ( ! CoursePress_Capabilities::is_campus() ) {
@@ -256,7 +269,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			if ( CoursePress_Capabilities::is_pro() ) {
 				require_once( $this->plugin_dir . 'includes/classes/class.basic.certificate.php' );
 			}
-			//
+
 
 			//Administration area
 			if ( is_admin() ) {
@@ -5122,6 +5135,9 @@ if ( ! class_exists( 'CoursePress' ) ) {
 		function add_cp2_editor() {
 
 			// Create a dummy editor to by used by the CoursePress JS object
+			remove_all_filters('media_buttons'); // We can't use 3rd parties with dynamic editors
+			add_action('media_buttons','media_buttons');
+			add_action('media_buttons', array( $this, 'coursepress_media_button_message' ) );
 			ob_start();
 			wp_editor( 'dummy_editor_content', 'dummy_editor_id', array( 'wpautop'       => false,
 			                                                             "textarea_name" => 'dummy_editor_name',
@@ -5142,6 +5158,11 @@ if ( ! class_exists( 'CoursePress' ) ) {
 
 			wp_localize_script( 'coursepress_object', '_coursepress', $localize_array );
 
+		}
+
+		// Media buttons on CoursePress don't work well with dynamic editor, so let users know why their buttons are gone.
+		function coursepress_media_button_message() {
+			echo '<div class="coursepress-media-button-message"><i class="fa fa-info-circle"></i> <span class="hidden">' . esc_html__('<p>WordPress does not normally allow dynamic visual editors, which CoursePress use quite extensively for the Course setup and Unit Builder.</p><p>As a result many plugins load their editor code too late to work properly in CoursePress.</p><p>To avoid showing broken buttons on CoursePress pages only the core "Add Media" button will be visible at this time.</p><p><strong>Close</strong></p>', 'cp') . '</span></div>';
 		}
 
 		function admin_coursepress_page_settings() {

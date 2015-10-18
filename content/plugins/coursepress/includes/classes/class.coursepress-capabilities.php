@@ -532,7 +532,8 @@ class CoursePress_Capabilities {
 	 * @return bool
 	 */
 	public static function is_pro() {
-		return 'true' === 'true';
+
+		return true;
 	}
 
 	/**

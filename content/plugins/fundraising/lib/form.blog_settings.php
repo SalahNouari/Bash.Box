@@ -535,7 +535,7 @@ if (!class_exists('WpmuDev_HelpTooltips')) require_once WDF_PLUGIN_BASE_DIR . '/
 	<script type="text/javascript">
 		jQuery(document).ready( function($) {
 			$('#wdf_reset').click( function(e) {
-				var check = confirm("Are you sure you want to do this?  You will lose all the data associated with your fundraisers donations and settings!");
+				var check = confirm("Are you sure you want to do this?  You will lose all the data associated with your fundraisers donations and settings!");	     	 	 				 			
 				if (check == true)  {
 					return true;
 				} else {

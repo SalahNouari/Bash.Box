@@ -18,6 +18,7 @@ PHP
 
 JS
 - Big improvements to the `wpmUi.popup()` function (templates, custom css, ...)
+- Add WordPress-like hook integration `wpmUi.add_action()`, `wpmUi.do_action()`, ...
 - Update select2 library from v3.5 to v4.0
 - Remove tiny-scrollbar JS library
 
@@ -178,4 +179,4 @@ Migration notes
 - First version.
 
 
-133620-1443654417-au
+133620-1445126752-au

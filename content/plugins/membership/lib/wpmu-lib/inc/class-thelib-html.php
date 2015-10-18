@@ -307,7 +307,8 @@ class TheLib_Html extends TheLib  {
 	 * @return Reference to $this for chaining.
 	 */
 	public function addon_list( $items, $lang, $filters ) {
-		self::$core->ui->add( 'card_list' );
+		self::$core->ui->css( $this->_css_url( 'wpmu-card-list.3.min.css' ) );
+		self::$core->ui->js( $this->_js_url( 'wpmu-card-list.3.min.js' ) );
 		include $this->_view_path( 'list.php' );
 		return $this;
 	}

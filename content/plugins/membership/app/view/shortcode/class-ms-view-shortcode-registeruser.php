@@ -8,6 +8,9 @@ class MS_View_Shortcode_RegisterUser extends MS_View {
 	 * @return string
 	 */
 	public function to_html() {
+		// If user is logged in, they obviously cannot register again ;)
+		if ( is_user_logged_in() ) { return ''; }
+
 		$fields = $this->prepare_fields();
 
 		$this->add_action(
@@ -321,10 +324,12 @@ class MS_View_Shortcode_RegisterUser extends MS_View {
 	 * @internal
 	 */
 	protected function render_errors() {
-		if ( ! empty( $this->data['errors'] ) ) {
+		$errors = MS_Controller_Frontend::$register_errors;
+
+		if ( ! empty( $errors ) ) {
 			?>
 			<div class="ms-alert-box ms-alert-error">
-				<?php echo $this->data['errors']; ?>
+				<?php echo $errors; ?>
 			</div>
 			<?php
 		}

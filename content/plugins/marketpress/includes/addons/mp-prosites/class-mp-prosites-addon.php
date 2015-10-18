@@ -18,9 +18,10 @@ class MP_Prosites_Addon {
 	 * @return object
 	 */
 	public static function get_instance() {
-		if ( is_null(self::$_instance) ) {
+		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new MP_Prosites_Addon();
 		}
+
 		return self::$_instance;
 	}
 
@@ -29,6 +30,7 @@ class MP_Prosites_Addon {
 	 *
 	 * @since 3.0
 	 * @access protected
+	 *
 	 * @param array $pro_levels The current pro levels from < 3.0.
 	 */
 	protected function _update_pro_levels( $pro_levels ) {
@@ -105,7 +107,7 @@ class MP_Prosites_Addon {
 	 * @filter mp_admin_multisite/theme_permissions_options, mp_admin_multisite/gateway_permissions_options
 	 */
 	public function permissions_options( $opts ) {
-		$levels = get_site_option( 'psts_levels' );
+		$levels         = get_site_option( 'psts_levels' );
 		$options_levels = array();
 
 		if ( is_array( $levels ) ) {
@@ -116,10 +118,18 @@ class MP_Prosites_Addon {
 
 		$opts['supporter'] = array(
 			'group_name' => __( 'Pro Site Level', 'mp' ),
-			'options'	 => $options_levels,
+			'options'    => $options_levels,
 		);
 
 		return $opts;
+	}
+
+	public function disable_active_deactive_ability( $status, $addon ) {
+		if ( $addon->class == 'MP_Prosites_Addon' ) {
+			$status = __( "Enabled", "mp" );
+		}
+
+		return $status;
 	}
 
 	/**
@@ -134,6 +144,7 @@ class MP_Prosites_Addon {
 		add_filter( 'mp_admin_multisite/gateway_permissions_options', array( &$this, 'permissions_options' ) );
 		add_filter( 'mp_gateway_api/get_gateways', array( &$this, 'get_gateways' ) );
 		add_filter( 'mp_get_theme_list', array( &$this, 'get_theme_list' ), 10, 2 );
+		add_filter( 'mp_addon_status_column_data', array( &$this, 'disable_active_deactive_ability' ), 10, 2 );
 	}
 }
 

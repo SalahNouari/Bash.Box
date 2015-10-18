@@ -2341,6 +2341,11 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
 .ms-wrap.ms-billing .more-details .post-data .inner {
   overflow: auto;
 }
+#wpwrap .ms-wrap.ms-billing .more-details .post-data hr,
+.ms-wrap.ms-billing .more-details .post-data hr {
+  margin: 11px 0 -8px;
+  border-color: #444;
+}
 #wpwrap .ms-wrap.ms-billing .more-details .post-data:before,
 .ms-wrap.ms-billing .more-details .post-data:before {
   content: '';
@@ -3180,8 +3185,10 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
   height: 100px;
 }
 
-.ms-settings-payment .ms-global-payment-wrapper .wpmui-field-input {
+.ms-settings-payment .ms-global-payment-wrapper .wpmui-field-input,
+.ms-settings-payment .ms-global-payment-wrapper .select2-container {
   width: 100%;
+  display: block;
 }
 .ms-settings-payment .ms-global-payment-wrapper th.column-active,
 .ms-settings-payment .ms-global-payment-wrapper td.column-active {
@@ -3343,4 +3350,4 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
 }
 
 
-/* 133620-1443654417-au */
+/* 133620-1445126752-au */

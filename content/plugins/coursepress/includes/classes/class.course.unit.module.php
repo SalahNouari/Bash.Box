@@ -45,11 +45,13 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 					</div>
 				</div>
 			</li>
-		<?php
+			<?php
 		}
 
 		function update_module( $data ) {
 			global $user_id, $wpdb; //$last_inserted_module_id
+
+			if( empty($data->unit_id) || $data->unit_id == 0) return;
 
 			$post = array(
 				'post_author'  => $user_id,
@@ -445,11 +447,11 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 					}
 					Student_Completion::clear_mandatory_answer( $user_id, $course_id, $unit_id, $module_id );
 					wp_redirect( add_query_arg(
-						array(
-							'resubmitting' => $module_id,
-							'previous_response' => $response_id
-						),
-						$_GET['resubmit_redirect_to'] ) . '#module-' . $module_id
+							array(
+								'resubmitting' => $module_id,
+								'previous_response' => $response_id
+							),
+							$_GET['resubmit_redirect_to'] ) . '#module-' . $module_id
 					);
 					exit;
 				} else if ( !empty($_GET['resubmit_cancel']) ){
@@ -613,16 +615,16 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 
 
 							<input type="submit" class="apply-button-enrolled submit-elements-data-button" name="submit_modules_data_<?php echo( $is_last_page ? 'done' : 'save' ); ?>" value="<?php echo( $is_last_page ? __( 'Done', 'cp' ) : __( 'Next', 'cp' ) ); ?>">
-						<?php
+							<?php
 						} else {
 							?>
 							<input type="submit" class="apply-button-enrolled submit-elements-data-button" name="submit_modules_data_no_save_<?php echo( $is_last_page ? 'done' : 'save' ); ?>" value="<?php echo( $is_last_page ? __( 'Done', 'cp' ) : __( 'Next', 'cp' ) ); ?>">
-						<?php
+							<?php
 						}
 					} else {
 						?>
 						<input type="submit" class="apply-button-enrolled submit-elements-data-button" name="submit_modules_data_no_save_<?php echo( $is_last_page ? 'done' : 'save' ); ?>" value="<?php echo( $is_last_page ? __( 'Done', 'cp' ) : __( 'Next', 'cp' ) ); ?>">
-					<?php
+						<?php
 					}
 				}
 
@@ -634,7 +636,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<?php endif; ?>
 			</form>
 
-		<?php
+			<?php
 		}
 
 
@@ -928,7 +930,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 		function element_title_description() {
 			?>
 			<span class="element_title_description"><?php _e( 'The title is used to identify this module element and is useful for assessment.', 'cp' ); ?></span>
-		<?php
+			<?php
 		}
 
 		function mandatory_answer_element( $data ) {
@@ -939,7 +941,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<?php _e( 'Mandatory Answer', 'cp' ); ?><br/>
 				<span class="element_title_description"><?php _e( 'A response is required to continue', 'cp' ); ?></span>
 			</label>
-		<?php
+			<?php
 		}
 
 		function assessable_answer_element( $data ) {
@@ -950,7 +952,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<?php _e( 'Assessable', 'cp' ); ?><br/>
 				<span class="element_title_description"><?php _e( 'The answer will be graded', 'cp' ); ?></span>
 			</label>
-		<?php
+			<?php
 		}
 
 		function placeholder_element( $data ) {
@@ -961,7 +963,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				</label>
 				<input type="text" class="placeholder_text" name="<?php echo $this->name; ?>_placeholder_text[]" value="<?php echo esc_attr( isset( $data->placeholder_text ) ? $data->placeholder_text : '' ); ?>"/>
 			</div>
-		<?php
+			<?php
 		}
 
 		function show_title_on_front_element( $data ) {
@@ -972,7 +974,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<?php _e( 'Show Title', 'cp' ); ?><br/>
 				<span class="element_title_description"><?php _e( 'The title is displayed as a heading', 'cp' ); ?></span>
 			</label>
-		<?php
+			<?php
 		}
 
 		function minimum_grade_element( $data ) {
@@ -982,7 +984,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<input type="text" class="grade_spinner" name="<?php echo $this->name; ?>_minimum_grade_required[]" value="<?php echo( isset( $data->minimum_grade_required ) ? $data->minimum_grade_required : 100 ); ?>"/><br/>
 				<span class="element_title_description"><?php _e( 'Set the minimum grade (%) required to pass the task', 'cp' ); ?></span>
 			</label>
-		<?php
+			<?php
 		}
 
 		function limit_attempts_element( $data ) {
@@ -994,7 +996,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<input type="text" class="attempts_spinner" name="<?php echo $this->name; ?>_limit_attempts_value[]" value="<?php echo( isset( $data->limit_attempts_value ) ? $data->limit_attempts_value : 1 ); ?>"/><br>
 				<span class="element_title_description"><?php _e( 'Limit attempts of this task', 'cp' ); ?></span>
 			</label>
-		<?php
+			<?php
 		}
 
 		public static function mandatory_message( $data ) {
@@ -1008,7 +1010,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 				<div class="module_mandatory">
 					<?php echo $message; ?>
 				</div>
-			<?php
+				<?php
 			}
 		}
 
@@ -1115,22 +1117,22 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 								if ( $grade['grade'] >= $data->minimum_grade_required ) {
 									?>
 									<span class="passed_element">(<?php _e( 'Passed', 'cp' ); ?>)</span>
-								<?php
+									<?php
 								} else {
 									if ( $attempts_remaining > 0 ) {
 										?>
 										<span class="failed_element">(<?php _e( 'Not yet passed', 'cp' ); ?>)</span>
-									<?php
+										<?php
 									} else {
 										?>
 										<span class="failed_element">(<?php _e( 'Not Passed', 'cp' ); ?>)</span>
-									<?php
+										<?php
 									}
 								}
 							}
 							?>
 
-						<?php
+							<?php
 						}
 						if ( ( ! empty( $total_correct ) || 0 == $total_correct ) && ! empty( $total_answers ) ) {
 							printf( __( '%d of %d correct', 'cp' ), $total_correct, $total_answers );
@@ -1138,7 +1140,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 						?>
 					</div>
 				</div>
-			<?php
+				<?php
 			} else {
 				// if ( $data->gradable_answer && 'enabled' != $enabled ) {
 				if ( 'yes' == $data->gradable_answer ) {
@@ -1148,7 +1150,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 					if ( (int) count( $responses ) > 1 ) {
 						?>
 						<div class="module_grade"><?php echo __( 'Grade Pending.', 'cp' ); ?></div>
-					<?php
+						<?php
 					}
 				}
 			}
@@ -1160,13 +1162,13 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 			<div class="module_time_estimation"><?php _e( 'Time Estimation (mins)', 'cp' ); ?>
 				<input type="text" name="<?php echo $this->name; ?>_time_estimation[]" value="<?php echo esc_attr( isset( $data->time_estimation ) ? $data->time_estimation : '1:00' ); ?>"/>
 			</div>
-		<?php
+			<?php
 		}
 
 		function get_module_move_link() {
 			?>
 			<span class="module_move"><i class="fa fa-th cp-move-icon"></i></span>
-		<?php
+			<?php
 		}
 
 		public static function create_auto_draft( $unit_id ) {
@@ -1247,7 +1249,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 		function get_module_delete_link() {
 			?>
 			<a class="delete_module_link" onclick="if ( deleteModule( jQuery( this ).parent().find( '.element_id' ).val() ) ) {jQuery( this ).parent().parent().remove(); update_sortable_module_indexes(); };"><i class="fa fa-trash-o"></i> <?php _e( 'Delete', 'cp' ); ?></a>
-		<?php
+			<?php
 		}
 
 		public static function display_title_on_front( $data ) {

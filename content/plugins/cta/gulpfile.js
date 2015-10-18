@@ -14,6 +14,7 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     copy = require('gulp-copy'),
     markdox = require("gulp-markdox"),
+    stripCssComments = require('gulp-strip-css-comments'),
     //phplint = require('phplint').lint,
     package = require('./package.json');
 
@@ -47,7 +48,38 @@ var banner = [
     '\n'
 ].join('');
 
+/* CSS Gulp processes */
+var cssHead = [
+    '/**\n',
+    ' * This CSS is compiled from the THIS_FILE_NAME.post.css version of this file\n',
+    ' * Any edits you make in this file will not be saved\n',
+    ' */',
+    '\n\n'
+].join('');
+var postcss = require('gulp-postcss'),
+    processors = [
+        require('postcss-mixins'),
+        require('postcss-simple-vars'),
+        require('postcss-nested'),
+        require('postcss-focus'),
+        require('autoprefixer-core')({ browsers: ['last 2 versions', '> 2%'] })
+    ];
 
+gulp.task('css', function() {
+  return gulp.src('./shared/assets/css/*.post.css')
+    .pipe(stripCssComments())
+    .pipe(postcss(processors))
+    .pipe(rename(function (path) {
+        path.basename = path.basename.replace('.post', '');
+    }))
+    .pipe(header(cssHead))
+    .pipe(gulp.dest('./shared/assets/css/'));
+});
+gulp.task('css-watch', function() {
+    //gulp.watch('shared/assets/js/frontend/analytics-src/*.js', ['lint', 'scripts']);
+    gulp.watch('./shared/assets/css/*.post.css', ['css']);
+    //gulp.watch('scss/*.scss', ['sass']);
+});
 
 //gulp.task('phplint', function(cb) {
     //phplint(['src/**/*.php'], {

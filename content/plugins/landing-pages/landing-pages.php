@@ -3,11 +3,11 @@
 Plugin Name: Landing Pages
 Plugin URI: http://www.inboundnow.com/landing-pages/
 Description: The first true all-in-one Landing Page solution for WordPress, including ongoing conversion metrics, a/b split testing, unlimited design options and so much more!
-Version: 1.9.2
+Version: 2.0.2
 Author: Inbound Now
 Author URI: http://www.inboundnow.com/
 Text Domain: landing-pages
-Domain Path: lang
+Domain Path: assets/lang
 */
 
 if (!class_exists('Inbound_Landing_Pages_Plugin')) {
@@ -20,8 +20,8 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 		public function __construct() {
 
 			/* Start a PHP Session if in wp-admin */
-			if (is_admin()) {
-				if(!isset($_SESSION)){@session_start();}
+			if(session_id() == '') {
+				session_start();
 			}
 
 			/* Run Loaders */
@@ -38,7 +38,7 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 		*/
 		private static function load_constants() {
 
-			define('LANDINGPAGES_CURRENT_VERSION', '1.9.2' );
+			define('LANDINGPAGES_CURRENT_VERSION', '2.0.2' );
 			define('LANDINGPAGES_URLPATH', plugins_url( '/' , __FILE__ ) );
 			define('LANDINGPAGES_PATH', WP_PLUGIN_DIR.'/'.plugin_basename( dirname(__FILE__) ).'/' );
 			define('LANDINGPAGES_PLUGIN_SLUG', plugin_basename( dirname(__FILE__) ) );
@@ -47,6 +47,8 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 			$uploads = wp_upload_dir();
 			define('LANDINGPAGES_UPLOADS_PATH', $uploads['basedir'].'/landing-pages/templates/' );
 			define('LANDINGPAGES_UPLOADS_URLPATH', $uploads['baseurl'].'/landing-pages/templates/' );
+			define('LANDINGPAGES_THEME_TEMPLATES_PATH' , get_template_directory(). '/landing-pages/' );
+			define('LANDINGPAGES_THEME_TEMPLATES_URLPATH' , get_template_directory_uri(). '/landing-pages/' );
 		}
 
 		/**
@@ -57,34 +59,29 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 			switch (is_admin()) :
 				case true :
 					/* loads admin files */
-					include_once( LANDINGPAGES_PATH . 'modules/module.language-support.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.javascript-admin.php');
 					include_once( LANDINGPAGES_PATH . 'classes/class.activation.php');
 					include_once( LANDINGPAGES_PATH . 'classes/class.activation.upgrade-routines.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.global-settings.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.clone.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.extension-updater.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.extension-licensing.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.admin-menus.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.welcome.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.install.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.alert.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.metaboxes.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.metaboxes-global.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.landing-page.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.variations.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.metaboxes.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.acf-integration.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.postmeta.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.template-management.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.wp-list-table.templates.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.admin-menus.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.inbound-statistics.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.admin-notices.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.cloning.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.settings.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.welcome.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.install.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.landing-pages.php');
 					include_once( LANDINGPAGES_PATH . 'classes/class.load-extensions.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.post-type.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.track.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.ajax-setup.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.post-type.landing-page.php');
 					include_once( LANDINGPAGES_PATH . 'modules/module.utils.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.sidebar.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.widgets.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.cookies.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.ab-testing.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.click-tracking.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.templates.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.store.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.customizer.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.sidebars.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.widgets.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.store.php');
+
 					//include_once( LANDINGPAGES_PATH . 'classes/class.branching.php');
 
 
@@ -92,19 +89,18 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 
 				case false :
 					/* load front-end files */
-					include_once( LANDINGPAGES_PATH . 'modules/module.javascript-frontend.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.post-type.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.track.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.ajax-setup.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.variations.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.acf-integration.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.postmeta.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.inbound-statistics.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.click-tracking.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.post-type.landing-page.php');
 					include_once( LANDINGPAGES_PATH . 'modules/module.utils.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.sidebar.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.widgets.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.cookies.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.ab-testing.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.click-tracking.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.landing-page.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.sidebars.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.widgets.php');
+					include_once( LANDINGPAGES_PATH . 'classes/class.landing-pages.php');
 					include_once( LANDINGPAGES_PATH . 'classes/class.load-extensions.php');
-					include_once( LANDINGPAGES_PATH . 'modules/module.customizer.php');
+
 
 					BREAK;
 			endswitch;
@@ -114,10 +110,10 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
          * Load Shared Files at priority 2
          */
 		private static function load_shared_files() {
-            if (!defined('INBOUND_PRO_PATH')) {
-                require_once('shared/classes/class.load-shared.php');
-                add_action( 'plugins_loaded', array( 'Inbound_Load_Shared' , 'init') , 3 );
-            }
+			if (!defined('INBOUND_PRO_PATH')) {
+				require_once('shared/classes/class.load-shared.php');
+				add_action( 'plugins_loaded', array( 'Inbound_Load_Shared' , 'init') , 3 );
+			}
 		}
 
 		/**
@@ -131,10 +127,9 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 		*  Loads the correct .mo file for this plugin
 		*/
 		public static function load_text_domain() {
-			load_plugin_textdomain( 'landing-pages' , false , LANDINGPAGES_PLUGIN_SLUG . '/lang/' );
+			load_plugin_textdomain( 'landing-pages' , false , LANDINGPAGES_PLUGIN_SLUG . '/assets/lang/' );
 		}
 
-		/* START PHP VERSION CHECKS */
 		/**
 		 * Admin notices, collected and displayed on proper action
 		 *

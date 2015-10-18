@@ -233,6 +233,9 @@ class MS_Addon_Invitation_Model extends MS_Model_CustomPostType {
 		}
 
 		$model = MS_Factory::load( 'MS_Addon_Invitation_Model', $invitation_id );
+
+		// If the model is not valid it means that the WP_Query returned no
+		// results. So the code was not found.
 		if ( ! $model->is_valid() ) {
 			$model->invitation_message = __( 'Invitation code not found.', 'membership2' );
 		}
@@ -273,10 +276,12 @@ class MS_Addon_Invitation_Model extends MS_Model_CustomPostType {
 	 * This is a non-static function, as it saves the current object!
 	 *
 	 * @since  1.0.0
-	 *
 	 * @param MS_Model_Relationship $subscription The subscription to apply the invitation.
 	 */
 	public function save_application( $subscription ) {
+		// Don't save empty invitations.
+		if ( empty( $this->code ) ) { return false; }
+
 		$membership = $subscription->get_membership();
 
 		$time = apply_filters(
@@ -330,6 +335,10 @@ class MS_Addon_Invitation_Model extends MS_Model_CustomPostType {
 			$invitation->invitation_message = $transient['message'];
 		} else {
 			$invitation = MS_Factory::load( 'MS_Addon_Invitation_Model' );
+		}
+
+		if ( $invitation->is_valid() ) {
+			$invitation->invitation_message = __( 'Invitation code is correct.', 'membership2' );
 		}
 
 		return apply_filters(
@@ -400,7 +409,9 @@ class MS_Addon_Invitation_Model extends MS_Model_CustomPostType {
 		} elseif ( ! $this->check_invitation_user_usage() ) {
 			$this->invitation_message = __( 'You have already used this invitation code.', 'membership2' );
 			$valid = false;
-		} elseif ( ! empty( $this->code ) ) {
+		} elseif ( $membership_id ) {
+			$membership_allowed = false;
+
 			if ( is_array( $this->membership_id ) ) {
 				foreach ( $this->membership_id as $valid_id ) {
 					if ( 0 == $valid_id || $valid_id == $membership_id ) {

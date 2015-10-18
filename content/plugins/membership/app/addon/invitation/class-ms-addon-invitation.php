@@ -304,7 +304,9 @@ class MS_Addon_Invitation extends MS_Addon {
 			$invitation_id = ! empty( $_GET['invitation_id'] ) ? $_GET['invitation_id'] : 0;
 			$data['invitation'] = MS_Factory::load( 'MS_Addon_Invitation_Model', $invitation_id );
 			$data['memberships'] = array( __( 'Any', 'membership2' ) );
-			$data['memberships'] += MS_Model_Membership::get_membership_names();
+			$data['memberships'] += MS_Model_Membership::get_membership_names(
+				array( 'include_guest' => 0 )
+			);
 			$data['action'] = $_GET['action'];
 
 			$view = MS_Factory::create( 'MS_Addon_Invitation_View_Edit' );
@@ -581,7 +583,7 @@ class MS_Addon_Invitation extends MS_Addon {
 					'label_class' => 'inline-label',
 					'title' => sprintf(
 						__( 'Using invitation code %s.', 'membership2' ),
-						$code
+						'<strong>' . $code . '</strong>'
 					),
 					'button_value' => 1,
 				),
@@ -631,9 +633,9 @@ class MS_Addon_Invitation extends MS_Addon {
 			<td colspan="2">
 				<form method="post">
 					<?php if ( $message ) : ?>
-					<p class="ms-alert-box <?php echo esc_attr( $class ); ?>"><?php
-						echo $message;
-					?></p>
+					<p class="ms-alert-box <?php echo esc_attr( $class ); ?>">
+						<?php echo $message; ?>
+					</p>
 					<?php endif; ?>
 					<div class="invitation-entry">
 						<?php if ( ! isset( $data['invitation_valid'] ) ) : ?>

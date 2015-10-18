@@ -3,11 +3,11 @@
 Plugin Name: Calls to Action
 Plugin URI: http://www.inboundnow.com/cta/
 Description: Display Targeted Calls to Action on your WordPress site.
-Version: 2.4.3
+Version: 2.5.0
 Author: InboundNow
 Author URI: http://www.inboundnow.com/
 Text Domain: cta
-Domain Path: lang
+Domain Path: assets/lang
 */
 
 if (!class_exists('Inbound_Calls_To_Action_Plugin')) {
@@ -30,7 +30,7 @@ if (!class_exists('Inbound_Calls_To_Action_Plugin')) {
 		*/
 		private static function define_constants() {
 
-			define('WP_CTA_CURRENT_VERSION', '2.4.3' );
+			define('WP_CTA_CURRENT_VERSION', '2.5.0' );
 			define('WP_CTA_URLPATH', plugins_url( '/' , __FILE__ ) );
 			define('WP_CTA_PATH', WP_PLUGIN_DIR.'/'.plugin_basename( dirname(__FILE__) ).'/' );
 			define('WP_CTA_SLUG', plugin_basename( dirname(__FILE__) ) );
@@ -38,6 +38,8 @@ if (!class_exists('Inbound_Calls_To_Action_Plugin')) {
 			$uploads = wp_upload_dir();
 			define('WP_CTA_UPLOADS_PATH', $uploads['basedir'].'/calls-to-action/templates/' );
 			define('WP_CTA_UPLOADS_URLPATH', $uploads['baseurl'].'/calls-to-action/templates/' );
+			define('WP_CTA_THEME_TEMPLATES_PATH' , get_template_directory(). '/calls-to-action/' );
+			define('WP_CTA_THEME_TEMPLATES_URLPATH' , get_template_directory_uri(). '/calls-to-action/' );
 			define('WP_CTA_STORE_URL', 'http://www.inboundnow.com/market/' );
 
 		}
@@ -68,7 +70,6 @@ if (!class_exists('Inbound_Calls_To_Action_Plugin')) {
 					include_once( WP_CTA_PATH . 'classes/class.templates.list-table.php');
 					include_once( WP_CTA_PATH . 'classes/class.templates.manage.php');
 					include_once( WP_CTA_PATH . 'modules/module.utils.php');
-					include_once( WP_CTA_PATH . 'classes/class.customizer.php');
 					include_once( WP_CTA_PATH . 'classes/class.tracking.php');
 					include_once( WP_CTA_PATH . 'classes/class.branching.php');
 
@@ -88,7 +89,7 @@ if (!class_exists('Inbound_Calls_To_Action_Plugin')) {
 					include_once( WP_CTA_PATH . 'classes/class.cta.variations.php');
 					include_once( WP_CTA_PATH . 'classes/class.cta.render.php');
 					include_once( WP_CTA_PATH . 'modules/module.utils.php');
-					include_once( WP_CTA_PATH . 'classes/class.customizer.php');
+
 
 					BREAK;
 			endswitch;
@@ -110,11 +111,11 @@ if (!class_exists('Inbound_Calls_To_Action_Plugin')) {
 		*  Loads the correct .mo file for this plugin
 		*/
 		private static function load_text_domain_init() {
-			add_action( 'init' , array( __CLASS__ , 'load_text_domain' ) );
+			add_action( 'init' , array(__CLASS__, 'load_text_domain' ) );
 		}
 
 		public static function load_text_domain() {
-			load_plugin_textdomain( 'cta' , false , WP_CTA_SLUG . '/lang/' );
+			load_plugin_textdomain( 'cta' , false , WP_CTA_SLUG . 'assets/lang/' );
 		}
 
 		/* START PHP VERSION CHECKS */

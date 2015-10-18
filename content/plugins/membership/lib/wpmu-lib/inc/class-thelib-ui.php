@@ -7,6 +7,30 @@
  */
 class TheLib_Ui extends TheLib {
 
+	// Load the main JS module (the wpmUi object) and basic styles.
+	const MODULE_CORE = 'core';
+
+	// Load CSS animations.
+	const MODULE_ANIMATION = 'animate';
+
+	// Custom select2 integration. JS: wpmUi.upgrade_multiselect()
+	const MODULE_SELECT = 'select';
+
+	// Vertical navigation support.
+	const MODULE_VNAV = 'vnav';
+
+	// Styles for lib3()->html->element() output.
+	const MODULE_HTML = 'html_element';
+
+	// WordPress media gallery support.
+	const MODULE_MEDIA = 'media';
+
+	// Fontawesome CSS icons.
+	const MODULE_ICONS = 'fontawesome';
+
+	// jQuery datepicker, draggable, jQuery-UI styles.
+	const MODULE_JQUERY = 'jquery-ui';
+
 	/**
 	 * Class constructor
 	 *
@@ -52,6 +76,7 @@ class TheLib_Ui extends TheLib {
 				break;
 
 			case 'animate':
+			case 'animation':
 				$this->css( $this->_css_url( 'animate.3.min.css' ), $onpage );
 				break;
 
@@ -65,14 +90,9 @@ class TheLib_Ui extends TheLib {
 				$this->js( $this->_js_url( 'wpmu-vnav.3.min.js' ), $onpage );
 				break;
 
-			case 'card-list':
-			case 'card_list':
-				$this->css( $this->_css_url( 'wpmu-card-list.3.min.css' ), $onpage );
-				$this->js( $this->_js_url( 'wpmu-card-list.3.min.js' ), $onpage );
-				break;
-
 			case 'html-element':
 			case 'html_element':
+			case 'html':
 				$this->css( $this->_css_url( 'wpmu-html.3.min.css' ), $onpage );
 				break;
 
@@ -81,10 +101,12 @@ class TheLib_Ui extends TheLib {
 				break;
 
 			case 'fontawesome':
+			case 'icons':
 				$this->css( $this->_css_url( 'fontawesome.3.min.css' ), $onpage );
 				break;
 
 			case 'jquery-ui':
+			case 'jquery':
 				$this->js( 'jquery-ui-core', $onpage );
 				$this->js( 'jquery-ui-datepicker', $onpage );
 				$this->js( 'jquery-ui-draggable', $onpage );

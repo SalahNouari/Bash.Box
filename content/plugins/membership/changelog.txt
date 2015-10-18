@@ -4,6 +4,26 @@ Author: Philipp Stracker, Fabio Jun, Rheinard Khorf
 Change Log:
 ----------------------------------------------------------------------
 
+1.0.2.3
+----------------------------------------------------------------------
+- Add new email template to customize the Forgot Password email
+- Add new option to Authorize.Net gateway settings: "Secure Payment" asks for CVC code on every payment
+- Improve transaction-logging for Authorize.Net payments
+- Improve UI of the Authorize.Net payment form on front end
+- Fix possible issue with Authorize.Net Gateway that might send empty form to the gateway
+- Fix PHP warnings caused by Profile Fields Add-on
+- Fix a bug in the Taxamo-Addon to include correct currency code with transactions
+- Fix display of line-breaks in membership description on front-end
+- Fix bug in invitation codes/coupons Add-on that randomly created empty codes
+- Fix invitation code Add-on so entering correct codes does not trigger an error message
+- Fix for caching issues on WP Engine
+- Fix missing error messages when registering username that is already in use
+- Fix wrong file-type displayed (always jpg) in the media protection add-on
+- Fix error during import "class MS_Gateway_Admin not found"
+- Fix incorrect message "BuddyPress uses Membership page"
+- Fix dates that displayed in GMT instead of local timezone
+- Fix bug that allowed logged-in users to register a new account
+
 1.0.2.2
 ----------------------------------------------------------------------
 - Improve the shortcode column in the admin membership list
@@ -449,4 +469,4 @@ Membership2 1.0.0.0
 - Initial version.
 
 
-133620-1443654417-au
+133620-1445126752-au
