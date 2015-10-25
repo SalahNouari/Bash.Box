@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WPMU DEV Videos package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPMU DEV Videos 1.5\n"
+"Project-Id-Version: WPMU DEV Videos 1.5.1\n"
 "Report-Msgid-Bugs-To: http://premium.wpmudev.org/\n"
-"POT-Creation-Date: 2015-01-23 16:40:01+00:00\n"
+"POT-Creation-Date: 2015-10-19 23:32:55+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,23 +13,23 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
 #: wpmudev-videos.php:61
-msgid "Add Heading"
+msgid "Heading Styles"
 msgstr ""
 
 #: wpmudev-videos.php:62
-msgid "Adding an Image From Media Library"
+msgid "Adding Images From Media Library"
 msgstr ""
 
 #: wpmudev-videos.php:63
-msgid "Adding an Image From Your Computer"
+msgid "Uploading Images"
 msgstr ""
 
 #: wpmudev-videos.php:64
-msgid "Adding an Image From a URL"
+msgid "Add Image From URL"
 msgstr ""
 
 #: wpmudev-videos.php:65
-msgid "Creating and Editing Image Galleries"
+msgid "Image Galleries"
 msgstr ""
 
 #: wpmudev-videos.php:66
@@ -45,11 +45,11 @@ msgid "Adding New Posts"
 msgstr ""
 
 #: wpmudev-videos.php:69
-msgid "Adding Paragraphs"
+msgid "Using Paragraphs"
 msgstr ""
 
 #: wpmudev-videos.php:70
-msgid "Admin Bar"
+msgid "The Admin Bar"
 msgstr ""
 
 #: wpmudev-videos.php:71
@@ -60,12 +60,12 @@ msgstr ""
 msgid "Changing Your Password"
 msgstr ""
 
-#: wpmudev-videos.php:73
-msgid "Comments"
+#: wpmudev-videos.php:73 wpmudev-videos.php:164
+msgid "Managing Comments"
 msgstr ""
 
-#: wpmudev-videos.php:74 wpmudev-videos.php:400
-msgid "Dashboard"
+#: wpmudev-videos.php:74 wpmudev-videos.php:113
+msgid "The Dashboard"
 msgstr ""
 
 #: wpmudev-videos.php:75
@@ -81,11 +81,11 @@ msgid "Editing Text"
 msgstr ""
 
 #: wpmudev-videos.php:78
-msgid "Excerpts"
+msgid "Post Excerpts"
 msgstr ""
 
 #: wpmudev-videos.php:79
-msgid "Featured Images"
+msgid "Set Featured Image"
 msgstr ""
 
 #: wpmudev-videos.php:80
@@ -93,15 +93,15 @@ msgid "Hyperlinks"
 msgstr ""
 
 #: wpmudev-videos.php:81
-msgid "Image Editor"
+msgid "The Image Editor"
 msgstr ""
 
 #: wpmudev-videos.php:82
 msgid "Lists"
 msgstr ""
 
-#: wpmudev-videos.php:83 wpmudev-videos.php:153
-msgid "Media Library"
+#: wpmudev-videos.php:83
+msgid "The Media Library"
 msgstr ""
 
 #: wpmudev-videos.php:84
@@ -113,15 +113,15 @@ msgid "Quick Draft"
 msgstr ""
 
 #: wpmudev-videos.php:86
-msgid "Replacing an Image"
+msgid "Replace an Image"
 msgstr ""
 
 #: wpmudev-videos.php:87
-msgid "Restoring a Page"
+msgid "Restoring Pages"
 msgstr ""
 
 #: wpmudev-videos.php:88
-msgid "Restoring a Post"
+msgid "Restoring Posts"
 msgstr ""
 
 #: wpmudev-videos.php:89
@@ -133,7 +133,7 @@ msgid "Pages vs. Posts"
 msgstr ""
 
 #: wpmudev-videos.php:91
-msgid "Tags"
+msgid "Using Tags"
 msgstr ""
 
 #: wpmudev-videos.php:92
@@ -141,214 +141,210 @@ msgid "The Toolbar"
 msgstr ""
 
 #: wpmudev-videos.php:93
-msgid "Trashing a Page"
+msgid "Using Trash"
 msgstr ""
 
 #: wpmudev-videos.php:94
-msgid "Trashing a Post"
-msgstr ""
-
-#: wpmudev-videos.php:95
 msgid "Managing Widgets"
 msgstr ""
 
+#: wpmudev-videos.php:95
+msgid "Navigation Menus"
+msgstr ""
+
 #: wpmudev-videos.php:96
-msgid "Creating and Managing Custom Navigation Menus"
+msgid "Change Theme"
 msgstr ""
 
 #: wpmudev-videos.php:97
-msgid "Switching Themes"
-msgstr ""
-
-#: wpmudev-videos.php:98
 msgid "The Customizer"
 msgstr ""
 
+#: wpmudev-videos.php:98
+msgid "Create and Edit Users"
+msgstr ""
+
 #: wpmudev-videos.php:99
-msgid "Creating and Editing Users"
+msgid "Tools"
 msgstr ""
 
 #: wpmudev-videos.php:100
-msgid "Tools - Importing and Exporting"
+msgid "Settings"
 msgstr ""
 
 #: wpmudev-videos.php:101
-msgid "Adjusting Settings"
-msgstr ""
-
-#: wpmudev-videos.php:102
 msgid "Creating Playlists"
 msgstr ""
 
-#: wpmudev-videos.php:106
+#: wpmudev-videos.php:105
 msgid "Running Updates"
 msgstr ""
 
-#: wpmudev-videos.php:107
+#: wpmudev-videos.php:106
 msgid "Install a Theme"
 msgstr ""
 
-#: wpmudev-videos.php:108
+#: wpmudev-videos.php:107
 msgid "Install and Configure a Plugin"
 msgstr ""
 
-#: wpmudev-videos.php:114
-msgid "The Dashboard"
-msgstr ""
-
-#: wpmudev-videos.php:118
+#: wpmudev-videos.php:117
 msgid "Posts"
 msgstr ""
 
-#: wpmudev-videos.php:122
+#: wpmudev-videos.php:121
 msgid "Pages"
 msgstr ""
 
-#: wpmudev-videos.php:126
+#: wpmudev-videos.php:125
 msgid "The Visual Editor"
 msgstr ""
 
-#: wpmudev-videos.php:140
+#: wpmudev-videos.php:139
 msgid "Working With Images"
 msgstr ""
 
-#: wpmudev-videos.php:157
+#: wpmudev-videos.php:152
+msgid "Media Library"
+msgstr ""
+
+#: wpmudev-videos.php:156
 msgid "Appearance"
 msgstr ""
 
-#: wpmudev-videos.php:161
+#: wpmudev-videos.php:160
 msgid "Organizing Content"
 msgstr ""
 
-#: wpmudev-videos.php:165
-msgid "Managing Comments"
-msgstr ""
-
-#: wpmudev-videos.php:169
+#: wpmudev-videos.php:168
 msgid "Users, Tools, and Settings"
 msgstr ""
 
-#: wpmudev-videos.php:205 wpmudev-videos.php:210
+#: wpmudev-videos.php:204 wpmudev-videos.php:209
 msgid "WPMU DEV Videos"
 msgstr ""
 
-#: wpmudev-videos.php:328
+#: wpmudev-videos.php:327
 msgid "Settings saved."
 msgstr ""
 
-#: wpmudev-videos.php:332
+#: wpmudev-videos.php:331
 msgid "WPMU DEV Video Settings"
 msgstr ""
 
-#: wpmudev-videos.php:338
+#: wpmudev-videos.php:337
 msgid "Display Settings"
 msgstr ""
 
-#: wpmudev-videos.php:344
+#: wpmudev-videos.php:343
 msgid "Register This Domain"
 msgstr ""
 
-#: wpmudev-videos.php:349
+#: wpmudev-videos.php:348
 msgid "Whoops, your server is having trouble connecting to the WPMU DEV API! If this problem continues, please contact your host and ask them to \"make sure php and any firewall is configured to allow an HTTP GET call via curl or fsockopen to %s."
 msgstr ""
 
-#: wpmudev-videos.php:353
+#: wpmudev-videos.php:352
 msgid "Please register this domain \"%s\" below: "
 msgstr ""
 
-#: wpmudev-videos.php:357
+#: wpmudev-videos.php:356
 msgid "Now Confirm Registration"
 msgstr ""
 
-#: wpmudev-videos.php:363
+#: wpmudev-videos.php:362
 msgid "Successfully Registered! Video Site ID: %s"
 msgstr ""
 
-#: wpmudev-videos.php:372
+#: wpmudev-videos.php:371
 msgid "WPMU DEV API Key"
 msgstr ""
 
-#: wpmudev-videos.php:375
+#: wpmudev-videos.php:374
 msgid "For compatibility with your current Domain Mapping settings you must enter your <a href=\"http://premium.wpmudev.org/wp-admin/profile.php?page=vidapi\" target=\"_blank\">WPMU DEV API Key</a>:"
 msgstr ""
 
-#: wpmudev-videos.php:378
+#: wpmudev-videos.php:377
 msgid "Enter your WPMU DEV API Key"
 msgstr ""
 
-#: wpmudev-videos.php:383
+#: wpmudev-videos.php:382
 msgid "Add Videos to Contextual Help"
 msgstr ""
 
-#: wpmudev-videos.php:386
+#: wpmudev-videos.php:385
 msgid "Yes"
 msgstr ""
 
-#: wpmudev-videos.php:389
+#: wpmudev-videos.php:388
 msgid "No"
 msgstr ""
 
-#: wpmudev-videos.php:392
+#: wpmudev-videos.php:391
 msgid "This will add the appropriate video tutorials to the help dropdowns on WordPress admin screens."
 msgstr ""
 
-#: wpmudev-videos.php:396
+#: wpmudev-videos.php:395
 msgid "Menu Location"
 msgstr ""
 
-#: wpmudev-videos.php:402
+#: wpmudev-videos.php:399
+msgid "Dashboard"
+msgstr ""
+
+#: wpmudev-videos.php:401
 msgid "Top Level"
 msgstr ""
 
-#: wpmudev-videos.php:405
+#: wpmudev-videos.php:404
 msgid "Support System Plugin"
 msgstr ""
 
-#: wpmudev-videos.php:408
+#: wpmudev-videos.php:407
 msgid "No Menu"
 msgstr ""
 
-#: wpmudev-videos.php:411
+#: wpmudev-videos.php:410
 msgid "What part of the admin menu should the video tutorial page be added?"
 msgstr ""
 
-#: wpmudev-videos.php:415
+#: wpmudev-videos.php:414
 msgid "Menu Title"
 msgstr ""
 
-#: wpmudev-videos.php:421
+#: wpmudev-videos.php:420
 msgid "Sets the menu title for the video tutorial page."
 msgstr ""
 
-#: wpmudev-videos.php:425
+#: wpmudev-videos.php:424
 msgid "Hide Videos"
 msgstr ""
 
-#: wpmudev-videos.php:428
+#: wpmudev-videos.php:427
 msgid "Check any videos here that you want to hide from users:"
 msgstr ""
 
-#: wpmudev-videos.php:442
+#: wpmudev-videos.php:441
 msgid "Save Changes"
 msgstr ""
 
-#: wpmudev-videos.php:448
+#: wpmudev-videos.php:447
 msgid "Shortcodes"
 msgstr ""
 
-#: wpmudev-videos.php:451
+#: wpmudev-videos.php:450
 msgid "These shortcodes allow you to easily embed video tutorials in posts and pages on your sites. Simply type or paste them into your post or page content where you would like them to appear. Also properly handles SSL protected pages. You may also pass \"width\" and/or \"height\" arguments to customize the size of the videos."
 msgstr ""
 
-#: wpmudev-videos.php:462
+#: wpmudev-videos.php:461
 msgid "Group Shortcodes"
 msgstr ""
 
-#: wpmudev-videos.php:463
+#: wpmudev-videos.php:462
 msgid "These shortcodes allow you to embed a whole group of videos at a time."
 msgstr ""
 
-#: wpmudev-videos.php:526
+#: wpmudev-videos.php:525
 msgid "Select a Video Tutorial"
 msgstr ""
 #. Plugin Name of the plugin/theme

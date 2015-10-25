@@ -4,7 +4,7 @@ Plugin Name: Pro Sites
 Plugin URI: http://premium.wpmudev.org/project/pro-sites/
 Description: The ultimate multisite site upgrade plugin, turn regular sites into multiple pro site subscription levels selling access to storage space, premium themes, premium plugins and much more!
 Author: WPMU DEV
-Version: 3.5.1.3
+Version: 3.5.1.4
 Author URI: http://premium.wpmudev.org/
 Text Domain: psts
 Domain Path: /pro-sites-files/languages/
@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ProSites {
 
-	var $version = '3.5.1.3';
+	var $version = '3.5.1.4';
 	var $location;
 	var $language;
 	var $plugin_dir = '';
@@ -103,7 +103,7 @@ class ProSites {
 		foreach ( $modules as $module ) {
 				ProSites_PluginLoader::require_module( $module );
 				// Making sure that important filters are in place rather than loading too late
-				if( method_exists( $module, 'run_critical_tasks' ) ) {
+				if( method_exists( $module, 'run_critical_tasks' ) && ( is_admin() || ! is_main_site( get_current_blog_id() ) ) ) {
 					call_user_func( array(  $module, 'run_critical_tasks' ) );
 				}
 		}
@@ -313,6 +313,7 @@ class ProSites {
 			'gateways_enabled'         => array(),
 			'modules_enabled'          => array(),
 			'enabled_periods'          => array( 1, 3, 12 ),
+			'send_receipts'             => 1,
 			'hide_adminmenu'           => 0,
 			'hide_adminbar'            => 0,
 			'hide_adminbar_super'      => 0,
@@ -1621,10 +1622,13 @@ Thanks!", 'psts' ),
 			'subject' => $psts->get_setting( 'receipt_subject' )
 		);
 		$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
-
+		$pdf_receipt = '';
+		if( $psts->get_setting( 'send_receipts', 1 ) ) {
+			$pdf_receipt = $psts->pdf_receipt( $e['msg'] );
+		}
 		//It is converting Euro symbol to emoji, need to submit a trac ticket, until then remove emoji in email
 		remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
-		wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ), $psts->pdf_receipt( $e['msg'] ) );
+		wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ), $pdf_receipt );
 		add_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 
 		$psts->log_action( $transaction->blog_id, sprintf( __( 'Payment receipt email sent to %s', 'psts' ), $email ) );
@@ -1911,7 +1915,7 @@ Thanks!", 'psts' ),
 		}
 
 		//check cache
-		if ( isset( $this->level[ $blog_id ] ) ) {
+		if ( isset( $this->level ) && isset( $this->level[ $blog_id ] ) ) {
 			return $this->level[ $blog_id ];
 		} else if ( false !== ( $level = wp_cache_get( 'level_' . $blog_id, 'psts' ) ) ) //try local cache (could be 0)
 		{
@@ -2024,6 +2028,10 @@ Thanks!", 'psts' ),
 		$extra_sql .= $wpdb->prepare( ", is_recurring = %d", $is_recurring );
 
 		if ( $exists ) {
+
+			// Get last gateway if exists
+			$last_gateway = ProSites_Helper_ProSite::last_gateway( $blog_id );
+
 			$wpdb->query( $wpdb->prepare( "
 	  		UPDATE {$wpdb->base_prefix}pro_sites
 	  		SET $extra_sql
@@ -2036,6 +2044,14 @@ Thanks!", 'psts' ),
 		  	VALUES (%d, %s, %d, %s, %s, %s, %d)",
 				$blog_id, $new_expire, $level, $gateway, $term, $amount, $is_recurring
 			) );
+		}
+
+		// If previous gateway is not the same, we need to cancel the old subscription if we can.
+		if( ! empty( $last_gateway ) && $last_gateway != $gateway ) {
+			$gateways = ProSites_Helper_Gateway::get_gateways();
+			if( ! empty( $gateways ) && isset( $gateways[ $last_gateway ] ) && method_exists( $gateways[ $last_gateway ]['class'], 'cancel_subscription' ) ) {
+				call_user_func( $gateways[ $last_gateway ]['class'] . '::cancel_subscription', $blog_id );
+			}
 		}
 
 		unset( $this->pro_sites[ $blog_id ] ); //clear local cache
@@ -2510,6 +2526,7 @@ Thanks!", 'psts' ),
 
 	/**
     * Hooked at prosites_inner_pricing_table_pre, to display a message before pricing table
+	*
 	* @param $content
 	*
 	*@return mixed
@@ -2786,7 +2803,7 @@ _gaq.push(["_trackTrans"]);
 		<?php
 		if( $activation_key ) {
 			$result = ProSites_Helper_Registration::activate_blog( $activation_key );
-			$blog_id = $result;
+			$blog_id = (int) $result['blog_id'];
 		}
 
 		if ( $blog_id ) { ?>
@@ -3944,6 +3961,28 @@ function admin_levels() {
 			</form>
 
 		</div>
+		<script type="text/javascript">
+		jQuery(function($) {
+			// @todo: Move this into the JS and use localize script for alerts.
+			$('#psts_ProSites_Module_Plugins, #psts_ProSites_Module_Plugins_Manager').change(function() {
+				if( $(this).is(':checked') ){
+					var id = $(this).attr('id');
+					if( id == 'psts_ProSites_Module_Plugins' ){
+						if( $('#psts_ProSites_Module_Plugins_Manager').is(':checked') ){
+							alert('<?php _e('Enabling this module will disable Premium Plugin Manager module.', 'psts' ); ?>');
+							$('#psts_ProSites_Module_Plugins_Manager').prop('checked', false);
+						}
+					}else if( id == 'psts_ProSites_Module_Plugins_Manager' ){
+						if( $('#psts_ProSites_Module_Plugins').is(':checked') ){
+							alert('<?php _e('Enabling this module will disable Premium Plugin module.', 'psts' ); ?>');
+							$('#psts_ProSites_Module_Plugins').prop('checked', false);
+						}
+					}
+				}
+			});
+
+		});
+		</script>
 	<?php
 	}
 
@@ -4551,13 +4590,15 @@ function admin_levels() {
 
 			if( !empty( $user_login ) ) {
 				//Query Signup table for domain name
-				$query = $wpdb->prepare("SELECT `domain` from {$wpdb->signups} WHERE `user_login` = %s", $user_login );
-				$user_domain = $wpdb->get_var( $query );
+				$query = $wpdb->prepare("SELECT `domain`, `active` from {$wpdb->signups} WHERE `user_login` = %s", $user_login );
+				$site = $wpdb->get_row( $query );
+				$user_domain = !empty( $site->domain ) ? $site->domain : false;
 			}
 
 			if( !empty( $user_domain ) && $allow_multi ) {
 				//Already have a site, allow to signup for another
-				$content .= '<div class="psts-signup-another">' . sprintf( __('Your site <strong>%s</strong> has not been activated yet.', 'psts' ), $user_domain ). '<br/><a href="' . esc_url( $this->checkout_url() . '?action=new_blog' ) . '">' . esc_html__( 'Sign up for another site.', 'psts' ) . '</a>' . '</div>';
+				$inactive_site = !empty( $site->active ) && 1 == $site->active ? '': sprintf( __('Your site <strong>%s</strong> has not been activated yet.', 'psts' ), $user_domain ). '<br/>';
+				$content .= '<div class="psts-signup-another">' . $inactive_site . '<a href="' . esc_url( $this->checkout_url() . '?action=new_blog' ) . '">' . esc_html__( 'Sign up for another site.', 'psts' ) . '</a>' . '</div>';
 			}elseif( empty( $user_domain ) ) {
 				//Don't have a site, let user create one
 				$content .= '<div class="psts-signup"><a href="' . esc_url( $this->checkout_url() . '?action=new_blog' ) . '">' . esc_html__( 'Sign up for a site.', 'psts' ) . '</a>' . '</div>';
@@ -4652,8 +4693,13 @@ function admin_levels() {
 
 		$html .= make_clickable( wpautop( $payment_info ) );
 
+		try{
 		// output the HTML content
 		$pdf->writeHTML( $html, true, false, true, false, '' );
+		}catch (Exception $e ) {
+			error_log( "TCPDF couldn't write HTML to PDF" . $e->get_error_message() );
+			return '';
+		}
 
 		// ---------------------------------------------------------
 
@@ -5004,7 +5050,8 @@ function admin_levels() {
 
 	/**
 	 * Displays a error on plugin activation
-	 * @param $message
+	 *
+*@param $message
 	 * @param $errno
 	 */
 	function trigger_install_error( $message, $errno ) {
@@ -5098,7 +5145,8 @@ function admin_levels() {
 	/**
     * Checks for Blog activation, if website was signed up using manual payment gateway
     * and assigns the pro site level as per the details in site meta
-	* @param $blog_id
+	*
+*@param $blog_id
 	* @param $user_id
 	* @param $password
 	* @param $signup_title

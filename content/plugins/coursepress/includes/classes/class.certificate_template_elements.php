@@ -99,7 +99,7 @@ if ( ! class_exists( 'CP_Certificate_Template_Elements' ) ) {
 		}
 
 		function get_full_background_image() {
-			$template_background_image = ( isset( $this->template_metas['document_template_background_image'][0] ) && $this->template_metas['document_template_background_image'][0] !== '' ? $this->template_metas['document_template_background_image'][0] : '' );
+			$template_background_image = ( isset( $this->template_metas['document_template_background_image'][0] ) && $this->template_metas['document_template_background_image'][0] !== '' ? $this->template_metas['document_template_background_image'][0] : '' );									   	 	   		
 			?>
 			<label><?php _e( 'Certificate Background Image', 'cp' ); ?></label>
 			<input class="file_url" type="text" size="36" name="document_template_background_image_post_meta" value="<?php echo esc_attr( $template_background_image ); ?>"/>

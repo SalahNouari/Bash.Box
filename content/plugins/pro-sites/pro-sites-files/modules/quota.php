@@ -34,6 +34,9 @@ class ProSites_Module_Quota {
 	}
 
 	function __construct() {
+		if( ! is_admin() && is_main_site( get_current_blog_id() ) ) {
+			return;
+		}
 		self::$user_label       = __( 'Quota', 'psts' );
 		self::$user_description = __( 'Upload quota', 'psts' );
 
@@ -218,6 +221,9 @@ class ProSites_Module_Quota {
 	}
 
 	public static function display_space( $space ) {
+
+		$space = apply_filters( 'psts_quota_pre_get_space', $space );
+
 		if ( ! $space ) {
 			return '0' . __( 'MB', 'psts' );
 		}

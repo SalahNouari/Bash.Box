@@ -72,8 +72,9 @@ class ProSites_Gateway_Stripe {
 			'create_transaction_object'
 		), 10, 3 );
 
+		$stripe_version = $psts->get_setting( 'stripe_version' );
 		//update install script if necessary
-		if ( $psts->get_setting( 'stripe_version' ) != $psts->version ) {
+		if ( empty( $stripe_version ) || $stripe_version != $psts->version ) {
 			$this->install();
 		}
 	}
@@ -108,7 +109,7 @@ class ProSites_Gateway_Stripe {
 		global $wpdb, $psts;
 
 		$table_name = $wpdb->base_prefix . 'pro_sites_stripe_customers';
-		$table1 = "CREATE TABLE " . $table_name ." IF NOT EXISTS  (
+		$table1 = "CREATE TABLE IF NOT EXISTS $table_name (
 		  blog_id bigint(20) NOT NULL,
 			customer_id char(20) NOT NULL,
 			subscription_id char(22) NOT NULL,
@@ -231,6 +232,7 @@ class ProSites_Gateway_Stripe {
 					<td>
 						<select name="psts[stripe_currency]" class="chosen">
 							<?php
+							// https://support.stripe.com/questions/which-currencies-does-stripe-support
 							$sel_currency = $psts->get_setting( "stripe_currency", 'USD' );
 							$currencies   = array(
 								"AUD" => 'AUD - Australian Dollar',
@@ -238,6 +240,13 @@ class ProSites_Gateway_Stripe {
 								"EUR" => 'EUR - Euro',
 								"GBP" => 'GBP - Pounds Sterling',
 								"USD" => 'USD - U.S. Dollar',
+								"DKK" => 'DKK - Danish Krone',
+								"NOK" => 'NOK - Norwegian Krone',
+								"SEK" => 'SEK - Swedish Krona',
+								"JPY" => 'JPY - Japanese Yen (Private BETA)',
+								"MXN" => 'MXN - Mexican Peso (Private BETA)',
+								"SGD" => 'SGD - Singapore Dollar (Private BETA)',
+								"CHF" => 'CHF - Swiss Franc (Private BETA)',
 							);
 
 							foreach ( $currencies as $k => $v ) {
@@ -1286,7 +1295,7 @@ class ProSites_Gateway_Stripe {
 				// Create generic class from Stripe\Subscription class
 
 				// Convert 3.4 -> 3.5+
-				if ( ! empty( $subscription ) && ! isset( $subscription->metadata->blog_id ) ) {
+				if ( ! empty( $subscription ) && ! isset( $subscription->metadata->blog_id ) && ! isset( $subscription->blog_id ) ) {
 					$blog_id = ProSites_Gateway_Stripe::get_blog_id( $customer_id );
 					self::set_subscription_blog_id( $subscription, $customer_id, $blog_id, $blog_id );
 					$subscription->blog_id = $blog_id;
@@ -1311,7 +1320,7 @@ class ProSites_Gateway_Stripe {
 
 			}
 
-			if ( empty( $blog_id ) && isset( $subscription ) && isset( $subscription->blog_id ) && ! empty( $subscription->blog_id ) ) {
+			if ( empty( $blog_id ) && isset( $subscription ) && ! empty( $subscription->blog_id ) ) {
 				$blog_id = $subscription->blog_id;
 			}
 
@@ -1762,7 +1771,11 @@ class ProSites_Gateway_Stripe {
 			if ( empty( $error ) ) {
 				//record stat
 				$psts->record_stat( $blog_id, 'cancel' );
-				$psts->email_notification( $blog_id, 'canceled' );
+
+				$last_gateway = ProSites_Helper_ProSite::last_gateway( $blog_id );
+				if( ! empty( $last_gateway ) && $last_gateway == self::get_slug() ) {
+					$psts->email_notification( $blog_id, 'canceled' );
+				}
 				update_blog_option( $blog_id, 'psts_stripe_canceled', 1 );
 				update_blog_option( $blog_id, 'psts_is_canceled', 1 );
 

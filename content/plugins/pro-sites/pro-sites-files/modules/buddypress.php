@@ -20,6 +20,10 @@ class ProSites_Module_BP {
 	}
 
 	function __construct() {
+		if( ! is_admin() && is_main_site( get_current_blog_id() ) ) {
+			return;
+		}
+//		add_action( 'psts_settings_page', array( &$this, 'settings' ) );
 		add_filter( 'psts_settings_filter', array( &$this, 'settings_process' ), 10, 2 );
 		self::$user_label       = __( 'Buddy Press', 'psts' );
 		self::$user_description = __( 'Limited group creation and messaging', 'psts' );

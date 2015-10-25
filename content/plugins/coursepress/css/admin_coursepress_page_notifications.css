@@ -151,7 +151,7 @@
 
 .instructor-avatar-holder:hover{
     /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha( Opacity=50 )";
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha( Opacity=50 )";									   	 	   		
 
     /* IE 5-7 */
     filter: alpha( opacity=70 );
@@ -300,4 +300,4 @@ input.wide, textarea.wide, #wp-notification_description-wrap {
 }
 
 
-/* 133620-1445126712-au */
+/* 133620-1445780655-au */

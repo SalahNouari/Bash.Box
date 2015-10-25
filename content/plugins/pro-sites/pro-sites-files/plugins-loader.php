@@ -14,6 +14,7 @@ class ProSites_PluginLoader {
 		'ProSites_Module_PostThrottling' => 'post-throttling',
 		'ProSites_Module_PostingQuota' => 'posting-quota',
 		'ProSites_Module_Plugins' => 'premium-plugins',
+		'ProSites_Module_Plugins_Manager' => 'premium-plugins-manager',
 		'ProSites_Module_Support' => 'premium-support',
 		'ProSites_Module_PremiumThemes' => 'premium-themes',
 		'ProSites_Module_Quota' => 'quota',
@@ -24,11 +25,15 @@ class ProSites_PluginLoader {
 	);
 
   function __construct() {
+
     //load modules
 		add_action( 'plugins_loaded', array(&$this, 'load_modules'), 11 );
 
 		//load gateways
 		add_action( 'plugins_loaded', array(&$this, 'load_gateways'), 11 );
+
+		//load the logging class to debug payment gateway issues.
+		require_once( 'logging.php' );
 	}
 
 	public static function require_module( $module ) {
@@ -160,4 +165,3 @@ function psts_register_module($class_name, $name, $description, $demo = false) {
 		return false;
 	}
 }
-?>

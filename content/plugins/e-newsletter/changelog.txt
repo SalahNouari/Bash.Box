@@ -6,6 +6,9 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.2.8 =
+* Improved possibility to detect bounce message
+
 = 2.7.2.7 =
 * Fixed Membership 2 integration
 
@@ -449,4 +452,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1442728663-au
+133620-1445780665-au

@@ -23,6 +23,8 @@ if ( ! class_exists( 'ProSites_View_Front_Gateway' ) ) {
 			}
 			$gateway_details = self::filter_usable_gateways( self::get_gateway_details( $gateways ) );
 
+			$site_details = false;
+
 			//Handle Subscription Cancel, call respective gateway function for the blog id
 			if ( isset( $_GET['action'] ) && $_GET['action'] == 'cancel' && wp_verify_nonce( $_GET['_wpnonce'], 'psts-cancel' ) ) {
 
@@ -33,10 +35,12 @@ if ( ! class_exists( 'ProSites_View_Front_Gateway' ) ) {
 				if ( empty( $_GET['_wpnonce'] ) ) {
 					return;
 				}
+
 				//If nonce not verified return, Verify Nonce
-				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'psts-cancel' ) ) {
-					return;
-				}
+//				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'psts-cancel' ) ) {
+//					return;
+//				}
+
 				//If there is blog id
 				if ( ! empty( $blog_id ) ) {
 
@@ -50,6 +54,8 @@ if ( ! class_exists( 'ProSites_View_Front_Gateway' ) ) {
 							call_user_func( $gateways[ $gateway ]['class'] . '::cancel_subscription', $blog_id, true );
 						}
 					}
+
+					$site_details = $result;
 				}
 			}
 
@@ -73,6 +79,17 @@ if ( ! class_exists( 'ProSites_View_Front_Gateway' ) ) {
 					$manual_gateway  = '';
 				}
 			}
+
+			$site_details = ProSites_Helper_ProSite::get_blog_info( $blog_id );
+
+			if( $site_details ) {
+				//if( $primary_gateway !== $site_details['last_payment_gateway'] ) {
+				//	$temp = $primary_gateway;
+				//	$primary_gateway = $site_details['last_payment_gateway'];
+				//	$secondary_gateway = $temp;
+				//}
+			}
+
 
 			/**
 			 * Process forms
@@ -132,24 +149,74 @@ if ( ! class_exists( 'ProSites_View_Front_Gateway' ) ) {
 				$content .= '</ul>';
 			}
 
+			$allowed_html = wp_kses_allowed_html('post');
+			$last_gateway = ! empty ( $site_details['last_payment_gateway'] ) ? $site_details['last_payment_gateway'] : '';
 			// Primary
 			if ( ! empty( $primary_gateway ) && method_exists( $gateways[ $primary_gateway ]['class'], 'render_gateway' ) ) {
+
 				$content .= '<div id="gateways-1" class="gateway gateway-primary">';
 				$content .= call_user_func( $gateways[ $primary_gateway ]['class'] . '::render_gateway', $render_data, $primary_args, $blog_id, $domain );
+
+				if( ! empty ( $last_gateway ) && $last_gateway !== $primary_gateway && $last_gateway !== 'Trial' ) {
+
+					$name = "";
+					if( method_exists( $gateways[ $site_details['last_payment_gateway'] ]['class'], 'get_name' ) ) {
+						$name = call_user_func( $gateways[ $site_details['last_payment_gateway'] ]['class'] . '::get_name' );
+						$name = $name[ $site_details['last_payment_gateway'] ];
+					}
+
+					$content .= '<div id="psts-general-error" class="psts-warning">' .
+					            wp_kses( __( 'You signed up with the <strong>' . esc_html( $name ) . '</strong> payment gateway. We will attempt to cancel your <strong>' . esc_html( $name ) . '</strong> payments and setup new payments if you choose to continue.','psts' ), $allowed_html );
+					$content .= '</div>';
+
+				}
+
 				$content .= '</div>';
+
 			}
 
 			// Secondary
 			if ( ! empty( $secondary_gateway ) && method_exists( $gateways[ $primary_gateway ]['class'], 'render_gateway' ) ) {
+
 				$content .= '<div id="gateways-2" class="gateway gateway-secondary">';
 				$content .= call_user_func( $gateways[ $secondary_gateway ]['class'] . '::render_gateway', $render_data, $secondary_args, $blog_id, $domain, false );
+
+				if( ! empty ( $last_gateway ) && $last_gateway !== $secondary_gateway && $last_gateway !== 'Trial' ) {
+//				if( ! empty ( $site_details['last_payment_gateway'] ) && $site_details['last_payment_gateway'] !== $secondary_gateway ) {
+					$name = "";
+					if( method_exists( $gateways[ $site_details['last_payment_gateway'] ]['class'], 'get_name' ) ) {
+						$name = call_user_func( $gateways[ $site_details['last_payment_gateway'] ]['class'] . '::get_name' );
+						$name = $name[ $site_details['last_payment_gateway'] ];
+					}
+
+					$content .= '<div id="psts-general-error" class="psts-warning">' .
+					            wp_kses( __( 'You signed up with the <strong>' . esc_html( $name ) . '</strong> payment gateway. We will attempt to cancel your <strong>' . esc_html( $name ) . '</strong> payments and setup new payments if you choose to continue.','psts' ), $allowed_html );
+					$content .= '</div>';
+
+				}
+
 				$content .= '</div>';
 			}
 
 			// Manual
 			if ( ! empty( $manual_gateway ) && method_exists( $gateways[ $primary_gateway ]['class'], 'render_gateway' ) ) {
+
 				$content .= '<div id="gateways-3" class="gateway gateway-manual">';
 				$content .= call_user_func( $gateways[ $manual_gateway ]['class'] . '::render_gateway', $render_data, $manual_args, $blog_id, $domain, false );
+
+				if( ! empty ( $last_gateway ) && $last_gateway !== $manual_gateway && $last_gateway !== 'Trial' ) {
+					$name = "";
+					if( method_exists( $gateways[ $site_details['last_payment_gateway'] ]['class'], 'get_name' ) ) {
+						$name = call_user_func( $gateways[ $site_details['last_payment_gateway'] ]['class'] . '::get_name' );
+						$name = $name[ $site_details['last_payment_gateway'] ];
+					}
+
+					$content .= '<div id="psts-general-error" class="psts-warning">' .
+					            wp_kses( __( 'You signed up with the <strong>' . esc_html( $name ) . '</strong> payment gateway. We will attempt to cancel your <strong>' . esc_html( $name ) . '</strong> payments and setup new payments if you choose to continue.','psts' ), $allowed_html );
+					$content .= '</div>';
+
+				}
+
 				$content .= '</div>';
 			}
 			$content .= '</div>';
@@ -438,9 +505,16 @@ if ( ! class_exists( 'ProSites_View_Front_Gateway' ) ) {
 
 			$content = '<div id="psts-payment-info-received">';
 
-			$email      = $render_data['new_blog_details']['email'];
-			$blogname   = $render_data['new_blog_details']['blogname'];
-			$blog_title = $render_data['new_blog_details']['title'];
+			if( isset( $render_data ) && isset( $render_data['new_blog_details'] ) ) {
+				$email      = $render_data['new_blog_details']['email'];
+			} else {
+
+				if( isset( $_GET['bid'] ) && is_user_logged_in() ) {
+					$user = get_userdata( get_current_user_id() );
+					$email = $user->user_email;
+				}
+
+			}
 
 			$content .= '<h2>' . esc_html__( 'Finalizing your site...', 'psts' ) . '</h2>';
 

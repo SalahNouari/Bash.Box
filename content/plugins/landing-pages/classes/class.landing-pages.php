@@ -141,7 +141,7 @@ class Landing_Pages_Template_Switcher {
         /* nextgen gallery support */
         if (!defined('NGG_DISABLE_FILTER_THE_CONTENT')) {
             define( 'NGG_DISABLE_FILTER_THE_CONTENT' , true );
-        }
+        } 
 
         $template = Landing_Pages_Variations::get_current_template( $post->ID );
 

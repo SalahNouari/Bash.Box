@@ -4,7 +4,7 @@ Plugin Name: WPMU DEV Videos
 Plugin URI: https://premium.wpmudev.org/project/unbranded-video-tutorials/
 Description: A simple way to integrate WPMU DEV's over 40 unbranded support videos into your websites. Simply activate this plugin, then configure where and how you want to display the video tutorials.
 Author: WPMU DEV
-Version: 1.5
+Version: 1.5.1
 Author URI: http://premium.wpmudev.org/
 Network: true
 WDP ID: 248
@@ -35,7 +35,7 @@ class WPMUDEV_Videos {
 	//---Config---------------------------------------------------------------//
 	//------------------------------------------------------------------------//
 
-	var $version = '1.5';
+	var $version = '1.5.1';
 	var $api_url = 'https://premium.wpmudev.org/video-api-register.php';
 	var $video_list;
 	var $video_cats;
@@ -58,47 +58,46 @@ class WPMUDEV_Videos {
 
 		//default settings
 		$this->video_list = array(
-			'add-heading'                  => __( 'Add Heading', 'wpmudev_vids' ),
-			'add-image-from-media-library' => __( 'Adding an Image From Media Library', 'wpmudev_vids' ),
-			'add-image-from-pc'            => __( 'Adding an Image From Your Computer', 'wpmudev_vids' ),
-			'add-image-from-url'           => __( 'Adding an Image From a URL', 'wpmudev_vids' ),
-			'image-gallery'                => __( 'Creating and Editing Image Galleries', 'wpmudev_vids' ),
+			'add-heading'                  => __( 'Heading Styles', 'wpmudev_vids' ),
+			'add-image-from-media-library' => __( 'Adding Images From Media Library', 'wpmudev_vids' ),
+			'add-image-from-pc'            => __( 'Uploading Images', 'wpmudev_vids' ),
+			'add-image-from-url'           => __( 'Add Image From URL', 'wpmudev_vids' ),
+			'image-gallery'                => __( 'Image Galleries', 'wpmudev_vids' ),
 			'add-media'                    => __( 'Adding Media', 'wpmudev_vids' ),
 			'add-new-page'                 => __( 'Adding New Pages', 'wpmudev_vids' ),
 			'add-new-post'                 => __( 'Adding New Posts', 'wpmudev_vids' ),
-			'add-paragraph'                => __( 'Adding Paragraphs', 'wpmudev_vids' ),
-			'admin-bar'                    => __( 'Admin Bar', 'wpmudev_vids' ),
+			'add-paragraph'                => __( 'Using Paragraphs', 'wpmudev_vids' ),
+			'admin-bar'                    => __( 'The Admin Bar', 'wpmudev_vids' ),
 			'categories'                   => __( 'Categories', 'wpmudev_vids' ),
 			'change-password'              => __( 'Changing Your Password', 'wpmudev_vids' ),
-			'comments'                     => __( 'Comments', 'wpmudev_vids' ),
-			'dashboard'                    => __( 'Dashboard', 'wpmudev_vids' ),
+			'comments'                     => __( 'Managing Comments', 'wpmudev_vids' ),
+			'dashboard'               	   => __( 'The Dashboard', 'wpmudev_vids' ),
 			'delete-image'                 => __( 'Deleting Images', 'wpmudev_vids' ),
 			'edit-image'                   => __( 'Editing Images', 'wpmudev_vids' ),
 			'edit-text'                    => __( 'Editing Text', 'wpmudev_vids' ),
-			'excerpt'                      => __( 'Excerpts', 'wpmudev_vids' ),
-			'featured-image'               => __( 'Featured Images', 'wpmudev_vids' ),
+			'excerpt'                      => __( 'Post Excerpts', 'wpmudev_vids' ),
+			'featured-image'               => __( 'Set Featured Image', 'wpmudev_vids' ),
 			'hyperlinks'                   => __( 'Hyperlinks', 'wpmudev_vids' ),
-			'image-editor'                 => __( 'Image Editor', 'wpmudev_vids' ),
+			'image-editor'                 => __( 'The Image Editor', 'wpmudev_vids' ),
 			'lists'                        => __( 'Lists', 'wpmudev_vids' ),
-			'media-library'                => __( 'Media Library', 'wpmudev_vids' ),
+			'media-library'                => __( 'The Media Library', 'wpmudev_vids' ),
 			'oEmbed'                       => __( 'Embed Videos', 'wpmudev_vids' ),
 			'quickpress'                   => __( 'Quick Draft', 'wpmudev_vids' ),
-			'replace-image'                => __( 'Replacing an Image', 'wpmudev_vids' ),
-			'restore-page'                 => __( 'Restoring a Page', 'wpmudev_vids' ),
-			'restore-post'                 => __( 'Restoring a Post', 'wpmudev_vids' ),
+			'replace-image'                => __( 'Replace an Image', 'wpmudev_vids' ),
+			'restore-page'                 => __( 'Restoring Pages', 'wpmudev_vids' ),
+			'restore-post'                 => __( 'Restoring Posts', 'wpmudev_vids' ),
 			'revisions'                    => __( 'Revisions', 'wpmudev_vids' ),
 			'pages-v-posts'                => __( 'Pages vs. Posts', 'wpmudev_vids' ),
-			'tags'                         => __( 'Tags', 'wpmudev_vids' ),
+			'tags'                         => __( 'Using Tags', 'wpmudev_vids' ),
 			'the-toolbar'                  => __( 'The Toolbar', 'wpmudev_vids' ),
-			'trash-page'                   => __( 'Trashing a Page', 'wpmudev_vids' ),
-			'trash-post'                   => __( 'Trashing a Post', 'wpmudev_vids' ),
+			'trash-post'                   => __( 'Using Trash', 'wpmudev_vids' ),
 			'widgets'                      => __( 'Managing Widgets', 'wpmudev_vids' ),
-			'menus'                        => __( 'Creating and Managing Custom Navigation Menus', 'wpmudev_vids' ),
-			'change-theme'                 => __( 'Switching Themes', 'wpmudev_vids' ),
+			'menus'                        => __( 'Navigation Menus', 'wpmudev_vids' ),
+			'change-theme'                 => __( 'Change Theme', 'wpmudev_vids' ),
 			'customize'                    => __( 'The Customizer', 'wpmudev_vids' ),
-			'create-edit-user'             => __( 'Creating and Editing Users', 'wpmudev_vids' ),
-			'tools'                        => __( 'Tools - Importing and Exporting', 'wpmudev_vids' ),
-			'settings'                     => __( 'Adjusting Settings', 'wpmudev_vids' ),
+			'create-edit-user'             => __( 'Create and Edit Users', 'wpmudev_vids' ),
+			'tools'                        => __( 'Tools', 'wpmudev_vids' ),
+			'settings'                     => __( 'Settings', 'wpmudev_vids' ),
 			'playlists'                    => __( 'Creating Playlists', 'wpmudev_vids' ),
 		);
 
@@ -120,7 +119,7 @@ class WPMUDEV_Videos {
 			),
 			'pages'      => array(
 				'name' => __( 'Pages', 'wpmudev_vids' ),
-				'list' => array( 'add-new-page', 'trash-page', 'restore-page', 'pages-v-posts' )
+				'list' => array( 'add-new-page', 'trash-post', 'restore-page', 'pages-v-posts' )
 			),
 			'editor'     => array(
 				'name' => __( 'The Visual Editor', 'wpmudev_vids' ),
