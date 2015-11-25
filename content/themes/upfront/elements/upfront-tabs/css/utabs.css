@@ -44,17 +44,17 @@
 }
 
 /* Content */
-.tabs-content {
+.utabs-content {
 	clear: both;
 }
 
-.tab-content {
+.utab-content {
 	display: none;
 }
 
-.tab-content-active {
+.utab-content-active {
 	display: block;
 }
 
 
-/* 133620-1441125902-au */
+/* 133620-1448470095-au */

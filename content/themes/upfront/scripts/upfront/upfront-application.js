@@ -550,8 +550,8 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			});
 
 			if (wrapper) {
-				//wrapper.objects.push(object);
-				wrapper.objects = [object];
+				wrapper.objects.push(object);
+				//wrapper.objects = [object];
 			} else {
 				wrapper = {objects: [object]};
 				layout.push(wrapper);
@@ -1623,7 +1623,7 @@ var Application = new (Backbone.Router.extend({
 						"	font-weight: normal;" +
 						"	font-style: normal;" +
 						"}" +
-						".uf_font_icon {" +
+						".uf_font_icon, .uf_font_icon * {" +
 						"	font-family: '" + font.family + "'!important;" +
 						"}";
 

@@ -131,5 +131,23 @@ div.upfront-button:hover .redactor_air {
   margin-bottom: 2px;
 }
 
+.upfront_cta {
+	display: table-cell;
+	padding: 4px 5px;
+	text-decoration: none;
+	height: 100%;
+	vertical-align: middle;
+}
 
-/* 133620-1441125902-au */
+.upfront-output-object.upfront-button {
+	display: table;
+}
+
+.upfront-object-content.upfront-output-ubutton {
+	display: table-row;
+	height: 100%;
+	width: 100%;
+}
+
+
+/* 133620-1448470095-au */

@@ -131,7 +131,7 @@
 
 /* css animation */
 .upfront_login.upfront_login-hover .upfront_login-form,
-.upfront_login.upfront_login-click .upfront_login-form {-webkit-animation-fill-mode:both;-moz-animation-fill-mode:both;-ms-animation-fill-mode:both;-o-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-duration:0.5s;-moz-animation-duration:0.5s;-ms-animation-duration:0.5s;-o-animation-duration:0.5s;animation-duration:0.5s;}
+.upfront_login.upfront_login-click .upfront_login-form {-webkit-animation-fill-mode:both;-moz-animation-fill-mode:both;-ms-animation-fill-mode:both;-o-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-duration:0.5s;-moz-animation-duration:0.5s;-ms-animation-duration:0.5s;-o-animation-duration:0.5s;animation-duration:0.5s;}	     	 		 		  	 		 	
 @-webkit-keyframes fadeInDown {
 	0% {
 		opacity: 0;
@@ -231,4 +231,4 @@ input#rememberme:checked:before {
 }
 
 
-/* 133620-1441125902-au */
+/* 133620-1448470095-au */
