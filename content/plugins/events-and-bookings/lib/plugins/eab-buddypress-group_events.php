@@ -178,11 +178,11 @@ class Eab_BuddyPress_GroupEvents {
 	}
 
 	function save_settings ($options) {
-		$options['bp-group_event-auto_join_groups'] = $_POST['event_default']['bp-group_event-auto_join_groups'];
-		$options['bp-group_event-private_events'] = $_POST['event_default']['bp-group_event-private_events'];
-		$options['bp-group_event-user_groups_only'] = $_POST['event_default']['bp-group_event-user_groups_only'];
-		$options['bp-group_event-user_groups_only-unless_superadmin'] = $_POST['event_default']['bp-group_event-user_groups_only-unless_superadmin'];
-		$options['eab_event_bp_group_event_email_grp_member'] = $_POST['event_default']['eab_event_bp_group_event_email_grp_member'];
+		$options['bp-group_event-auto_join_groups'] = empty( $_POST['event_default']['bp-group_event-auto_join_groups'] ) ? 0 : $_POST['event_default']['bp-group_event-auto_join_groups'];
+		$options['bp-group_event-private_events'] = empty( $_POST['event_default']['bp-group_event-private_events'] ) ? 0 : $_POST['event_default']['bp-group_event-private_events'];
+		$options['bp-group_event-user_groups_only'] = empty( $_POST['event_default']['bp-group_event-user_groups_only'] ) ? 0 : $_POST['event_default']['bp-group_event-user_groups_only'];
+		$options['bp-group_event-user_groups_only-unless_superadmin'] = empty( $_POST['event_default']['bp-group_event-user_groups_only-unless_superadmin'] ) ? 0 : $_POST['event_default']['bp-group_event-user_groups_only-unless_superadmin'];
+		$options['eab_event_bp_group_event_email_grp_member'] = empty( $_POST['event_default']['eab_event_bp_group_event_email_grp_member'] ) ? 0 : $_POST['event_default']['eab_event_bp_group_event_email_grp_member'];
 		return $options;
 	}
 
@@ -263,11 +263,9 @@ class Eab_BuddyPress_GroupEvents {
 		update_post_meta($post_id, 'eab_event-bp-group_event', $data);
 
 		$email_grp_member = $this->_data->get_option('eab_event_bp_group_event_email_grp_member');
-		if( isset( $email_grp_member ) ) {
+		if( isset( $email_grp_member ) &&  $email_grp_member == 1 ) {
 			$grp_members = groups_get_group_members( array( 'group_id' => $data, 'exclude_admins_mods' => false ) );
-			foreach( $grp_members['members'] as $member ){echo "<pre>";
-print_r($grp_members['members']);
-echo "</pre>";
+			foreach( $grp_members['members'] as $member ){
 				//echo $member->user_email;
 				$subject = __( 'Information about a group event', Eab_EventsHub::TEXT_DOMAIN );
 				$subject = apply_filters( 'eab_bp_grp_events_member_mail_subject', $subject, $member, $post_id );
@@ -344,7 +342,7 @@ echo "</pre>";
 
 	private function _get_navigation ($timestamp) {
 		global $bp;
-		$root = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/';
+		$root = $bp->root_domain . '/' . $bp->pages->groups->slug . '/' . $bp->groups->current_group->slug . '/';
 
 		$prev_url = $root . self::SLUG . date_i18n('/Y/m/', $timestamp - (28*86400));
 		$next_url = $root . self::SLUG . date_i18n('/Y/m/', $timestamp + (32*86400));

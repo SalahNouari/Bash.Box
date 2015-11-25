@@ -10,13 +10,18 @@ add_shortcode( 'master_slider'	, 'msp_masterslider_shortcode' );
 
 function msp_masterslider_shortcode( $atts, $content = null ) {
 	extract( shortcode_atts(
-					array( 'id' => ''),
+					array(
+                        'id'    => '',
+                        'alias' => ''
+                    ),
 					$atts,
 					'masterslider'
 				)
 	);
+    // take the slider markuo by slider alias or ID
+    $slider_key = $alias ? $alias : $id;
 
-	return get_masterslider( $id );
+	return get_masterslider( $slider_key );
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -1018,7 +1023,7 @@ function msp_masterslider_layer_shortcode( $atts, $content = null ) {
 
 		} elseif( 'scrollTo' == $action ) {
 			if( ! empty( $scroll_target ) ){
-				$data_action  = 'data-action="'.$action.'('. (float)$action_scroll_duration .', '. $scroll_target .')"';
+				$data_action  = 'data-action="'.$action.'('. $scroll_target .', '. (float)$action_scroll_duration .')"';
 			}
 		} else {
 			$data_action  = 'data-action="'.$action.'"';

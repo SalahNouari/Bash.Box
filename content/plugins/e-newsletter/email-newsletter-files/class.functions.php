@@ -1210,6 +1210,8 @@ class Email_Newsletter_functions {
         if(strpos($contents,'{VIEW_LINK_TEXT}') === false)
             add_filter( 'email_newsletter_make_email_content_header', create_function('$a, $b', 'return "{VIEW_LINK_TEXT}".$a;'), 10, 2 );
 
+        $date_format = (isset($settings['date_format']) ? $settings['date_format'] : "F j, Y");
+
         //Prepare newsletter body
         $body_prepare =
         array(
@@ -1225,7 +1227,7 @@ class Email_Newsletter_functions {
                 'from_email' => (isset($newsletter_data['from_email']) ? $newsletter_data['from_email'] : $this->settings['from_email']),
                 'branding_html' => $this->get_newsletter_meta($newsletter_id,'branding_html', $this->get_default_builder_var('branding_html') ),
                 'contact_info' => (isset($newsletter_data['contact_info']) ? $newsletter_data['contact_info'] : $this->settings['contact_info']),
-                'date' => (isset($this->settings['date_format']) ? $this->settings['date_format'] : "F j, Y"),
+                'date' => date_i18n( $date_format ),
                 'view_link_text' => $settings['view_browser']
             )
         );
@@ -2316,6 +2318,22 @@ class Email_Newsletter_functions {
 
                 }
             }
+            if($prev < 2.729) {
+                if(function_exists( 'mcrypt_decrypt' ) ) {
+                    $settings = $this->get_settings($tb_prefix);
+                    $new_settings = array();
+
+                    if(isset($settings['bounce_password'])) {
+                        $settings['bounce_password'] = trim( @mcrypt_decrypt( MCRYPT_RIJNDAEL_256, DB_PASSWORD, base64_decode( $settings['bounce_password'] ), MCRYPT_MODE_ECB ) );
+                    }
+                    if(isset($settings['smtp_pass'])) {
+                        $new_settings['smtp_pass'] = trim( @mcrypt_decrypt( MCRYPT_RIJNDAEL_256, DB_PASSWORD, base64_decode( $settings['smtp_pass'] ), MCRYPT_MODE_ECB ) );
+                    }
+
+                    if($new_settings)
+                        $this->save_settings($new_settings, $tb_prefix, 0);
+                }
+            }
 		}
 
         if($prev < 2.51) {
@@ -2534,7 +2552,7 @@ class Email_Newsletter_functions {
      **/
     protected function _encrypt( $text ) {
         if  ( function_exists( 'mcrypt_encrypt' ) ) {
-            return base64_encode( @mcrypt_encrypt( MCRYPT_RIJNDAEL_256, DB_PASSWORD, $text, MCRYPT_MODE_ECB ) );
+            return base64_encode( @mcrypt_encrypt( MCRYPT_RIJNDAEL_256, md5(DB_PASSWORD), $text, MCRYPT_MODE_ECB ) );
         } else {
             return $text;
         }
@@ -2545,7 +2563,7 @@ class Email_Newsletter_functions {
      **/
     protected function _decrypt( $text ) {
         if ( function_exists( 'mcrypt_decrypt' ) ) {
-            return trim( @mcrypt_decrypt( MCRYPT_RIJNDAEL_256, DB_PASSWORD, base64_decode( $text ), MCRYPT_MODE_ECB ) );
+            return trim( @mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5(DB_PASSWORD), base64_decode( $text ), MCRYPT_MODE_ECB ) );
         } else {
             return $text;
         }

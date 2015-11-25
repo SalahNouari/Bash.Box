@@ -6,6 +6,13 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.2.9 =
+* Improved opt-in error message fo users that already received it
+* Fixed issue with password encoding for newer versions of PHP
+* Fixed removing from CRON list for scheduled newsletters
+* Fixed {DATE} tag issue
+* Fixed pressing enter on subscribing with widget/shortcode
+
 = 2.7.2.8 =
 * Improved possibility to detect bounce message
 
@@ -452,4 +459,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1445780665-au
+133620-1448469598-au

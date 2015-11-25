@@ -611,7 +611,7 @@ EOBpFormInjection;
 		} // Already posted and no manual override, nothing to do
 
 		$post_type    = $post->post_type;
-		$post_title   = $post->post_title;
+		$post_title   = wp_strip_all_tags( html_entity_decode( $post->post_title ) );
 		$post_content = wp_strip_all_tags( strip_shortcodes( $post->post_content ) );
 
 		$post_as = $this->data->get_option( 'wdfb_autopost', "type_{$post_type}_fb_type" );
@@ -643,7 +643,7 @@ EOBpFormInjection;
 					'caption'     => home_url( '/' ),
 					'message'     => $post_title,
 					'link'        => $permalink,
-					'name'        => $post->post_title,
+					'name'        => $post_title,
 					'description' => $description,
 					'actions'     => array(
 						'name' => __( 'Share', 'wdfb' ),
@@ -711,7 +711,7 @@ EOBpFormInjection;
 			add_action( 'login_head', array( $this, 'js_inject_fb_login_script' ) );
 			add_action( 'login_head', array( $this, 'js_setup_ajaxurl' ) );
 			add_action( 'login_form', array( $this, 'inject_fb_login' ) );
-			add_filter( 'login_form_bottom', array( $this, 'inject_fb_login_return' ) );
+			// add_filter( 'login_form_bottom', array( $this, 'inject_fb_login_return' ) );
 			add_action( 'login_footer', array( $this, 'inject_fb_root_div' ) );
 
 			add_action( 'login_footer', array(

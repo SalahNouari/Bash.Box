@@ -214,13 +214,10 @@ class Incsub_Subscribe_By_Email_Settings_Handler {
 
 		global $current_site;
 
-		$subscribe_email_content = __( 'Howdy.
-
-You recently signed up to be notified of new posts on my blog. This means
-once you confirm below, you will receive an email when posts are published.
-
-To activate, click confirm below. If you believe this is an error, ignore this message
-and nothing more will happen.', INCSUB_SBE_LANG_DOMAIN );
+		$subscribe_email_content = _x( 'Howdy.', 'Confirmation email sent to subscribers.', INCSUB_SBE_LANG_DOMAIN ) . "\r\n\r\n";
+		$subscribe_email_content .= __( 'You recently signed up to be notified of new posts on my blog. This means', INCSUB_SBE_LANG_DOMAIN ) . "\r\n";
+		$subscribe_email_content .= __( 'once you confirm below, you will receive an email when posts are published.', INCSUB_SBE_LANG_DOMAIN ) . "\r\n";
+		$subscribe_email_content .= __( 'To activate, click confirm below. If you believe this is an error, ignore this message and nothing more will happen.', INCSUB_SBE_LANG_DOMAIN ) . "\r\n";
 
 		$defaults = array(
 			'auto-subscribe' => false,
@@ -311,7 +308,7 @@ and nothing more will happen.', INCSUB_SBE_LANG_DOMAIN );
 		elseif ( is_multisite() && ! is_subdomain_install() ) {
 			$current_site = get_current_site();
 			$blog_details = get_blog_details( $current_site->blog_id );
-			$base_domain = $blog_details->path;
+			$base_domain = $blog_details->domain;
 			$base_domain = preg_replace( '/^\//', '', $base_domain );
 			$base_domain = preg_replace( '/\/$/', '', $base_domain );
 			$base_domain = str_replace( '/', '.', $base_domain );

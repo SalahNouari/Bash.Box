@@ -26,5 +26,5 @@ if ( is_plugin_active( 'wpmu-dev-facebook/wpmu-dev-facebook.php' ) ) {
 
 		$mailchimp_sync->mailchimp_add_user( $user_arr );
 	}
-	add_action( 'wdfb-user_registered-postprocess', 'mailchimp_ultimate_fb_add_user', 10, 3 );	     	 	   				 	
+	add_action( 'wdfb-user_registered-postprocess', 'mailchimp_ultimate_fb_add_user', 10, 3 );
 }

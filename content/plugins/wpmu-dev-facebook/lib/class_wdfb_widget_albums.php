@@ -59,7 +59,7 @@ class Wdfb_WidgetAlbums extends WP_Widget {
 		$fb_user = $this->model->fb->getUser();
 		if ( ! $fb_user ) {
 			$html .= '<div class="wdfb_admin_message message">';
-			$html .= sprintf( __( 'You should be logged into your Facebook account when adding this widget. <a href="%s">Click here to do so now</a>, then refresh this page.', 'wdfb' ), $this->model->fb->getLoginUrl() );	     	 	 		 		   
+			$html .= sprintf( __( 'You should be logged into your Facebook account when adding this widget. <a href="%s">Click here to do so now</a>, then refresh this page.', 'wdfb' ), $this->model->fb->getLoginUrl() );
 			$html .= '</div>';
 		} else {
 			$html .= '<div class="wdfb_admin_message message">Facebook user ID: ' . $fb_user . '</div>';

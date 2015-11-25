@@ -7,6 +7,19 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+
+3.5.1 2015-11-17
+----------------------------------------------------------------------
+- Fixed: From email in a subfolder multisite was set to 'no-reply@'
+
+3.5 2015-11-15
+----------------------------------------------------------------------
+- Enhance: Fixed some translations.
+- Enhance: Improved handler to avoid duplicated digests.
+- Enhance: Fixed MySQL 5.6 incompatibility
+- Fixed: Typo in email template.
+- New hooks.
+
 3.4.4 2015/09/15
 ----------------------------------------------------------------------
 - Fixed: Fatal error when upgrading from a very old version
@@ -423,4 +436,4 @@ Other minor improvements/fixes
 - Initial Release.
 
 
-133620-1442728687-au
+133620-1448469613-au

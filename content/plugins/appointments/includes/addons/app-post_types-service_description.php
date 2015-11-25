@@ -43,7 +43,7 @@ class App_PostTypes_ServiceDescription {
 	}
 
 	public function save_settings ($options) {
-		if (!empty($_POST['service_description_post_type'])) $options['service_description_post_type'] = $_POST['service_description_post_type'];		   		 	  		  	 	 	
+		if (!empty($_POST['service_description_post_type'])) $options['service_description_post_type'] = $_POST['service_description_post_type'];
 		return $options;
 	}
 

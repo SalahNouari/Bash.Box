@@ -97,7 +97,7 @@ class Eab_Events_RecurringShortCode {
 		$new_content .= apply_filters('eab-template-archive_after_view_link', '', $event);
 		$new_content .= '<div style="clear: both;"></div>';
 		$new_content .= '<hr />';
-		$new_content .= '<div id="wpmudevevents-contentbody" itemprop="description">' . ($content ? $content : $event->get_content()) . '</div>';	     	 	 			 		 	
+		$new_content .= '<div id="wpmudevevents-contentbody" itemprop="description">' . ($content ? $content : $event->get_content()) . '</div>';
 		$new_content .= '<hr />';
 		$new_content .= Eab_Template::get_event_details($event);
 		$new_content .= Eab_Template::get_rsvp_form($event);

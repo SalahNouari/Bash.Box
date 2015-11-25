@@ -4,7 +4,7 @@ Plugin Name: WPMU DEV Videos
 Plugin URI: https://premium.wpmudev.org/project/unbranded-video-tutorials/
 Description: A simple way to integrate WPMU DEV's over 40 unbranded support videos into your websites. Simply activate this plugin, then configure where and how you want to display the video tutorials.
 Author: WPMU DEV
-Version: 1.5.1
+Version: 1.5.2
 Author URI: http://premium.wpmudev.org/
 Network: true
 WDP ID: 248
@@ -35,7 +35,7 @@ class WPMUDEV_Videos {
 	//---Config---------------------------------------------------------------//
 	//------------------------------------------------------------------------//
 
-	var $version = '1.5.1';
+	var $version = '1.5.2';
 	var $api_url = 'https://premium.wpmudev.org/video-api-register.php';
 	var $video_list;
 	var $video_cats;
@@ -45,6 +45,8 @@ class WPMUDEV_Videos {
 
 		add_action( 'admin_menu', array( &$this, 'plug_pages' ), 20 );
 		add_action( 'network_admin_menu', array( &$this, 'plug_pages' ) ); //for 3.1
+
+		add_action( 'admin_enqueue_scripts', array( &$this, 'wpmudev_videos_settings_styles' ) );
 
 		//localize the plugin
 		load_plugin_textdomain( 'wpmudev_vids', false, dirname( plugin_basename( __FILE__ ) ) . '/includes/languages/' );
@@ -215,25 +217,38 @@ class WPMUDEV_Videos {
 
 		if ( ! is_network_admin() ) {
 			if ( $this->get_setting( 'menu_location' ) == 'dashboard' ) {
-				add_submenu_page( 'index.php', $this->get_setting( 'menu_title' ), $this->get_setting( 'menu_title' ), 'read', 'video-tuts', array(
+				$page = add_submenu_page( 'index.php', $this->get_setting( 'menu_title' ), $this->get_setting( 'menu_title' ), 'read', 'video-tuts', array(
 						&$this,
 						'page_output'
 					) );
 				$this->page_url = admin_url( "index.php?page=video-tuts" );
 			} else if ( $this->get_setting( 'menu_location' ) == 'support_system' ) {
-				add_submenu_page( 'ticket-manager', $this->get_setting( 'menu_title' ), $this->get_setting( 'menu_title' ), 'read', 'video-tuts', array(
+				$page = add_submenu_page( 'ticket-manager', $this->get_setting( 'menu_title' ), $this->get_setting( 'menu_title' ), 'read', 'video-tuts', array(
 						&$this,
 						'page_output'
 					) );
 				$this->page_url = admin_url( "admin.php?page=video-tuts" );
 			} else if ( $this->get_setting( 'menu_location' ) == 'top' ) {
 				$icon = version_compare( $wp_version, '3.8', '>=' ) ? 'dashicons-format-video' : plugins_url( 'includes/icon.png', __FILE__ );
-				add_menu_page( $this->get_setting( 'menu_title' ), $this->get_setting( 'menu_title' ), 'read', 'video-tuts', array(
+				$page = add_menu_page( $this->get_setting( 'menu_title' ), $this->get_setting( 'menu_title' ), 'read', 'video-tuts', array(
 						&$this,
 						'page_output'
 					), $icon, 57.24 );
 				$this->page_url = admin_url( "admin.php?page=video-tuts" );
 			}
+			add_action( 'admin_print_scripts-' . $page, array( &$this, 'masonry_script' ) );
+		}
+	}
+
+	function masonry_script() {
+		wp_enqueue_script( 'jquery-masonry' );
+	}
+
+	function wpmudev_videos_settings_styles () {
+		$screen = get_current_screen();
+
+		if ( is_object($screen) && ( 'settings_page_wpmudev-videos' == $screen->id || 'settings_page_wpmudev-videos-network' == $screen->id ) ) {
+			wp_enqueue_style( 'wpmudev-videos-stylesheet', plugins_url('/includes/stylesheet.css', __FILE__) );
 		}
 	}
 
@@ -251,8 +266,13 @@ class WPMUDEV_Videos {
 		}
 
 		if ( $group && isset( $this->video_cats[ $group ] ) ) {
+			$hidden = $this->get_setting( 'hide' );
+
 			$output = $show_title ? '<h3 class="wpmudev_video_group_title">' . $this->video_cats[ $group ]['name'] . '</h3>' : '';
 			foreach ( $this->video_cats[ $group ]['list'] as $video ) {
+				if ( ! isset( $this->video_list[ $video ] ) || isset( $hidden[ $video ] ) ) {
+					continue; //exclude videos not in the main list (multisite ones) or hidden videos
+				}
 				$output .= '<p class="wpmudev_video"><iframe src="' . $this->create_embed_url( $video ) . '" frameborder="0" width="' . $width . '" height="' . $height . '" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></p>';
 			}
 
@@ -422,9 +442,9 @@ class WPMUDEV_Videos {
 								</tr>
 								<tr>
 									<th scope="row"><?php _e( 'Hide Videos', 'wpmudev_vids' ) ?></th>
-									<td>
+									<td class="wpmudev-hide-videos">
 										<span
-											class="description"><?php _e( 'Check any videos here that you want to hide from users:', 'wpmudev_vids' ) ?></span><br/>
+											class="description"><?php _e( 'Check any videos here that you want to hide from users on the videos page or in group shortcodes.', 'wpmudev_vids' ) ?></span><br/>
 										<?php
 										$hidden = $this->get_setting( 'hide' );
 										foreach ( $this->video_list as $key => $label ) {
@@ -462,12 +482,23 @@ class WPMUDEV_Videos {
 									class="description"><?php _e( 'These shortcodes allow you to embed a whole group of videos at a time.', 'wpmudev_vids' ) ?></span>
 							</h2>
 							<table class="form-table">
-								<?php foreach ( $this->video_cats as $url => $label ) { ?>
+								<?php foreach ( $this->video_cats as $url => $group ) { ?>
 									<tr>
-										<th scope="row"><?php echo esc_attr( $label['name'] ); ?></th>
+										<th scope="row"><?php echo esc_attr( $group['name'] ); ?></th>
 										<td>
 											<strong>[wpmudev-video group="<?php echo $url; ?>" show_title="1"]</strong> or <strong>[wpmudev-video
 												group="<?php echo $url; ?>" show_title="0"]</strong>
+											<br><small>
+											<?php
+											$list = array();
+											foreach( $group['list'] as $video ) {
+												if ( isset( $this->video_list[ $video ] ) && ! isset( $hidden[ $video ] ) ) { //only display if existing and not hidden
+													$list[] = $this->video_list[ $video ];
+												}
+											}
+											echo implode( ', ', $list );
+											?>
+											</small>
 										</td>
 									</tr>
 								<?php } ?>
@@ -496,42 +527,71 @@ class WPMUDEV_Videos {
 			}
 		}
 
-		//run video and category list through filters so people can add their own videos
+		/**
+		 * Video list filter.
+		 *
+		 * Use this hook to add your custom videos to the $this->video_list array in the same format
+         *  like 'slug' => 'label'. Example `return $video_list['newslug'] = 'Label';`
+		 *
+		 * @since 1.5
+		 *
+		 * @param array $this->video_list Registered videos.
+		 */
 		$this->video_list = apply_filters( 'wpmudev_vids_list', $this->video_list );
+
+		/**
+		 * Video category filter.
+		 *
+		 * Use this hook to add your custom videos registered via 'wpmudev_vids_list' filter to the desired categories, or a new category.
+		 *
+		 * @since 1.5
+		 *
+		 * @param array $this->video_cats Registered video categories.
+		 */
 		$this->video_cats = apply_filters( 'wpmudev_vids_categories', $this->video_cats );
 		?>
+		<style type="text/css">#poststuff .postbox .inside iframe { display:block;margin:0 auto;box-shadow:30px 0 50px -30px #222, -30px 0 50px -30px #222; }</style>
 		<div class="wrap">
 			<h2><?php echo $this->get_setting( 'menu_title' ); ?></h2>
 
-			<div id="poststuff" class="metabox-holder">
-
 				<?php if ( isset( $_GET['vid'] ) && isset( $this->video_list[ $_GET['vid'] ] ) ) { ?>
+				<div id="poststuff" class="metabox-holder">
 					<div class="postbox">
 						<h3 class='hndle' style="cursor:default;">
 							<span><?php esc_attr_e( $this->video_list[ $_GET['vid'] ] ); ?></span></h3>
 
 						<div class="inside">
 							<?php
-							echo apply_filters( 'wpmudev_vids_categories', '<iframe style="display:block;margin:0 auto;box-shadow:30px 0 50px -30px #222, -30px 0 50px -30px #222;"
-							        src="' . $this->create_embed_url( $_GET['vid'], true ) . '" frameborder="0" width="600"
-							        height="338" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>', $_GET['vid'] );
+							$video_html = '<iframe src="' . $this->create_embed_url( $_GET['vid'], true ) . '" frameborder="0" width="600"
+							        height="338" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
+
+							/**
+							 * Video embed HTML
+							 *
+							 * Use this hook to return the actual video embed code to display your custom video.
+							 *
+							 * @since 1.5.2
+							 *
+							 * @param string $video_html HTML embed code.
+							 * @param string $video_slug The id slug of the video that you added via the wpmudev_vids_(list|categories) filters.
+							 */
+							echo apply_filters( 'wpmudev_vids_embed_html', $video_html, $_GET['vid'] );
 							?>
 						</div>
 					</div>
+				</div>
 				<?php } ?>
 
-				<div class="postbox">
-					<h3 class='hndle' style="cursor:default;">
-						<span><?php _e( 'Select a Video Tutorial', 'wpmudev_vids' ) ?></span></h3>
+			<h3><?php _e( 'Select a Video Tutorial', 'wpmudev_vids' ) ?></h3>
 
-					<div class="inside" style="padding-left:1%;padding-right:0;">
+			<div class="grid js-masonry" data-masonry-options='{ "itemSelector": ".grid-item", "columWidth": 190 }'>
 						<?php foreach ( $this->video_cats as $cat ) {
 							//skip if no vids in category
 							if ( count( $cat['list'] ) == 0 ) {
 								continue;
 							}
 							?>
-							<table class='widefat' style="width: 19%; float: left; margin-right: 1%;margin-bottom: 10px;clear: none;">
+							<table class='widefat grid-item' style="width: 19%; float: left; margin-right: 1%;margin-bottom: 10px;clear: none;">
 								<thead>
 								<tr>
 									<th scope='col'><?php echo $cat['name']; ?></th>

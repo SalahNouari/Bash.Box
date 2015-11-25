@@ -193,7 +193,7 @@ class Incsub_Subscribe_By_Email_Admin_Settings_Page extends Incsub_Subscribe_By_
 
 				foreach ( $post_types as $post_type_slug => $post_type ) {
 					add_settings_section( 'post-type-' . $post_type_slug . '-settings', $post_type->labels->name, null, $this->get_menu_slug() );
-					add_settings_field( 'post-types' . $post_type_slug . '-send-content-field', __( 'Send this post type', INCSUB_SBE_LANG_DOMAIN ), array( &$this, 'render_send_content_field' ), $this->get_menu_slug(), 'post-type-' . $post_type_slug . '-settings', array( 'post_type_slug' => $post_type_slug, 'post_type_name' => $post_type->labels->name ) );
+					add_settings_field( 'post-types' . $post_type_slug . '-send-content-field', __( 'Send this post type', INCSUB_SBE_LANG_DOMAIN ), array( &$this, 'render_send_content_field' ), $this->get_menu_slug(), 'post-type-' . $post_type_slug . '-settings', array( 'post_type_slug' => $post_type_slug, 'post_type_name' => $post_type->labels->name ) );	     	 	  			  		
 
 					$taxonomies = $settings_handler->get_taxonomies_by_post_type( $post_type_slug );
 					foreach ( $taxonomies as $tax_slug => $taxonomy ) {

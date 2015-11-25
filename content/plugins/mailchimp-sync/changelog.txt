@@ -7,6 +7,10 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+1.8.1 - 2015-11-25
+----------------------------------------------------------------------
+- Fixed: Deprecated widget notice
+
 1.8 - 2015-08-20
 ----------------------------------------------------------------------
 - Enhance: Removed user meta to check if it's subscribed to the list in the profile page. Using API instead.
@@ -161,4 +165,4 @@ http://premium.wpmudev.org/forums/topic/mailchimp-integration#post-249269
 - Initial Release.
 
 
-133620-1440034990-au
+133620-1448471113-au

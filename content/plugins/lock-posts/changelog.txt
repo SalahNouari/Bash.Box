@@ -1,9 +1,15 @@
 Plugin Name: Lock Posts
-Author: Andrew Billits, Ulrich Sossou, Maniu
+Author: WPMUDEV
+Lead developer: Maniu
+Contributors: Andrew Billits, Ulrich Sossou
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+1.1.6 - 11/13/2015
+----------------------------------------------------------------------
+- Update dash notice
 
 1.1.5 - 11/13/2013
 ----------------------------------------------------------------------
@@ -33,4 +39,4 @@ Change Log:
 - Initial Release.
 
 
-133620-1435570461-ai
+133620-1448469607-au
