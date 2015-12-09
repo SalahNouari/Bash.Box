@@ -492,6 +492,10 @@ input[type="image"] {
   display: block;
   width: 100%;
 }
+#ms-authorize-cim-profiles-wrapper td span.select2-container,
+#ms-authorize-card-wrapper td span.select2-container {
+  width: 100px !important;
+}
 #ms-authorize-cim-profiles-wrapper .wpmui-radio,
 #ms-authorize-card-wrapper .wpmui-radio {
   margin-right: 6px;
@@ -1193,4 +1197,4 @@ input[type="image"] {
 }
 
 
-/* 133620-1445126752-au */
+/* 133620-1449637589-au */

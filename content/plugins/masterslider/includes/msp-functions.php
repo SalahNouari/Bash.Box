@@ -1016,6 +1016,16 @@ function msp_get_template_tag_value( $tag_name, $post = null, $args = null ){
             $value = msp_get_auto_post_thumbnail_src( $post, 'auto' );
             break;
 
+        case 'image-alt':
+            $attachment_id = get_post_thumbnail_id( $post->ID );
+            $value = ! empty( $attachment_id ) ? get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) : '';
+            break;
+
+        case 'image-title':
+            $attachment_id = get_post_thumbnail_id( $post->ID );
+            $value = ! empty( $attachment_id ) ? get_post_meta( $attachment_id, '_wp_attachment_image_title', true ) : '';
+            break;
+
         case 'thumbnail':
             $value = msp_get_auto_post_thumbnail( $post, 'featured', 150, 150 );
             break;

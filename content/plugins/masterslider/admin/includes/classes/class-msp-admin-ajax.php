@@ -74,8 +74,8 @@ class MSP_Admin_Ajax {
 
         global $mspdb;
 
-        if( isset( $_GET['slug'] ) ){
-            echo json_encode( $mspdb->validate_slider_alias( $_GET['slug'] ) );
+        if( isset( $_GET['slug'] ) && isset( $_GET['id'] ) ){
+            echo json_encode( $mspdb->validate_slider_alias( $_GET['slug'], $_GET['id'] ) );
         }
 
         exit;// IMPORTANT

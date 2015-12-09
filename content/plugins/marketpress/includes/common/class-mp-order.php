@@ -85,7 +85,9 @@ class MP_Order {
 			} elseif ( is_numeric( $order ) ) {
 				$this->ID = $order;
 			} else {
-				$this->_order_id = $order;
+				if( ! is_object( $order ) ) {
+					$this->_order_id = $order;
+				}
 			}
 
 			$this->_get_post();
@@ -227,14 +229,25 @@ class MP_Order {
 	 * @param string $msg The email message text.
 	 */
 	protected function _send_email_to_buyers( $subject, $msg, $attachments = array() ) {
-		$billing_email  = $this->get_meta( 'mp_billing_info->email', '' );
-		$shipping_email = $this->get_meta( 'mp_shipping_info->email', '' );
+		$registration_email = mp_get_setting( 'email_registration_email', 0 );
+		$current_user = wp_get_current_user();
 
-		mp_send_email( $billing_email, $subject, $msg, $attachments );
+		if( $registration_email && $current_user->user_email ) {
 
-		if ( $billing_email != $shipping_email ) {
-			// Billing email is different than shipping email so let's send an email to the shipping email too
-			mp_send_email( $shipping_email, $subject, $msg, $attachments );
+			mp_send_email( $current_user->user_email, $subject, $msg, $attachments );
+
+		} else {
+
+			$billing_email  = $this->get_meta( 'mp_billing_info->email', '' );
+			$shipping_email = $this->get_meta( 'mp_shipping_info->email', '' );
+
+			mp_send_email( $billing_email, $subject, $msg, $attachments );
+
+			if ( $billing_email != $shipping_email ) {
+				// Billing email is different than shipping email so let's send an email to the shipping email too
+				mp_send_email( $shipping_email, $subject, $msg, $attachments );
+			}
+
 		}
 	}
 
@@ -292,28 +305,10 @@ class MP_Order {
 		$attachments = apply_filters( 'mp_order/sendmail_attachments', array(), $this, 'new_order_client' );
 		$this->_send_email_to_buyers( $subject, $msg, $attachments );
 
-		// Send message to admin
-		$subject = __( 'New Order Notification: ORDERID', 'mp' );
-		$msg .= __( 'A new order (ORDERID) was created in your store:<br /><br />', 'mp' );
-		$msg .= __( 'ORDERINFOSKU<br /><br />', 'mp' );
-		$msg .= __( 'SHIPPINGINFO<br /><br />', 'mp' );
-		$msg .= __( 'PAYMENTINFO<br /><br />', 'mp' );
-		$msg .= __( 'You can manage this order here: %s', 'mp' );
+		$subject = mp_filter_email( $this, stripslashes( mp_get_setting( 'email->admin_order->subject', __( 'New Order Notification: ORDERID', 'mp' ) ) ) );
+		$msg     = mp_filter_email( $this, nl2br( stripslashes( mp_get_setting( 'email->admin_order->text', __( "A new order (ORDERID) was created in your store:\n\n ORDERINFOSKU\n\n SHIPPINGINFO\n\n PAYMENTINFO\n\n", 'mp' ) ) ) ) );
 
-		$subject = mp_filter_email( $this, $subject );
-
-		/**
-		 * Filter the admin order notification subject
-		 *
-		 * @since 3.0
-		 *
-		 * @param string $subject
-		 * @param MP_Order $this
-		 */
 		$subject = apply_filters( 'mp_order_notification_admin_subject', $subject, $this );
-
-		$msg = mp_filter_email( $this, $msg, true );
-		//$msg = sprintf( $msg, admin_url( 'post.php?post=' . $this->ID . '&action=edit' ) );
 
 		/**
 		 * Filter the admin order notification message
@@ -415,6 +410,9 @@ class MP_Order {
 
 			case 'order_paid' :
 				add_post_meta( $this->ID, 'mp_paid_time', time(), true );
+				if ( $this->get_cart()->is_download_only() ) {
+					$this->_send_shipment_notification();
+				}
 				break;
 
 			case 'order_shipped' :
@@ -521,9 +519,13 @@ class MP_Order {
 						<!-- end mp_cart_item_content -->
 						<div class="mp_cart_item_content mp_cart_item_content-title">
 							<h2 class="mp_cart_item_title">
-								<a target="_blank"
-								   href="<?php echo $item['url'] ?>"><?php echo $item['name'] ?></a>
+								<a href="<?php echo $item['url'] ?>"><?php echo $item['name'] ?></a>
 							</h2>
+							<?php
+							if ( $product->is_download() && mp_is_shop_page( 'order_status' ) ) {
+								echo '<a target="_blank" href="' . $product->download_url( get_query_var( 'mp_order_id' ), false ) . '">' . __( 'Download', 'mp' ) . '</a>';
+							}
+							?>
 						</div>
 						<!-- end mp_cart_item_content -->
 						<div class="mp_cart_item_content mp_cart_item_content-price"><!-- MP Product Price -->
@@ -610,10 +612,19 @@ class MP_Order {
 	 *
 	 * @return string
 	 */
-	public function get_address( $type, $editable = false ) {
+	public function get_address( $type, $editable = false, $product_type = false ) {
 		if ( ! $editable ) {
-			$html = '' .
+
+			if( $product_type == 'digital' ) {
+				$html = '' .
 			        $this->get_name( $type ) . '<br />' .
+					( ( $company_name = $this->get_meta( "mp_{$type}_info->company_name", '' ) ) ? $company_name . '<br />' : '' ) .
+			        ( ( $phone = $this->get_meta( "mp_{$type}_info->phone", '' ) ) ? $phone . '<br />' : '' ) .
+			        ( ( $email = $this->get_meta( "mp_{$type}_info->email", '' ) ) ? '<a href="mailto:' . antispambot( $email ) . '">' . antispambot( $email ) . '</a><br />' : '' );
+			} else {
+				$html = '' .
+			        $this->get_name( $type ) . '<br />' .
+					( ( $company_name = $this->get_meta( "mp_{$type}_info->company_name", '' ) ) ? $company_name . '<br />' : '' ) .
 			        $this->get_meta( "mp_{$type}_info->address1", '' ) . '<br />' .
 			        ( ( $address2 = $this->get_meta( "mp_{$type}_info->address2", '' ) ) ? $address2 . '<br />' : '' ) .
 			        ( ( $city = $this->get_meta( "mp_{$type}_info->city", '' ) ) ? $city : '' ) .
@@ -621,6 +632,7 @@ class MP_Order {
 			        ( ( $zip = $this->get_meta( "mp_{$type}_info->zip", '' ) ) ? $zip . '<br />' : '' ) .
 			        ( ( $phone = $this->get_meta( "mp_{$type}_info->phone", '' ) ) ? $phone . '<br />' : '' ) .
 			        ( ( $email = $this->get_meta( "mp_{$type}_info->email", '' ) ) ? '<a href="mailto:' . antispambot( $email ) . '">' . antispambot( $email ) . '</a><br />' : '' );
+			}
 		} else {
 			$prefix = 'mp[' . $type . '_info]';
 
@@ -651,7 +663,9 @@ class MP_Order {
 				}
 			}
 
-			$html = '
+			$html = '';
+
+			$html .= '
 				<table class="form-table">
 					<tr>
 						<th scope="row">' . __( 'First Name', 'mp' ) . '</th>
@@ -661,6 +675,12 @@ class MP_Order {
 						<th scope="row">' . __( 'Last Name', 'mp' ) . '</th>
 						<td><input type="text" name="' . $prefix . '[last_name]" value="' . $this->get_meta( "mp_{$type}_info->last_name", '' ) . '" /></td>
 					</tr>
+					<tr>
+						<th scope="row">' . __( 'Company', 'mp' ) . '</th>
+						<td><input type="text" name="' . $prefix . '[company_name]" value="' . $this->get_meta( "mp_{$type}_info->company_name", '' ) . '" /></td>
+					</tr>';
+			if( $product_type != 'digital' ) {
+				$html .= '
 					<tr>
 						<th scope="row">' . __( 'Address 1', 'mp' ) . '</th>
 						<td><input type="text" name="' . $prefix . '[address1]" value="' . $this->get_meta( "mp_{$type}_info->address1", '' ) . '" /></td>
@@ -674,26 +694,30 @@ class MP_Order {
 						<td><input type="text" name="' . $prefix . '[city]" value="' . $this->get_meta( "mp_{$type}_info->city", '' ) . '" /></td>
 					</tr>';
 
-			if ( is_array( $states ) ) {
+				if ( is_array( $states ) ) {
+					$html .= '
+						<tr>
+							<th scope="row">' . __( 'State', 'mp' ) . '</th>
+							<td>
+								<select class="mp-select2" name="' . $prefix . '[state]" style="width:100%">' . $state_options . '</select>
+								<img src="' . admin_url( 'images/wpspin_light.gif' ) . '" alt="" style="display:none">
+							</td>
+						</tr>';
+				}
+
 				$html .= '
-					<tr>
-						<th scope="row">' . __( 'State', 'mp' ) . '</th>
-						<td>
-							<select class="mp-select2" name="' . $prefix . '[state]" style="width:100%">' . $state_options . '</select>
-							<img src="' . admin_url( 'images/wpspin_light.gif' ) . '" alt="" style="display:none">
-						</td>
-					</tr>';
+						<tr>
+							<th scope="row">' . mp_get_setting( 'zip_label' ) . '</th>
+							<td><input type="text" name="' . $prefix . '[zip]" value="' . $this->get_meta( "mp_{$type}_info->zip", '' ) . '"></td>
+						</tr>
+						<tr>
+							<th scope="row">' . __( 'Country', 'mp' ) . '</th>
+							<td><select class="mp-select2" name="' . $prefix . '[country]" style="width:100%">' . $country_options . '</select></td>
+						</tr>';
+
 			}
 
 			$html .= '
-					<tr>
-						<th scope="row">' . mp_get_setting( 'zip_label' ) . '</th>
-						<td><input type="text" name="' . $prefix . '[zip]" value="' . $this->get_meta( "mp_{$type}_info->zip", '' ) . '"></td>
-					</tr>
-					<tr>
-						<th scope="row">' . __( 'Country', 'mp' ) . '</th>
-						<td><select class="mp-select2" name="' . $prefix . '[country]" style="width:100%">' . $country_options . '</select></td>
-					</tr>
 					<tr>
 						<th scope="row">' . __( 'Phone', 'mp' ) . '</th>
 						<td><input type="text" name="' . $prefix . '[phone]" value="' . $this->get_meta( "mp_{$type}_info->phone", '' ) . '"></td>
@@ -734,15 +758,24 @@ class MP_Order {
 	 * @param bool $editable Optional, whether the address fields should be editable. Defaults to false.
 	 */
 	public function get_addresses( $editable = false ) {
-		$html = '
-			<div class="mp_customer_address">
+
+		$html = '<div class="mp_customer_address">';
+
+		if ( $this->get_cart()->is_download_only() && mp_get_setting( 'details_collection' ) == "contact" ) {
+			$html .= '
+				<div class="mp_content_col mp_content_col-one-half">
+					<h4 class="mp_sub_title">' . __( 'Contact Details', 'mp' ) . '</h4>' .
+					$this->get_address( 'billing', $editable, 'digital' ) .
+					'</div>';
+		} else {
+			$html .= '
 				<div class="mp_content_col mp_content_col-one-half">
 					<h4 class="mp_sub_title">' . __( 'Billing Address', 'mp' ) . '</h4>' .
-		        $this->get_address( 'billing', $editable ) .
-		        ( ( $editable ) ? '<p><a class="button" id="mp-order-copy-billing-address" href="javascript:;">' . __( 'Copy billing address to shipping address', 'mp' ) . '</a>' : '' ) . '
-				</div>';
-
-		if ( ! $this->get_cart()->is_download_only() || mp_get_setting( 'tax->downloadable_address' ) ) {
+					$this->get_address( 'billing', $editable ) .
+					( ( $editable ) ? '<p><a class="button" id="mp-order-copy-billing-address" href="javascript:;">' . __( 'Copy billing address to shipping address', 'mp' ) . '</a>' : '' ) . '
+					</div>';
+		}
+		if ( ! $this->get_cart()->is_download_only() ) {
 			$html .= '
 				<div class="mp_content_col mp_content_col-one-half">
 					<h4 class="mp_sub_title">' . __( 'Shipping Address', 'mp' ) . '</h4>' .
@@ -888,12 +921,16 @@ class MP_Order {
 			<div class="mp_tooltip_content_item">
 				<div class="mp_tooltip_content_item_label">' . __( 'Taxes:', 'mp' ) . '</div><!-- end mp_tooltip_content_item_label -->
 				<div class="mp_tooltip_content_item_value">' . $tax_total . '</div><!-- end mp_tooltip_content_item_value -->
-			</div><!-- end mp_tooltip_content_item -->
-			<div class="mp_tooltip_content_item">
-				<div class="mp_tooltip_content_item_label">' . __( 'Shipping:', 'mp' ) . '</div><!-- end mp_tooltip_content_item_label -->
-				<div class="mp_tooltip_content_item_value">' . $shipping_total . '</div><!-- end mp_tooltip_content_item_value -->
-			</div><!-- end mp_tooltip_content_item -->
-		';
+			</div><!-- end mp_tooltip_content_item -->';
+
+		if( ! $this->get_cart()->is_download_only() ) {
+			$tooltip_content .= '
+				<div class="mp_tooltip_content_item">
+					<div class="mp_tooltip_content_item_label">' . __( 'Shipping:', 'mp' ) . '</div><!-- end mp_tooltip_content_item_label -->
+					<div class="mp_tooltip_content_item_value">' . $shipping_total . '</div><!-- end mp_tooltip_content_item_value -->
+				</div><!-- end mp_tooltip_content_item -->
+			';
+		}
 
 		/**
 		 * Filter the order total tooltip content

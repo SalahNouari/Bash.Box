@@ -289,6 +289,15 @@ class MS_Controller_Shortcode extends MS_Controller {
 			$exclude
 		);
 
+                if ( ! $member->is_valid() ) {
+                    foreach( $memberships as $key => $membership ) {
+                        if( isset( $membership->update_denied['guest'] ) && lib3()->is_true( $membership->update_denied['guest'] ) ) {
+                            unset( $memberships[$key] );
+                        }
+                    }
+                }
+
+
 		$data['memberships'] = $memberships;
 		$move_from_ids = array();
 
@@ -889,6 +898,8 @@ class MS_Controller_Shortcode extends MS_Controller {
 	public function ms_note( $atts, $content = '' ) {
 		MS_Helper_Shortcode::did_shortcode( MS_Helper_Shortcode::SCODE_NOTE );
 
+		lib3()->ui->css( 'ms-styles' );
+
 		$atts = apply_filters(
 			'ms_controller_shortcode_note_atts',
 			shortcode_atts(
@@ -1023,11 +1034,15 @@ class MS_Controller_Shortcode extends MS_Controller {
 				break;
 
 			case 'guest':
-				$access = ($user_type === 'guest' );
+				$access = ($user_type == 'guest' );
 				break;
 
 			case 'admin':
-				$access = ( $user_type === 'admin' );
+				$access = ( $user_type == 'admin' );
+				break;
+
+			case 'non-admin':
+				$access = ( $user_type != 'admin' );
 				break;
 		}
 

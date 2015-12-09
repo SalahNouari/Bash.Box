@@ -293,7 +293,7 @@ class MP_Product {
 
 							<form id="mp-product-options-callout-form"
 							      class="mp_form mp_form-mp-product-options-callout" method="post"
-							      data-ajax-url="<?php echo admin_url( 'admin-ajax.php?action=mp_update_cart' ); ?>"
+							      data-ajax-url="<?php echo mp_get_ajax_url( 'admin-ajax.php?action=mp_update_cart' ); ?>"
 							      action="<?php echo get_permalink( mp_get_setting( 'pages->cart' ) ); ?>">
 								<input type="hidden" name="product_id" value="<?php echo $product->ID; ?>">
 								<input type="hidden" name="product_qty_changed" value="0">
@@ -366,7 +366,7 @@ class MP_Product {
 		$all_atts = $product->get_attributes();
 
 		foreach ( $_POST as $key => $val ) {
-			if ( false !== strpos( $key, $product_atts::SLUGBASE ) && ! empty( $val ) ) {
+			if ( false !== strpos( $key, MP_Product_Attributes::SLUGBASE ) && ! empty( $val ) ) {
 				$taxonomies[]       = $key;
 				$attributes[ $key ] = $val;
 			}
@@ -866,9 +866,10 @@ class MP_Product {
 			return $price;
 		}
 
+		$charge_tax = $this->get_meta( 'charge_tax' );
 		$rate = $this->get_meta( 'special_tax_rate' );
 
-		if ( empty( $rate ) ) {
+		if ( empty( $charge_tax ) ) {
 			$rate = mp_tax_rate();
 		} else {
 			if ( false !== strpos( $rate, '%' ) ) {
@@ -897,7 +898,7 @@ class MP_Product {
 		if ( $this->get_meta( 'product_type' ) == 'external' && ( $url = $this->get_meta( 'external_url' ) ) ) {
 			$button = '<a class="mp_link-buynow" href="' . esc_url( $url ) . '">' . __( 'Buy Now &raquo;', 'mp' ) . '</a>';
 		} elseif ( ! mp_get_setting( 'disable_cart' ) ) {
-			$button = '<form id="mp-buy-product-' . $this->ID . '-form" class="mp_form mp_form-buy-product ' . ( $no_single ? 'mp_no_single' : '' ) . ' ' . ( $mp_buy_button ? 'mp_buy_button' : '' ) . '" method="post" data-ajax-url="' . admin_url( 'admin-ajax.php?action=mp_update_cart' ) . '" action="' . mp_cart_link( false, true ) . '">';
+			$button = '<form id="mp-buy-product-' . $this->ID . '-form" class="mp_form mp_form-buy-product ' . ( $no_single ? 'mp_no_single' : '' ) . ' ' . ( $mp_buy_button ? 'mp_buy_button' : '' ) . '" method="post" data-ajax-url="' . mp_get_ajax_url( 'admin-ajax.php?action=mp_update_cart' ) . '" action="' . mp_cart_link( false, true ) . '">';
 
 			if ( ! $this->in_stock() ) {
 				$button .= '<span class="mp_no_stock">' . __( 'Out of Stock', 'mp' ) . '</span>';
@@ -947,14 +948,7 @@ class MP_Product {
 		$content = $this->_post->post_content;
 
 		if ( $this->has_variations() || $this->is_variation() ) {
-
-			$content = get_the_content( $this->ID ); //get_post_meta( $variation_id, 'description', true );
-
-			$parent_post_id = wp_get_post_parent_id( $this->ID );
-			$parent_post    = get_post( $parent_post_id );
-			if ( ! empty( $parent_post->post_content ) && ( $parent_post->post_content !== $content ) ) {
-				$content = $parent_post->post_content . "\r\n" . $content;
-			}
+			$content = $this->get_variation()->post_content;
 		}
 
 		$content = apply_filters( 'the_content', $content );
@@ -1214,17 +1208,47 @@ class MP_Product {
 		$tax_rate = mp_get_setting( 'tax->rate', '' );
 		$tax_inclusive = mp_get_setting( 'tax->tax_inclusive', 0 );
 		$include_tax_to_price = mp_get_setting( 'tax->include_tax', 1 );
+		$special_tax = get_post_meta( $this->ID, 'charge_tax', true );
+		$special_fixed_tax = false;
 
-		if(! empty( $tax_rate ) ) {
-			//Price with Tax added
-			if( $tax_inclusive != 1 && $include_tax_to_price == 1 ) {
-				$price = $price + ($price * $tax_rate);
+		if( ! empty( $tax_rate ) ) {
+			//Set tax rate to special tax
+			if( $special_tax ) {
+				$tax_rate = get_post_meta( $this->ID, 'special_tax_rate', true );
+				if( substr( $tax_rate, -1 ) == '%' ) {
+					$tax_rate = rtrim( $tax_rate, "%" ) / 100;
+				} else {
+					$special_fixed_tax = true;
+				}
+			} else {
+				$tax_rate = mp_get_setting( 'tax->rate', '' );
 			}
-			//Price with Tax excluded
-			if( $tax_inclusive == 1 && $include_tax_to_price != 1) {
-				//$taxDivisor = 1 + ($tax_rate / 100);
-				$taxDivisor = 1 + $tax_rate;
-				$price = $price / $taxDivisor;
+
+			if ( mp_get_setting( 'tax->tax_digital' ) && ! $this->is_download() ) {
+				//Price with Tax added
+				if( $tax_inclusive != 1 && $include_tax_to_price == 1 ) {
+					if( $special_fixed_tax ) {
+						$price = $price + $tax_rate;
+					} else {
+						$price = $price + ($price * $tax_rate);
+					}
+				}
+				//Price with Tax excluded
+				if( $tax_inclusive == 1 && $include_tax_to_price != 1) {
+					$taxDivisor = 1 + $tax_rate;
+					$price = $price / $taxDivisor;
+				}
+			}
+
+			//Calculate price when special price & download product
+			if ( ! empty( $special_tax ) && $this->is_download() ) {
+				if( $tax_inclusive != 1 && $include_tax_to_price == 1 ) {
+					if( $special_fixed_tax ) {
+						$price = $price + $tax_rate;
+					} else {
+						$price = $price + ($price * $tax_rate);
+					}
+				}
 			}
 		}
 
@@ -1257,6 +1281,8 @@ class MP_Product {
 			} else {
 				$string = '<span class="inclusve_tax"> ' . __('(tax incl.)', 'mp') . '</span>';
 			}
+		} elseif( $tax_inclusive != 1 && $include_tax_to_price == 1 ) {
+			$string = '<span class="exclusive_tax"> ' . __('(tax incl.)', 'mp') . '</span>';
 		}
 
 		if ( $echo ) {
@@ -2144,7 +2170,7 @@ class MP_Product {
 			FROM {$wpdb->term_relationships} AS t1
 			INNER JOIN {$wpdb->term_taxonomy} AS t2 ON t1.term_taxonomy_id = t2.term_taxonomy_id
 			WHERE t1.object_id IN (" . implode( ',', $ids ) . ")
-			AND t2.taxonomy LIKE '" . $mp_product_atts::SLUGBASE . "%'"
+			AND t2.taxonomy LIKE '" . MP_Product_Attributes::SLUGBASE . "%'"
 		);
 
 		$table_name = $wpdb->prefix . 'mp_product_attributes_terms';

@@ -18,6 +18,7 @@ $this->defaults = array(
 		'tag'		 => NULL,
 		'list_view'	 => NULL,
 		'filters'	 => NULL,
+		'limit'		 => NULL,
 	),
 );
 
@@ -35,9 +36,10 @@ $this->default_settings = array(
 		'include_tax'			 => 1,
 		'tax_label'				 => 1,
 		'tax_digital'			 => 1,
-		'downloadable_address'	 => 0
+		'tax_based'				 => 'store_tax',
 	),
 	'currency'					 => 'USD',
+	'details_collection'		 => 'contact',
 	'curr_symbol_position'		 => 1,
 	'curr_decimal'				 => 1,
 	'disable_cart'				 => 0,
@@ -80,7 +82,7 @@ $this->default_settings = array(
 	'product_img_size'			 => 'medium',
 	'show_lightbox'				 => 1,
 	'disable_large_image'		 => 0,
-	'list_view'					 => 'grid',
+	'list_view'					 => 'list',
 	'list_button_type'			 => 'addcart',
 	'show_thumbnail'			 => 1,
 	'list_img_size'				 => 'thumbnail',
@@ -88,6 +90,7 @@ $this->default_settings = array(
 	'show_filters'				 => 1,
 	'order'						 => 'DESC',
 	'show_purchase_breadcrumbs'	 => 0,
+	'email_registration_email'	 => 0,
 	'shipping'					 => array(
 		'allowed_countries'	 => array( 'all_countries' ),
 		'method'			 => 'flat-rate',
@@ -115,6 +118,10 @@ $this->default_settings = array(
 	),
 	'store_email'				 => get_option( "admin_email" ),
 	'email'						 => array(
+		'admin_order'	 => array(
+			'subject'	 => __( 'New Order Notification: ORDERID', 'mp' ),
+			'text'	 	 => __( "A new order (ORDERID) was created in your store:\n\n ORDERINFOSKU\n\n SHIPPINGINFO\n\n PAYMENTINFO\n\n", 'mp' ),
+		),
 		'new_order'		 => array(
 			'subject'	 => __( 'Your Order Confirmation (ORDERID)', 'mp' ),
 			'text'		 => __( "Thank you for your order CUSTOMERNAME!\n\n Your order has been received, and any items to be shipped will be processed as soon as possible. Please refer to your Order ID (ORDERID) whenever contacting us. \n Here is a confirmation of your order details:\n\n Order Information:\n ORDERINFO \n\n Shipping Information: \n SHIPPINGINFO \n\n Payment Information: \n PAYMENTINFO \n\n ORDERNOTES \n\n You can track the latest status of your order here: TRACKINGURL \n\n Thanks again!", 'mp'
@@ -136,7 +143,7 @@ $this->default_settings = array(
 		'relate_by'		 => 'both',
 		'simple_list'	 => 0,
 		'show_limit'	 => 3,
-		'view'			 => 'grid',
+		'view'			 => 'list',
 	),
 );
 

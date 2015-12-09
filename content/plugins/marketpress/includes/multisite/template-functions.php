@@ -142,11 +142,17 @@ if ( ! function_exists( 'mp_global_list_products' ) ) {
 // Figure out page
 
 			if ( ! is_null( $args['page'] ) ) {
-				$query['paged'] = intval( $args['page'] );
+				$query['paged']  = intval( $args['page'] );
+				$query['offset'] = ( $query['paged'] - 1 ) * $query['posts_per_page'];
 			} elseif ( get_query_var( 'paged' ) != '' ) {
-				$query['paged'] = $args['page'] = intval( get_query_var( 'paged' ) );
+				$query['paged']  = $args['page'] = intval( get_query_var( 'paged' ) );
+				$query['offset'] = ( $query['paged'] - 1 ) * $query['posts_per_page'];
+			} elseif ( get_query_var( 'page' ) != '' ) {
+				$query['paged'] = $args['page'] = intval( get_query_var( 'page' ) );
+				$query['offset'] = ( $query['paged'] - 1 ) * $query['posts_per_page'];
 			} else {
-				$query['paged'] = 1;
+				$query['paged']  = 1;
+				$query['offset'] = 0;
 			}
 
 // Get order by
@@ -187,6 +193,11 @@ if ( ! function_exists( 'mp_global_list_products' ) ) {
 			} else {
 				$query['orderby'] = mp_get_setting( 'order_by' );
 			}
+		}
+
+		if ( ! is_null( $args['limit'] ) ) {
+			$query['posts_per_page'] = intval( $args['limit'] );
+			$args['nopaging'] 		 = true;
 		}
 
 		if ( ! is_null( $args['category'] ) ) {
@@ -254,7 +265,7 @@ if ( ! function_exists( 'mp_global_list_products' ) ) {
 		$paging = "";
 		if ( mp_arr_get_value( 'posts_per_page', $query, 0 ) > 0 ) {
 			$limit  = mp_arr_get_value( 'posts_per_page', $query, 0 );
-			$offset = mp_arr_get_value( 'paged', $query ) - 1;
+			$offset = mp_arr_get_value( 'offset', $query );
 			$paging = " LIMIT $offset,$limit";
 		}
 
@@ -275,7 +286,7 @@ if ( ! function_exists( 'mp_global_list_products' ) ) {
 			$per_page = ( is_null( $args['per_page'] ) ) ? null : $args['per_page'];
 			//$content .= ( ( ( is_null( $args['filters'] ) && 1 == mp_get_setting( 'show_filters' ) ) || $args['filters'] ) && mp_arr_get_value( 'context', $args, null ) != 'widget' ) ? mp_global_products_filter( false, $per_page, $custom_query, $args ) : mp_global_products_filter( true, $per_page, $custom_query, $args );
 			if( isset( $args['context'] ) && $args['context'] == 'widget' ) {
-				$content .= ( ( ( is_null( $args['filters'] ) && 1 == mp_get_setting( 'show_filters' ) ) || $args['filters'] ) ) ? mp_global_products_filter( false, $per_page, $custom_query, $args ) : mp_global_products_filter( true, $per_page, $custom_query, $args );
+				$content .= ( ( ( is_null( $args['filters'] ) && 1 != mp_get_setting( 'hide_products_filter' ) ) || $args['filters'] ) ) ? mp_global_products_filter( false, $per_page, $custom_query, $args ) : '';
 			}
 		}
 
@@ -318,10 +329,17 @@ if ( ! function_exists( 'mp_global_list_products' ) ) {
 if ( ! function_exists( 'mp_global_products_nav' ) ) {
 	function mp_global_products_nav( $echo = true, $per_page, $count ) {
 		$html      = '';
+		$paged     = 1;
 		$max_pages = ceil( $count / $per_page );
 
 		if ( $max_pages > 1 ) {
 			$big = 999999999;
+
+			if ( get_query_var( 'paged' ) != '' ) {
+				$paged  = intval( get_query_var( 'paged' ) );
+			} elseif ( get_query_var( 'page' ) != '' ) {
+				$paged  = intval( get_query_var( 'page' ) );
+			}
 
 			$html = '
 				<nav class="mp_listings_nav">';
@@ -330,7 +348,7 @@ if ( ! function_exists( 'mp_global_products_nav' ) ) {
 				'base'         => '?paged=%#%', //'%_%',
 				'format'       => '', //?paged=%#%
 				'total'        => $max_pages,
-				'current'      => max( 1, get_query_var( 'paged' ) ),
+				'current'      => max( 1, $paged ),
 				'show_all'     => false,
 				'prev_next'    => true,
 				'prev_text'    => __( 'Prev', 'mp' ),
@@ -782,13 +800,18 @@ endif;
 if ( ! function_exists( '_mp_global_categories_list' ) ) {
 
 	function _mp_global_categories_list( $results, $taxonomy ) {
-		$html = '<ul id="mp_category_list">';
-		foreach ( $results as $row ) {
-			$html .= '<li class="cat-item cat-item-' . $row->term_id . '">
-			<a href="' . mp_global_taxonomy_url( $row->slug, $taxonomy ) . '">' . $row->name . '</a>
-			</li>';
+		$html = '';
+		if( ! empty( $results ) ) {
+			$html .= '<ul id="mp_category_list">';
+			foreach ( $results as $row ) {
+				$html .= '<li class="cat-item cat-item-' . $row->term_id . '">
+				<a href="' . mp_global_taxonomy_url( $row->slug, $taxonomy ) . '">' . $row->name . '</a>
+				</li>';
+			}
+			$html .= '</ul>';
+		} else {
+			$html .= '<div id="mp_category_list">' . __( 'No Categories', 'mp' ) . '</div>';
 		}
-		$html .= '</ul>';
 
 		return $html;
 	}
@@ -799,8 +822,12 @@ if ( ! function_exists( '_mp_global_tags_cloud' ) ) {
 
 	function _mp_global_tags_cloud( $results, $taxonomy ) {
 		$html = '<div id="mp_tag_cloud">';
-		foreach ( $results as $row ) {
-			$html .= '<a href="' . mp_global_taxonomy_url( $row->slug, $taxonomy ) . '" class="tag-link tag-link-' . $row->term_id . '" title="">' . $row->name . '</a> ';
+		if( ! empty( $results ) ) {
+			foreach ( $results as $row ) {
+				$html .= '<a href="' . mp_global_taxonomy_url( $row->slug, $taxonomy ) . '" class="tag-link tag-link-' . $row->term_id . '" title="">' . $row->name . '</a> ';
+			}
+		} else {
+			$html .= __( 'No Tags', 'mp' );
 		}
 		$html .= '</div>';
 

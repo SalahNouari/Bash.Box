@@ -175,6 +175,7 @@
                     <option value="fadeFlow">Flow and Fade</option>
                     <option value="mask">Mask</option>
                     <option value="parallaxMask">Parallax Mask</option>
+                    <option value="box">Box</option>
                     <option value="fade">Fade</option>
                     <option value="scale">Scale</option>
                     <option value="focus">Focus</option>

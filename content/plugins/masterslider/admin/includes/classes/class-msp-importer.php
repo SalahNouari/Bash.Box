@@ -274,7 +274,8 @@ class MSP_Importer {
 
 					$sliders 		= isset( $_POST['msp-export-sliders']  		 ) ? $_POST['msp-export-sliders'] 		 : '';
 					$preset_styles  = isset( $_POST['msp-export-preset-styles']  ) ? $_POST['msp-export-preset-styles']  : '';
-					$preset_effects = isset( $_POST['msp-export-preset-effects'] ) ? $_POST['msp-export-preset-effects'] : '';
+                    $preset_effects = isset( $_POST['msp-export-preset-effects'] ) ? $_POST['msp-export-preset-effects'] : '';
+					$buttons_style  = isset( $_POST['msp-export-buttons-style']  ) ? $_POST['msp-export-buttons-style']  : '';
 
 					$args = array();
 
@@ -283,6 +284,9 @@ class MSP_Importer {
 
 					if( $preset_effects )
 						$args[] = 'preset_effects';
+
+                    if( $buttons_style )
+                        $args[] = 'buttons_style';
 
 					if( ! empty( $sliders ) || ! empty( $args ) ) {
 						$this->export_slider_data_in_file( $sliders, $args );
@@ -383,7 +387,8 @@ class MSP_Importer {
 
 
 		$export_data['preset_styles']  = in_array( 'preset_styles' , $args ) ? msp_get_option( 'preset_style'  , '' ) : '';
-		$export_data['preset_effects'] = in_array( 'preset_effects', $args ) ? msp_get_option( 'preset_effect' , '' ) : '';
+        $export_data['preset_effects'] = in_array( 'preset_effects', $args ) ? msp_get_option( 'preset_effect' , '' ) : '';
+		$export_data['buttons_style']  = in_array( 'buttons_style' , $args ) ? msp_get_option( 'buttons_style' , '' ) : '';
 
 
 		$export_json_data = json_encode( $export_data );
@@ -498,6 +503,12 @@ class MSP_Importer {
 			echo __( 'Preset transitions imported successfully.', MSWP_TEXT_DOMAIN ) . "<br />";
 		}
 
+        // import buttons styles if it's included in export data
+        if( isset( $export_array['buttons_style'] ) && ! empty( $export_array['buttons_style'] ) ) {
+            msp_update_option( 'buttons_style'  , $export_array['buttons_style'] );
+            echo __( 'Buttons custom style imported successfully.', MSWP_TEXT_DOMAIN ) . "<br />";
+        }
+
 		// import sliders
 		if( isset( $export_array['sliders_data'] ) ) {
 			// reset image import queue
@@ -567,9 +578,9 @@ class MSP_Importer {
 	}
 
 
-
 	/**
 	 * Extract images from slider data and add them to image_import_queue list
+     *
 	 * @param  string $slider_params the slider params
 	 * @return void
 	 */
@@ -604,7 +615,6 @@ class MSP_Importer {
 
 	    $this->image_import_queue = apply_filters( 'masterslider_extract_slider_images_to_import', $this->image_import_queue, $results );
 	}
-
 
 
 	/**

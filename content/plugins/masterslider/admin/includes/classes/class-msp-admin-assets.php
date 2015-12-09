@@ -154,7 +154,7 @@ class MSP_Admin_Assets {
 			$msp_buttons_style = empty( $msp_buttons_style ) ? NULL : $msp_buttons_style;
 
             if( empty( $slider_alias ) ){
-                $slider_alias  = isset( $slider_data[ 'alias' ] ) ? $slider_data[ 'alias' ] : $mspdb->generate_slider_alias( $slider_id );
+                $slider_alias  = isset( $slider_data[ 'alias' ] ) && ! empty( $slider_data[ 'alias' ] ) ? $slider_data[ 'alias' ] : $mspdb->generate_slider_alias( $slider_id );
                 wp_localize_script( 'jquery', '__MSP_SLIDER_ALIAS'  , $slider_alias );
             }
 			wp_localize_script( 'jquery', '__MSP_DATA'			, $msp_data          );

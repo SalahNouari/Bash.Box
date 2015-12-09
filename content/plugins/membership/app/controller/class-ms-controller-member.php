@@ -327,7 +327,8 @@ class MS_Controller_Member extends MS_Controller {
 			elseif ( isset( $_POST['btn_modify'] )
 				&& $this->verify_nonce()
 			) {
-				$user_id = intval( $_POST['user_id'] );
+				// REQUEST here: When editing a user the ID is sent in the URL.
+				$user_id = intval( $_REQUEST['user_id'] );
 				$user = MS_Factory::load( 'MS_Model_Member', $user_id );
 
 				// Modify existing subscriptions.
@@ -475,7 +476,7 @@ class MS_Controller_Member extends MS_Controller {
 		if ( $this->_resp_ok() && ! $this->is_admin_user() ) {
 			$this->_resp_err( 'permission denied' );
 		} elseif ( $this->_resp_ok() && ! self::validate_required( $required ) ) {
-			$this->_resp_err( 'validate: required' );
+			$this->_resp_err( __( 'This field is required.', 'membership2' ) );
 		}
 
 		if ( $this->_resp_ok() ) {

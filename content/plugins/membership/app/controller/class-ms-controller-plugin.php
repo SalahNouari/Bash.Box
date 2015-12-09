@@ -857,7 +857,12 @@ class MS_Controller_Plugin extends MS_Controller {
 
 		// Checks for invoice single template.
 		if ( $type = MS_Model_Pages::is_membership_page() ) {
-			$membership_id = apply_filters( 'ms_detect_membership_id', 0, true );
+			$membership_id = apply_filters(
+				'ms_detect_membership_id',
+				0,
+				true,
+				true
+			);
 
 			if ( $membership_id ) {
 				$template = get_query_template(
@@ -918,11 +923,11 @@ class MS_Controller_Plugin extends MS_Controller {
 		wp_register_script(
 			'ms-admin',
 			$plugin_url . 'app/assets/js/ms-admin.js',
-			array( 'jquery', 'jquery-validate', 'jquery-plugins' ), $version
+			array( 'jquery', 'jquery-validate', 'm2-jquery-plugins' ), $version
 		);
 
 		wp_register_script(
-			'jquery-plugins',
+			'm2-jquery-plugins',
 			$plugin_url . 'app/assets/js/jquery.m2.plugins.js',
 			array( 'jquery' ), $version
 		);
@@ -963,7 +968,7 @@ class MS_Controller_Plugin extends MS_Controller {
 		wp_register_script(
 			'ms-admin',
 			$plugin_url . 'app/assets/js/ms-admin.js',
-			array( 'jquery', 'jquery-validate', 'jquery-plugins' ), $version
+			array( 'jquery', 'jquery-validate', 'm2-jquery-plugins' ), $version
 		);
 		wp_register_script(
 			'ms-ajax-login',
@@ -977,7 +982,7 @@ class MS_Controller_Plugin extends MS_Controller {
 		);
 
 		wp_register_script(
-			'jquery-plugins',
+			'm2-jquery-plugins',
 			$plugin_url . 'app/assets/js/jquery.m2.plugins.js',
 			array( 'jquery' ), $version
 		);

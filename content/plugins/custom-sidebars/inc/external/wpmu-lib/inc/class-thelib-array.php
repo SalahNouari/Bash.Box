@@ -112,7 +112,7 @@ class TheLib_2_0_3_Array extends TheLib_2_0_3 {
 	 * Matching keys' values in the second array overwrite those in the first array, as is the
 	 * case with array_merge, i.e.:
 	 *
-	 * merge_recursive_distinct(array('key' => 'org value'), array('key' => 'new value'));							 			 	 	 		  
+	 * merge_recursive_distinct(array('key' => 'org value'), array('key' => 'new value'));
 	 *     => array('key' => array('new value'));
 	 *
 	 * Parameters are passed by reference, though only for performance reasons. They're not

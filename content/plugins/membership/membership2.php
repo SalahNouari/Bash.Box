@@ -2,7 +2,7 @@
 /**
 Plugin Name: Membership 2 Pro
 Plugin URI:  https://premium.wpmudev.org/project/membership/
-Version:     1.0.2.3
+Version:     1.0.2.5
 Description: The most powerful, easy to use and flexible membership plugin for WordPress sites available.
 Author:      WPMU DEV
 Author URI:  http://premium.wpmudev.org/
@@ -14,7 +14,7 @@ Text Domain: membership2
 /**
  * @copyright Incsub (http://incsub.com/)
  *
- * Authors: Philipp Stracker, Fabio Jun Onishi, Victor Ivanov, Jack Kitterhing, Rheinard Korf
+ * Authors: Philipp Stracker, Fabio Jun Onishi, Victor Ivanov, Jack Kitterhing, Rheinard Korf, Ashok Kumar Nath
  * Contributors: Joji Mori, Patrick Cohen
  *
  * @license http://opensource.org/licenses/GPL-2.0 GNU General Public License, version 2 (GPL-2.0)
@@ -62,7 +62,7 @@ function membership2_init_pro_app() {
 	 *
 	 * @since  1.0.0
 	 */
-	define( 'MS_PLUGIN_VERSION', '1.0.2.3' );
+	define( 'MS_PLUGIN_VERSION', '1.0.2.4' );
 
 	/**
 	 * Plugin identifier constant.
@@ -78,9 +78,7 @@ function membership2_init_pro_app() {
 	 */
 	define( 'MS_PLUGIN_NAME', dirname( MS_PLUGIN ) );
 
-	/**
-	 * Include WPMUDev Dashboard
-	 */
+	// WPMUDEV Dashboard
 	global $wpmudev_notices;
 	$wpmudev_notices[] = array(
 		'id' => 1003656,
@@ -110,7 +108,7 @@ function membership2_init_pro_app() {
 	do_action(
 		'wdev-register-plugin',
 		/*             Plugin ID */ plugin_basename( __FILE__ ),
-		/*          Plugin Title */ 'Membership 2 Pro',
+		/*          Plugin Title */ 'Membership 2',
 		/* https://wordpress.org */ '/plugins/membership/',
 		/*      Email Button CTA */ false,
 		/*  getdrip Plugin param */ false
@@ -141,6 +139,12 @@ function membership2_init_pro_app() {
 		);
 	}
 	add_action( 'plugins_loaded', '_membership2_translate_plugin' );
+
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG || WDEV_DEBUG ) {
+		// Load development/testing code before the plugin is initialized.
+		$testfile = dirname( __FILE__ ) . '/tests/wp/init.php';
+		if ( file_exists( $testfile ) ) { include $testfile; }
+	}
 
 	/**
 	 * Create an instance of the plugin object.
@@ -475,8 +479,9 @@ class MS_Plugin {
 			'top'
 		);
 
-		// Alternative payment return URL: Membership
-		if ( MS_Model_Import_Membership::did_import() ) {
+		// Alternative payment return URL: Old Membership plugin.
+		$use_old_ipn = apply_filters( 'ms_legacy_paymentreturn_url', true );
+		if ( $use_old_ipn && ! class_exists( 'M_Membership' ) ) {
 			add_rewrite_rule(
 				'paymentreturn/(.+)/?',
 				'index.php?paymentgateway=$matches[1]',

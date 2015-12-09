@@ -78,7 +78,7 @@ class MP_Checkout {
 		$is_download_only	 = $cart->is_download_only();
 		$this->_sections	 = apply_filters( 'mp_checkout/sections_array', array(
 			'login-register'			 => __( 'Login/Register', 'mp' ),
-			'billing-shipping-address'	 => (!mp()->download_only_cart( mp_cart() ) || mp_get_setting( 'tax->downloadable_address' ) ) ? __( 'Billing/Shipping Address', 'mp' ) : __( 'Billing', 'mp' ),
+			'billing-shipping-address'	 => ( !mp()->download_only_cart( mp_cart() ) ) ? __( 'Billing/Shipping Address', 'mp' ) : __( 'Billing Information', 'mp' ),
 			'shipping'					 => __( 'Shipping Method', 'mp' ),
 			'order-review-payment'		 => __( 'Review Order/Payment', 'mp' ),
 		) );
@@ -268,120 +268,183 @@ class MP_Checkout {
 			),
 		);
 
-		$address_fields = array(
-			array(
-				'type'		 => 'complex',
-				'label'		 => __( 'Name', 'mp' ),
-				'validation' => array(
-					'required' => true,
-				),
-				'subfields'	 => array(
-					array(
-						'type'	 => 'text',
-						'label'	 => __( 'First', 'mp' ),
-						'name'	 => $this->field_name( 'first_name', $type ),
-						'value'	 => mp_get_user_address_part( 'first_name', $type ),
-						'atts'	 => array(
-							'class' => 'mp_form_input',
+		if ( mp()->download_only_cart( mp_cart() ) && mp_get_setting( 'details_collection' ) == "contact" ) {
+			$address_fields = array(
+				array(
+					'type'		 => 'complex',
+					'label'		 => __( 'Name', 'mp' ),
+					'validation' => array(
+						'required' => true,
+					),
+					'subfields'	 => array(
+						array(
+							'type'	 => 'text',
+							'label'	 => __( 'First', 'mp' ),
+							'name'	 => $this->field_name( 'first_name', $type ),
+							'value'	 => mp_get_user_address_part( 'first_name', $type ),
+							'atts'	 => array(
+								'class' => 'mp_form_input',
+							),
+						),
+						array(
+							'type'	 => 'text',
+							'label'	 => __( 'Last', 'mp' ),
+							'name'	 => $this->field_name( 'last_name', $type ),
+							'value'	 => mp_get_user_address_part( 'last_name', $type ),
+							'atts'	 => array(
+								'class' => 'mp_form_input',
+							),
 						),
 					),
-					array(
-						'type'	 => 'text',
-						'label'	 => __( 'Last', 'mp' ),
-						'name'	 => $this->field_name( 'last_name', $type ),
-						'value'	 => mp_get_user_address_part( 'last_name', $type ),
-						'atts'	 => array(
-							'class' => 'mp_form_input',
+				),
+				array(
+					'type'		 => 'text',
+					'label'		 => __( 'Email Address', 'mp' ),
+					'name'		 => $this->field_name( 'email', $type ),
+					'value'		 => mp_get_user_address_part( 'email', $type ),
+					'validation' => array(
+						'required'	 => true,
+						'email'		 => true,
+					),
+					'atts'		 => array(
+						'class' => 'mp_form_input',
+					),
+				),
+				array(
+					'type'	 => 'text',
+					'label'	 => __( 'Company', 'mp' ),
+					'name'	 => $this->field_name( 'company_name', $type ),
+					'value'	 => mp_get_user_address_part( 'company_name', $type ),
+					'atts'	 => array(
+						'class' => 'mp_form_input',
+					),
+				),
+				array(
+					'type'	 => 'text',
+					'label'	 => __( 'Phone', 'mp' ),
+					'name'	 => $this->field_name( 'phone', $type ),
+					'value'	 => mp_get_user_address_part( 'phone', $type ),
+					'atts'	 => array(
+						'class' => 'mp_form_input',
+					),
+				),
+			);
+		} else {
+			$address_fields = array(
+				array(
+					'type'		 => 'complex',
+					'label'		 => __( 'Name', 'mp' ),
+					'validation' => array(
+						'required' => true,
+					),
+					'subfields'	 => array(
+						array(
+							'type'	 => 'text',
+							'label'	 => __( 'First', 'mp' ),
+							'name'	 => $this->field_name( 'first_name', $type ),
+							'value'	 => mp_get_user_address_part( 'first_name', $type ),
+							'atts'	 => array(
+								'class' => 'mp_form_input',
+							),
+						),
+						array(
+							'type'	 => 'text',
+							'label'	 => __( 'Last', 'mp' ),
+							'name'	 => $this->field_name( 'last_name', $type ),
+							'value'	 => mp_get_user_address_part( 'last_name', $type ),
+							'atts'	 => array(
+								'class' => 'mp_form_input',
+							),
 						),
 					),
 				),
-			),
-			array(
-				'type'		 => 'text',
-				'label'		 => __( 'Email Address', 'mp' ),
-				'name'		 => $this->field_name( 'email', $type ),
-				'value'		 => mp_get_user_address_part( 'email', $type ),
-				'validation' => array(
-					'required'	 => true,
-					'email'		 => true,
+				array(
+					'type'		 => 'text',
+					'label'		 => __( 'Email Address', 'mp' ),
+					'name'		 => $this->field_name( 'email', $type ),
+					'value'		 => mp_get_user_address_part( 'email', $type ),
+					'validation' => array(
+						'required'	 => true,
+						'email'		 => true,
+					),
+					'atts'		 => array(
+						'class' => 'mp_form_input',
+					),
 				),
-				'atts'		 => array(
-					'class' => 'mp_form_input',
+				array(
+					'type'	 => 'text',
+					'label'	 => __( 'Company', 'mp' ),
+					'name'	 => $this->field_name( 'company_name', $type ),
+					'value'	 => mp_get_user_address_part( 'company_name', $type ),
+					'atts'	 => array(
+						'class' => 'mp_form_input',
+					),
 				),
-			),
-			array(
-				'type'	 => 'text',
-				'label'	 => __( 'Company', 'mp' ),
-				'name'	 => $this->field_name( 'company_name', $type ),
-				'value'	 => mp_get_user_address_part( 'company_name', $type ),
-				'atts'	 => array(
-					'class' => 'mp_form_input',
+				array(
+					'type'		 => 'text',
+					'label'		 => __( 'Address Line 1', 'mp' ),
+					'name'		 => $this->field_name( 'address1', $type ),
+					'value'		 => mp_get_user_address_part( 'address1', $type ),
+					'atts'		 => array(
+						'placeholder'	 => __( 'Street address, P.O. box, company name, c/o', 'mp' ),
+						'class'			 => 'mp_form_input',
+					),
+					'validation' => array(
+						'required' => true,
+					),
 				),
-			),
-			array(
-				'type'		 => 'text',
-				'label'		 => __( 'Address Line 1', 'mp' ),
-				'name'		 => $this->field_name( 'address1', $type ),
-				'value'		 => mp_get_user_address_part( 'address1', $type ),
-				'atts'		 => array(
-					'placeholder'	 => __( 'Street address, P.O. box, company name, c/o', 'mp' ),
-					'class'			 => 'mp_form_input',
+				array(
+					'type'	 => 'text',
+					'label'	 => __( 'Address Line 2', 'mp' ),
+					'name'	 => $this->field_name( 'address2', $type ),
+					'value'	 => mp_get_user_address_part( 'address2', $type ),
+					'atts'	 => array(
+						'placeholder'	 => __( 'Apartment, suite, unit, building, floor, etc', 'mp' ),
+						'class'			 => 'mp_form_input',
+					),
 				),
-				'validation' => array(
-					'required' => true,
+				array(
+					'type'		 => 'text',
+					'label'		 => __( 'Town/City', 'mp' ),
+					'name'		 => $this->field_name( 'city', $type ),
+					'value'		 => mp_get_user_address_part( 'city', $type ),
+					'validation' => array(
+						'required' => true,
+					),
+					'atts'		 => array(
+						'class' => 'mp_form_input',
+					),
 				),
-			),
-			array(
-				'type'	 => 'text',
-				'label'	 => __( 'Address Line 2', 'mp' ),
-				'name'	 => $this->field_name( 'address2', $type ),
-				'value'	 => mp_get_user_address_part( 'address2', $type ),
-				'atts'	 => array(
-					'placeholder'	 => __( 'Apartment, suite, unit, building, floor, etc', 'mp' ),
-					'class'			 => 'mp_form_input',
+				array(
+					'type'		 => 'complex',
+					'subfields'	 => $state_zip_fields,
 				),
-			),
-			array(
-				'type'		 => 'text',
-				'label'		 => __( 'Town/City', 'mp' ),
-				'name'		 => $this->field_name( 'city', $type ),
-				'value'		 => mp_get_user_address_part( 'city', $type ),
-				'validation' => array(
-					'required' => true,
+				array(
+					'type'			 => 'select',
+					'label'			 => __( 'Country', 'mp' ),
+					'name'			 => $this->field_name( 'country', $type ),
+					'options'		 => array_merge( array( '' => __( 'Select One', 'mp' ) ), $countries ), //array_merge(array('' => __('Select One', 'mp')), $this->currencies),
+					'value'			 => $country,
+					'default_value'	 => '',
+					'atts'			 => array(
+						'class' => 'mp_select2_search',
+					),
+					'validation'	 => array(
+						'required' => true,
+					),
 				),
-				'atts'		 => array(
-					'class' => 'mp_form_input',
+				array(
+					'type'	 => 'text',
+					'label'	 => __( 'Phone', 'mp' ),
+					'name'	 => $this->field_name( 'phone', $type ),
+					'value'	 => mp_get_user_address_part( 'phone', $type ),
+					'atts'	 => array(
+						'class' => 'mp_form_input',
+					),
 				),
-			),
-			array(
-				'type'		 => 'complex',
-				'subfields'	 => $state_zip_fields,
-			),
-			array(
-				'type'			 => 'select',
-				'label'			 => __( 'Country', 'mp' ),
-				'name'			 => $this->field_name( 'country', $type ),
-				'options'		 => array_merge( array( '' => __( 'Select One', 'mp' ) ), $countries ), //array_merge(array('' => __('Select One', 'mp')), $this->currencies),
-				'value'			 => $country,
-				'default_value'	 => '',
-				'atts'			 => array(
-					'class' => 'mp_select2_search',
-				),
-				'validation'	 => array(
-					'required' => true,
-				),
-			),
-			array(
-				'type'	 => 'text',
-				'label'	 => __( 'Phone', 'mp' ),
-				'name'	 => $this->field_name( 'phone', $type ),
-				'value'	 => mp_get_user_address_part( 'phone', $type ),
-				'atts'	 => array(
-					'class' => 'mp_form_input',
-				),
-			),
-		);
+			);
 
+		}
 		/**
 		 * Filter the address fields array
 		 *
@@ -994,7 +1057,7 @@ class MP_Checkout {
 		$cart				 = mp_cart();
 		$is_download_only	 = $cart->is_download_only();
 
-		if ( !mp()->download_only_cart( mp_cart() ) || mp_get_setting( 'tax->downloadable_address' ) ) {
+		if ( !mp()->download_only_cart( mp_cart() ) ) {
 			$html .= '
 					<div class="mp_checkout_field mp_checkout_checkbox">
 						<label class="mp_form_label"><input type="checkbox" class="mp_form_checkbox" name="enable_shipping_address" value="1" autocomplete="off" ' . checked( true, $enable_shipping_address, false ) . '> <span>' . __( 'Shipping address different than billing?', 'mp' ) . '</span></label>
@@ -1119,7 +1182,7 @@ class MP_Checkout {
 		$this->address_fields( 'billing', true ) . '
 			</div><!-- end mp_checkout_column -->';
 
-		if ( !mp()->download_only_cart( mp_cart() ) || mp_get_setting( 'tax->downloadable_address' ) ) {
+		if ( !mp()->download_only_cart( mp_cart() ) ) {
 			$html .= '
 				<div class="mp_checkout_column">
 					<h3 class="mp_sub_title">' . __( 'Shipping Address', 'mp' ) . '</h3>' .

@@ -508,12 +508,15 @@ class MSP_DB {
      * @param  string $alias The slider alias name
      * @return string        A unique slider alias
      */
-    public function validate_slider_alias( $alias ){
+    public function validate_slider_alias( $alias, $slider_id = null ){
         $sanitized_alias = sanitize_title( $alias );
         $valid_alias     = $sanitized_alias;
         $counter         = 0;
 
-        while( $this->slider_alias_exists( $valid_alias ) ){
+        while( $slider_data = $this->get_slider( $valid_alias, 'alias' ) ){
+            if( $slider_id && isset( $slider_data['ID'] ) && $slider_id == $slider_data['ID'] ){
+                return $valid_alias;
+            }
             ++$counter;
             $valid_alias = $sanitized_alias .'-'. $counter;
         }

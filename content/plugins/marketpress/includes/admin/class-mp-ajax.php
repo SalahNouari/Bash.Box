@@ -233,7 +233,7 @@ class MP_Ajax {
 							<fieldset id="fieldset_charge_tax" class="has_area">
 								<div class="wpmudev-field-desc"><?php _e( 'If you would like this product to use a special tax rate, enter it here. If you omit the "%" symbol the rate will be calculated as a fixed amount for each of this product in the user\'s cart.', 'mp' ); ?></div>
 								<?php _e( 'Special Tax Rate', 'mp' ); ?>
-								<input placeholder="<?php esc_attr_e( 'Tax Rate', 'mp' ); ?>" type="text" class="mp-numeric" name="special_tax_rate" value="<?php echo esc_attr( MP_Product::get_variation_meta( $variation_id, 'special_tax_rate' ) ); ?>">
+								<input placeholder="<?php esc_attr_e( 'Tax Rate', 'mp' ); ?>" type="text" name="special_tax_rate" value="<?php echo esc_attr( MP_Product::get_variation_meta( $variation_id, 'special_tax_rate' ) ); ?>">
 								<br>
 							</fieldset>
 						</div>
@@ -326,12 +326,12 @@ class MP_Ajax {
 	public function ajax_login() {
 		check_ajax_referer( 'mp-login-nonce', 'mp_login_nonce' );
 
-		$error_message = __( 'Oops!You entered an invalid username and or password ', 'mp' );
+		$error_message = __( 'Oops! You entered an invalid username/email and or password.', 'mp' );
 
 		$user_login = mp_get_post_value( 'email ', '' );
 
 		if ( is_email( $user_login ) ) {
-			$user = get_user_by( 'email ', $user_login );
+			$user = get_user_by( 'email', $user_login );
 
 			if ( !$user instanceof WP_User ) {
 				wp_send_json_error( array(
@@ -382,6 +382,12 @@ class MP_Ajax {
 		foreach ( $post_ids as $post_id ) {
 			update_post_meta( $post_id, 'regular_price', $price );
 			update_post_meta( $post_id, 'sale_price_amount', $sale_price );
+
+			if( ! empty( $sale_price ) && $sale_price > 0 ) {
+				update_post_meta( $post_id, 'sort_price', $sale_price );
+			} else {
+				update_post_meta( $post_id, 'sort_price', $price );
+			}
 		}
 
 		die;
