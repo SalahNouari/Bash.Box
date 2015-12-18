@@ -377,6 +377,13 @@ function ultra_adminmenu_newmenu($neworder,$menu){
 
 
 function ultra_adminmenu_newsubmenu($newsuborder,$submenu,$menu){
+	//return $submenu;
+
+	//ultraprint("submenu",$submenu);
+	//ultraprint("submenu",$menu);
+	//ultraprint("newsuborder",$newsuborder);
+	//die();
+
 	//echo "<br>";
 
 	//echo "<pre>"; 
@@ -400,30 +407,35 @@ function ultra_adminmenu_newsubmenu($newsuborder,$submenu,$menu){
 
 	$allids = $menu;
 	$allsubids = $submenu;
-
-
+/*
+	echo "<pre>";
+	print_r($submenu);
+	echo "</pre>";*/
+	
 	$ret = array();
 		foreach($newsuborder['submenu'] as $submenuid => $arr) {
 			$k = 1100000;
+			$k = 0;
 			foreach($arr as $linkid) {
-				$k++;
 				$submenu[$submenuid][$linkid]['original'] = $linkid;
 				$ret[$submenuid][$k] = $submenu[$submenuid][$linkid];
 				unset($allsubids[$submenuid][$linkid]);
 				//$ret[$menumap[$submenuid]][]['original'] = $linkid;
+				$k++;
 			}
 		}
 		//ultraprint("allsubids",$allsubids);
 
 		foreach($allsubids as $itemid => $item) {
 			$k = 1100000;
+			$k = 0;
 			//if(sizeof($item) > 0){
 			foreach($item as $a => $b) {
-				$k++;
 				$allsubids[$itemid][$a]['original'] = $a;
 				$ret[$itemid][$k] = $allsubids[$itemid][$a];
 				//$ret[$k] = $item;
 				//$ret[$k]['original'] = $itemid;
+				$k++;
 			}
 			//}
 		}
@@ -433,6 +445,8 @@ function ultra_adminmenu_newsubmenu($newsuborder,$submenu,$menu){
 	//$ret = array_merge($ret,$allsubids);
 	
 	//ultraprint("ret",$ret);
+
+	//die();
 
 	return $ret;
 	//return $submenu;
@@ -456,33 +470,37 @@ function ultra_admin_submenu_rearrange()
 
 
 	$enablemenumng = ultra_get_user_type(); 
-if($enablemenumng){
-	//ultraprint('menu',$menu);
-	//ultraprint('submenu',$submenu);
+	if($enablemenumng){
+		//ultraprint('menu',$menu);
 
-	//return $submenu;
+		//ultraprint('submenu',$submenu);
 
-	$renamesubmenu = ultra_rename_submenu();
-	$submenu = $renamesubmenu;
-	//ultraprint('submenu',$submenu);
+		//return $submenu;
 
+		$renamesubmenu = ultra_rename_submenu();
+		$submenu = $renamesubmenu;
+		//ultraprint('submenu',$submenu);
 
-	$newsuborder = ultra_adminmenu_neworder();
-	//echo "<pre>"; print_r($newsuborder); echo "</pre>";
-
-
-	$ret = ultra_adminmenu_newsubmenu($newsuborder,$submenu,$ultramenu);
-
-	//return $submenu;
+		//return $submenu;
 
 
-	$submenu = $ret;
+		$newsuborder = ultra_adminmenu_neworder();
+		//echo "<pre>"; print_r($newsuborder); echo "</pre>";
 
-	$GLOBALS['ultrasubmenu'] = $submenu;
+		//return $submenu;
 
-	$submenu = ultra_adminsubmenu_disable($submenu);
+		$ret = ultra_adminmenu_newsubmenu($newsuborder,$submenu,$ultramenu);
 
-}
+		$submenu = $ret;
+
+		//return $submenu;
+
+
+		$GLOBALS['ultrasubmenu'] = $submenu;
+
+		$submenu = ultra_adminsubmenu_disable($submenu);
+
+	}
 	return $submenu;
 
 
@@ -490,12 +508,12 @@ if($enablemenumng){
     // Enable the next line to inspect the $submenu values
     // echo '<pre>'.print_r($submenu,true).'</pre>';
 
-/*    $arr = array();
-    $arr[] = $submenu['upload.php'][10];
-    $arr[] = $submenu['upload.php'][5];
-    $submenu['upload.php'] = $arr;
+	/*    $arr = array();
+	    $arr[] = $submenu['upload.php'][10];
+	    $arr[] = $submenu['upload.php'][5];
+	    $submenu['upload.php'] = $arr;
 
-    return $menu_ord;*/
+	    return $menu_ord;*/
 
 }
 

@@ -20,7 +20,7 @@ $ultrastr = " h1,h2,h3,h4,h5,h6, "
 			.".postbox .hndle, .stuffbox .hndle, "
 			."#delete-action, "
 			."#dashboard-widgets #dashboard_activity h4, "
-			.".welcome-panel h3, .welcome-panel .about-description,"
+			.".welcome-panel h2, .welcome-panel .about-description,"
 			."#titlediv #title,"
 			.".widefat tfoot tr th, .widefat thead tr th, th.manage-column a, th.sortable a,"
 			.".form-wrap label,"
@@ -339,7 +339,7 @@ echo ultra_css_background($ultrastr, "box-bg", "1.0") . "\n";
 
 
 echo " \n/* -- Box Head -- */\n";
-$ultrastr = " .postbox .hndle, .stuffbox .hndle, .welcome-panel h3, .settings_page_menu_editor .ui-dialog-titlebar";
+$ultrastr = " .postbox .hndle, .stuffbox .hndle, .welcome-panel h2, .settings_page_menu_editor .ui-dialog-titlebar";
 echo ultra_css_background($ultrastr, "box-head-bg", "1.0") . "\n";
 echo ultra_css_color($ultrastr, "box-head-color", "1.0") . "\n";
 

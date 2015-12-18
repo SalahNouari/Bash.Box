@@ -25,6 +25,17 @@ function ultra_admin_deactivation() {
 	delete_option( "ultraadmin_logintheme_page");
 	delete_option( "ultraadmin_master_theme");
 
+
+  delete_site_option( "ultraadmin_plugin_access");
+  delete_site_option( "ultraadmin_plugin_page");
+  delete_site_option( "ultraadmin_plugin_userid");
+  delete_site_option( "ultraadmin_menumng_page");
+  delete_site_option( "ultraadmin_admin_menumng_page");
+  delete_site_option( "ultraadmin_admintheme_page");
+  delete_site_option( "ultraadmin_logintheme_page");
+  delete_site_option( "ultraadmin_master_theme");
+
+
 /*
        delete_option("ultraadmin_menuorder");
        delete_option("ultraadmin_submenuorder");

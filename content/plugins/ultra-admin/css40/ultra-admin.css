@@ -153,6 +153,12 @@ ul{
 	margin-bottom:23px;
 }
 
+.wrap h2{
+	font-size: 18px;
+	line-height: 30px;
+	margin-bottom: 10px;
+}
+
 
 .highlight, .highlight a {
 	background-color: #f95e44;
@@ -550,6 +556,8 @@ div.wp-menu-image:before{
 	-o-box-shadow:	0px 2px 2px 0px rgba(150,150,150,0.2);
 }
 
+#poststuff h2,
+.metabox-holder h2.hndle,
 .postbox .hndle, .stuffbox .hndle{
 	line-height:46px;
 	font-size:17px;
@@ -561,6 +569,15 @@ div.wp-menu-image:before{
 	background: #f95e44;
 	color: #ffffff; /*rgb(32, 32, 32);*/
 }
+
+.metabox-holder .postbox>h3, .metabox-holder .stuffbox>h3, .metabox-holder h2.hndle, .metabox-holder h3.hndle{
+	line-height:46px;
+	font-size:16px;
+	font-weight:300;
+	padding: 0 23px;
+}
+
+
 
 .postbox .handlediv{
 	height: 46px;
@@ -581,9 +598,6 @@ div.wp-menu-image:before{
 	line-height: 23px;
 	font-size: 14px;
 }
-
-
-
 
 
 /*post page - inner boxes*/
@@ -665,7 +679,10 @@ div.wp-menu-image:before{
 }
 
 
-
+#pageparentdiv p{
+	margin-top: 13px;
+	margin-bottom: 10px;
+}
 
 
 
@@ -747,7 +764,13 @@ div.wp-menu-image:before{
 	padding: 21px 23px 0px 23px;
 }
 
-
+#dashboard-widgets h3, #dashboard-widgets h4, #dashboard_quick_press .drafts h2 {
+    margin: 10px 12px 15px 12px;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 300;
+    color: #757575;
+}
 
 /*---- dashboard quick draft widget ---- */
 #dashboard_quick_press form{
@@ -800,7 +823,7 @@ div.wp-menu-image:before{
 	line-height: 2.1em;
 }
 
-.welcome-panel h3{
+.welcome-panel h2{
 	line-height:69px;
 	font-size:21px;
 	font-weight:300;
@@ -810,6 +833,7 @@ div.wp-menu-image:before{
 	padding: 0 23px;
 	background: #f95e44;
 	color: #ffffff;
+	margin-top: 0px;
 }
 
 .welcome-panel .about-description{
@@ -861,10 +885,22 @@ div.wp-menu-image:before{
 	margin-top: 0;
 }
 
+.wp-core-ui .button-group.button-hero .button, .wp-core-ui .button.button-hero,
 .wp-core-ui .welcome-panel .button.button-hero{
-	margin: 0 0 23px 0;
+	margin: 23px 0 23px 0;
 	font-size: 17px;
 }
+
+.wp-core-ui .button-group.button-hero .button, .wp-core-ui .button.button-hero,
+.wp-core-ui .welcome-panel .button.button-hero,
+.wp-core-ui .button.button-primary.button-hero.active, .wp-core-ui .button.button-primary.button-hero.active:focus, .wp-core-ui .button.button-primary.button-hero.active:hover, .wp-core-ui .button.button-primary.button-hero:active {
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-ms-box-shadow: none;
+	-o-box-shadow: none;
+	-moz-box-shadow: none;
+}
+
 
 .wp-core-ui .button-group.button-hero .button:active, .wp-core-ui .button.button-hero:active,
 .wp-core-ui .button-group.button-hero .button, .wp-core-ui .button.button-hero{
@@ -1761,6 +1797,15 @@ div#widgets-left{
 }
 
 
+.widget-title h3, .widget-title h4{
+	font-size: 16px;
+}
+
+.widget-holder .widget-title{
+	background-color: #ffffff;
+}
+
+
 .widget-title h4 {
 	padding: 16px 15px 15px 15px;
 	background: #f7f7f7;
@@ -2161,6 +2206,11 @@ td.plugin-title strong, td.post-title strong{
 	font-size: 16px;
 }
 
+.form-table th{
+    padding: 15px 10px 15px 23px;
+    vertical-align: middle;
+}
+
 .form-table td {
 	margin-bottom: 9px;
 	padding: 12px 23px 11px 0;
@@ -2415,6 +2465,10 @@ html.wp-toolbar{
 	color: #ffffff;
 }
 
+#wpadminbar #wp-admin-bar-user-actions.ab-submenu{
+	overflow: hidden !important;
+}
+
 
 /*----------------------------------
  Top bar Style 2
@@ -2613,10 +2667,10 @@ logo bg
 		z-index:9999;
 	}
 
-	.auto-fold #adminmenu .wp-has-current-submenu a.menu-top:focus+.wp-submenu,
+	/*.auto-fold #adminmenu .wp-has-current-submenu a.menu-top:focus+.wp-submenu,
 	.auto-fold #adminmenu a.menu-top:focus+.wp-submenu {
 		left: 0px;
-	}
+	}*/
 
 	.auto-fold #adminmenu .wp-has-current-submenu .wp-submenu, 
 	.auto-fold #adminmenu a.wp-has-current-submenu:focus+.wp-submenu
@@ -3691,17 +3745,36 @@ div#widgets-right .widgets-sortables {
 
 .widget-control-edit,
 #widgets-right a.widget-control-edit{
-	line-height: 49px;
+	line-height: 46px;
+    text-decoration: none;
+}
+
+#widgets-right a.widget-control-edit:hover{
+	line-height: 45px;
+	border: 0px solid transparent;
+}
+
+#widgets-left .widget-control-edit:hover, #widgets-right .widget-control-edit:hover {
+    color: #fff;
+    background: #757575;
+    border-left: 0;
+    outline: #444 solid 0px;
 }
 
 .control-section .accordion-section-title:after {
   color: #ccc;
 }
 
-form h3, p.submit {
+p.submit {
   margin-top: 23px;
   padding-left: 23px;
 }
+
+form h3{
+  margin-top: 23px;
+  padding-left: 0px;
+}
+
 
 
 .col-wrap form p.submit {
@@ -3776,13 +3849,17 @@ As suggested by "anthonyparsons" on envato
 
 }
 
+.wp-core-ui .button-primary{
+	text-shadow: none;	
+}
+
 
 /* -------------------------------------------
 	default theme added in core css file 
 	Generated Dynamically
 ---------------------------------------------*/
 
- h1,h2,h3,h4,h5,h6, .postbox .hndle, .stuffbox .hndle, #delete-action, #dashboard-widgets #dashboard_activity h4, .welcome-panel h3, .welcome-panel .about-description,#titlediv #title,.widefat tfoot tr th, .widefat thead tr th, th.manage-column a, th.sortable a,.form-wrap label,.theme-browser .theme .theme-name, .theme-browser .theme .more-details, .no-plugin-results , .no-plugin-results a,.form-table th, #ws_menu_editor .ws_item_title,#ws_menu_editor .ws_edit_field, .settings_page_menu_editor .ui-dialog-title{font-family: 'Oswald', Arial, Helvetica, sans-serif;  font-weight:300;  font-style:normal; } body, p, #activity-widget #the-comment-list .comment-item h4,#wpadminbar, .ws_edit_field-colors .ws_color_scheme_display, #ws_menu_editor .ws_main_container .ws_edit_field input, #ws_menu_editor .ws_main_container .ws_edit_field select, #ws_menu_editor .ws_main_container .ws_edit_field textarea{font-family: 'Open Sans', Arial, Helvetica, sans-serif;  font-weight:400;  font-size:14px;  line-height:23px;  font-style:normal; } #adminmenu .wp-submenu-head, #adminmenu a.menu-top, #adminmenu .wp-has-current-submenu ul>li>a, .folded #adminmenu li.menu-top .wp-submenu>li>a, #adminmenu .wp-not-current-submenu li>a, .folded #adminmenu .wp-has-current-submenu li>a,#collapse-menu{ font-family: 'Oswald', Arial, Helvetica, sans-serif;  font-weight:300;  font-size:15px;  line-height:46px;  font-style:normal; } .wp-core-ui .button, .wp-core-ui .button-secondary,.wp-core-ui .button-primary,.upload-plugin .install-help, .upload-theme .install-help,.wordfenceWrap input[type='button'], .wordfenceWrap input[type='submit']{ font-family: 'Oswald', Arial, Helvetica, sans-serif;  font-weight:300;  font-size:15px;  line-height:23px;  font-style:normal; } 
+ h1,h2,h3,h4,h5,h6, .postbox .hndle, .stuffbox .hndle, #delete-action, #dashboard-widgets #dashboard_activity h4, .welcome-panel h2, .welcome-panel .about-description,#titlediv #title,.widefat tfoot tr th, .widefat thead tr th, th.manage-column a, th.sortable a,.form-wrap label,.theme-browser .theme .theme-name, .theme-browser .theme .more-details, .no-plugin-results , .no-plugin-results a,.form-table th, #ws_menu_editor .ws_item_title,#ws_menu_editor .ws_edit_field, .settings_page_menu_editor .ui-dialog-title{font-family: 'Oswald', Arial, Helvetica, sans-serif;  font-weight:300;  font-style:normal; } body, p, #activity-widget #the-comment-list .comment-item h4,#wpadminbar, .ws_edit_field-colors .ws_color_scheme_display, #ws_menu_editor .ws_main_container .ws_edit_field input, #ws_menu_editor .ws_main_container .ws_edit_field select, #ws_menu_editor .ws_main_container .ws_edit_field textarea{font-family: 'Open Sans', Arial, Helvetica, sans-serif;  font-weight:400;  font-size:14px;  line-height:23px;  font-style:normal; } #adminmenu .wp-submenu-head, #adminmenu a.menu-top, #adminmenu .wp-has-current-submenu ul>li>a, .folded #adminmenu li.menu-top .wp-submenu>li>a, #adminmenu .wp-not-current-submenu li>a, .folded #adminmenu .wp-has-current-submenu li>a,#collapse-menu{ font-family: 'Oswald', Arial, Helvetica, sans-serif;  font-weight:300;  font-size:15px;  line-height:46px;  font-style:normal; } .wp-core-ui .button, .wp-core-ui .button-secondary,.wp-core-ui .button-primary,.upload-plugin .install-help, .upload-theme .install-help,.wordfenceWrap input[type='button'], .wordfenceWrap input[type='submit']{ font-family: 'Oswald', Arial, Helvetica, sans-serif;  font-weight:300;  font-size:15px;  line-height:23px;  font-style:normal; } 
 /* -- Page BG -- */
  html, #ws_menu_editor .ws_editbox{background-color: rgba(241,242,247,1.0) /*#f1f2f7*/; ;} 
  
@@ -3900,8 +3977,8 @@ a, .no-plugin-results a{color:rgba(50,50,58,1) /*#32323a*/;} a:hover, .no-plugin
   .welcome-panel, .postbox, #screen-meta, #contextual-help-link-wrap, #screen-options-link-wrap, #ws_menu_editor .ws_main_container{background-color: rgba(255,255,255,1.0) /*#ffffff*/; ;} 
  
 /* -- Box Head -- */
-  .postbox .hndle, .stuffbox .hndle, .welcome-panel h3, .settings_page_menu_editor .ui-dialog-titlebar{background-color: rgba(250,133,100,1.0) /*#fa8564*/; ;} 
-  .postbox .hndle, .stuffbox .hndle, .welcome-panel h3, .settings_page_menu_editor .ui-dialog-titlebar{color:rgba(255,255,255,1.0) /*#ffffff*/;} 
+  .postbox .hndle, .stuffbox .hndle, .welcome-panel h2, .settings_page_menu_editor .ui-dialog-titlebar{background-color: rgba(250,133,100,1.0) /*#fa8564*/; ;} 
+  .postbox .hndle, .stuffbox .hndle, .welcome-panel h2, .settings_page_menu_editor .ui-dialog-titlebar{color:rgba(255,255,255,1.0) /*#ffffff*/;} 
   #ws_menu_editor .ws_main_container .ws_container.ws_active{background-color: rgba(250,133,100,1.0) /*#fa8564*/; ;} 
   #ws_menu_editor .ws_item_title{color:rgba(255,255,255,1.0) /*#ffffff*/;} 
  

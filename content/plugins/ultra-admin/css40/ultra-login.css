@@ -35,6 +35,9 @@ body a, body label{
     margin: 0px 0 0;
 }
 
+.mobile #login{
+    padding: 0px;
+}
 
 .login.wp-core-ui .button-primary{ 
     height: 34px;
@@ -42,6 +45,7 @@ body a, body label{
     border-radius : 0px;
     padding: 0 12px 2px;
     border-color: transparent;
+    text-shadow: none;
 }
 
 
@@ -214,6 +218,11 @@ input[type=checkbox], input[type=color], input[type=date], input[type=datetime-l
 body{
     height:130%;
 }
+
+#login{
+    padding: 0px;
+}
+
     #login {
         top:50%;
     }
