@@ -3,7 +3,7 @@
  * Copyright © 2015 All Rights Reserved. 
  *
  * @author Averta [www.averta.net]
- * @version 2.16.3
+ * @version 2.16.6
  * @date Dec 2015
  */
 
@@ -4908,7 +4908,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 	};
 
 	MasterSlider.author  		= 'Averta Ltd. (www.averta.net)';
-	MasterSlider.version 		= '2.16.3';
+	MasterSlider.version 		= '2.16.6';
 	MasterSlider.releaseDate 	= 'Dec 2015';
 
 	// Master Slider plugins.
@@ -5420,7 +5420,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
         }
 
 		$(document).ready(function(){
-            if ( !that.initialize ) {
+            if ( !that.initialized ) {
     			that._docReady = true;
     			that._init();
             }
@@ -5623,7 +5623,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
             return false;
         }
 
-        _ready.apply( this, arguments );
+        return _ready.apply( this, arguments );
     };
 
 })(jQuery, window, document);

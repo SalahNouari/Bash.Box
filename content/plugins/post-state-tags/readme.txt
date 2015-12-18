@@ -1,10 +1,10 @@
 === Plugin Name ===
 Contributors: brandbrilliance
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=D5FQNCTEV2HVJ
+Donate link: http://j.mp/1QvdGgX
 Tags: wp-admin, admin, post state, color, post colours, list, highlight
 Requires at least: 3.8
-Tested up to: 4.3
-Stable tag: 1.1.2
+Tested up to: 4.4
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ Highlights the left border color and background color and reformats the post sta
 * Reset settings to defaults in Admin Settings screen
 
 > <strong>IMPORTANT NOTE</strong><br>
-> If all your posts or pages have a status of published, nothing will display. This plugin doesn't add anything to regular **published** posts, otherwise the screen will look way too colourful. To see the plugin in action, you will have to set at least one of your posts or pages to DRAFT, PENDING, PROTECTED, PRIVATE or any status **other** than published, to make it show something.
+> If all your posts or pages are only published, nothing in the display will change. This plugin doesn't add anything to regular **Published** posts, otherwise the screen will look way too colourful. To see the plugin in action, you will have to set at least one of your posts or pages to DRAFT, PENDING, PROTECTED, PRIVATE or any status **other** than published, to make it show something.
 
 = Notes =
 
@@ -56,6 +56,10 @@ Highlights the left border color and background color and reformats the post sta
 = Where are the settings? =
 
 You can click the Settings link on the plugin install screen, or find it under SETTINGS: Post State Tags.
+
+= Why are there no default settings to make it look like the screenshots? =
+
+On some installations, the plugin setup doesn't work correctly (haven't figured that out), so the settings appears blank. Just click on the [RESET SETTINGS] button at the bottom to reset the settings, make change after and then SAVE.
 
 = Can I change colors? =
 
@@ -100,6 +104,9 @@ add_filter( 'bb_pst_lightvalue', 'my_lightvalue', 10, 2 );
 3. Screenshot showing the Settings interface where you can adjust settings like colors, icons 
 
 == Changelog ==
+
+= 1.1.3 =
+* Small style fixes in the way Wordpress 4.4 displays settings
 
 = 1.1.2 =
 * Added corrected support for new inline scheduled post status

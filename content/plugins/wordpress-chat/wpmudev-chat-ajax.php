@@ -11,7 +11,7 @@ if ( ! empty( $configs_array ) ) {
 }
 if ( ( isset( $configs_array['ABSPATH'] ) ) && ( ! empty( $configs_array['ABSPATH'] ) ) ) {
 	$configs_array['ABSPATH'] = base64_decode( $configs_array['ABSPATH'] );
-	if ( ! file_exists( $configs_array['ABSPATH'] . "/wp-load.php" ) ) //header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	if ( ! file_exists( $configs_array['ABSPATH'] . "/wp-load.php" ) ) //header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);	     	 	 	  	  		
 	{
 		die();
 	}
@@ -47,6 +47,19 @@ if ( $_POST['function'] !== "chat_messages_update" ) {
 	require( ABSPATH . WPINC . '/formatting.php' );
 	require( ABSPATH . WPINC . '/capabilities.php' );
 	require( ABSPATH . WPINC . '/user.php' );
+	//Added in WordPress 4.4
+	if ( file_exists( ABSPATH . WPINC . '/class-wp-user.php' ) ) {
+		require( ABSPATH . WPINC . '/class-wp-user.php' );
+	}
+	if ( file_exists( ABSPATH . WPINC . '/class-wp-role.php' ) ) {
+		require( ABSPATH . WPINC . '/class-wp-role.php' );
+	}
+	if ( file_exists( ABSPATH . WPINC . '/class-wp-roles.php' ) ) {
+		require( ABSPATH . WPINC . '/class-wp-roles.php' );
+	}
+	if ( file_exists( ABSPATH . WPINC . '/rest-api.php' ) ) {
+		require( ABSPATH . WPINC . '/rest-api.php' );
+	}
 	if ( file_exists( ABSPATH . WPINC . '/session.php' ) ) {
 		require( ABSPATH . WPINC . '/session.php' );
 	}

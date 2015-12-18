@@ -2,8 +2,6 @@
 
 function wpmudev_chat_form_section_logs( $form_section = 'page' ) {
 	global $wpmudev_chat, $wp_roles;
-
-	//echo "log_display_role=[". $wpmudev_chat->get_option('log_display_role', $form_section) ."]<br />";
 	?>
 	<fieldset>
 		<legend><?php _e( "Logs", $wpmudev_chat->translation_domain ); ?></legend>
@@ -37,10 +35,6 @@ function wpmudev_chat_form_section_logs( $form_section = 'page' ) {
 								<option value="enabled-link-above" <?php print ( $wpmudev_chat->get_option( 'log_display', $form_section ) == 'enabled-link-above' ) ? 'selected="selected"' : ''; ?>><?php _e( "Enabled - Link above chat", $wpmudev_chat->translation_domain ); ?></option>
 								<option value="enabled-link-below" <?php print ( $wpmudev_chat->get_option( 'log_display', $form_section ) == 'enabled-link-below' ) ? 'selected="selected"' : ''; ?>><?php _e( "Enabled - Link below chat", $wpmudev_chat->translation_domain ); ?></option>
 							</optgroup>
-
-							<?php /* ?>						<option value="enabled-settings-menu" <?php print ($wpmudev_chat->get_option('log_display', $form_section) == 'enabled-settings-menu') ? 'selected="selected"':''; ?>><?php _e("Enabled - Settings menu", $wpmudev_chat->translation_domain); ?></option>
-<?php */
-							?>
 						</select>
 					</td>
 					<td class="chat-help-column"><?php echo wpmudev_chat_get_help_item( 'log_display', 'tip' ); ?></td>
@@ -84,8 +78,7 @@ function wpmudev_chat_form_section_logs( $form_section = 'page' ) {
 					$log_display_levels['group_members'] = __( "Group Members", $wpmudev_chat->translation_domain );
 					$log_display_levels['group_mods']    = __( "Group Mods and Admins", $wpmudev_chat->translation_domain );
 					$log_display_levels['group_admins']  = __( "Group Admins Only", $wpmudev_chat->translation_domain );
-					//echo "log_display_levels<pre>"; print_r($log_display_levels); echo "</pre>";
-					//echo "selected_role_level [". $wpmudev_chat->get_option('log_display_role_level', $form_section) ."]<br />";
+
 					if ( count( $log_display_levels ) ) {
 						?>
 						<tr>
@@ -184,18 +177,6 @@ function wpmudev_chat_form_section_logs_limit( $form_section = 'page' ) {
 				</td>
 				<td class="chat-help-column"><?php echo wpmudev_chat_get_help_item( 'log_limit', 'tip' ); ?></td>
 			</tr>
-			<?php /* ?>
-		<tr>
-			<td class="chat-label-column"><label for="chat_log_purge"><?php _e("Automatically Purge Messages", $wpmudev_chat->translation_domain); ?></label></td>
-			<td class="chat-value-column">
-				<input type="text" id="chat_log_purge" name="chat[log_purge]"
-					value="<?php print $wpmudev_chat->get_option('log_purge', $form_section); ?>" /> hours<br />
-				<span class="description"><?php _e("Leave empty for no purge. Does purge database messages", $wpmudev_chat->translation_domain); ?></span>
-			</td>
-			<td class="chat-help-column"><?php echo wpmudev_chat_get_help_item('log_purge', 'tip'); ?></td>
-		</tr>
-<?php */
-			?>
 		</table>
 	</fieldset>
 <?php

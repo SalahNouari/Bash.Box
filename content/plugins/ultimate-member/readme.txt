@@ -1,13 +1,13 @@
 === Ultimate Member ===
 Author URI: https://ultimatemember.com/
 Plugin URI: https://ultimatemember.com/
-Contributors: ultimatemember
+Contributors: ultimatemember, champsupertramp
 Donate link: 
 Tags: access control, author, authors, author profile, comments, community, communities, conditional fields, conditional logic, conditional menus, content protection, custom fields, file uploads, form builder, front-end login, front-end registration, gravatar, hide wp-admin, login, login page, logged-in users, mandrill, member, members, membership, member directory, online users, profile, profiles, profile builder, registration, restriction, restrict content, role creation, role menus, search filters, sign in, sign up, social network, star ratings, toolbar, user, users, user fields, user profile, user-profile, user profiles, user roles
 Requires at least: 4.1
-Tested up to: 4.3
+Tested up to: 4.4
 
-Stable Tag: 1.3.30
+Stable Tag: 1.3.35
 
 License: GNU Version 2 or Any Later Version
 
@@ -37,7 +37,6 @@ Ultimate Member is a powerful and flexible plugin that makes it a breeze for use
 * Developer friendly with dozens of actions and filters
 * Multi-site compatibility
 * Mandrill compatibility
-* WPML Support
 
 Read about all of the plugin's features at [Ultimate Member](https://ultimatemember.com)
 
@@ -146,6 +145,35 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 16. Screenshot 16
 
 == Changelog ==
+
+= 1.3.35: December 15, 2015 =
+
+* Fixed: registration/login issues resolved
+
+= 1.3.34: December 15, 2015 =
+
+* New: new privacy option for fields: allow profile owner & specific roles to view the field
+* Fixed: wrong php syntax in admin notice
+
+= 1.3.33: December 15, 2015 =
+
+* Fixed: Member search on homepage
+* Fixed: emoticons support
+* Fixed: redux notices, css styles in admin
+* Fixed: users not being deleted
+
+= 1.3.32: December 10, 2015 =
+
+* Fixed: array format and notices
+* Fixed: users search, delete confirmation and role filter
+* Fixed: unique key field validation
+
+= 1.3.31: December 9, 2015 =
+
+* Fixed: Add slash in base url filter for multisite
+* Fixed: manage user roles, status and filters
+* Fixed: Enable WPML support to all UM url/links
+* Fixed: Sanitize referers and printing notices in admin screens
 
 = 1.3.30: December 3, 2015 =
 

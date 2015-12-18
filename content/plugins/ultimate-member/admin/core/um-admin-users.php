@@ -159,9 +159,9 @@ class UM_Admin_Users {
 		global $ultimatemember;
 		
 		$admin_err = 0;
-		
+
 		if (isset($_REQUEST) && !empty ($_REQUEST) ){
-		
+			 
 			// bulk change role
 			if (isset($_REQUEST['users']) && is_array($_REQUEST['users']) && isset($_REQUEST['um_changeit']) && $_REQUEST['um_changeit'] != '' && isset($_REQUEST['um_change_role']) && !empty($_REQUEST['um_change_role']) ){
 			
@@ -171,7 +171,7 @@ class UM_Admin_Users {
 					check_admin_referer('bulk-users');
 					
 					$users = $_REQUEST['users'];
-					$new_role = $_REQUEST['um_change_role'];
+					$new_role = current( array_filter( $_REQUEST['um_change_role'] ) );
 					
 					foreach($users as $user_id){
 						$ultimatemember->user->set( $user_id );
@@ -207,9 +207,9 @@ class UM_Admin_Users {
 					check_admin_referer('bulk-users');
 					
 					$users = $_REQUEST['users'];
-					$bulk_action = $_REQUEST['um_bulk_action'];
+					$bulk_action = current( array_filter( $_REQUEST['um_bulk_action']) );
 					
-					if ( $bulk_action == 'um_delete' ) { // this needs confirmation
+					if ( 'um_delete' == $bulk_action )  { // this needs confirmation
 						
 						$uri = admin_url('users.php');
 						$userids = array_map( 'intval', (array) $_REQUEST['users'] );
@@ -254,8 +254,13 @@ class UM_Admin_Users {
 			}
 			
 			// filter by user role
-			if ( isset($_REQUEST['um_filter_role']) && ! isset( $_REQUEST['new_role'] ) && $_REQUEST['um_filter_role'] ) {
-				exit( wp_redirect( admin_url('users.php?um_role=' . $_REQUEST['um_filter_role'] ) ) );
+			if ( isset($_REQUEST['um_filter_role']) && ! isset( $_REQUEST['um_filter_processed'] ) && ( ! isset( $_REQUEST['new_role'] )  ||  empty( $_REQUEST['new_role'] ) ) && $_REQUEST['um_filter_role'] ) {
+				$filter_role = current( array_filter(  $_REQUEST['um_filter_role'] ) );
+				$uri = add_query_arg('um_role',$filter_role);
+				$uri = add_query_arg('s',$_REQUEST['s'], $uri);
+				$uri = add_query_arg('um_filter_processed',true, $uri);
+				
+				exit( wp_redirect( $uri ) );
 			}
 			
 		}
@@ -271,12 +276,13 @@ class UM_Admin_Users {
 			<div class="actions">
 			
 				<label class="screen-reader-text" for="um_filter_role"><?php _e('Filter by','ultimatemember'); ?></label>
-				<select name="um_filter_role" id="um_filter_role" class="umaf-selectjs" style="width: 120px">
+				<select name="um_filter_role[]" id="um_filter_role" class="umaf-selectjs" style="width: 120px">
 					<option value="0"><?php _e('Filter by','ultimatemember'); ?></option>
 					<?php
 						$roles = $ultimatemember->query->get_roles();
+						$um_filter_role = isset( $_REQUEST['um_filter_role'] )? current( array_filter($_REQUEST['um_filter_role']) ):'';
 						foreach( $roles as $role => $role_name ) { ?>
-						<option value="<?php echo urlencode( $role ); ?>"><?php echo $role_name; ?></option>
+						<option value="<?php echo urlencode( $role ); ?>" <?php selected($role,$um_filter_role); ?>><?php echo $role_name; ?></option>
 						<?php } ?>
 				</select>
 				
@@ -287,7 +293,7 @@ class UM_Admin_Users {
 			<div class="actions">
 			
 				<label class="screen-reader-text" for="um_bulk_action"><?php _e('Take Action','ultimatemember'); ?></label>
-				<select name="um_bulk_action" id="um_bulk_action" class="umaf-selectjs" style="width: 200px">
+				<select name="um_bulk_action[]" id="um_bulk_action" class="umaf-selectjs" style="width: 200px">
 					<option value="0"><?php _e('Take Action','ultimatemember'); ?></option>
 					<?php echo $ultimatemember->user->get_bulk_admin_actions(); ?>
 				</select>
@@ -299,7 +305,7 @@ class UM_Admin_Users {
 			<div class="actions">
 			
 				<label class="screen-reader-text" for="um_change_role"><?php _e('Community role&hellip;','ultimatemember'); ?></label>
-				<select name="um_change_role" id="um_change_role" class="umaf-selectjs" style="width: 160px">
+				<select name="um_change_role[]" id="um_change_role" class="umaf-selectjs" style="width: 160px">
 					<?php foreach($ultimatemember->query->get_roles( $add_default = 'Community role&hellip;' ) as $key => $value) { ?>
 					<option value="<?php echo $key; ?>"><?php echo $value; ?></option>
 					<?php } ?>

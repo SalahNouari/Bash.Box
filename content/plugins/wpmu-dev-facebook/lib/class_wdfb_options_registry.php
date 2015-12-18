@@ -55,7 +55,7 @@ class Wdfb_OptionsRegistry {
 	}
 
 	function get_network_option( $key, $option ) {
-		$opts = is_multisite() ? get_site_option( $key ) : get_option( $key );	     	 	 		 		   
+		$opts = is_multisite() ? get_site_option( $key ) : get_option( $key );
 
 		return @$opts[ $option ];
 	}

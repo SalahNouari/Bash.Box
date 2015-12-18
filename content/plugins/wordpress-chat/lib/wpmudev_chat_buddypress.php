@@ -36,7 +36,6 @@ function wpmudev_chat_buddypress_friends_list() {
 		}
 
 		$friend_data = wpmudev_chat_get_chat_status_data( $members_template->member->id, $friends_status );
-//		echo "friend_data<pre>"; print_r($friend_data); echo "</pre>";
 
 		$friend_status_display = $friend_data['icon'] . $friend_data['label'];
 		if ( ! empty( $friend_data['href'] ) ) {

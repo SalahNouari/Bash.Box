@@ -15,13 +15,15 @@ if (!class_exists('WPSHAPERE')) {
 	private $wp_df_submenu;
 	private $wps_options = 'wpshapere_options';
 	private $wps_menuorder_options = 'wpshapere_menuorder';
+                    public $aof_options;
 
 	function __construct()
 	{
-	   //add_action('after_setup_theme', array($this, 'generateOptions'));
+	    //add_action('after_setup_theme', array($this, 'generateOptions'));
                         //add_action('plugins_loaded', array($this, 'wps_load_textdomain'));
-                        $this->generateOptions();
-	    add_action('admin_menu', array($this, 'wps_sub_menus'));
+                        //$this->generateOptions();
+                        $this->aof_options = $this->get_wps_option_data($this->wps_options);
+                        add_action('admin_menu', array($this, 'wps_sub_menus'));
 	    add_action('admin_init', array($this, 'initialize_defaults'), 19);
 	    add_action('admin_init', array($this, 'customize_admin_menu'), 29);
 
@@ -35,10 +37,10 @@ if (!class_exists('WPSHAPERE')) {
 	    add_action( 'admin_bar_menu', array($this, 'add_wpshapere_nav_menus'), 99);
 	    add_action('wp_dashboard_setup', array($this, 'widget_functions'));
 	    if ( ! has_action( 'login_enqueue_scripts', array($this, 'wpshapereloginAssets') ) )
-		   add_action('login_enqueue_scripts', array($this, 'wpshapereloginAssets'), 10);
+                            add_action('login_enqueue_scripts', array($this, 'wpshapereloginAssets'), 10);
 	    add_action( 'admin_enqueue_scripts', array($this, 'wpshapereAssets'), 99999 );
-	    add_action('wp_ajax_wpshapeOptionscss', array($this, 'wpshapeOptionscss'));
-	    add_action('wp_ajax_nopriv_wpshapeLogincss', array($this, 'wpshapeLogincss'));
+                        add_action('admin_head', array($this, 'wpshapeOptionscss'));
+	    add_action('login_head', array($this, 'wpshapeLogincss'));
 	    add_action('wp_before_admin_bar_render', array($this, 'wps_remove_bar_links'), 0);
 	    add_filter('login_headerurl', array($this, 'wpshapere_login_url'));
 	    add_filter('login_headertitle', array($this, 'wpshapere_login_title'));
@@ -49,7 +51,25 @@ if (!class_exists('WPSHAPERE')) {
 	    add_action('login_footer', array($this, 'login_footer_content'));
 		
 	    add_action('wp_head', array($this, 'frontendActions'), 99999);
+                        add_action( 'activated_plugin', array($this, 'wps_activated' ));
+                        add_action( 'aof_before_heading', array($this, 'wps_welcome_msg'));
 	}
+        
+                    /*
+                    * Redirect to settings page after plugin activation
+                    */
+                   function wps_activated( $plugin ) {
+                       if( $plugin == plugin_basename( WPSHAPERE_PATH . "wpshapere.php" ) ) {
+                           exit( wp_redirect( admin_url( 'admin.php?page=wpshapere-options&status=wps-activated' ) ) );
+                       }
+                   }
+                   
+                   function wps_welcome_msg() {
+                       if(isset($_GET['status']) && $_GET['status'] == "wps-activated") {
+                           echo '<h1 style="line-height: 1.2em;font-size: 2.8em;font-weight: 400;">' . __('Welcome to WPShapere ', 'wps') . WPSHAPERE_VERSION . '</h1>';
+                           echo '<div class="wps_kb_link"><a target="_blank" href="http://kb.acmeedesign.com/kbase_categories/wpshapere/">Visit Knowledgebase</a></div>';
+                       }
+                   }
         
                     function wps_load_textdomain()
                     {
@@ -61,7 +81,10 @@ if (!class_exists('WPSHAPERE')) {
 	    $this->wp_df_menu = $menu;
 	    $this->wp_df_submenu = $submenu;
 	}
-
+                    
+                    /*
+                    * function to determine multi customization is enabled
+                    */
 	public function is_wps_single() {
 	    if(!is_multisite())
 		return true;
@@ -71,18 +94,18 @@ if (!class_exists('WPSHAPERE')) {
 	}
 
 	public function initFunctionss(){
-		if($this->get_wps_option('disable_auto_updates') === true)
+		if($this->aof_options['disable_auto_updates'] === true)
 			add_filter( 'automatic_updater_disabled', '__return_true' );
 		
-		if($this->get_wps_option('disable_update_emails') === true)
+		if($this->aof_options['disable_update_emails'] === true)
 			add_filter( 'auto_core_update_send_email', '__return_false' );
 		
-		if($this->get_wps_option('email_settings') != 3) {
+		if($this->aof_options['email_settings'] != 3) {
 			add_filter( 'wp_mail_from', array($this, 'custom_email_addr') );
 			add_filter( 'wp_mail_from_name', array($this, 'custom_email_name') );
 		}
 		
-		if($this->get_wps_option('hide_profile_color_picker') === true) {
+		if($this->aof_options['hide_profile_color_picker'] === true) {
 			remove_action( 'admin_color_scheme_picker', 'admin_color_scheme_picker' );
 		}		
 		register_nav_menus(array(			
@@ -97,28 +120,30 @@ if (!class_exists('WPSHAPERE')) {
 		wp_enqueue_script( 'loginjs-js', WPSHAPERE_DIR_URI . 'assets/js/loginjs.js', array( 'jquery' ), '', true );
 	}
 	public function wpshapereAssets($nowpage) 
-	{
+	{ 
+            wp_enqueue_script('jquery');
 	    wp_enqueue_style( 'dashicons' );
 	    wp_enqueue_style('fontAwesome-css', WPSHAPERE_DIR_URI . 'assets/font-awesome/css/font-awesome.min.css', '', WPSHAPERE_VERSION);
-	    wp_enqueue_style('wpshapereOptions-css', admin_url('admin-ajax.php').'?action=wpshapeOptionscss', '', WPSHAPERE_VERSION);
+	    //wp_enqueue_style('wpshapereOptions-css', admin_url('admin-ajax.php').'?action=wpshapeOptionscss', '', WPSHAPERE_VERSION);
 	    wp_enqueue_style('wpshapereMain-css', WPSHAPERE_DIR_URI . 'assets/css/wpshapere.styles.css', '', WPSHAPERE_VERSION);
 	    wp_enqueue_script( 'wps-livepreview', WPSHAPERE_DIR_URI . 'assets/js/live-preview.js', array( 'jquery' ), '', true );
-	    if($nowpage == 'wpshapere-options_page_wps_admin_menuorder') {		   
-		wp_enqueue_style('iconPicker-css', WPSHAPERE_DIR_URI . 'includes/icon-picker/css/icon-picker.css', '', WPSHAPERE_VERSION);
-		wp_enqueue_script( 'iconPicker-js', WPSHAPERE_DIR_URI . 'includes/icon-picker/js/icon-picker.js', array( 'jquery' ), '', true );
-		wp_enqueue_script( 'wps-sortable', WPSHAPERE_DIR_URI . 'assets/js/sortjs.js', array( 'jquery' ), '', true );
-	    }
+	    if($nowpage == 'wpshapere_page_wps_admin_menuorder') {	            
+                            wp_enqueue_script('jquery-ui-sortable');
+                            wp_enqueue_style('iconPicker-css', WPSHAPERE_DIR_URI . 'includes/icon-picker/css/icon-picker.css', '', WPSHAPERE_VERSION);
+                            wp_enqueue_script( 'iconPicker-js', WPSHAPERE_DIR_URI . 'includes/icon-picker/js/icon-picker.js', array( 'jquery' ), '', true );
+                            wp_enqueue_script( 'wps-sortable', WPSHAPERE_DIR_URI . 'assets/js/sortjs.js', array( 'jquery' ), '', true );
+	   }
 	}
 
 	public function wpshapeLogincss()
 	{
-	    require_once(WPSHAPERE_PATH.'assets/css/wpshapere.login.css.php');
-	    exit;
+                        if($this->aof_options['disable_styles_login'] != 1) {
+                            include_once(WPSHAPERE_PATH.'assets/css/wpshapere.login.css.php');
+                        }
 	}
 	public function wpshapeOptionscss() 
 	{
-	  require_once(WPSHAPERE_PATH.'assets/css/wpshapere.css.php');
-	  exit;
+	  include_once(WPSHAPERE_PATH.'assets/css/wpshapere.css.php');
 	}
 
 	public function generateOptions()
@@ -128,11 +153,11 @@ if (!class_exists('WPSHAPERE')) {
 
 	public function generalFns() {
 	    $screen = get_current_screen();
-                        $admin_general_options_data = $this->get_wps_option('admin_generaloptions');
+                        $admin_general_options_data = ( !empty($this->aof_options['admin_generaloptions']) ) ? $this->aof_options['admin_generaloptions'] : "";
                         $admin_generaloptions = (is_serialized( $admin_general_options_data )) ? unserialize( $admin_general_options_data ) : $admin_general_options_data;
 	    if(!empty($admin_generaloptions)) {
                             foreach($admin_generaloptions as $general_opt) {
-                                    if($general_opt == 1) {
+                                    if(isset($screen) && $general_opt == 1) {
                                             $screen->remove_help_tabs();
                                     }
                                     elseif($general_opt == 2) {
@@ -189,15 +214,15 @@ if (!class_exists('WPSHAPERE')) {
 	}
 	
 	public function custom_email_addr($email){
-		if($this->get_wps_option('email_settings') == 1)
+		if($this->aof_options['email_settings'] == 1)
 			return get_option('admin_email');
-		else return $this->get_wps_option('email_from_addr');
+		else return $this->aof_options['email_from_addr'];
 	}
 	
 	public function custom_email_name($name){
-		if($this->get_wps_option('email_settings') == 1)
+		if($this->aof_options['email_settings'] == 1)
 			return get_option('blogname');
-		else return $this->get_wps_option('email_from_name');
+		else return $this->aof_options['email_from_name'];
 	}
 
 	public function wps_sub_menus() 
@@ -222,7 +247,7 @@ if (!class_exists('WPSHAPERE')) {
                         echo '</h2><div id="message" class="updated below-h2"><p>';
                         echo __('By default, all menu items will be shown to administrator users. ', 'wps');
                         echo '<a href="' . admin_url() . 'admin.php?page=wpshapere-options&tab=general_options#wpshapere_show_all_menu_to_admin2"><strong>';
-                        echo __('Click here', 'wps');
+                        echo __('Click here ', 'wps');
                         echo '</strong></a>';
                         echo __('to customize who can access to all menu items.', 'wps');
                         echo '</p></div><div class="wps_menu_order">';
@@ -305,7 +330,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	public function customize_admin_menu(){
 	    global $menu, $submenu;
 	    $wps_sorteddmenu = $this->get_wps_option_data($this->wps_menuorder_options);
-                        $privilege_data = $this->get_wps_option('privilege_users');
+                        $privilege_data = (!empty($this->aof_options['privilege_users'])) ? $this->aof_options['privilege_users'] : "";
 	    $privilege_users = (is_serialized( $privilege_data )) ? unserialize( $privilege_data ) : $privilege_data;
 	    $user_id = get_current_user_id();
 	    $submenu_sort_exists = $wps_sorteddmenu['index.php_sbchild'];
@@ -319,7 +344,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                                 $menu_value[5] = ""; //removing list ID in order to override icons set by other plugins
                                 if($menu_value[4] != 'wp-menu-separator' && !preg_match("/separator/i",$menu_value[4])){
                                         if(is_super_admin()) {
-                                                                                            $menu_access_data = $this->get_wps_option('show_all_menu_to_admin');
+                                                                                            $menu_access_data = $this->aof_options['show_all_menu_to_admin'];
                                                                                             if(!empty($menu_access_data) && $menu_access_data == 2 && !in_array($user_id, $privilege_users) && $getMenudata[3] == "hide")
                                                                                                 unset($menu[$menu_key]);
                                         }
@@ -342,7 +367,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                                                         $sbmenu_label = (isset($wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][1])) ? $wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][1] : "";
                                                         $sbmenu_hide = (isset($wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][3])) ? $wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][3] : "";
                                                         if(is_super_admin()) {
-                                                                if($this->get_wps_option('show_all_menu_to_admin') == 2 && !in_array($user_id, $privilege_users) && $sbmenu_hide == "hide")
+                                                                if($this->aof_options['show_all_menu_to_admin'] == 2 && !in_array($user_id, $privilege_users) && $sbmenu_hide == "hide")
                                                                 unset($submenu[$menu_value[2]][$submenu_key]);
                                                         }
                                                         if(!is_super_admin() && $sbmenu_hide == "hide")
@@ -401,122 +426,130 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 
 	public function download_settings()
 	{
-		if(isset($_POST['wps_import_settings_field']) ) {
-			if(!wp_verify_nonce( $_POST['wps_import_settings_field'], 'wps_import_settings_nonce' ) )
-				exit();
-			$imp_settings_data = trim($_POST['wps_import_settings_data']);
-			if(empty($imp_settings_data)) {
-				wp_safe_redirect( admin_url( 'admin.php?page=wps_impexp_settings&status=fileerror' ) ); 
-				exit();				
-			}
+                        if(isset($_POST['wps_import_settings_field']) ) {
+                                if(!wp_verify_nonce( $_POST['wps_import_settings_field'], 'wps_import_settings_nonce' ) )
+                                        exit();
+                                $imp_settings_data = trim($_POST['wps_import_settings_data']);
+                                if(empty($imp_settings_data)) {
+                                        wp_safe_redirect( admin_url( 'admin.php?page=wps_impexp_settings&status=fileerror' ) ); 
+                                        exit();				
+                                }
 
-			if(!empty($imp_settings_data)) {
-				$decodeddata = base64_decode($imp_settings_data);
-				$datacontent = explode("---nnn---", $decodeddata);
-				$wpshapere_options_data = trim($datacontent[0]);
-				$wpsmenuorder_data = trim($datacontent[1]);
-				if($this->is_wps_single()) {
-				    update_option($this->wps_options, $wpshapere_options_data);
-				    update_option($this->wps_menuorder_options, $wpsmenuorder_data);
-				}
-				else {
-				    update_site_option($this->wps_options, $wpshapere_options_data);
-				    update_site_option($this->wps_menuorder_options, $wpsmenuorder_data);
-				}
-				wp_safe_redirect( admin_url( 'admin.php?page=wps_impexp_settings&status=updated' ) ); 
-				exit();
-			}
-		}
-		if(isset($_GET['wps_export_settings'])) {
-			if(!wp_verify_nonce( $_GET['wps_export_settings_field'], 'wps_export_settings_nonce' ) )
-			    exit();
-			if($this->is_wps_single()) {
-			    $main_options = get_option($this->wps_options);
-			    $wps_menu_order = get_option($this->wps_menuorder_options);
-			}
-			else{
-			    $main_options = get_site_option($this->wps_options);
-			    $wps_menu_order = get_site_option($this->wps_menuorder_options);
-			}
-			$file_data = $main_options . "---nnn---" . $wps_menu_order;
-			$handle = fopen("wpshapere-settings.txt", "w");
-			fwrite($handle, $file_data);
-			fclose($handle);
+                                if(!empty($imp_settings_data)) {
+                                        $decodeddata = base64_decode($imp_settings_data);
+                                        $datacontent = explode("---nnn---", $decodeddata);
+                                        $wpshapere_options_data = trim($datacontent[0]);
+                                        $wpsmenuorder_data = trim($datacontent[1]);
+                                        if($this->is_wps_single()) {
+                                            update_option($this->wps_options, $wpshapere_options_data);
+                                            update_option($this->wps_menuorder_options, $wpsmenuorder_data);
+                                        }
+                                        else {
+                                            update_site_option($this->wps_options, $wpshapere_options_data);
+                                            update_site_option($this->wps_menuorder_options, $wpsmenuorder_data);
+                                        }
+                                        wp_safe_redirect( admin_url( 'admin.php?page=wps_impexp_settings&status=updated' ) ); 
+                                        exit();
+                                }
+                        }
+                        if(isset($_GET['wps_export_settings'])) {
+                                if(!wp_verify_nonce( $_GET['wps_export_settings_field'], 'wps_export_settings_nonce' ) )
+                                    exit();
+                                if($this->is_wps_single()) {
+                                    $main_options = get_option($this->wps_options);
+                                    $wps_menu_order = get_option($this->wps_menuorder_options);
+                                }
+                                else{
+                                    $main_options = get_site_option($this->wps_options);
+                                    $wps_menu_order = get_site_option($this->wps_menuorder_options);
+                                }
+                                $file_data = $main_options . "---nnn---" . $wps_menu_order;
+                                $handle = fopen("wpshapere-settings.txt", "w");
+                                fwrite($handle, $file_data);
+                                fclose($handle);
 
-			header('Content-Type: application/octet-stream');
-			header('Content-Disposition: attachment; filename='.basename('wpshapere-settings.txt'));
-			header('Expires: 0');
-			header('Cache-Control: must-revalidate');
-			header('Pragma: public');
-			header('Content-Length: ' . filesize('wpshapere-settings.txt'));
-			readfile('wpshapere-settings.txt');
-			exit();
-		}
-		if(isset($_POST['wps_admin_custommenu_field']) ) {
-			if(!wp_verify_nonce( $_POST['wps_admin_custommenu_field'], 'wps_admin_custommenu_nonce' ) )
-			    exit();
-			if(isset($_POST['save_sorting'])) {
-				$wpsmenuOrder = array();
-				foreach($_POST['parentmenu_item'] as $parentMenu){
-					$split_parent = explode("^", $parentMenu);
-					$menuName = $this->wps_clean_name($split_parent[0]);
-					$custom_label = isset($_POST['menu_item_label'][$split_parent[2]]) ? $_POST['menu_item_label'][$split_parent[2]] : null;
-					$custom_icon = isset($_POST['menu_item_icon'][$split_parent[2]]) ? $_POST['menu_item_icon'][$split_parent[2]] : null;
-					$menu_hide = isset($_POST['menu_item_hide'][$split_parent[2]]) ? $_POST['menu_item_hide'][$split_parent[2]] : null;
-					$wpsmenuOrder[$menuName] = array($custom_label, $split_parent[1], $custom_icon, $menu_hide);
+                                header('Content-Type: application/octet-stream');
+                                header('Content-Disposition: attachment; filename='.basename('wpshapere-settings.txt'));
+                                header('Expires: 0');
+                                header('Cache-Control: must-revalidate');
+                                header('Pragma: public');
+                                header('Content-Length: ' . filesize('wpshapere-settings.txt'));
+                                readfile('wpshapere-settings.txt');
+                                exit();
+                        }
+                        if(isset($_POST['wps_admin_custommenu_field']) ) {
+                                if(!wp_verify_nonce( $_POST['wps_admin_custommenu_field'], 'wps_admin_custommenu_nonce' ) )
+                                    exit();
+                                if(isset($_POST['save_sorting'])) {
+                                        $wpsmenuOrder = array();
+                                        foreach($_POST['parentmenu_item'] as $parentMenu){
+                                                $split_parent = explode("^", $parentMenu);
+                                                $menuName = $this->wps_clean_name($split_parent[0]);
+                                                $custom_label = isset($_POST['menu_item_label'][$split_parent[2]]) ? $_POST['menu_item_label'][$split_parent[2]] : null;
+                                                $custom_icon = isset($_POST['menu_item_icon'][$split_parent[2]]) ? $_POST['menu_item_icon'][$split_parent[2]] : null;
+                                                $menu_hide = isset($_POST['menu_item_hide'][$split_parent[2]]) ? $_POST['menu_item_hide'][$split_parent[2]] : null;
+                                                $wpsmenuOrder[$menuName] = array($custom_label, $split_parent[1], $custom_icon, $menu_hide);
 
-					//sub menu items
-					$childname = $menuName . '_child';
-					$childlabel = $menuName . '_child_label';
-					$childhide = $menuName . '_child_hide';
-					unset($wpssubmenuOrder);
-					$wpssubmenuOrder = array();
-					if(isset($_POST[$childname])){
-						foreach($_POST[$childname] as $childMenu){
-							$sb_key = explode("^", $childMenu);
-							$subcustom_label = (isset($_POST[$childlabel][$sb_key[2]])) ? trim($_POST[$childlabel][$sb_key[2]]) : "";
-							$submenu_hide = (isset($_POST[$childhide][$sb_key[2]])) ? trim($_POST[$childhide][$sb_key[2]]) : "";
-							$wpssubmenuOrder[$sb_key[1]] = array($sb_key[0], $subcustom_label, $sb_key[2], $submenu_hide);
-						}
-					}
-					$subMenu_slug = trim($split_parent[1]);
-					$wpsmenuOrder[$subMenu_slug . '_sbchild'] = $wpssubmenuOrder;
-				}
+                                                //sub menu items
+                                                $childname = $menuName . '_child';
+                                                $childlabel = $menuName . '_child_label';
+                                                $childhide = $menuName . '_child_hide';
+                                                unset($wpssubmenuOrder);
+                                                $wpssubmenuOrder = array();
+                                                if(isset($_POST[$childname])){
+                                                        foreach($_POST[$childname] as $childMenu){
+                                                                $sb_key = explode("^", $childMenu);
+                                                                $subcustom_label = (isset($_POST[$childlabel][$sb_key[2]])) ? trim($_POST[$childlabel][$sb_key[2]]) : "";
+                                                                $submenu_hide = (isset($_POST[$childhide][$sb_key[2]])) ? trim($_POST[$childhide][$sb_key[2]]) : "";
+                                                                $wpssubmenuOrder[$sb_key[1]] = array($sb_key[0], $subcustom_label, $sb_key[2], $submenu_hide);
+                                                        }
+                                                }
+                                                $subMenu_slug = trim($split_parent[1]);
+                                                $wpsmenuOrder[$subMenu_slug . '_sbchild'] = $wpssubmenuOrder;
+                                        }
 
-				$custom_admin_menu_order = serialize($wpsmenuOrder);
-				if($this->is_wps_single())
-					update_option($this->wps_menuorder_options, $custom_admin_menu_order);
-				else 
-					update_site_option($this->wps_menuorder_options, $custom_admin_menu_order);
-			}
-			elseif(isset($_POST['reset_sorting'])) {
-				if($this->is_wps_single())
-					update_option($this->wps_menuorder_options, '');
-				else 
-					update_site_option($this->wps_menuorder_options, '');
-			}
-		}
+                                        $custom_admin_menu_order = serialize($wpsmenuOrder);
+                                        if($this->is_wps_single())
+                                                update_option($this->wps_menuorder_options, $custom_admin_menu_order);
+                                        else 
+                                                update_site_option($this->wps_menuorder_options, $custom_admin_menu_order);
+                                }
+                                elseif(isset($_POST['reset_sorting'])) {
+                                        if($this->is_wps_single())
+                                                update_option($this->wps_menuorder_options, '');
+                                        else 
+                                                update_site_option($this->wps_menuorder_options, '');
+                                }
+                        }
 	}
 	
 	public function wps_settings() {
-                        if($this->is_wps_single())
-                            $settings_data = get_option($this->wps_options) . "---nnn---" . get_option($this->wps_menuorder_options);
-                        else
-                            $settings_data = get_site_option($this->wps_options) . "---nnn---" . get_site_option($this->wps_menuorder_options);
-                        return base64_encode($settings_data);
+                        if($this->is_wps_single()) {     //if blog wide options                      
+                            $wps_options_data = (!is_serialized(get_option($this->wps_options))) ? maybe_serialize(get_option($this->wps_options)) : get_option($this->wps_options);
+                            $wps_menu_data = (!is_serialized(get_option($this->wps_menuorder_options))) ? maybe_serialize(get_option($this->wps_menuorder_options)) : get_option($this->wps_menuorder_options);
+                            $wps_settings_data = $wps_options_data . "---nnn---" . $wps_menu_data;
+                        }
+                        else { //if network wide options
+                            $wps_options_data = (!is_serialized(get_site_option($this->wps_options))) ? maybe_serialize(get_site_option($this->wps_options)) : get_site_option($this->wps_options);
+                            $wps_menu_data = (!is_serialized(get_site_option($this->wps_menuorder_options))) ? maybe_serialize(get_site_option($this->wps_menuorder_options)) : get_site_option($this->wps_menuorder_options);
+                            $wps_settings_data = $wps_options_data . "---nnn---" . $wps_menu_data;                            
+                        }
+                        
+                        return base64_encode($wps_settings_data);
+                        
 	}
 
 	public function login_footer_content()
 	{
-	        $login_footer_content = $this->get_wps_option('login_footer_content');
+	        $login_footer_content = $this->aof_options['login_footer_content'];
                             echo '<div class="login_footer_content">';
-                            if(!empty($login_footer_content)) echo $this->get_wps_option('login_footer_content');
+                            if(!empty($login_footer_content)) echo $this->aof_options['login_footer_content'];
                             echo '</div>';
 	}
 
 	public function wpsbrandFooter() 
 	{
-		echo $this->get_wps_option('admin_footer_txt');
+                        echo $this->aof_options['admin_footer_txt'];
 	}
 
 	public function wpsremoveVersion()
@@ -528,7 +561,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	public function wps_remove_bar_links() 
 	{
                         global $wp_admin_bar;
-                        $admin_bar_menu_data = $this->get_wps_option('hide_admin_bar_menus') ;
+                        $admin_bar_menu_data = $this->aof_options['hide_admin_bar_menus'] ;
                         $hide_admin_bar_menus = (is_serialized($admin_bar_menu_data)) ? unserialize($admin_bar_menu_data) : $admin_bar_menu_data;
 
                         $wp_admin_bar->remove_menu('view');
@@ -553,11 +586,11 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	}
 
 	public function add_wpshapere_menus($wp_admin_bar) {
-		$admin_logo = $this->get_wps_option('admin_logo');
+		$admin_logo = $this->aof_options['admin_logo'];
 		if(!empty($admin_logo)) {
 			$wp_admin_bar->add_node( array(
 				'id'    => 'wpshape_site_title',
-				//'title' => $this->get_wps_option('admin_title'),
+				//'title' => $this->aof_options['admin_title'],
 				'href'  => admin_url(),
 				'meta'  => array( 'class' => 'wpshape_site_title' )
 			) );
@@ -630,14 +663,17 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	function get_wps_option($option_id) {
                         //$getoptions = unserialize(get_option( 'wpshapere_options' ));
                        // return $getoptions[$option_id];
-                        return $this->wpshapereOptions->getOption( $option_id );
+                        //return $this->wpshapereOptions->getOption( $option_id );
 	}
 
 	public function get_wps_option_data( $option_id ) {
-	    if($this->is_wps_single())
-                            return unserialize(get_option($option_id));
-	    else
-                            return unserialize(get_site_option($option_id));
+	    if($this->is_wps_single()) {
+                            $get_wps_option_data = (is_serialized(get_option($option_id))) ? unserialize(get_option($option_id)) : get_option($option_id);
+                         }
+	    else {
+                            $get_wps_option_data = (is_serialized(get_site_option($option_id))) ? unserialize(get_site_option($option_id)) : get_site_option($option_id);
+                        }
+                        return $get_wps_option_data;
 	}
 
 	public function get_wps_image_url($imgid, $size='full') {
@@ -656,7 +692,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 
 	public function wpshapere_login_url()
 	{
-		$login_logo_url = $this->get_wps_option('login_logo_url');
+		$login_logo_url = $this->aof_options['login_logo_url'];
 		if(empty($login_logo_url))
 			return site_url();
 		else return $login_logo_url;
@@ -674,7 +710,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 
 	public function widget_functions() {
                         global $wp_meta_boxes;
-                        $dash_widgets_removal_data = $this->get_wps_option('remove_dash_widgets');
+                        $dash_widgets_removal_data = $this->aof_options['remove_dash_widgets'];
                         $remove_dash_widgets = (is_serialized($dash_widgets_removal_data)) ? unserialize($dash_widgets_removal_data) : $dash_widgets_removal_data;
 
                         //Removing unwanted widgets
@@ -710,11 +746,11 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 		//Creating new widgets
 		$wps_widget_handle = array();
 		for($i = 1; $i <= 4; $i++) {
-			$wps_widget_handle['type'] = $this->get_wps_option( 'wps_widget_' . $i .'_type' );
-			$wps_widget_handle['pos'] = $this->get_wps_option( 'wps_widget_' . $i .'_position' );
-			$wps_widget_handle['title'] = $this->get_wps_option( 'wps_widget_' . $i .'_title' );
-			$wps_widget_handle['content'] = do_shortcode($this->get_wps_option( 'wps_widget_' . $i .'_content' ));
-			$wps_widget_handle['rss'] = $this->get_wps_option( 'wps_widget_' . $i .'_rss' );
+			$wps_widget_handle['type'] = $this->aof_options[ 'wps_widget_' . $i .'_type' ];
+			$wps_widget_handle['pos'] = $this->aof_options[ 'wps_widget_' . $i .'_position' ];
+			$wps_widget_handle['title'] = $this->aof_options[ 'wps_widget_' . $i .'_title' ];
+			$wps_widget_handle['content'] = do_shortcode($this->aof_options[ 'wps_widget_' . $i .'_content']);
+			$wps_widget_handle['rss'] = $this->aof_options[ 'wps_widget_' . $i .'_rss' ];
 			if(!empty($wps_widget_handle['title']) || !empty($wps_widget_handle['content']) || !empty($wps_widget_handle['rss']))
 				add_meta_box('wps_dashwidget_' . $i, $wps_widget_handle['title'], array($this, 'wps_display_widget_content'), 'dashboard', $wps_widget_handle['pos'], 'high', $wps_widget_handle);
 		}
@@ -780,21 +816,21 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	public function frontendActions()
 	{
 	    //remove admin bar	
-	    if($this->get_wps_option('hide_admin_bar') === true) {
+	    if($this->aof_options['hide_admin_bar'] === true) {
 		add_filter( 'show_admin_bar', '__return_false' );
 		echo '<style type="text/css">html { margin-top: 0 !important; }</style>';
 	    }
 	    else {
 ?>
 		<style>
-		#wpadminbar, #wpadminbar .menupop .ab-sub-wrapper { background: <?php echo $this->get_wps_option('admin_bar_color'); ?>;}
-#wpadminbar a.ab-item, #wpadminbar>#wp-toolbar span.ab-label, #wpadminbar>#wp-toolbar span.noticon { color: <?php echo $this->get_wps_option('admin_bar_menu_color'); ?> }
-#wpadminbar .ab-top-menu>li>.ab-item:focus, #wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, #wpadminbar .ab-top-menu>li:hover>.ab-item, #wpadminbar .ab-top-menu>li.hover>.ab-item, #wpadminbar .quicklinks .menupop ul li a:focus, #wpadminbar .quicklinks .menupop ul li a:focus strong, #wpadminbar .quicklinks .menupop ul li a:hover, #wpadminbar-nojs .ab-top-menu>li.menupop:hover>.ab-item, #wpadminbar .ab-top-menu>li.menupop.hover>.ab-item, #wpadminbar .quicklinks .menupop ul li a:hover strong, #wpadminbar .quicklinks .menupop.hover ul li a:focus, #wpadminbar .quicklinks .menupop.hover ul li a:hover, #wpadminbar li .ab-item:focus:before, #wpadminbar li a:focus .ab-icon:before, #wpadminbar li.hover .ab-icon:before, #wpadminbar li.hover .ab-item:before, #wpadminbar li:hover #adminbarsearch:before, #wpadminbar li:hover .ab-icon:before, #wpadminbar li:hover .ab-item:before, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:focus, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:hover, #wpadminbar li:hover .ab-item:after, #wpadminbar>#wp-toolbar a:focus span.ab-label, #wpadminbar>#wp-toolbar li.hover span.ab-label, #wpadminbar>#wp-toolbar li:hover span.ab-label { color: <?php echo $this->get_wps_option('admin_bar_menu_hover_color'); ?> }
+		#wpadminbar, #wpadminbar .menupop .ab-sub-wrapper { background: <?php echo $this->aof_options['admin_bar_color']; ?>;}
+#wpadminbar a.ab-item, #wpadminbar>#wp-toolbar span.ab-label, #wpadminbar>#wp-toolbar span.noticon { color: <?php echo $this->aof_options['admin_bar_menu_color']; ?> }
+#wpadminbar .ab-top-menu>li>.ab-item:focus, #wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, #wpadminbar .ab-top-menu>li:hover>.ab-item, #wpadminbar .ab-top-menu>li.hover>.ab-item, #wpadminbar .quicklinks .menupop ul li a:focus, #wpadminbar .quicklinks .menupop ul li a:focus strong, #wpadminbar .quicklinks .menupop ul li a:hover, #wpadminbar-nojs .ab-top-menu>li.menupop:hover>.ab-item, #wpadminbar .ab-top-menu>li.menupop.hover>.ab-item, #wpadminbar .quicklinks .menupop ul li a:hover strong, #wpadminbar .quicklinks .menupop.hover ul li a:focus, #wpadminbar .quicklinks .menupop.hover ul li a:hover, #wpadminbar li .ab-item:focus:before, #wpadminbar li a:focus .ab-icon:before, #wpadminbar li.hover .ab-icon:before, #wpadminbar li.hover .ab-item:before, #wpadminbar li:hover #adminbarsearch:before, #wpadminbar li:hover .ab-icon:before, #wpadminbar li:hover .ab-item:before, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:focus, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:hover, #wpadminbar li:hover .ab-item:after, #wpadminbar>#wp-toolbar a:focus span.ab-label, #wpadminbar>#wp-toolbar li.hover span.ab-label, #wpadminbar>#wp-toolbar li:hover span.ab-label { color: <?php echo $this->aof_options['admin_bar_menu_hover_color']; ?> }
 
 .quicklinks li.wpshape_site_title { width: 200px !important; }
 .quicklinks li.wpshape_site_title a{ outline:none; border:none;
 <?php 
-  $admin_logo_id = $this->get_wps_option('admin_logo');
+  $admin_logo_id = $this->aof_options['admin_logo'];
   $admin_logo_url = $this->get_wps_image_url($admin_logo_id);
 
 if(!empty($admin_logo_url)){ ?>
@@ -803,7 +839,7 @@ background-image:url(<?php echo $admin_logo_url;  ?>) !important; background-rep
  }
 
 #wpadminbar .ab-top-menu>li>.ab-item:focus, #wpadminbar-nojs .ab-top-menu>li.menupop:hover>.ab-item, #wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, #wpadminbar .ab-top-menu>li:hover>.ab-item, #wpadminbar .ab-top-menu>li.menupop.hover>.ab-item, #wpadminbar .ab-top-menu>li.hover>.ab-item { background: none }
-#wpadminbar .quicklinks .menupop ul li a, #wpadminbar .quicklinks .menupop ul li a strong, #wpadminbar .quicklinks .menupop.hover ul li a, #wpadminbar.nojs .quicklinks .menupop:hover ul li a { color: <?php echo $this->get_wps_option('admin_bar_menu_color'); ?>; font-size:13px !important }
+#wpadminbar .quicklinks .menupop ul li a, #wpadminbar .quicklinks .menupop ul li a strong, #wpadminbar .quicklinks .menupop.hover ul li a, #wpadminbar.nojs .quicklinks .menupop:hover ul li a { color: <?php echo $this->aof_options['admin_bar_menu_color']; ?>; font-size:13px !important }
 #wpadminbar .quicklinks li#wp-admin-bar-my-account.with-avatar>a img {	width: 20px; height: 20px; border-radius: 100px; -moz-border-radius: 100px; -webkit-border-radius: 100px; 	border: none; }
 		</style>
 		<?php

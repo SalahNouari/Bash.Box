@@ -6,6 +6,9 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+2.8.1.2 - 2015-12-17 - Julien Zerbib
+- Fixed: Import comments for new FB Graph API
+
 2.8.1.1 - 2015-11-24 - Julien Zerbib
 - Fixed: The auto posted post title contained HTML tags
 - Added: Primary User so FB auto post accounts come from him only
@@ -457,4 +460,4 @@ Change Log:
 - Added date threshold parameter for Facebook Events widget.
 
 
-133620-1448469926-au
+133620-1450470479-au

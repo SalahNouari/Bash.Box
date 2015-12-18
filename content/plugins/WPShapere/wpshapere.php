@@ -11,54 +11,73 @@ Text-Domain: wps
 */
 
 /*
-*	WPSHAPERE Version
+*   WPSHAPERE Version
 */
 
 define( 'WPSHAPERE_VERSION' , '3.0' );    
 
 /*
-*	WPSHAPERE Path Constant
+*   WPSHAPERE Path Constant
 */
 define( 'WPSHAPERE_PATH' , dirname(__FILE__) . "/"); 
 
 /*
-*	WPSHAPERE URI Constant
+*   WPSHAPERE URI Constant
 */
 define( 'WPSHAPERE_DIR_URI' , plugin_dir_url(__FILE__) );
 
 /*
-*	Enabling Global Customization for Multi-site installation
-*       Delete the below two lines to enable customization per blog
+*       Enabling Global Customization for Multi-site installation.
+*       Delete below two lines if you want to give access to all blog admins to customizing their own blog individually.
+*       Works only for multi-site installation
 */
 if(is_multisite())
     define('NETWORK_ADMIN_CONTROL', true);
 // Delete the above two lines to enable customization per blog
 
-if ( ! empty( $_GET['action'] ) && ! empty( $_GET['plugin'] ) ) {
-        if ( $_GET['action'] == 'activate' ) {
-            return;
-        }
-    }
-    // Check if the framework plugin is activated
-    $useEmbeddedFramework = true;
-    $activePlugins = get_option('active_plugins');
-    if ( is_array( $activePlugins ) ) {
-        foreach ( $activePlugins as $plugin ) {
-            if ( is_string( $plugin ) ) {
-                if ( stripos( $plugin, '/titan-framework.php' ) !== false ) {
-                    $useEmbeddedFramework = false;
-                    break;
-                }
-            }
-        }
-    }
-    // Use the embedded Titan Framework
-    if ( $useEmbeddedFramework ) {
-        require_once( WPSHAPERE_PATH . 'includes/titan-framework/titan-framework.php' );
-    }
+
+
+//AOF Framework Implementation
+require_once( WPSHAPERE_PATH . 'includes/acmee-framework/acmee-framework.php' );
+require_once( WPSHAPERE_PATH . 'includes/wps-options.php' );
+
+/*
+ * Main configuration for AOF class
+ * put 'multi' => false for customizing the single or entire multi-site network admin panel as single super admin
+ * put 'multi' => true for giving access to all blog admins to customizing their own blog individually
+ *  (works only for multisite network install)
+ */
+
+if(!is_multisite()) {
+    $multi_option = false;
+}
+ elseif(is_multisite() && !defined('NETWORK_ADMIN_CONTROL')) {
+     $multi_option = false;
+ }
+ else {
+     $multi_option = true;
+ }
+$config = array(    
+    'capability' => 'edit_themes',
+    'page_title' => __('WPShapere Settings', 'aof'),
+    'menu_title' => __('WPShapere', 'aof'),
+    'menu_slug' => 'wpshapere-options',
+    'icon_url'   => 'dashicons-art',
+    'position'   => 3,
+    'tabs'  => $panel_tabs,
+    'fields'    => $panel_fields,
+    'multi' => $multi_option //default = false
+  );  
+
+/*
+ * Instantiate the AOF class
+ */
+$aof_options = new AcmeeFramework($config);
+
                         
 include_once WPSHAPERE_PATH . 'includes/wpshapere.class.php';
 include_once WPSHAPERE_PATH . 'includes/wpsthemes.class.php';
+
 
 register_deactivation_hook( __FILE__, array( 'WPSHAPERE', 'deleteOptions') );
 

@@ -102,10 +102,11 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<input type="hidden" name="chat[section]" value="<?php echo $form_section; ?>"/>
 					<?php wp_nonce_field( 'wpmudev_chat_settings_save', 'wpmudev_chat_settings_save_wpnonce' ); ?>
 					<p class="submit"><input type="submit" name="Submit" class="button-primary"
-							value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/></p>
+					                         value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/>
+					</p>
 				</form>
 			</div>
-		<?php
+			<?php
 		}
 
 		function chat_settings_panel_site() {
@@ -186,11 +187,12 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<input type="hidden" name="chat[section]" value="<?php echo $form_section; ?>"/>
 					<?php wp_nonce_field( 'wpmudev_chat_settings_save', 'wpmudev_chat_settings_save_wpnonce' ); ?>
 					<p class="submit"><input type="submit" name="Submit" class="button-primary"
-							value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/></p>
+					                         value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/>
+					</p>
 
 				</form>
 			</div>
-		<?php
+			<?php
 		}
 
 		function chat_settings_panel_widget() {
@@ -258,12 +260,12 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<input type="hidden" name="chat[section]" value="<?php echo $form_section; ?>"/>
 					<?php wp_nonce_field( 'wpmudev_chat_settings_save', 'wpmudev_chat_settings_save_wpnonce' ); ?>
 					<p class="submit"><input type="submit" name="Submit" class="button-primary"
-							value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/></p>
+					                         value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/>
+					</p>
 				</form>
 			</div>
-		<?php
+			<?php
 		}
-
 
 		function chat_settings_panel_buddypress() {
 			global $wpmudev_chat;
@@ -273,7 +275,7 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 			<div id="wpmudev-chat-wrap" class="wrap wpmudev-chat-wrap-settings-page">
 				<h2><?php _e( 'Group Chat Settings', $wpmudev_chat->translation_domain ); ?></h2>
 
-				<?php if (version_compare( bp_get_version(), '1.8' ) < 0) { ?>
+				<?php if ( version_compare( bp_get_version(), '1.8' ) < 0 ) { ?>
 				<form method="post" id="wpmudev-chat-settings-form" action="?page=<?php echo $_GET['page']; ?>">
 					<?php } ?>
 
@@ -332,7 +334,7 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<?php } */
 					?>
 
-					<?php if (version_compare( bp_get_version(), '1.8' ) < 0) { ?>
+					<?php if ( version_compare( bp_get_version(), '1.8' ) < 0 ) { ?>
 				</form>
 			<?php } ?>
 				<style type="text/css">
@@ -346,7 +348,7 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					}
 				</style>
 			</div>
-		<?php
+			<?php
 		}
 
 		function chat_settings_panel_global() {
@@ -447,10 +449,11 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<input type="hidden" name="chat[section]" value="<?php echo $form_section; ?>"/>
 					<?php wp_nonce_field( 'wpmudev_chat_settings_save', 'wpmudev_chat_settings_save_wpnonce' ); ?>
 					<p class="submit"><input type="submit" name="Submit" class="button-primary"
-							value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/></p>
+					                         value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/>
+					</p>
 				</form>
 			</div>
-		<?php
+			<?php
 		}
 
 		function chat_settings_panel_session_logs() {
@@ -466,7 +469,8 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 			}
 			if ( ( isset( $_GET['laction'] ) ) && ( $_GET['laction'] == "show" ) ) {
 				?>
-				<div id="wpmudev-chat-messages-listing-panel" class="wrap wpmudev-chat-wrap wpmudev-chat-wrap-settings-page">
+				<div id="wpmudev-chat-messages-listing-panel"
+				     class="wrap wpmudev-chat-wrap wpmudev-chat-wrap-settings-page">
 					<?php //screen_icon('wpmudev-chat'); ?>
 					<h2><?php _ex( "Chat Session", "Page Title", $wpmudev_chat->translation_domain ); ?></h2>
 
@@ -502,11 +506,12 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 
 					?>
 				</div>
-			<?php
+				<?php
 
 			} else if ( ( isset( $_GET['laction'] ) ) && ( $_GET['laction'] == "details" ) ) {
 				?>
-				<div id="wpmudev-chat-messages-listing-panel" class="wrap wpmudev-chat-wrap wpmudev-chat-wrap-settings-page">
+				<div id="wpmudev-chat-messages-listing-panel"
+				     class="wrap wpmudev-chat-wrap wpmudev-chat-wrap-settings-page">
 					<?php //screen_icon('wpmudev-chat'); ?>
 					<h2><?php _ex( "Chat Session Messages", "Page Title", $wpmudev_chat->translation_domain ); ?></h2>
 
@@ -543,10 +548,11 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 						<?php $wpmudev_chat->chat_log_list_table->display(); ?>
 					</form>
 				</div>
-			<?php
+				<?php
 			} else {
 				?>
-				<div id="wpmudev-chat-messages-listing-panel" class="wrap wpmudev-chat-wrap wpmudev-chat-wrap-settings-page">
+				<div id="wpmudev-chat-messages-listing-panel"
+				     class="wrap wpmudev-chat-wrap wpmudev-chat-wrap-settings-page">
 					<?php //screen_icon('wpmudev-chat'); ?>
 					<h2><?php _ex( "Chat Session Logs", "Page Title", $wpmudev_chat->translation_domain ); ?></h2>
 
@@ -564,7 +570,7 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 
 					</form>
 				</div>
-			<?php
+				<?php
 			}
 		}
 
@@ -641,11 +647,12 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<input type="hidden" name="chat[section]" value="<?php echo $form_section; ?>"/>
 					<?php wp_nonce_field( 'wpmudev_chat_settings_save', 'wpmudev_chat_settings_save_wpnonce' ); ?>
 					<p class="submit"><input type="submit" name="Submit" class="button-primary"
-							value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/></p>
+					                         value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/>
+					</p>
 
 				</form>
 			</div>
-		<?php
+			<?php
 		}
 
 		function chat_settings_panel_dashboard() {
@@ -725,11 +732,12 @@ if ( ! class_exists( "wpmudev_chat_admin_panels" ) ) {
 					<input type="hidden" name="chat[section]" value="<?php echo $form_section; ?>"/>
 					<?php wp_nonce_field( 'wpmudev_chat_settings_save', 'wpmudev_chat_settings_save_wpnonce' ); ?>
 					<p class="submit"><input type="submit" name="Submit" class="button-primary"
-							value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/></p>
+					                         value="<?php _e( 'Save Changes', $wpmudev_chat->translation_domain ) ?>"/>
+					</p>
 
 				</form>
 			</div>
-		<?php
+			<?php
 		}
 
 	}

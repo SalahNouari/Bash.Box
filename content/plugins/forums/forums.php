@@ -3,15 +3,17 @@
 Plugin Name: Forums
 Plugin URI: http://premium.wpmudev.org/project/forums/
 Description: Allows each blog to have their very own forums - embedded in any page or post.
-Author: S H Mohanjith (Incsub), Ulrich Sossou (Incsub), Andrew Billits (Incsub)
+Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
-Version: 2.0.2.0
+Version: 2.0.2.1
 Text Domain: wpmudev_forums
 WDP ID: 26
 */
 
 /*
-Copyright 2007-2013 Incsub (http://incsub.com)
+Copyright 2007-2014 Incsub (http://incsub.com)
+Author - S H Mohanjith
+Contributors - Ulrich Sossou, Andrew Billits
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -861,7 +863,11 @@ function forums_get_metadata( $last_updated, $last_author ) {
 }
 
 function forum_shortcode( $atts ) {
-	return forums_output("[forum{$atts[0]}]");
+	if(isset($atts[0]))
+		$id = $atts[0];
+	elseif(isset($atts['id']))
+		$id = ':'.$atts['id'];
+	return forums_output("[forum{$id}]");
 }
 add_shortcode( 'forum', 'forum_shortcode' );
 
@@ -1457,7 +1463,7 @@ function forums_output_view_topic($tmp_tid,$tmp_fid){
 			}
 			$content =  $content . '<td ' . $style . ' width="80%" ><p style="padding-left:10px;">' . forums_display_post_content($tmp_post['post_content']) . '</li><p><hr /><div class="forum-post-meta" style="padding-left:10px;">';
 			$content =  $content . __( 'Posted: ', 'wpmudev_forums' ) . date(get_option('date_format', __("D, F jS Y g:i A", 'wpmudev_forums' )),$tmp_post['post_stamp']);
-			$content =  $content . ' <a href="'. add_query_arg( array( 'topic' => $tmp_tid, 'forum_page' => $tmp_next_page ), get_permalink() ) . '#post-' . (int)$tmp_post['post_ID'] . '">#</a> ';
+			$content =  $content . ' <a href="'. add_query_arg( array( 'topic' => $tmp_tid, 'forum_page' => $tmp_current_page ), get_permalink() ) . '#post-' . (int)$tmp_post['post_ID'] . '">#</a> ';
 			$tmp_now = time();
 			$tmp_then = $tmp_post['post_stamp'];
 			$tmp_ago = $tmp_now - $tmp_then;
@@ -1941,7 +1947,7 @@ function forums_manage_output() {
 				echo "<td valign='top'>" . esc_html(stripslashes($tmp_forum['forum_name'])) . "</td>";
 				echo "<td valign='top'>" . (int)$tmp_forum['forum_topics'] . "</td>";
 				echo "<td valign='top'>" . (int)$tmp_forum['forum_posts'] . "</td>";
-				$tmp_page_code = '[forum:' . (int)$tmp_forum['forum_ID'] . ']';
+				$tmp_page_code = '[forum id="' . (int)$tmp_forum['forum_ID'] . '"]';
 				echo "<td valign='top'>" . $tmp_page_code . "</td>";
 				echo "<td valign='top'><a href='admin.php?page=wpmudev_forums&action=edit_forum&fid=" . (int)$tmp_forum['forum_ID'] . "' rel='permalink' class='edit'>" . __( 'Edit', 'wpmudev_forums' ) . "</a></td>";
 				echo "<td valign='top'><a href='admin.php?page=wpmudev_forums&action=delete_forum&fid=" . (int)$tmp_forum['forum_ID'] . "' rel='permalink' class='delete'>" . __( 'Remove', 'wpmudev_forums' ) . "</a></td>";
@@ -2416,6 +2422,6 @@ if ( !function_exists( 'wdp_un_check' ) ) {
 
 	function wdp_un_check() {
 		if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'edit_users' ) )
-			echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';	     	 	     			 
+			echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';
 	}
 }

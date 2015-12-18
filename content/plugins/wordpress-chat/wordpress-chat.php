@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/wordpress-chat-plugin
 Description: Provides you with a fully featured chat area either in a post, page, widget or bottom corner of your site. Support BuddyPress Group chat and private chats between logged in users.
 Author: WPMU DEV
 WDP ID: 159
-Version: 2.0.9.5
+Version: 2.1
 Author URI: http://premium.wpmudev.org
 Text Domain: wordpress_chat
 Domain Path: /languages
@@ -24,7 +24,7 @@ if ( ( ! defined( 'WPMUDEV_CHAT_SHORTINIT' ) ) || ( WPMUDEV_CHAT_SHORTINIT != tr
 }
 if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 	class WPMUDEV_Chat {
-		var $chat_current_version = '2.0.9.5';
+		var $chat_current_version = '2.1';
 		var $translation_domain = 'wordpress-chat';
 
 		/**
@@ -561,7 +561,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 					// We can only get the avatar when not in SHORTINIT mode since SHORTINIT removes all other plugin filters.
 					if ( ( ! defined( 'WPMUDEV_CHAT_SHORTINIT' ) ) || ( WPMUDEV_CHAT_SHORTINIT != true ) ) {
 
-						$avatar = get_avatar( $current_user->ID, 96, get_option( 'avatar_default' ), $this->chat_auth['name'] );
+						$avatar = get_avatar( $current_user->data->user_email, 96, '', $this->chat_auth['name'] );
+
 						if ( $avatar ) {
 							$avatar_parts = array();
 							if ( stristr( $avatar, ' src="' ) !== false ) {
@@ -2699,7 +2700,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 			<table class="form-table">
 				<tr>
 					<th>
-						<label for="wpmudev_chat_status"><?php _e( 'Set Chat status', $this->translation_domain ); ?></label>
+						<label
+							for="wpmudev_chat_status"><?php _e( 'Set Chat status', $this->translation_domain ); ?></label>
 					</th>
 					<td>
 						<select name="wpmudev_chat_user_settings[chat_user_status]" id="wpmudev_chat_status">
@@ -2716,7 +2718,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 								}
 
 								?>
-								<option value="<?php echo $status_key; ?>" <?php echo $selected; ?>><?php echo $status_label; ?></option><?php
+								<option
+								value="<?php echo $status_key; ?>" <?php echo $selected; ?>><?php echo $status_label; ?></option><?php
 							}
 							?>
 						</select>
@@ -2724,11 +2727,13 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 				</tr>
 				<tr>
 					<th>
-						<label for="wpmudev_chat_name_display"><?php _e( 'In Chat Sessions show name as', $this->translation_domain ); ?></label>
+						<label
+							for="wpmudev_chat_name_display"><?php _e( 'In Chat Sessions show name as', $this->translation_domain ); ?></label>
 					</th>
 					<td>
 						<select name="wpmudev_chat_user_settings[chat_name_display]" id="wpmudev_chat_name_display">
-							<option value="display_name" <?php if ( $user_meta['chat_name_display'] == 'display_name' ) {
+							<option
+								value="display_name" <?php if ( $user_meta['chat_name_display'] == 'display_name' ) {
 								echo ' selected="selected" ';
 							} ?>><?php echo __( 'Display Name', $this->translation_domain ) . ": " . $user->display_name; ?></option>
 							<option value="user_login" <?php if ( $user_meta['chat_name_display'] == 'user_login' ) {
@@ -2742,10 +2747,12 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 					?>
 					<tr>
 						<th>
-							<label for="wpmudev_chat_users_listing"><?php _e( 'Show Chat Status column on<br />Users > All Users listing?', $this->translation_domain ); ?></label>
+							<label
+								for="wpmudev_chat_users_listing"><?php _e( 'Show Chat Status column on<br />Users > All Users listing?', $this->translation_domain ); ?></label>
 						</th>
 						<td>
-							<select name="wpmudev_chat_user_settings[chat_users_listing]" id="wpmudev_chat_users_listing">
+							<select name="wpmudev_chat_user_settings[chat_users_listing]"
+							        id="wpmudev_chat_users_listing">
 								<option value="enabled"<?php if ( $user_meta['chat_users_listing'] == 'enabled' ) {
 									echo ' selected="selected" ';
 								} ?>><?php
@@ -2761,7 +2768,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 
 				<tr>
 					<th>
-						<label for="wpmudev_chat_wp_admin"><?php _e( 'Show Chats within WPAdmin', $this->translation_domain ); ?></label>
+						<label
+							for="wpmudev_chat_wp_admin"><?php _e( 'Show Chats within WPAdmin', $this->translation_domain ); ?></label>
 					</th>
 					<td>
 						<select name="wpmudev_chat_user_settings[chat_wp_admin]" id="wpmudev_chat_wp_admin">
@@ -2782,7 +2790,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 					echo ' style="display:none;" ';
 				} ?>>
 					<th>
-						<label for="wpmudev_chat_wp_toolbar"><?php _e( 'Show Chat WordPress toolbar menu?', $this->translation_domain ); ?></label>
+						<label
+							for="wpmudev_chat_wp_toolbar"><?php _e( 'Show Chat WordPress toolbar menu?', $this->translation_domain ); ?></label>
 					</th>
 					<td>
 						<select name="wpmudev_chat_user_settings[chat_wp_toolbar]" id="wpmudev_chat_wp_toolbar">
@@ -2796,31 +2805,40 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 								_e( 'Disabled', $this->translation_domain ); ?></option>
 						</select>
 
-						<div id="wpmudev_chat_wp_toolbar_options" <?php if ( $user_meta['chat_wp_toolbar'] == 'disabled' ) {
+						<div
+							id="wpmudev_chat_wp_toolbar_options" <?php if ( $user_meta['chat_wp_toolbar'] == 'disabled' ) {
 							echo ' style="display:none;" ';
 						} ?> >
 							<p>
-								<select name="wpmudev_chat_user_settings[chat_wp_toolbar_show_status]" id="wpmudev_chat_wp_toolbar_show_status">
-									<option value="enabled"<?php if ( $user_meta['chat_wp_toolbar_show_status'] == 'enabled' ) {
+								<select name="wpmudev_chat_user_settings[chat_wp_toolbar_show_status]"
+								        id="wpmudev_chat_wp_toolbar_show_status">
+									<option
+										value="enabled"<?php if ( $user_meta['chat_wp_toolbar_show_status'] == 'enabled' ) {
 										echo ' selected="selected" ';
 									} ?>><?php _e( 'Enabled', $this->translation_domain ); ?></option>
-									<option value="disabled"<?php if ( $user_meta['chat_wp_toolbar_show_status'] == 'disabled' ) {
+									<option
+										value="disabled"<?php if ( $user_meta['chat_wp_toolbar_show_status'] == 'disabled' ) {
 										echo ' selected="selected" ';
 									} ?>><?php _e( 'Disabled', $this->translation_domain ); ?></option>
 								</select>
-								<label for="wpmudev_chat_wp_toolbar_show_status"><?php _e( 'Show Your Chat Status on WordPress toolbar menu?', $this->translation_domain ); ?></label>
+								<label
+									for="wpmudev_chat_wp_toolbar_show_status"><?php _e( 'Show Your Chat Status on WordPress toolbar menu?', $this->translation_domain ); ?></label>
 							</p>
 
 							<p>
-								<select name="wpmudev_chat_user_settings[chat_wp_toolbar_show_friends]" id="wpmudev_chat_wp_toolbar_show_friends">
-									<option value="enabled"<?php if ( $user_meta['chat_wp_toolbar_show_friends'] == 'enabled' ) {
+								<select name="wpmudev_chat_user_settings[chat_wp_toolbar_show_friends]"
+								        id="wpmudev_chat_wp_toolbar_show_friends">
+									<option
+										value="enabled"<?php if ( $user_meta['chat_wp_toolbar_show_friends'] == 'enabled' ) {
 										echo ' selected="selected" ';
 									} ?>><?php _e( 'Enabled', $this->translation_domain ); ?></option>
-									<option value="disabled"<?php if ( $user_meta['chat_wp_toolbar_show_friends'] == 'disabled' ) {
+									<option
+										value="disabled"<?php if ( $user_meta['chat_wp_toolbar_show_friends'] == 'disabled' ) {
 										echo ' selected="selected" ';
 									} ?>><?php _e( 'Disabled', $this->translation_domain ); ?></option>
 								</select>
-								<label for="wpmudev_chat_wp_toolbar_show_friends"><?php _e( 'Show Your Chat Friends on WordPress toolbar menu?', $this->translation_domain ); ?></label>
+								<label
+									for="wpmudev_chat_wp_toolbar_show_friends"><?php _e( 'Show Your Chat Friends on WordPress toolbar menu?', $this->translation_domain ); ?></label>
 							</p>
 						</div>
 
@@ -2848,7 +2866,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 									$item_key = 'chat_dashboard_widget';
 								}
 								?>
-								<select name="wpmudev_chat_user_settings[<?php echo $item_key; ?>]" id="wpmudev_chat_dashboard_widget">
+								<select name="wpmudev_chat_user_settings[<?php echo $item_key; ?>]"
+								        id="wpmudev_chat_dashboard_widget">
 									<option value="enabled"<?php if ( $user_meta[ $item_key ] == 'enabled' ) {
 										echo ' selected="selected" ';
 									} ?>><?php
@@ -2859,7 +2878,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 										_e( 'Disabled', $this->translation_domain ); ?></option>
 								</select>
 
-								<div id="wpmudev_chat_dashboard_widget_options" <?php if ( $user_meta[ $item_key ] == 'disabled' ) {
+								<div
+									id="wpmudev_chat_dashboard_widget_options" <?php if ( $user_meta[ $item_key ] == 'disabled' ) {
 									echo ' style="display:none;" ';
 								} ?>
 								<?php
@@ -2871,12 +2891,16 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 								?>
 
 								<p>
-									<label for="wpmudev_chat_dashboard_widget_height"><?php _e( 'Height of Chat Widget', $this->translation_domain ); ?></label><br/><input name="wpmudev_chat_user_settings[<?php echo $item_option_key; ?>]" id="wpmudev_chat_dashboard_widget_height" value="<?php echo $user_meta[ $item_option_key ]; ?>"/> <?php _e( 'Default is', $this->translation_domain ) ?> <?php echo $this->_chat_options['dashboard']['dashboard_widget_height'] ?>
+									<label
+										for="wpmudev_chat_dashboard_widget_height"><?php _e( 'Height of Chat Widget', $this->translation_domain ); ?></label><br/><input
+										name="wpmudev_chat_user_settings[<?php echo $item_option_key; ?>]"
+										id="wpmudev_chat_dashboard_widget_height"
+										value="<?php echo $user_meta[ $item_option_key ]; ?>"/> <?php _e( 'Default is', $this->translation_domain ) ?> <?php echo $this->_chat_options['dashboard']['dashboard_widget_height'] ?>
 								</p>
 								</div>
 							</td>
 						</tr>
-					<?php
+						<?php
 					}
 				}
 				?>
@@ -2900,7 +2924,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 								$item_key = 'chat_dashboard_status_widget';
 							}
 							?>
-							<select name="wpmudev_chat_user_settings[<?php echo $item_key; ?>]" id="wpmudev_chat_dashboard_status_widget">
+							<select name="wpmudev_chat_user_settings[<?php echo $item_key; ?>]"
+							        id="wpmudev_chat_dashboard_status_widget">
 								<option value="enabled"<?php if ( $user_meta[ $item_key ] == 'enabled' ) {
 									echo ' selected="selected" ';
 								} ?>><?php
@@ -2943,7 +2968,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 									$item_key = 'chat_dashboard_friends_widget';
 								}
 								?>
-								<select name="wpmudev_chat_user_settings[<?php echo $item_key; ?>]" id="wpmudev_chat_dashboard_friends_widget">
+								<select name="wpmudev_chat_user_settings[<?php echo $item_key; ?>]"
+								        id="wpmudev_chat_dashboard_friends_widget">
 									<option value="enabled"<?php if ( $user_meta[ $item_key ] == 'enabled' ) {
 										echo ' selected="selected" ';
 									} ?>><?php
@@ -2954,7 +2980,8 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 										_e( 'Disabled', $this->translation_domain ); ?></option>
 								</select><br/>
 
-								<div id="wpmudev_chat_dashboard_friends_widget_options" <?php if ( $user_meta[ $item_key ] == 'disabled' ) {
+								<div
+									id="wpmudev_chat_dashboard_friends_widget_options" <?php if ( $user_meta[ $item_key ] == 'disabled' ) {
 									echo ' style="display:none;" ';
 								} ?>
 								<?php
@@ -2966,17 +2993,21 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 								?>
 
 								<p>
-									<label for="wpmudev_chat_dashboard_friends_widget_height"><?php _e( 'Min Height of Chat Friends Widget', $this->translation_domain ); ?></label><br/><input name="wpmudev_chat_user_settings[<?php echo $item_option_key; ?>]" id="wpmudev_chat_dashboard_friends_widget_height" value="<?php echo $user_meta[ $item_option_key ]; ?>"/> <?php _e( 'Default is', $this->translation_domain ) ?> <?php echo $this->_chat_options['dashboard']['dashboard_friends_widget_height'] ?>
+									<label
+										for="wpmudev_chat_dashboard_friends_widget_height"><?php _e( 'Min Height of Chat Friends Widget', $this->translation_domain ); ?></label><br/><input
+										name="wpmudev_chat_user_settings[<?php echo $item_option_key; ?>]"
+										id="wpmudev_chat_dashboard_friends_widget_height"
+										value="<?php echo $user_meta[ $item_option_key ]; ?>"/> <?php _e( 'Default is', $this->translation_domain ) ?> <?php echo $this->_chat_options['dashboard']['dashboard_friends_widget_height'] ?>
 								</p>
 								</div>
 							</td>
 						</tr>
-					<?php
+						<?php
 					}
 				}
 				?>
 			</table>
-		<?php
+			<?php
 		}
 
 		/**
@@ -4779,9 +4810,10 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 			$row_text .= '<div id="wpmudev-chat-row-' . strtotime( $row->timestamp ) . '-' . $row->id . '" class="' . $row_class . '">';
 
 			$row_avatar_name = '';
-			if ( ! filter_var( $row->avatar, FILTER_VALIDATE_URL ) ) {
+			if ( empty( $row->avatar ) ) {
 				$row->avatar = "http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=96";
 			}
+			$row->avatar = esc_url( $row->avatar );
 			if ( $chat_session['row_name_avatar'] == 'avatar' ) {
 				if ( ( isset( $row->avatar ) ) && ( ! empty( $row->avatar ) ) ) {
 					$avatar = '<img alt="' . $row->name . '" src="' . $row->avatar . '" class="wpmudev-chat-user wpmudev-chat-user-avatar" height="' .
@@ -4809,10 +4841,13 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 				} else {
 					$row_date_format = get_option( 'date_format' );
 				}
-				//$row_date_time .= '<span class="date">'. date_i18n($row_date_format,
-				//	strtotime($row->timestamp) + get_option('gmt_offset') * 3600, false) . '</span>';
 
-				$row_date_time .= '<span class="date">' . get_date_from_gmt( $row->timestamp, $row_date_format ) . '</span>';
+				//Convert to timezone
+				$date = get_date_from_gmt( $row->timestamp, $row_date_format );
+
+				//Translate
+				$date = date_i18n( $row_date_format, strtotime( $date ) );
+				$row_date_time .= '<span class="date new">' . $date . '</span>';
 			}
 
 			if ( $chat_session['row_time'] == 'enabled' ) {
@@ -4824,9 +4859,6 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 				} else {
 					$row_time_format = get_option( 'time_format' );
 				}
-
-				//$row_date_time .= '<span class="time">'. date_i18n($row_time_format,
-				//	strtotime($row->timestamp) + get_option('gmt_offset') * 3600, false) . '</span>';
 
 				$row_date_time .= '<span class="time">' . get_date_from_gmt( $row->timestamp, $row_time_format ) . '</span>';
 			}
@@ -6047,6 +6079,7 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 						$sql_str = $wpdb->prepare( "INSERT INTO " . WPMUDEV_Chat::tablename( 'message' ) .
 						                           " (`blog_id`, `chat_id`, `session_type`, `timestamp`, `name`, `avatar`, `auth_hash`, `ip_address`, `message`, `moderator`, `deleted`, `archived`, `log_id`) VALUES(%d, %s, %s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %d);",
 							0, $chat_id, 'invite', '', '', $user_to_hash, '', serialize( $invitation ), 'no', 'no', 'no', 0 );
+
 						$wpdb->get_results( $sql_str );
 					}
 				}

@@ -3,7 +3,7 @@ Contributors: wpmudev, Paul Menard, UmeshSingla
 Tags: chat, twitter, facebook, google, shortcode, BuddyPress, widget, chat widget, buddypress group, buddypress friend
 Requires at least: 3.7
 Stable tag: trunk
-Tested up to: 4.3
+Tested up to: 4.4
 
 Allow your readers to chat with you
 
@@ -17,6 +17,11 @@ Add a chat to your blog and allow your readers to chat with you.
 2. Chat widget
 
 == ChangeLog ==
+
+= 2.1 = Umesh Kumar =
+* Fixed: Chat messages not working with WordPress 4.4
+* Fixed: Gravatar doesn't shows up for page chat
+* Fixed: Translate date
 
 = 2.0.9.5 = Umesh Kumar =
 
@@ -443,4 +448,4 @@ Add a chat to your blog and allow your readers to chat with you.
 * Initial release
 
 
-133620-1444352759-au
+133620-1450470484-au

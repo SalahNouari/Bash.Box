@@ -21,8 +21,9 @@ class removeemailverification {
 
         add_filter('wpmu_signup_user_notification', '__return_false');
 
-        //Remove MS welcome email
-        remove_filter('site_option_welcome_user_email', 'welcome_user_msg_filter');
+        if( apply_filters( 'removeev_disable_welcome_email', false ) ){ // Remove MS welcome email disabled by default.
+            remove_filter('site_option_welcome_user_email', 'welcome_user_msg_filter');
+        }
 
         // Blog signup - autoactivate
         add_filter('wpmu_signup_blog_notification', array(&$this, 'activate_on_blog_signup'), 10, 7);
@@ -33,11 +34,7 @@ class removeemailverification {
         // Lets assume we successfully activated the user account
         add_filter('bp_registration_needs_activation',  '__return_false');
 
-        remove_filter('wpmu_welcome_notification', 'wp_mail');
-
         add_filter('wpmu_welcome_notification', array(&$this, 'remove_bp_activation'));
-
-        remove_filter('wpmu_welcome_user_notification', 'wp_mail');
 
         add_filter('wpmu_welcome_user_notification', array(&$this, 'remove_bp_activation'));
 
@@ -166,7 +163,7 @@ class removeemailverification {
 
                 <?php
                 if ($signup->domain . $signup->path != '') {
-                    printf(__('<p class="lead-in">Your blog at <a href="%1$s">%2$s</a> is active. You may now login to your blog using your chosen username of "%3$s".  Please check your email inbox at %4$s for your password and login instructions.  If you do not receive an email, please check your junk or spam folder.  If you still do not receive an email within an hour, you can <a href="%5$s">reset your password</a>.</p>', 'removeev'), 'http://' . $signup->domain, $signup->domain, $signup->user_login, $signup->user_email, 'http://' . $current_site->domain . $current_site->path . 'wp-login.php?action=lostpassword');	     	 	   					 
+                    printf(__('<p class="lead-in">Your blog at <a href="%1$s">%2$s</a> is active. You may now login to your blog using your chosen username of "%3$s".  Please check your email inbox at %4$s for your password and login instructions.  If you do not receive an email, please check your junk or spam folder.  If you still do not receive an email within an hour, you can <a href="%5$s">reset your password</a>.</p>', 'removeev'), 'http://' . $signup->domain, $signup->domain, $signup->user_login, $signup->user_email, 'http://' . $current_site->domain . $current_site->path . 'wp-login.php?action=lostpassword');
                 }
             } else {
                 ?>
@@ -189,9 +186,6 @@ class removeemailverification {
 
             <?php if (!empty($url)) : ?>
                 <p class="view"><?php printf(__('You\'re all set up and ready to go. <a href="%s">View your site</a> or go to the <a href="%s">admin area</a>.', 'removeev'), $url, trailingslashit($url) . 'wp-admin'); ?></p>
-                <?php
-                wp_redirect(trailingslashit(site_url()) . 'pro-site/?bid=' . $result['blog_id']);
-                ?>
             <?php else: ?>
                 <p class="view"><?php printf(__('You\'re all set up and ready to go. Why not go back to the <a href="%2$s">homepage</a>.', 'removeev'), 'http://' . $current_site->domain . $current_site->path); ?></p>
 
@@ -244,13 +238,21 @@ class removeemailverification {
         } else {
             extract($result);
 
+            if( empty( $user_id ) ){
+                $user_id = $result;
+            }
+
+            if( empty( $password ) ){
+                $password = '********';
+            }
+
             $newuser = new WP_User((int) $user_id);
 
             $html = '<h2>' . sprintf(__('Hello %s, your account has been created!', 'removeev'), $newuser->user_login) . "</h2>\n";
 
             $html .= '<div id="signup-welcome">';
-            $html .= '<p><span class="h3">' . __('Username:', 'removeev') . '</span>' . $newuser->user_login . '</p>';
-            $html .= '<p><span class="h3">' . __('Password:', 'removeev') . '</span>' . $password . '</p>';
+            $html .= '<p><span class="h3">' . __('Username:', 'removeev') . '</span> ' . $newuser->user_login . '</p>';
+            $html .= '<p><span class="h3">' . __('Password:', 'removeev') . '</span> ' . $password . '</p>';
             $html .= '</div>';
 
             $html .= '<p class="view">' . sprintf(__('You can now update your details by going to the <a href="%1$s">admin area</a> of your account or go back to the <a href="%2$s">homepage</a>.', 'removeev'), 'http://' . $current_blog->domain . $current_blog->path . 'wp-admin', 'http://' . $current_blog->domain . $current_blog->path) . '</p>';
@@ -296,6 +298,8 @@ class removeemailverification {
         global $current_blog;
 
         delete_user_meta( $user_id, 'activation_key' );
+
+        if( is_user_logged_in() ) return;
 
         wp_set_current_user($user_id);
         wp_set_auth_cookie($user_id, false, is_ssl());

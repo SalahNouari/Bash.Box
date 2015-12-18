@@ -240,8 +240,8 @@
 				$uri = add_query_arg('user[]', $user_id, $uri);
 				$redirect = add_query_arg('user[]', $user_id, $redirect);
 			}
-			$uri = add_query_arg('confirm', 1, $uri);
-			$redirect = add_query_arg('_refer', urlencode($uri), $redirect);
+			$uri = add_query_arg('_refer', $_POST['_wp_http_referer'], $redirect);
+			$redirect = add_query_arg('confirm', 1, $uri);
 			
 			exit( wp_redirect($redirect) );
 			
@@ -267,24 +267,6 @@
 		$url = admin_url('admin.php?page=ultimatemember');
 		$url = add_query_arg('update','cleared_cache',$url);
 		exit( wp_redirect($url) );
-	}
-	
-	/***
-	***	@secure passwords
-	***/
-	add_action('um_admin_do_action__um_passwords_secured', 'um_admin_do_action__um_passwords_secured');
-	function um_admin_do_action__um_passwords_secured( $action ){
-		global $ultimatemember;
-		if ( !is_admin() || !current_user_can('manage_options') ) die();
-		
-		$users = get_users();
-		foreach( $users as $user ) {
-			delete_user_meta( $user->ID, 'confirm_user_password' );
-			update_user_meta( $user->ID, 'submitted', '' );
-		}
-		
-		update_option( 'um_passwords_secured', 1 );
-		exit( wp_redirect( admin_url() ) );
 	}
 	
 	/***

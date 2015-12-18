@@ -1,8 +1,8 @@
 html.wp-toolbar { 
-        padding-top: 56px;
+        padding-top: 50px;
 }
 #wpadminbar {
-        height:56px;
+        height:50px;
         -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
         -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
         box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
@@ -23,14 +23,13 @@ li#wp-admin-bar-my-account a {
 }
 #wpadminbar .quicklinks li a .blavatar, #wpadminbar .quicklinks li a:hover .blavatar { display: none}
 #wpadminbar .quicklinks .ab-empty-item, #wpadminbar .quicklinks a, #wpadminbar .shortlink-input {
-        height: 45px;
+        height: 32px;
 }
 #collapse-button {
         margin:10px 21px 20px;
 }
-ul#wp-admin-bar-root-default, ul.ab-top-menu { 
-        margin-top: 11px 
-}
+ul#wp-admin-bar-root-default, ul.ab-top-menu {}
+#wpadminbar .quicklinks>ul>li>a { padding: 9px }
 #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
         width: 230px;
 }
@@ -54,7 +53,7 @@ ul#wp-admin-bar-root-default, ul.ab-top-menu {
 }
 #adminmenu div.wp-menu-image img { display: none; }
 .titan-framework-panel-wrap .form-table th { width: 250px; }
-#wpfooter { position: relative !important; }
+/*#wpfooter { position: relative !important; }*/
 .button, .button-primary, .button-secondary { outline: none} 
 
 /* jQuery Sortable */
@@ -165,6 +164,21 @@ ol.sortUls ol {
 ol.sortUls li.collapsed > ol {
     display: none;
 }
+div.wps_kb_link {
+    padding-top: 10px;
+}
+div.wps_kb_link a {
+    font-size: 12px;
+    line-height: 1.2em;
+    color: #fff;
+    font-weight: 900;
+    background: #fa56f9;
+    padding: 5px 10px;
+    text-decoration: none;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border-radius: 3px
+}
 
 @media only screen and (min-width:782px) and (max-width: 960px) {
         .auto-fold #adminmenu, .auto-fold #adminmenu li.menu-top, .auto-fold #adminmenuback, .auto-fold #adminmenuwrap {
@@ -196,6 +210,9 @@ ol.sortUls li.collapsed > ol {
         }
         html.wp-toolbar {
             padding-top: 46px;
+        }
+        #wpadminbar .quicklinks>ul>li>a {
+            padding: 0;
         }
 }
 

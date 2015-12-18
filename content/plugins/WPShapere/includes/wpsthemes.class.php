@@ -85,10 +85,10 @@ if(isset($_GET['status']) && $_GET['status'] == 'updated')
 			$wps_color_theme_data = serialize($wps_color_theme_data);
 			
 			if($this->is_wps_single()) {
-				update_option($this->wps_options, $wps_color_theme_data);
+                                                                update_option($this->wps_options, $wps_color_theme_data);
 			}
 			else {
-				update_site_option($this->wps_options, $wps_color_theme_data);
+                                                                update_site_option($this->wps_options, $wps_color_theme_data);
 			}
 			wp_safe_redirect( admin_url( 'admin.php?page=wps_themes&status=updated' ) );
 			exit();

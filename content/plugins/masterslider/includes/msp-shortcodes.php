@@ -604,15 +604,15 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 					echo "\t\t\t$instance_name.api.addEventListener(MSSliderEvent.INIT, function(){\n";
 
 					if( ! empty( $on_swipe_start ) ){
-						printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSSliderEvent.SWIPE_START, %s );\n" , msp_maybe_base64_decode( $on_swipe_start ) ) ;
+						printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_START, %s );\n" , msp_maybe_base64_decode( $on_swipe_start ) ) ;
 					}
 
 					if( ! empty( $on_swipe_move ) ){
-						printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSSliderEvent.SWIPE_MOVE, %s );\n"  , msp_maybe_base64_decode( $on_swipe_move ) ) ;
+						printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_MOVE, %s );\n"  , msp_maybe_base64_decode( $on_swipe_move ) ) ;
 					}
 
 					if( ! empty( $on_swipe_end ) ){
-						printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSSliderEvent.SWIPE_END, %s );\n"   , msp_maybe_base64_decode( $on_swipe_end ) ) ;
+						printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_END, %s );\n"   , msp_maybe_base64_decode( $on_swipe_end ) ) ;
 					}
 
 					echo "\t\t\t});\n";

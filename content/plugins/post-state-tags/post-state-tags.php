@@ -3,7 +3,7 @@
 Plugin Name: Post State Tags
 Plugin URI: http://wordpress.org/plugins/post-state-tags/
 Description: Make your WordPress post state list stand out with colors and color tags (draft, pending, sticky, etc)
-Version: 1.1.2
+Version: 1.1.3
 Author: BRANDbrilliance
 Author URI: http://www.brandbrilliance.co.za
 License: GPLv2 or later
@@ -650,7 +650,7 @@ function bb_pst_view_settings()
 							<p>Please <a href="http://wordpress.org/support/view/plugin-reviews/post-state-tags/" target="_blank">vote for the plugin</a>. Thanks!</p>
 							                            
 							<div class="author">
-								Copyright &copy; <?php echo date('Y'); ?> <img src="http://www.brandbrilliance.co.za/favicon-16.png" style="vertical-align: -3px; margin-right:3px;" /><a href="http://www.brandbrilliance.co.za/">BRANDbrilliance</a>
+								Copyright &copy; <?php echo date('Y'); ?> <img src="http://www.brandbrilliance.co.za/favicon-16.png" style="vertical-align: -3px; margin-right:3px;" /><a href="http://www.brandbrilliance.co.za/" target="_blank">BRANDbrilliance</a>
 							</div>
                         
 						</div>

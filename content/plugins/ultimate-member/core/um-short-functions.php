@@ -424,7 +424,10 @@ function um_profile_id() {
 				$url =  add_query_arg( 'updated', esc_attr( $updated ), $url );	
 		}
 		
-		if ( function_exists('icl_get_current_language') && icl_get_current_language() != icl_get_default_language() && $slug == 'account' ) {
+		if ( function_exists('icl_get_current_language') && icl_get_current_language() != icl_get_default_language()  ) {
+			
+			$url = um_get_url_for_language( $ultimatemember->permalinks->core[ $slug ], icl_get_current_language() );
+			
 			if ( get_post_meta( get_the_ID() , '_um_wpml_account', true ) == 1 ) {
 				$url = get_permalink( get_the_ID() );
 			}
@@ -692,6 +695,9 @@ function um_reset_user() {
 			
 			if ( is_user_logged_in() ) {
 			
+				if ( $data['public'] == '-3' && !um_is_user_himself() && !in_array( $ultimatemember->query->get_role_by_userid( get_current_user_id() ), $data['roles'] ) )
+					return false;
+					
 				if ( !um_is_user_himself() && $data['public'] == '-1' && !um_user_can('can_edit_everyone') )
 					return false;
 					
