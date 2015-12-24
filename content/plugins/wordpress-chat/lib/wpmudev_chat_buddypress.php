@@ -90,7 +90,6 @@ function wpmudev_chat_buddypress_member_header_actions() {
 		}
 
 		$friend_data = wpmudev_chat_get_chat_status_data( bp_displayed_user_id(), $friends_status );
-		//echo "friend_data<pre>"; print_r($friend_data); echo "</pre>";
 
 		$friend_status_display = $friend_data['icon'] . $friend_data['label'];
 		if ( ! empty( $friend_data['href'] ) ) {

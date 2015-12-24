@@ -144,49 +144,37 @@ if (!class_exists('WPMUDEVChatWidget')) {
 		function update($new_instance, $old_instance) {
 			global $wpmudev_chat;
 
-			//echo "this<pre>"; print_r($this); echo "</pre>";
-			//die();
-
 			$instance = $old_instance;
 			$instance = $this->convert_settings_keys($instance);
-			//echo "instance<pre>"; print_r($instance); echo "</pre>";
 
-			//echo "new_instance<pre>"; print_r($new_instance); echo "</pre>";
-			//echo "old_instance<pre>"; print_r($instance); echo "</pre>";
-			//die();
-
-			if (isset($new_instance['box_title']))
+			if (isset($new_instance['box_title'])) {
 				$instance['box_title'] 			= strip_tags($new_instance['box_title']);
+			}
 
-			//if (isset($new_instance['id']))
-			//	$instance['id'] 				= intval($new_instance['id']);
-
-			if (isset($new_instance['box_height']))
+			if (isset($new_instance['box_height'])) {
 				$instance['box_height'] 		= esc_attr($new_instance['box_height']);
+			}
 
 			if (isset($new_instance['box_sound']))
-				$instance['box_sound'] 			= esc_attr($new_instance['box_sound']);
+				{$instance['box_sound'] 			= esc_attr($new_instance['box_sound']);}
 
 			if (isset($new_instance['row_name_avatar']))
-				$instance['row_name_avatar'] 	= esc_attr($new_instance['row_name_avatar']);
+				{$instance['row_name_avatar'] 	= esc_attr($new_instance['row_name_avatar']);}
 
 			if (isset($new_instance['box_emoticons']))
-				$instance['box_emoticons'] 		= esc_attr($new_instance['box_emoticons']);
+				{$instance['box_emoticons'] 		= esc_attr($new_instance['box_emoticons']);}
 
 			if (isset($new_instance['row_date']))
-				$instance['row_date'] 			= esc_attr($new_instance['row_date']);
+				{$instance['row_date'] 			= esc_attr($new_instance['row_date']);}
 
 			if (isset($new_instance['row_date_format']))
-				$instance['row_date_format'] 	= esc_attr($new_instance['row_date_format']);
+				{$instance['row_date_format'] 	= esc_attr($new_instance['row_date_format']);}
 
 			if (isset($new_instance['row_time']))
-				$instance['row_time'] 			= esc_attr($new_instance['row_time']);
+				{$instance['row_time'] 			= esc_attr($new_instance['row_time']);}
 
 			if (isset($new_instance['row_time_format']))
-				$instance['row_time_format'] 	= esc_attr($new_instance['row_time_format']);
-
-//			echo "instance<pre>"; print_r($instance); echo "</pre>";
-//			die();
+				{$instance['row_time_format'] 	= esc_attr($new_instance['row_time_format']);}
 
 			return $instance;
 		}
@@ -196,7 +184,7 @@ if (!class_exists('WPMUDEVChatWidget')) {
 
 			if ($wpmudev_chat->get_option('blocked_on_shortcode', 'widget') == "enabled") {
 				if (strstr($post->post_content, '[chat ') !== false)
-					return;
+					{return;}
 			}
 
 			if ((isset($bp->groups->current_group->id)) && (intval($bp->groups->current_group->id))) {
@@ -231,7 +219,7 @@ if (!class_exists('WPMUDEVChatWidget')) {
 					echo $args['before_widget'];
 
 					$title = apply_filters('widget_title', $instance['box_title']);
-					if ($title) echo $args['before_title'] . $title . $args['after_title'];
+					if ($title) {echo $args['before_title'] . $title . $args['after_title'];}
 
 					echo $chat_output;
 
@@ -325,17 +313,17 @@ if (!class_exists('WPMUDEVChatFriendsWidget')) {
 			$instance = $old_instance;
 
 			if (isset($new_instance['box_title']))
-				$instance['box_title'] 			= strip_tags($new_instance['box_title']);
+				{$instance['box_title'] 			= strip_tags($new_instance['box_title']);}
 
 			if (isset($new_instance['height']))
-				$instance['height'] 		= esc_attr($new_instance['height']);
+				{$instance['height'] 		= esc_attr($new_instance['height']);}
 
 			if (isset($new_instance['row_name_avatar']))
-				$instance['row_name_avatar'] 	= esc_attr($new_instance['row_name_avatar']);
+				{$instance['row_name_avatar'] 	= esc_attr($new_instance['row_name_avatar']);}
 
 
 			if (isset($new_instance['avatar_width']))
-				$instance['avatar_width'] 		= esc_attr($new_instance['avatar_width']);
+				{$instance['avatar_width'] 		= esc_attr($new_instance['avatar_width']);}
 
 			return $instance;
 		}
@@ -343,7 +331,7 @@ if (!class_exists('WPMUDEVChatFriendsWidget')) {
 		function widget($args, $instance) {
 			global $wpmudev_chat, $bp, $current_user;
 
-			if (!$current_user->ID) return;
+			if (!$current_user->ID) {return;}
 
 			// IF we are blocking the Widgets from Chat
 			if ($wpmudev_chat->_chat_plugin_settings['blocked_urls']['widget'] == true) {
@@ -375,7 +363,7 @@ if (!class_exists('WPMUDEVChatFriendsWidget')) {
 						return;
 					}
 				}
-				if (!function_exists('friends_get_list')) return;
+				if (!function_exists('friends_get_list')) {return;}
 
 				$friends_list_ids = friends_get_list($current_user->ID);
 			}
@@ -385,7 +373,7 @@ if (!class_exists('WPMUDEVChatFriendsWidget')) {
 			}
 
 			if ($wpmudev_chat->_chat_plugin_settings['blocked_urls']['widget'] == true)
-				return;
+				{return;}
 
 			$instance['id'] = $this->id;
 			$instance = wp_parse_args( $instance, $this->defaults );
@@ -436,7 +424,7 @@ if (!class_exists('WPMUDEVChatFriendsWidget')) {
 				echo $args['before_widget'];
 
 				$title = apply_filters('widget_title', $instance['box_title']);
-				if ($title) echo $args['before_title'] . $title . $args['after_title'];
+				if ($title) {echo $args['before_title'] . $title . $args['after_title'];}
 
 				echo $chat_output;
 
@@ -529,7 +517,7 @@ if (!class_exists('WPMUDEVChatRoomsWidget')) {
 
 				if ((empty($bp)) || (!is_object($bp))) {
 					if (isset($instance['session_types']['bp-group']))
-						unset($instance['session_types']['bp-group']);
+						{unset($instance['session_types']['bp-group']);}
 				}
 
 				if (count($instance['session_types']) == 0) {
@@ -571,20 +559,20 @@ if (!class_exists('WPMUDEVChatRoomsWidget')) {
 			//echo "new_instance<pre>"; print_r($new_instance); echo "</pre>";
 
 			if (isset($new_instance['box_title']))
-				$instance['box_title'] 			= strip_tags($new_instance['box_title']);
+				{$instance['box_title'] 			= strip_tags($new_instance['box_title']);}
 			else
 
 			if (isset($new_instance['height']))
-				$instance['height'] 			= esc_attr($new_instance['height']);
+				{$instance['height'] 			= esc_attr($new_instance['height']);}
 
 			if (isset($new_instance['show_active_user_count']))
-				$instance['show_active_user_count'] 	= strip_tags($new_instance['show_active_user_count']);
+				{$instance['show_active_user_count'] 	= strip_tags($new_instance['show_active_user_count']);}
 
 			if (isset($new_instance['session_types']))
-				$instance['session_types'] 		= $new_instance['session_types'];
+				{$instance['session_types'] 		= $new_instance['session_types'];}
 
 			if (isset($new_instance['show_title']))
-				$instance['show_title'] 		= esc_attr($new_instance['show_title']);
+				{$instance['show_title'] 		= esc_attr($new_instance['show_title']);}
 
 
 			//echo "instance<pre>"; print_r($instance); echo "</pre>";
@@ -596,7 +584,7 @@ if (!class_exists('WPMUDEVChatRoomsWidget')) {
 		function widget($args, $instance) {
 			global $wpmudev_chat, $bp, $current_user;
 
-			if (!$current_user->ID) return;
+			if (!$current_user->ID) {return;}
 
 			// IF we are blocking the Widgets from Chat
 			if ($wpmudev_chat->_chat_plugin_settings['blocked_urls']['widget'] == true) {
@@ -635,7 +623,7 @@ if (!class_exists('WPMUDEVChatRoomsWidget')) {
 				echo $args['before_widget'];
 
 				$title = apply_filters('widget_title', $instance['box_title']);
-				if ($title) echo $args['before_title'] . $title . $args['after_title'];
+				if ($title) {echo $args['before_title'] . $title . $args['after_title'];}
 
 				?><ul class="wpmudev-chat-active-chats-list"><?php
 				foreach($chat_sessions as $chat_session) {
@@ -734,10 +722,10 @@ if (!class_exists('WPMUDEVChatStatusWidget')) {
 			$instance = $old_instance;
 
 			if (isset($new_instance['box_title']))
-				$instance['box_title'] 			= strip_tags($new_instance['box_title']);
+				{$instance['box_title'] 			= strip_tags($new_instance['box_title']);}
 
 			if (isset($new_instance['box_height']))
-				$instance['box_height'] 		= esc_attr($new_instance['box_height']);
+				{$instance['box_height'] 		= esc_attr($new_instance['box_height']);}
 
 			return $instance;
 		}
@@ -745,7 +733,7 @@ if (!class_exists('WPMUDEVChatStatusWidget')) {
 		function widget($args, $instance) {
 			global $wpmudev_chat, $bp, $current_user;
 
-			if (!$current_user->ID) return;
+			if (!$current_user->ID) {return;}
 
 			// IF we are blocking the Widgets from Chat
 			if ($wpmudev_chat->_chat_plugin_settings['blocked_urls']['widget'] == true) {
@@ -769,7 +757,7 @@ if (!class_exists('WPMUDEVChatStatusWidget')) {
 
 				$class = '';
 				if ($status_key == 'available')
-					$class .= ' available';
+					{$class .= ' available';}
 
 				$chat_output .= '<option class="'. $class .'" value="'. $status_key .'" '. $selected .'>'. $status_label .'</option>';
 			}
@@ -779,7 +767,7 @@ if (!class_exists('WPMUDEVChatStatusWidget')) {
 				echo $args['before_widget'];
 
 				$title = apply_filters('widget_title', $instance['box_title']);
-				if ($title) echo $args['before_title'] . $title . $args['after_title'];
+				if ($title) {echo $args['before_title'] . $title . $args['after_title'];}
 
 				echo '<select id="wpmudev-chat-status-widget-'. $this->number .'" class="wpmudev-chat-status-widget">'. $chat_output .'</select>';
 
@@ -808,7 +796,7 @@ if (!class_exists('WPMUDEVChatDashboardWidget')) {
 				if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 					require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 				}
-				if (!is_plugin_active_for_network('wordpress-chat/wordpress-chat.php')) return;
+				if (!is_plugin_active_for_network('wordpress-chat/wordpress-chat.php')) {return;}
 
 				add_action( 'wp_network_dashboard_setup', array(&$this, 'wpmudev_chat_add_dashboard_widgets') );
 			} else {
@@ -937,7 +925,7 @@ if (!class_exists('WPMUDEVChatStatusDashboardWidget')) {
 				if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 					require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 				}
-				if (!is_plugin_active_for_network('wordpress-chat/wordpress-chat.php')) return;
+				if (!is_plugin_active_for_network('wordpress-chat/wordpress-chat.php')) {return;}
 
 				add_action( 'wp_network_dashboard_setup', array(&$this, 'wpmudev_chat_add_dashboard_widgets') );
 			} else {
@@ -1013,7 +1001,7 @@ if (!class_exists('WPMUDEVChatStatusDashboardWidget')) {
 
 				$class = '';
 				if ($status_key == 'available')
-					$class .= ' available';
+					{$class .= ' available';}
 
 				$chat_output .= '<option class="'. $class .'" value="'. $status_key .'" '. $selected .'>'. $status_label .'</option>';
 			}
@@ -1038,7 +1026,7 @@ if (!class_exists('WPMUDEVChatFriendsDashboardWidget')) {
 				if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 					require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 				}
-				if (!is_plugin_active_for_network('wordpress-chat/wordpress-chat.php')) return;
+				if (!is_plugin_active_for_network('wordpress-chat/wordpress-chat.php')) {return;}
 
 				add_action( 'wp_network_dashboard_setup', array(&$this, 'wpmudev_chat_add_dashboard_widgets') );
 			} else {
@@ -1143,7 +1131,7 @@ if (!class_exists('WPMUDEVChatFriendsDashboardWidget')) {
 						return;
 					}
 				}
-				if (!function_exists('friends_get_list')) return;
+				if (!function_exists('friends_get_list')) {return;}
 
 				$friends_list_ids = friends_get_list($current_user->ID);
 			}
@@ -1162,7 +1150,6 @@ if (!class_exists('WPMUDEVChatFriendsDashboardWidget')) {
 				foreach($friends_status as $friend) {
 					if ((isset($friend->chat_status)) && ($friend->chat_status == "available")) {
 						$friend_status_data = wpmudev_chat_get_chat_status_data($current_user->ID, $friend);
-						//echo "friend_status_data<pre>"; print_r($friend_status_data); echo "</pre>";
 
 						$chat_output .= '<li><a class="'. $friend_status_data['href_class'] .'" title="'. $friend_status_data['href_title'] .'" href="#" rel="'.md5($friend->ID) .'"><span class="wpmudev-chat-ab-icon wpmudev-chat-ab-icon-'. $friend->chat_status .'"></span><span class="wpmudev-chat-ab-label">'. $friend->display_name .'</span>'.'</a></li>';
 

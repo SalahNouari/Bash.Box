@@ -1614,7 +1614,7 @@ function wpmudev_chat_form_section_google_plus( $form_section = 'global' ) {
 	?>
 	<fieldset>
 		<legend><?php _e( 'Google+', $wpmudev_chat->translation_domain ); ?></legend>
-		<p><?php _e( 'To create a client ID and client secret, create a Google APIs Console project, enable the Google+ API, create an OAuth 2.0 client ID, and register your JavaScript origins', $wpmudev_chat->translation_domain ); ?></p>
+		<p><?php _e( 'To create a client ID and client secret, create a Google Developers Console project, enable the Google+ API, create an OAuth 2.0 client ID, and register your JavaScript origins', $wpmudev_chat->translation_domain ); ?></p>
 		<table border="0" cellpadding="4" cellspacing="0">
 			<tr>
 				<td style="vertical-align:top; width: 35%">
@@ -1625,19 +1625,20 @@ function wpmudev_chat_form_section_google_plus( $form_section = 'global' ) {
 				<td class="info" style="vertical-align:top; width: 65%">
 					<ol>
 						<li><?php _e( 'First log into your Google+ account', $wpmudev_chat->translation_domain ); ?></li>
-						<li><?php echo sprintf( __( 'In the <a target="_blank" href="%s">Google APIs Console</a>, select <strong>Create</strong> from the pull-down menu on the left, and enter a project name (such as "WordPress Chat").', $wpmudev_chat->translation_domain ), "https://developers.google.com/console" ); ?></li>
+						<li><?php echo sprintf( __( 'In the <a target="_blank" href="%s">Google Developers Console</a>, click on <strong>Create project</strong>, and enter a project name (such as "Site Name Chat").', $wpmudev_chat->translation_domain ), "https://console.developers.google.com/project" ); ?></li>
 
-						<li><?php echo sprintf( __( 'In the <a target="_blank" href="%s">Services pane</a>, enable the <strong>Google+ API</strong>.', $wpmudev_chat->translation_domain ), "https://code.google.com/apis/console/?api=plus#:services" ); ?></li>
+						<li><?php echo sprintf( __( 'After project creation you\'ll be redirected to project dashboard. Go to <a target="_blank" href="%s">Enable and Manage APIs</a>, enable the <strong>Google+ API</strong>.', $wpmudev_chat->translation_domain ), "https://console.developers.google.com/apis/library" ); ?></li>
 
-						<li><?php echo sprintf( __( 'In the <a target="_blank" href="%s">API Access pane</a>, click Create an OAuth 2.0 Client ID.', $wpmudev_chat->translation_domain ), "https://code.google.com/apis/console/#:access" ); ?>
+						<li><?php echo sprintf( __( 'Go to <a target="_blank" href="%s">Credentials</a> tab on left, click on New Credentials and select <strong>OAuth client ID</strong>. It prompts to configure the Consent screen first.', $wpmudev_chat->translation_domain ), "https://console.developers.google.com/apis/credentials" ); ?>
 							<ol style="list-style-type:lower-alpha;">
-								<li><?php _e( 'In the <strong>Product name</strong> field, enter a name for your application (such as "Wordpress Chat"). All other fields are optional. Click <strong>Next</strong>.', $wpmudev_chat->translation_domain ); ?></li>
-								<li><?php _e( 'In the Client ID Settings section, do the following:	', $wpmudev_chat->translation_domain ); ?>
+								<li><?php _e( 'In the <strong>Product name</strong> field, enter a name for your application (such as "Wordpress Chat"). All other fields are optional. Click <strong>Save</strong>.', $wpmudev_chat->translation_domain ); ?></li>
+								<li><?php _e( 'In the Create Client ID Settings section, do the following:	', $wpmudev_chat->translation_domain ); ?>
 									<ol style="list-style-type:circle">
 										<li><?php _e( 'Select <em>Web application</em> for the <strong>Application type</strong>.', $wpmudev_chat->translation_domain ); ?></li>
-										<li><?php _e( 'Enter your site full domain into the <strong>Your site or hostname</strong>. Ensure the dropdown for the prefix is properly selected. You should only select <em>https://</em> if your site is using a valid SSL certificate installed.', $wpmudev_chat->translation_domain ); ?>
+										<li><?php _e( 'Specify a name for the credentials, keep it different from the project name.', $wpmudev_chat->translation_domain ); ?></li>
+										<li><?php _e( 'Enter your site full domain into the <strong>Authorized JavaScript origins</strong> and <strong>Authorized redirect URIs</strong>.', $wpmudev_chat->translation_domain ); ?>
 											<strong><?php print get_bloginfo( 'url' ); ?></strong></li>
-										<li><?php _e( 'Finally, click the <strong>Create client ID</strong> button.', $wpmudev_chat->translation_domain ); ?></li>
+										<li><?php _e( 'Finally, click the <strong>Create</strong> button.', $wpmudev_chat->translation_domain ); ?></li>
 									</ol>
 								</li>
 							</ol>

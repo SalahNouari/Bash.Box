@@ -11,7 +11,7 @@ if ( ! empty( $configs_array ) ) {
 }
 if ( ( isset( $configs_array['ABSPATH'] ) ) && ( ! empty( $configs_array['ABSPATH'] ) ) ) {
 	$configs_array['ABSPATH'] = base64_decode( $configs_array['ABSPATH'] );
-	if ( ! file_exists( $configs_array['ABSPATH'] . "/wp-load.php" ) ) //header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);	     	 	 	  	  		
+	if ( ! file_exists( $configs_array['ABSPATH'] . "/wp-load.php" ) ) //header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 	{
 		die();
 	}

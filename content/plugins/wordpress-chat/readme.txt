@@ -18,6 +18,11 @@ Add a chat to your blog and allow your readers to chat with you.
 
 == ChangeLog ==
 
+= 2.1.1 = Umesh Kumar =
+
+* Fixed: Emoji issue in Safari
+* Fixed: Page reload required for Twitter login
+
 = 2.1 = Umesh Kumar =
 * Fixed: Chat messages not working with WordPress 4.4
 * Fixed: Gravatar doesn't shows up for page chat
@@ -448,4 +453,4 @@ Add a chat to your blog and allow your readers to chat with you.
 * Initial release
 
 
-133620-1450470484-au
+133620-1450932153-au

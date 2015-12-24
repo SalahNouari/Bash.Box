@@ -5,7 +5,7 @@ Plugin URI: http://premium.wpmudev.org/project/wordpress-chat-plugin
 Description: Provides you with a fully featured chat area either in a post, page, widget or bottom corner of your site. Support BuddyPress Group chat and private chats between logged in users.
 Author: WPMU DEV
 WDP ID: 159
-Version: 2.1
+Version: 2.1.1
 Author URI: http://premium.wpmudev.org
 Text Domain: wordpress_chat
 Domain Path: /languages
@@ -24,7 +24,7 @@ if ( ( ! defined( 'WPMUDEV_CHAT_SHORTINIT' ) ) || ( WPMUDEV_CHAT_SHORTINIT != tr
 }
 if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 	class WPMUDEV_Chat {
-		var $chat_current_version = '2.1';
+		var $chat_current_version = '2.1.1';
 		var $translation_domain = 'wordpress-chat';
 
 		/**
@@ -4121,10 +4121,6 @@ if ( ! class_exists( 'WPMUDEV_Chat' ) ) {
 		 */
 		function chat_session_message_area_module( $chat_session ) {
 			$content = '';
-
-			//$content .= $this->chat_session_buttonbar_module($chat_session);
-			//$content .= $this->chat_session_emoticons_module($chat_session);
-
 			if ( ( $chat_session['session_status'] != "open" ) && ( ! wpmudev_chat_is_moderator( $chat_session ) ) ) {
 				$display_style = ' style="display:none;" ';
 			} else {

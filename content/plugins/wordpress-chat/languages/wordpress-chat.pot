@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WordPress Chat package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WordPress Chat 2.1\n"
+"Project-Id-Version: WordPress Chat 2.1.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wordpress-chat\n"
-"POT-Creation-Date: 2015-12-12 04:17:42+00:00\n"
+"POT-Creation-Date: 2015-12-21 08:40:14+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -96,7 +96,7 @@ msgstr ""
 #: lib/wpmudev_chat_admin_panels.php:105 lib/wpmudev_chat_admin_panels.php:190
 #: lib/wpmudev_chat_admin_panels.php:263 lib/wpmudev_chat_admin_panels.php:452
 #: lib/wpmudev_chat_admin_panels.php:650 lib/wpmudev_chat_admin_panels.php:735
-#: lib/wpmudev_chat_buddypress.php:253
+#: lib/wpmudev_chat_buddypress.php:252
 msgid "Save Changes"
 msgstr ""
 
@@ -113,7 +113,7 @@ msgid "Under Multisite the bottom corner chat can be enabled at the Netowrk. Whe
 msgstr ""
 
 #: lib/wpmudev_chat_admin_panels.php:131 lib/wpmudev_chat_admin_panels.php:593
-#: lib/wpmudev_chat_form_sections.php:2492
+#: lib/wpmudev_chat_form_sections.php:2493
 msgid "Bottom Corner"
 msgstr ""
 
@@ -169,7 +169,7 @@ msgid "Block IP/User"
 msgstr ""
 
 #: lib/wpmudev_chat_admin_panels.php:394
-#: lib/wpmudev_chat_form_sections.php:1681
+#: lib/wpmudev_chat_form_sections.php:1682
 msgid "Blocked Words"
 msgstr ""
 
@@ -818,12 +818,12 @@ msgid "The global bottom corner chat means the chat message will be from all sit
 msgstr ""
 
 #: lib/wpmudev_chat_admin_panels_help.php:620
-#: lib/wpmudev_chat_buddypress.php:203
+#: lib/wpmudev_chat_buddypress.php:202
 msgid "This user option controls your public chat status to other users within your network. This lets you control when others can initiate private chat sessions with you. Note this does not prevent private chats during existing chat sessions you are participating in."
 msgstr ""
 
 #: lib/wpmudev_chat_admin_panels_help.php:627
-#: lib/wpmudev_chat_form_sections.php:2759
+#: lib/wpmudev_chat_form_sections.php:2760
 msgid "This will disable all Chat functions including WordPress toolbar menu"
 msgstr ""
 
@@ -920,8 +920,8 @@ msgid "Private"
 msgstr ""
 
 #: lib/wpmudev_chat_admin_session_logs.php:343
-#: lib/wpmudev_chat_buddypress.php:128 lib/wpmudev_chat_widget.php:844
-#: lib/wpmudev_chat_widget.php:874 lib/wpmudev_chat_wpadminbar.php:111
+#: lib/wpmudev_chat_buddypress.php:127 lib/wpmudev_chat_widget.php:832
+#: lib/wpmudev_chat_widget.php:862 lib/wpmudev_chat_wpadminbar.php:111
 #: lib/wpmudev_chat_wpadminbar.php:145 wordpress-chat.php:1007
 msgid "Chat"
 msgstr ""
@@ -936,7 +936,7 @@ msgstr ""
 
 #: lib/wpmudev_chat_admin_session_logs.php:403
 #: lib/wpmudev_chat_admin_session_messages.php:334 wordpress-chat.php:1181
-#: wordpress-chat.php:4880
+#: wordpress-chat.php:4876
 msgid "hide"
 msgstr ""
 
@@ -946,7 +946,7 @@ msgstr ""
 
 #: lib/wpmudev_chat_admin_session_logs.php:410
 #: lib/wpmudev_chat_admin_session_messages.php:341 wordpress-chat.php:1182
-#: wordpress-chat.php:4881
+#: wordpress-chat.php:4877
 msgid "unhide"
 msgstr ""
 
@@ -1057,12 +1057,12 @@ msgstr ""
 msgid "Delete this chat message permanently"
 msgstr ""
 
-#: lib/wpmudev_chat_admin_tinymce.php:183 lib/wpmudev_chat_widget.php:968
-#: lib/wpmudev_chat_widget.php:986
+#: lib/wpmudev_chat_admin_tinymce.php:183 lib/wpmudev_chat_widget.php:956
+#: lib/wpmudev_chat_widget.php:974
 msgid "WordPress Chat"
 msgstr ""
 
-#: lib/wpmudev_chat_admin_tinymce.php:261 wordpress-chat.php:4964
+#: lib/wpmudev_chat_admin_tinymce.php:261 wordpress-chat.php:4960
 msgid "Cancel"
 msgstr ""
 
@@ -1086,42 +1086,42 @@ msgstr ""
 msgid "Save settings and insert shortcode at cursor"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:167
+#: lib/wpmudev_chat_buddypress.php:166
 msgid "Changes saved."
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:180 wordpress-chat.php:2698
-#: wordpress-chat.php:4605
+#: lib/wpmudev_chat_buddypress.php:179 wordpress-chat.php:2698
+#: wordpress-chat.php:4601
 msgid "Chat Settings"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:201 wordpress-chat.php:2704
+#: lib/wpmudev_chat_buddypress.php:200 wordpress-chat.php:2704
 msgid "Set Chat status"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:224 wordpress-chat.php:2731
+#: lib/wpmudev_chat_buddypress.php:223 wordpress-chat.php:2731
 msgid "In Chat Sessions show name as"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:226
+#: lib/wpmudev_chat_buddypress.php:225
 msgid "During chat sessions you are participating in this setting controls how you will be labelled to other users. Default is display name."
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:230 lib/wpmudev_chat_form_sections.php:2735
+#: lib/wpmudev_chat_buddypress.php:229 lib/wpmudev_chat_form_sections.php:2736
 #: wordpress-chat.php:2738
 msgid "Display Name"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:233 lib/wpmudev_chat_form_sections.php:2738
+#: lib/wpmudev_chat_buddypress.php:232 lib/wpmudev_chat_form_sections.php:2739
 #: wordpress-chat.php:2741
 msgid "User Login"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:239 wordpress-chat.php:2794
+#: lib/wpmudev_chat_buddypress.php:238 wordpress-chat.php:2794
 msgid "Show Chat WordPress toolbar menu?"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:244 lib/wpmudev_chat_form_sections.php:16
+#: lib/wpmudev_chat_buddypress.php:243 lib/wpmudev_chat_form_sections.php:16
 #: lib/wpmudev_chat_form_sections.php:317
 #: lib/wpmudev_chat_form_sections.php:407
 #: lib/wpmudev_chat_form_sections.php:736
@@ -1132,40 +1132,40 @@ msgstr ""
 #: lib/wpmudev_chat_form_sections.php:1144
 #: lib/wpmudev_chat_form_sections.php:1189
 #: lib/wpmudev_chat_form_sections.php:1540
-#: lib/wpmudev_chat_form_sections.php:1718
-#: lib/wpmudev_chat_form_sections.php:1786
-#: lib/wpmudev_chat_form_sections.php:1853
-#: lib/wpmudev_chat_form_sections.php:1909
-#: lib/wpmudev_chat_form_sections.php:1968
-#: lib/wpmudev_chat_form_sections.php:2016
-#: lib/wpmudev_chat_form_sections.php:2030
-#: lib/wpmudev_chat_form_sections.php:2072
-#: lib/wpmudev_chat_form_sections.php:2097
-#: lib/wpmudev_chat_form_sections.php:2594
-#: lib/wpmudev_chat_form_sections.php:2608
-#: lib/wpmudev_chat_form_sections.php:2634
-#: lib/wpmudev_chat_form_sections.php:2648
-#: lib/wpmudev_chat_form_sections.php:2752
-#: lib/wpmudev_chat_form_sections.php:2772
-#: lib/wpmudev_chat_form_sections.php:2790
-#: lib/wpmudev_chat_form_sections.php:2811
-#: lib/wpmudev_chat_form_sections.php:2830
-#: lib/wpmudev_chat_form_sections.php:2848
-#: lib/wpmudev_chat_form_sections.php:2870
-#: lib/wpmudev_chat_form_sections.php:2900
-#: lib/wpmudev_chat_form_sections.php:2956
-#: lib/wpmudev_chat_form_sections.php:3003
-#: lib/wpmudev_chat_form_sections.php:3039
-#: lib/wpmudev_chat_form_sections.php:3088 lib/wpmudev_chat_widget.php:91
+#: lib/wpmudev_chat_form_sections.php:1719
+#: lib/wpmudev_chat_form_sections.php:1787
+#: lib/wpmudev_chat_form_sections.php:1854
+#: lib/wpmudev_chat_form_sections.php:1910
+#: lib/wpmudev_chat_form_sections.php:1969
+#: lib/wpmudev_chat_form_sections.php:2017
+#: lib/wpmudev_chat_form_sections.php:2031
+#: lib/wpmudev_chat_form_sections.php:2073
+#: lib/wpmudev_chat_form_sections.php:2098
+#: lib/wpmudev_chat_form_sections.php:2595
+#: lib/wpmudev_chat_form_sections.php:2609
+#: lib/wpmudev_chat_form_sections.php:2635
+#: lib/wpmudev_chat_form_sections.php:2649
+#: lib/wpmudev_chat_form_sections.php:2753
+#: lib/wpmudev_chat_form_sections.php:2773
+#: lib/wpmudev_chat_form_sections.php:2791
+#: lib/wpmudev_chat_form_sections.php:2812
+#: lib/wpmudev_chat_form_sections.php:2831
+#: lib/wpmudev_chat_form_sections.php:2849
+#: lib/wpmudev_chat_form_sections.php:2871
+#: lib/wpmudev_chat_form_sections.php:2901
+#: lib/wpmudev_chat_form_sections.php:2957
+#: lib/wpmudev_chat_form_sections.php:3004
+#: lib/wpmudev_chat_form_sections.php:3040
+#: lib/wpmudev_chat_form_sections.php:3089 lib/wpmudev_chat_widget.php:91
 #: lib/wpmudev_chat_widget.php:114 lib/wpmudev_chat_widget.php:124
-#: lib/wpmudev_chat_widget.php:134 lib/wpmudev_chat_widget.php:520
+#: lib/wpmudev_chat_widget.php:134 lib/wpmudev_chat_widget.php:508
 #: wordpress-chat.php:2759 wordpress-chat.php:2779 wordpress-chat.php:2801
 #: wordpress-chat.php:2818 wordpress-chat.php:2834 wordpress-chat.php:2874
 #: wordpress-chat.php:2932 wordpress-chat.php:2976
 msgid "Enabled"
 msgstr ""
 
-#: lib/wpmudev_chat_buddypress.php:248 lib/wpmudev_chat_form_sections.php:17
+#: lib/wpmudev_chat_buddypress.php:247 lib/wpmudev_chat_form_sections.php:17
 #: lib/wpmudev_chat_form_sections.php:29 lib/wpmudev_chat_form_sections.php:318
 #: lib/wpmudev_chat_form_sections.php:409
 #: lib/wpmudev_chat_form_sections.php:738
@@ -1176,33 +1176,33 @@ msgstr ""
 #: lib/wpmudev_chat_form_sections.php:1146
 #: lib/wpmudev_chat_form_sections.php:1191
 #: lib/wpmudev_chat_form_sections.php:1541
-#: lib/wpmudev_chat_form_sections.php:1720
-#: lib/wpmudev_chat_form_sections.php:1788
-#: lib/wpmudev_chat_form_sections.php:1855
-#: lib/wpmudev_chat_form_sections.php:1911
-#: lib/wpmudev_chat_form_sections.php:1970
-#: lib/wpmudev_chat_form_sections.php:2018
-#: lib/wpmudev_chat_form_sections.php:2032
-#: lib/wpmudev_chat_form_sections.php:2075
-#: lib/wpmudev_chat_form_sections.php:2100
-#: lib/wpmudev_chat_form_sections.php:2596
-#: lib/wpmudev_chat_form_sections.php:2610
-#: lib/wpmudev_chat_form_sections.php:2636
-#: lib/wpmudev_chat_form_sections.php:2650
-#: lib/wpmudev_chat_form_sections.php:2756
-#: lib/wpmudev_chat_form_sections.php:2776
-#: lib/wpmudev_chat_form_sections.php:2794
-#: lib/wpmudev_chat_form_sections.php:2815
-#: lib/wpmudev_chat_form_sections.php:2834
-#: lib/wpmudev_chat_form_sections.php:2852
-#: lib/wpmudev_chat_form_sections.php:2871
-#: lib/wpmudev_chat_form_sections.php:2902
-#: lib/wpmudev_chat_form_sections.php:2958
-#: lib/wpmudev_chat_form_sections.php:3005
-#: lib/wpmudev_chat_form_sections.php:3041
-#: lib/wpmudev_chat_form_sections.php:3090 lib/wpmudev_chat_widget.php:93
+#: lib/wpmudev_chat_form_sections.php:1721
+#: lib/wpmudev_chat_form_sections.php:1789
+#: lib/wpmudev_chat_form_sections.php:1856
+#: lib/wpmudev_chat_form_sections.php:1912
+#: lib/wpmudev_chat_form_sections.php:1971
+#: lib/wpmudev_chat_form_sections.php:2019
+#: lib/wpmudev_chat_form_sections.php:2033
+#: lib/wpmudev_chat_form_sections.php:2076
+#: lib/wpmudev_chat_form_sections.php:2101
+#: lib/wpmudev_chat_form_sections.php:2597
+#: lib/wpmudev_chat_form_sections.php:2611
+#: lib/wpmudev_chat_form_sections.php:2637
+#: lib/wpmudev_chat_form_sections.php:2651
+#: lib/wpmudev_chat_form_sections.php:2757
+#: lib/wpmudev_chat_form_sections.php:2777
+#: lib/wpmudev_chat_form_sections.php:2795
+#: lib/wpmudev_chat_form_sections.php:2816
+#: lib/wpmudev_chat_form_sections.php:2835
+#: lib/wpmudev_chat_form_sections.php:2853
+#: lib/wpmudev_chat_form_sections.php:2872
+#: lib/wpmudev_chat_form_sections.php:2903
+#: lib/wpmudev_chat_form_sections.php:2959
+#: lib/wpmudev_chat_form_sections.php:3006
+#: lib/wpmudev_chat_form_sections.php:3042
+#: lib/wpmudev_chat_form_sections.php:3091 lib/wpmudev_chat_widget.php:93
 #: lib/wpmudev_chat_widget.php:116 lib/wpmudev_chat_widget.php:126
-#: lib/wpmudev_chat_widget.php:136 lib/wpmudev_chat_widget.php:522
+#: lib/wpmudev_chat_widget.php:136 lib/wpmudev_chat_widget.php:510
 #: wordpress-chat.php:2763 wordpress-chat.php:2783 wordpress-chat.php:2805
 #: wordpress-chat.php:2822 wordpress-chat.php:2838 wordpress-chat.php:2878
 #: wordpress-chat.php:2936 wordpress-chat.php:2980
@@ -1321,7 +1321,7 @@ msgstr ""
 #: lib/wpmudev_chat_form_sections.php:648
 #: lib/wpmudev_chat_form_sections.php:877
 #: lib/wpmudev_chat_form_sections.php:1092
-#: lib/wpmudev_chat_form_sections.php:2398
+#: lib/wpmudev_chat_form_sections.php:2399
 msgid "Font"
 msgstr ""
 
@@ -1329,8 +1329,8 @@ msgstr ""
 #: lib/wpmudev_chat_form_sections.php:652
 #: lib/wpmudev_chat_form_sections.php:881
 #: lib/wpmudev_chat_form_sections.php:1096
-#: lib/wpmudev_chat_form_sections.php:2265
-#: lib/wpmudev_chat_form_sections.php:2402
+#: lib/wpmudev_chat_form_sections.php:2266
+#: lib/wpmudev_chat_form_sections.php:2403
 msgid "-- None inherit from theme --"
 msgstr ""
 
@@ -1472,10 +1472,10 @@ msgid "Chat Box Information"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:588
-#: lib/wpmudev_chat_form_sections.php:2039
-#: lib/wpmudev_chat_form_sections.php:2967
-#: lib/wpmudev_chat_form_sections.php:3014
-#: lib/wpmudev_chat_form_sections.php:3050
+#: lib/wpmudev_chat_form_sections.php:2040
+#: lib/wpmudev_chat_form_sections.php:2968
+#: lib/wpmudev_chat_form_sections.php:3015
+#: lib/wpmudev_chat_form_sections.php:3051
 msgid "Title"
 msgstr ""
 
@@ -1501,8 +1501,8 @@ msgid "Full width"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:628
-#: lib/wpmudev_chat_form_sections.php:2977
-#: lib/wpmudev_chat_form_sections.php:3059
+#: lib/wpmudev_chat_form_sections.php:2978
+#: lib/wpmudev_chat_form_sections.php:3060
 msgid "Height"
 msgstr ""
 
@@ -1575,22 +1575,22 @@ msgid "Message Text Color"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:918 lib/wpmudev_chat_widget.php:97
-#: lib/wpmudev_chat_widget.php:301
+#: lib/wpmudev_chat_widget.php:289
 msgid "Show Avatar/Name"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:923 lib/wpmudev_chat_widget.php:100
-#: lib/wpmudev_chat_widget.php:304
+#: lib/wpmudev_chat_widget.php:292
 msgid "Avatar"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:925 lib/wpmudev_chat_widget.php:102
-#: lib/wpmudev_chat_widget.php:306 wordpress-chat.php:4961
+#: lib/wpmudev_chat_widget.php:294 wordpress-chat.php:4957
 msgid "Name"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:927 lib/wpmudev_chat_widget.php:104
-#: lib/wpmudev_chat_widget.php:308
+#: lib/wpmudev_chat_widget.php:296
 msgid "Avatar and Name"
 msgstr ""
 
@@ -1600,17 +1600,17 @@ msgid "None"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:938
-#: lib/wpmudev_chat_form_sections.php:2385
+#: lib/wpmudev_chat_form_sections.php:2386
 msgid "User Name Color"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:951
-#: lib/wpmudev_chat_form_sections.php:2372
+#: lib/wpmudev_chat_form_sections.php:2373
 msgid "Moderator Name Color"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:963
-#: lib/wpmudev_chat_form_sections.php:2320
+#: lib/wpmudev_chat_form_sections.php:2321
 msgid "User Avatar Width"
 msgstr ""
 
@@ -1671,7 +1671,7 @@ msgid "Max Characters"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1107
-#: lib/wpmudev_chat_form_sections.php:2414
+#: lib/wpmudev_chat_form_sections.php:2415
 msgid "Font size"
 msgstr ""
 
@@ -1680,8 +1680,8 @@ msgid "Text Color"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1128
-#: lib/wpmudev_chat_form_sections.php:2227
-#: lib/wpmudev_chat_form_sections.php:2668
+#: lib/wpmudev_chat_form_sections.php:2228
+#: lib/wpmudev_chat_form_sections.php:2669
 msgid "Background Color"
 msgstr ""
 
@@ -1910,7 +1910,7 @@ msgid "Copy and paste them to the fields on the left"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1617
-msgid "To create a client ID and client secret, create a Google APIs Console project, enable the Google+ API, create an OAuth 2.0 client ID, and register your JavaScript origins"
+msgid "To create a client ID and client secret, create a Google Developers Console project, enable the Google+ API, create an OAuth 2.0 client ID, and register your JavaScript origins"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1621
@@ -1922,23 +1922,23 @@ msgid "First log into your Google+ account"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1628
-msgid "In the <a target=\"_blank\" href=\"%s\">Google APIs Console</a>, select <strong>Create</strong> from the pull-down menu on the left, and enter a project name (such as \"WordPress Chat\")."
+msgid "In the <a target=\"_blank\" href=\"%s\">Google Developers Console</a>, click on <strong>Create project</strong>, and enter a project name (such as \"Site Name Chat\")."
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1630
-msgid "In the <a target=\"_blank\" href=\"%s\">Services pane</a>, enable the <strong>Google+ API</strong>."
+msgid "After project creation you'll be redirected to project dashboard. Go to <a target=\"_blank\" href=\"%s\">Enable and Manage APIs</a>, enable the <strong>Google+ API</strong>."
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1632
-msgid "In the <a target=\"_blank\" href=\"%s\">API Access pane</a>, click Create an OAuth 2.0 Client ID."
+msgid "Go to <a target=\"_blank\" href=\"%s\">Credentials</a> tab on left, click on New Credentials and select <strong>OAuth client ID</strong>. It prompts to configure the Consent screen first."
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1634
-msgid "In the <strong>Product name</strong> field, enter a name for your application (such as \"Wordpress Chat\"). All other fields are optional. Click <strong>Next</strong>."
+msgid "In the <strong>Product name</strong> field, enter a name for your application (such as \"Wordpress Chat\"). All other fields are optional. Click <strong>Save</strong>."
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1635
-msgid "In the Client ID Settings section, do the following:\t"
+msgid "In the Create Client ID Settings section, do the following:\t"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1637
@@ -1946,560 +1946,564 @@ msgid "Select <em>Web application</em> for the <strong>Application type</strong>
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1638
-msgid "Enter your site full domain into the <strong>Your site or hostname</strong>. Ensure the dropdown for the prefix is properly selected. You should only select <em>https://</em> if your site is using a valid SSL certificate installed."
+msgid "Specify a name for the credentials, keep it different from the project name."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1640
-msgid "Finally, click the <strong>Create client ID</strong> button."
+#: lib/wpmudev_chat_form_sections.php:1639
+msgid "Enter your site full domain into the <strong>Authorized JavaScript origins</strong> and <strong>Authorized redirect URIs</strong>."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1645
+#: lib/wpmudev_chat_form_sections.php:1641
+msgid "Finally, click the <strong>Create</strong> button."
+msgstr ""
+
+#: lib/wpmudev_chat_form_sections.php:1646
 msgid "On the next page find the section <strong>Client ID for web applications</strong>."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1647
+#: lib/wpmudev_chat_form_sections.php:1648
 msgid "Confirm the <em>JavaScript origins</em> matches the URL for your site home."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1648
+#: lib/wpmudev_chat_form_sections.php:1649
 msgid "Copy the <strong>Client ID</strong> value into the field on the left."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1665
+#: lib/wpmudev_chat_form_sections.php:1666
 msgid "Banned Words Filtering"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1666
+#: lib/wpmudev_chat_form_sections.php:1667
 msgid "Control the banned words filter used for ALL chat sessions. Once enabled you can then control individual chat sessions via the Advanced tab."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1670
+#: lib/wpmudev_chat_form_sections.php:1671
 msgid "Replace Blocked Words with"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1675
+#: lib/wpmudev_chat_form_sections.php:1676
 msgid "Leave blank to remove"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1684
+#: lib/wpmudev_chat_form_sections.php:1685
 msgid "One word per line. Partial word matches will be included."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1708
+#: lib/wpmudev_chat_form_sections.php:1709
 msgid "Blocked Words Filtering This Session"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1712
-#: lib/wpmudev_chat_form_sections.php:1963
+#: lib/wpmudev_chat_form_sections.php:1713
+#: lib/wpmudev_chat_form_sections.php:1964
 msgid "Active for this Chat Session?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1735
+#: lib/wpmudev_chat_form_sections.php:1736
 msgid "Blocked Users by Email Address"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1739
+#: lib/wpmudev_chat_form_sections.php:1740
 msgid "Users (email address only)"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1741
+#: lib/wpmudev_chat_form_sections.php:1742
 msgid "One user email per line. Patterns or ranges are not supported. Only effects public users. Does not support blocking Facebook, Twitter or Google+ users."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1774
+#: lib/wpmudev_chat_form_sections.php:1775
 msgid "Hide Bottom Corner Chat on URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1776
+#: lib/wpmudev_chat_form_sections.php:1777
 msgid "This setting control where the Bottom Corner chat is shown within your site. This settings does not effect the WP toolbar chat menu, Page chat, Private chats or Widget chats."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1781
-#: lib/wpmudev_chat_form_sections.php:1848
+#: lib/wpmudev_chat_form_sections.php:1782
+#: lib/wpmudev_chat_form_sections.php:1849
 msgid "Block on URLs with shortcode"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1795
+#: lib/wpmudev_chat_form_sections.php:1796
 msgid "In addition to the above you can also exclude/include Bottom Corner chat on specific URLs using the options below. The URLs can be front or WPAdmin URLs."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1801
-#: lib/wpmudev_chat_form_sections.php:1868
-#: lib/wpmudev_chat_form_sections.php:2448
-#: lib/wpmudev_chat_form_sections.php:2514
+#: lib/wpmudev_chat_form_sections.php:1802
+#: lib/wpmudev_chat_form_sections.php:1869
+#: lib/wpmudev_chat_form_sections.php:2449
+#: lib/wpmudev_chat_form_sections.php:2515
 msgid "Select Action"
-msgstr ""
-
-#: lib/wpmudev_chat_form_sections.php:1805
-#: lib/wpmudev_chat_form_sections.php:1872
-msgid "Show on URLs ONLY"
 msgstr ""
 
 #: lib/wpmudev_chat_form_sections.php:1806
 #: lib/wpmudev_chat_form_sections.php:1873
+msgid "Show on URLs ONLY"
+msgstr ""
+
+#: lib/wpmudev_chat_form_sections.php:1807
+#: lib/wpmudev_chat_form_sections.php:1874
 msgid "Hide on URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1813
-#: lib/wpmudev_chat_form_sections.php:1880
+#: lib/wpmudev_chat_form_sections.php:1814
+#: lib/wpmudev_chat_form_sections.php:1881
 msgid "URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1815
-#: lib/wpmudev_chat_form_sections.php:1882
-#: lib/wpmudev_chat_form_sections.php:2462
-#: lib/wpmudev_chat_form_sections.php:2530
+#: lib/wpmudev_chat_form_sections.php:1816
+#: lib/wpmudev_chat_form_sections.php:1883
+#: lib/wpmudev_chat_form_sections.php:2463
+#: lib/wpmudev_chat_form_sections.php:2531
 msgid "One URL per line.<br />URL can be relative or absolute and may contain parameters"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1841
+#: lib/wpmudev_chat_form_sections.php:1842
 msgid "Hide Widget Chat on URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1843
+#: lib/wpmudev_chat_form_sections.php:1844
 msgid "This setting control where Widget chats are shown within your site. This settings does not effect the WP toolbar chat menu, Page chat, Private chats or Bottom Corner chat."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1862
+#: lib/wpmudev_chat_form_sections.php:1863
 msgid "In addition to the above you can also exclude/include Widget chats on specific URLs using the options below"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1900
-#: lib/wpmudev_chat_form_sections.php:1932
-#: lib/wpmudev_chat_form_sections.php:1959
+#: lib/wpmudev_chat_form_sections.php:1901
+#: lib/wpmudev_chat_form_sections.php:1933
+#: lib/wpmudev_chat_form_sections.php:1960
 msgid "Blocked IP Addresses"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1904
+#: lib/wpmudev_chat_form_sections.php:1905
 msgid "Active for ALL Chat Sessions?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1918
+#: lib/wpmudev_chat_form_sections.php:1919
 msgid "Message Displayed to User"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1921
+#: lib/wpmudev_chat_form_sections.php:1922
 msgid "When the user is banned this message will be display in place of all other chat message and information"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1935
+#: lib/wpmudev_chat_form_sections.php:1936
 msgid "One IP Address per line. Patterns or ranges are not supported"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1987
-#: lib/wpmudev_chat_form_sections.php:2889
+#: lib/wpmudev_chat_form_sections.php:1988
+#: lib/wpmudev_chat_form_sections.php:2890
 msgid "Bottom Corner Chat"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1989
+#: lib/wpmudev_chat_form_sections.php:1990
 msgid "The Bottom Corner Chat is a group chat shown on all pages of the site. Using the settings below you can fine tune the display and functionality."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:1996
+#: lib/wpmudev_chat_form_sections.php:1997
 msgid "The Bottom Corner Chat has been Network enabled by the Super Admin. This means it will preclude your local site Bottom Corner Chat visibility."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2003
+#: lib/wpmudev_chat_form_sections.php:2004
 msgid "The Bottom Corner WPAdmin Chat has been Network enabled by the Super Admin. This means it will preclude your local site Bottom Corner WPAdmin Chat visibility."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2011
+#: lib/wpmudev_chat_form_sections.php:2012
 msgid "Display Bottom Corner Chat on Front?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2025
+#: lib/wpmudev_chat_form_sections.php:2026
 msgid "Display Bottom Corner Chat on WPAdmin?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2050
+#: lib/wpmudev_chat_form_sections.php:2051
 msgid "Display Bottom Corner Initial View"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2056
+#: lib/wpmudev_chat_form_sections.php:2057
 msgid "Maximized"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2059
+#: lib/wpmudev_chat_form_sections.php:2060
 msgid "Minimized"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2066
+#: lib/wpmudev_chat_form_sections.php:2067
 msgid "When Minimized poll for New Messages?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2085
+#: lib/wpmudev_chat_form_sections.php:2086
 msgid "Private Chat"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2087
+#: lib/wpmudev_chat_form_sections.php:2088
 msgid "The Private chats operate much like the bottom corner chat session. A Private chat is a one-to-one chat session between two users. The settings below allow you to control options for the Private and how they effect users."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2091
+#: lib/wpmudev_chat_form_sections.php:2092
 msgid "Allow Private Chat popup to reopen after existing?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2116
+#: lib/wpmudev_chat_form_sections.php:2117
 msgid "WYSIWYG Chat button User Roles"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2118
+#: lib/wpmudev_chat_form_sections.php:2119
 msgid "Select which roles will use the Chat WYSIWYG button. Note the user must also have Edit capabilities for the Post type."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2142
+#: lib/wpmudev_chat_form_sections.php:2143
 msgid "WYSIWYG Chat button Post Types"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2143
+#: lib/wpmudev_chat_form_sections.php:2144
 msgid "Select which Post Types will have the Chat WYSIWYG button available."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2174
+#: lib/wpmudev_chat_form_sections.php:2175
 msgid "Show list of Chat Users"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2175
+#: lib/wpmudev_chat_form_sections.php:2176
 msgid "With this option you can show the list of users participating in the chat session. You may position the users list on either side of the chat window. You may also chose to display the user avatar or name."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2177
+#: lib/wpmudev_chat_form_sections.php:2178
 msgid "For left right positions the avatar option works best. For above or below positions the name format works best."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2182
+#: lib/wpmudev_chat_form_sections.php:2183
 msgid "Show Users List Position"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2187
+#: lib/wpmudev_chat_form_sections.php:2188
 msgid "Do not show users list"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2189
+#: lib/wpmudev_chat_form_sections.php:2190
 msgid "To the Right of the Messages list"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2191
+#: lib/wpmudev_chat_form_sections.php:2192
 msgid "To the left of the Messages list"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2193
+#: lib/wpmudev_chat_form_sections.php:2194
 msgid "Above of the Messages list"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2195
+#: lib/wpmudev_chat_form_sections.php:2196
 msgid "Below the the Messages list"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2202
+#: lib/wpmudev_chat_form_sections.php:2203
 msgid "Show Moderators and Users"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2207
+#: lib/wpmudev_chat_form_sections.php:2208
 msgid "Split - Show moderator and user as separate lists. "
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2209
+#: lib/wpmudev_chat_form_sections.php:2210
 msgid "Combined - Show moderators first, then users."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2216
+#: lib/wpmudev_chat_form_sections.php:2217
 msgid "List Width/Height"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2238
+#: lib/wpmudev_chat_form_sections.php:2239
 msgid "Remove Inactive User after (seconds)"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2250
+#: lib/wpmudev_chat_form_sections.php:2251
 msgid "Header Above Lists"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2261
+#: lib/wpmudev_chat_form_sections.php:2262
 msgid "Header Font"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2276
+#: lib/wpmudev_chat_form_sections.php:2277
 msgid "Header Font Size"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2290
+#: lib/wpmudev_chat_form_sections.php:2291
 msgid "Header Text Color"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2304
+#: lib/wpmudev_chat_form_sections.php:2305
 msgid "Show Users List"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2309
+#: lib/wpmudev_chat_form_sections.php:2310
 msgid "Avatars"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2311
+#: lib/wpmudev_chat_form_sections.php:2312
 msgid "Names"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2333
+#: lib/wpmudev_chat_form_sections.php:2334
 msgid "User Avatar Border Width"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2346
+#: lib/wpmudev_chat_form_sections.php:2347
 msgid "Moderator Avatar Border Color"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2358
+#: lib/wpmudev_chat_form_sections.php:2359
 msgid "User Avatar Border Color"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2443
+#: lib/wpmudev_chat_form_sections.php:2444
 msgid "Hide Chat on WP Admin URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2444
+#: lib/wpmudev_chat_form_sections.php:2445
 msgid "This section control how Chat works within the WordPress admin area. These are global settings and effect all users"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2452
+#: lib/wpmudev_chat_form_sections.php:2453
 msgid "Show on Admin URLs ONLY"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2453
+#: lib/wpmudev_chat_form_sections.php:2454
 msgid "Hide on Admin URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2460
+#: lib/wpmudev_chat_form_sections.php:2461
 msgid "WP Admin URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2489
+#: lib/wpmudev_chat_form_sections.php:2490
 msgid "By default Chat will load the needed JS/CSS on all Front URLs. This is to facilitate Private chat invitations as well as interactions with the WP toolbar Chat section. If disabled, the JS/CSS files will not be loaded. Also the WP toolbar Chat menu as well as Private chats will not be displayed."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2491
+#: lib/wpmudev_chat_form_sections.php:2492
 msgid "Note this ONLY effects URLs where you don't have Page chat (shortcode), Widget Chat or Bottom Corner chat already displayed. You can disable the %s and %s chat within the the Setting section."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2493
+#: lib/wpmudev_chat_form_sections.php:2494
 msgid "Widget"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2496
+#: lib/wpmudev_chat_form_sections.php:2497
 msgid "Hide Chat on WP Front URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2500
+#: lib/wpmudev_chat_form_sections.php:2501
 msgid "Load JS/CSS on ALL URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2504
+#: lib/wpmudev_chat_form_sections.php:2505
 msgid "Yes, All URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2505
+#: lib/wpmudev_chat_form_sections.php:2506
 msgid "No, Only URLs where needed for shortcode, widgets, etc."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2518
+#: lib/wpmudev_chat_form_sections.php:2519
 msgid "Show on Front URLs ONLY"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2519
+#: lib/wpmudev_chat_form_sections.php:2520
 msgid "Hide on Front URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2528
+#: lib/wpmudev_chat_form_sections.php:2529
 msgid "WP Front URLs"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2548
+#: lib/wpmudev_chat_form_sections.php:2549
 msgid "Group Information"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2549
+#: lib/wpmudev_chat_form_sections.php:2550
 msgid "Controls the Group menu label and URL slug within the BuddyPress Group pages."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2553
+#: lib/wpmudev_chat_form_sections.php:2554
 msgid "Menu Label"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2564
+#: lib/wpmudev_chat_form_sections.php:2565
 msgid "Page Slug"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2583
+#: lib/wpmudev_chat_form_sections.php:2584
 msgid "Hide Bottom Corner Chats"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2584
+#: lib/wpmudev_chat_form_sections.php:2585
 msgid "Controls the display of the Bottom Corner chat within the BuddyPress Group pages. This setting will override the blocked URLs set within the Settings Site tab."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2589
-#: lib/wpmudev_chat_form_sections.php:2629
+#: lib/wpmudev_chat_form_sections.php:2590
+#: lib/wpmudev_chat_form_sections.php:2630
 msgid "Show on Groups pages"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2603
-#: lib/wpmudev_chat_form_sections.php:2643
+#: lib/wpmudev_chat_form_sections.php:2604
+#: lib/wpmudev_chat_form_sections.php:2644
 msgid "Show on Groups admin pages"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2624
+#: lib/wpmudev_chat_form_sections.php:2625
 msgid "Hide Widget Chats"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2625
+#: lib/wpmudev_chat_form_sections.php:2626
 msgid "Controls the display of the Widget chat within the BuddyPress Group pages. This setting will override the blocked URLs set within the Settings Widget tab."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2664
+#: lib/wpmudev_chat_form_sections.php:2665
 msgid "Colors for BuddyPress Group Admin Chat form"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2679
+#: lib/wpmudev_chat_form_sections.php:2680
 msgid "Label Color"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2701
+#: lib/wpmudev_chat_form_sections.php:2702
 msgid "User Profile defaults"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2702
+#: lib/wpmudev_chat_form_sections.php:2703
 msgid "Using the following options you can define defaults for users within your site. These settings are just defaults in the case where the user has not already saved their own values via their profile."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2707
+#: lib/wpmudev_chat_form_sections.php:2708
 msgid "User Chat Status"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2729
+#: lib/wpmudev_chat_form_sections.php:2730
 msgid "In Chat Sessions Show Name as"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2745 wordpress-chat.php:2772
+#: lib/wpmudev_chat_form_sections.php:2746 wordpress-chat.php:2772
 msgid "Show Chats within WPAdmin"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2765
+#: lib/wpmudev_chat_form_sections.php:2766
 msgid "Show Chat WordPress Toolbar Menu?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2783
+#: lib/wpmudev_chat_form_sections.php:2784
 msgid "Show Chat Status Column on Users > All Users listing?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2797
+#: lib/wpmudev_chat_form_sections.php:2798
 msgid "User must have <strong>list_users</strong> role capability"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2804 wordpress-chat.php:2860
+#: lib/wpmudev_chat_form_sections.php:2805 wordpress-chat.php:2860
 msgid "Show Chat Widget on Dashboard"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2823 wordpress-chat.php:2918
+#: lib/wpmudev_chat_form_sections.php:2824 wordpress-chat.php:2918
 msgid "Show Chat Status Widget on Dashboard"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2841 wordpress-chat.php:2961
+#: lib/wpmudev_chat_form_sections.php:2842 wordpress-chat.php:2961
 msgid "Show Chat Friends Widget on Dashboard"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2861
+#: lib/wpmudev_chat_form_sections.php:2862
 msgid "User Management"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2866
+#: lib/wpmudev_chat_form_sections.php:2867
 msgid "Remove Chat messages when WordPress user is deleted"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2894
+#: lib/wpmudev_chat_form_sections.php:2895
 msgid "Enable Global Bottom Corner Chat?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2897
+#: lib/wpmudev_chat_form_sections.php:2898
 msgid "Enabling global bottom corner chat means message posted from one site will be shown to all sites within your Multisite system. Local site moderators will still be able to clear/delete message, etc. Also local admins will still be able to disable bottom corner chat from showing within their site."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2916
+#: lib/wpmudev_chat_form_sections.php:2917
 msgid "pc"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2917
+#: lib/wpmudev_chat_form_sections.php:2918
 msgid "pt"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2918
+#: lib/wpmudev_chat_form_sections.php:2919
 msgid "px"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2919
+#: lib/wpmudev_chat_form_sections.php:2920
 msgid "em"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2920
+#: lib/wpmudev_chat_form_sections.php:2921
 msgid "%"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2943
+#: lib/wpmudev_chat_form_sections.php:2944
 msgid "Chat Widget on Dashboard"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2948
+#: lib/wpmudev_chat_form_sections.php:2949
 msgid "Enable Chat Widget on Network Dashboard?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2950
+#: lib/wpmudev_chat_form_sections.php:2951
 msgid "Enable Chat Widget on Dashboard?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2961
-#: lib/wpmudev_chat_form_sections.php:3008
-#: lib/wpmudev_chat_form_sections.php:3044
+#: lib/wpmudev_chat_form_sections.php:2962
+#: lib/wpmudev_chat_form_sections.php:3009
+#: lib/wpmudev_chat_form_sections.php:3045
 msgid "If enabled, Users will able to control visibility via their profile."
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2990
+#: lib/wpmudev_chat_form_sections.php:2991
 msgid "Chat Status Widget on Dashboard"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2995
+#: lib/wpmudev_chat_form_sections.php:2996
 msgid "Enable Chat Status Widget on Network Dashboard?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:2997
+#: lib/wpmudev_chat_form_sections.php:2998
 msgid "Enable Chat Status Widget on Dashboard?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3025
+#: lib/wpmudev_chat_form_sections.php:3026
 msgid "Chat Friends widget on Dashboard"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3026
+#: lib/wpmudev_chat_form_sections.php:3027
 msgid "Requires either the WPMUDEV Friends plugins or BuddyPress with Friends option enabled"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3031
+#: lib/wpmudev_chat_form_sections.php:3032
 msgid "Enable Chat Friends Widget on Network Dashboard?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3033
+#: lib/wpmudev_chat_form_sections.php:3034
 msgid "Enable Chat Friends Widget on Dashboard?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3079
+#: lib/wpmudev_chat_form_sections.php:3080
 msgid "Chat User Entered/Exited Messages"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3083
+#: lib/wpmudev_chat_form_sections.php:3084
 msgid "Show Entered/Exited Messages?"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3097
+#: lib/wpmudev_chat_form_sections.php:3098
 msgid "Display notice time<br /><em>(seconds)</em>"
 msgstr ""
 
-#: lib/wpmudev_chat_form_sections.php:3104
+#: lib/wpmudev_chat_form_sections.php:3105
 msgid "Fractions of seconds are acceptable ex. 1.02, 0.5, 5.35."
 msgstr ""
 
@@ -2511,13 +2515,13 @@ msgstr ""
 msgid "WordPress Chat Widget"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:73 lib/wpmudev_chat_widget.php:288
-#: lib/wpmudev_chat_widget.php:503 lib/wpmudev_chat_widget.php:724
+#: lib/wpmudev_chat_widget.php:73 lib/wpmudev_chat_widget.php:276
+#: lib/wpmudev_chat_widget.php:491 lib/wpmudev_chat_widget.php:712
 msgid "Title:"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:80 lib/wpmudev_chat_widget.php:294
-#: lib/wpmudev_chat_widget.php:509
+#: lib/wpmudev_chat_widget.php:80 lib/wpmudev_chat_widget.php:282
+#: lib/wpmudev_chat_widget.php:497
 msgid "Height for widget:"
 msgstr ""
 
@@ -2541,95 +2545,95 @@ msgstr ""
 msgid "Widget Settings Menu"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:262 lib/wpmudev_chat_widget.php:479
+#: lib/wpmudev_chat_widget.php:250 lib/wpmudev_chat_widget.php:467
 msgid "This widget requires either BuddyPress Friends enabled or Friends plugins."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:266
+#: lib/wpmudev_chat_widget.php:254
 msgid "Shows Chat Friends and status. (Friends plugin required)"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:267
+#: lib/wpmudev_chat_widget.php:255
 msgid "WordPress Chat Friends Widget"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:284 lib/wpmudev_chat_widget.php:719
+#: lib/wpmudev_chat_widget.php:272 lib/wpmudev_chat_widget.php:707
 msgid "This widget will show information specific to the WordPress authenticated user. If the user is not authenticated the widget will not output anything."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:298 lib/wpmudev_chat_widget.php:513
+#: lib/wpmudev_chat_widget.php:286 lib/wpmudev_chat_widget.php:501
 msgid "The widget will scroll output when needed."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:313
+#: lib/wpmudev_chat_widget.php:301
 msgid "Avatar width/height:"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:401
+#: lib/wpmudev_chat_widget.php:389
 msgid "Click to start private chat session"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:432 lib/wpmudev_chat_widget.php:1178
+#: lib/wpmudev_chat_widget.php:420 lib/wpmudev_chat_widget.php:1165
 msgid "No Friends online."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:461
+#: lib/wpmudev_chat_widget.php:449
 msgid "Chat Rooms"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:469
+#: lib/wpmudev_chat_widget.php:457
 msgid "Page"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:475
+#: lib/wpmudev_chat_widget.php:463
 msgid "BuddyPress Group"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:483
+#: lib/wpmudev_chat_widget.php:471
 msgid "Shows Active Chats Sessions across site."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:484
+#: lib/wpmudev_chat_widget.php:472
 msgid "WordPress Chat Rooms"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:499
+#: lib/wpmudev_chat_widget.php:487
 msgid "This widget will show all active chat sessions across the site."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:517
+#: lib/wpmudev_chat_widget.php:505
 msgid "Show Active User Count"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:526
+#: lib/wpmudev_chat_widget.php:514
 msgid "Include Session Types - must chose at least one"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:553
+#: lib/wpmudev_chat_widget.php:541
 msgid "Show link title from Chat session or the Page/Group"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:556
+#: lib/wpmudev_chat_widget.php:544
 msgid "Page/Group"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:558
+#: lib/wpmudev_chat_widget.php:546
 msgid "Chat Session"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:705
+#: lib/wpmudev_chat_widget.php:693
 msgid "This widget allows WordPress users to set their Chat status via a sidebar widget."
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:706
+#: lib/wpmudev_chat_widget.php:694
 msgid "WordPress Chat Status"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:922
+#: lib/wpmudev_chat_widget.php:910
 msgid "Checked - Archive Chat Message"
 msgstr ""
 
-#: lib/wpmudev_chat_widget.php:1075 lib/wpmudev_chat_widget.php:1100
+#: lib/wpmudev_chat_widget.php:1063 lib/wpmudev_chat_widget.php:1088
 #: wordpress-chat.php:1013
 msgid "Chat Friends"
 msgstr ""
@@ -2654,7 +2658,7 @@ msgstr ""
 msgid "To"
 msgstr ""
 
-#: templates/wpmudev-chat-pop-twitter-auth.php:33
+#: templates/wpmudev-chat-pop-twitter-auth.php:36
 msgid "ERROR:"
 msgstr ""
 
@@ -2746,7 +2750,7 @@ msgstr ""
 msgid "The WordPress Chat plugin has been upgraded on yor site. <strong>Please review the <a href=\"%s\">polling interval</a> settings before using</strong>. In most cases the default options will work for your host configuration. However in some unique cases the polling interval is too frequent and could cause your hosting to shutdown your account. Once you have reviewed and saved the chat settings this message will no longer appear."
 msgstr ""
 
-#: wordpress-chat.php:1924 wordpress-chat.php:4730
+#: wordpress-chat.php:1924 wordpress-chat.php:4726
 msgid "Disable auto scroll"
 msgstr ""
 
@@ -2924,189 +2928,189 @@ msgstr ""
 msgid "Return to Chat"
 msgstr ""
 
-#: wordpress-chat.php:4104 wordpress-chat.php:4692
+#: wordpress-chat.php:4104 wordpress-chat.php:4688
 msgid "Logout"
 msgstr ""
 
-#: wordpress-chat.php:4140
+#: wordpress-chat.php:4136
 msgid "Type your message here"
 msgstr ""
 
-#: wordpress-chat.php:4160
+#: wordpress-chat.php:4156
 msgid "Turn chat sound of"
 msgstr ""
 
-#: wordpress-chat.php:4160 wordpress-chat.php:4700
+#: wordpress-chat.php:4156 wordpress-chat.php:4696
 msgid "Turn chat sound off"
 msgstr ""
 
-#: wordpress-chat.php:4163 wordpress-chat.php:4702
+#: wordpress-chat.php:4159 wordpress-chat.php:4698
 msgid "Turn chat sound on"
 msgstr ""
 
-#: wordpress-chat.php:4244
+#: wordpress-chat.php:4240
 msgid "Log in using:"
 msgstr ""
 
-#: wordpress-chat.php:4299
+#: wordpress-chat.php:4295
 msgid "Accept"
 msgstr ""
 
-#: wordpress-chat.php:4299
+#: wordpress-chat.php:4295
 msgid "Decline"
 msgstr ""
 
-#: wordpress-chat.php:4300
+#: wordpress-chat.php:4296
 msgid "has invited you to a private chat"
 msgstr ""
 
-#: wordpress-chat.php:4302
+#: wordpress-chat.php:4298
 msgid "You have been invited to private chat"
 msgstr ""
 
-#: wordpress-chat.php:4595
+#: wordpress-chat.php:4591
 msgid "Minimize Chat"
 msgstr ""
 
-#: wordpress-chat.php:4596
+#: wordpress-chat.php:4592
 msgid "Maximize Chat"
 msgstr ""
 
-#: wordpress-chat.php:4611
+#: wordpress-chat.php:4607
 msgid "Pop out"
 msgstr ""
 
-#: wordpress-chat.php:4615
+#: wordpress-chat.php:4611
 msgid "Pop in"
 msgstr ""
 
-#: wordpress-chat.php:4634
+#: wordpress-chat.php:4630
 msgid "open"
 msgstr ""
 
-#: wordpress-chat.php:4636
+#: wordpress-chat.php:4632
 msgid "closed"
 msgstr ""
 
-#: wordpress-chat.php:4642
+#: wordpress-chat.php:4638
 msgid "Private chat"
 msgstr ""
 
-#: wordpress-chat.php:4644
+#: wordpress-chat.php:4640
 msgid "Group chat"
 msgstr ""
 
-#: wordpress-chat.php:4646
+#: wordpress-chat.php:4642
 msgid "Network Group chat"
 msgstr ""
 
-#: wordpress-chat.php:4690 wordpress-chat.php:4964
+#: wordpress-chat.php:4686 wordpress-chat.php:4960
 msgid "Login"
 msgstr ""
 
-#: wordpress-chat.php:4696
+#: wordpress-chat.php:4692
 msgid "Leave Chat"
 msgstr ""
 
-#: wordpress-chat.php:4701
+#: wordpress-chat.php:4697
 msgid "Sound Off"
 msgstr ""
 
-#: wordpress-chat.php:4703
+#: wordpress-chat.php:4699
 msgid "Sound On"
 msgstr ""
 
-#: wordpress-chat.php:4713
+#: wordpress-chat.php:4709
 msgid "Open Chat"
 msgstr ""
 
-#: wordpress-chat.php:4714
+#: wordpress-chat.php:4710
 msgid "Close Chat"
 msgstr ""
 
-#: wordpress-chat.php:4719
+#: wordpress-chat.php:4715
 msgid "Clear Chat"
 msgstr ""
 
-#: wordpress-chat.php:4725
+#: wordpress-chat.php:4721
 msgid "Archive Chat"
 msgstr ""
 
-#: wordpress-chat.php:4886
+#: wordpress-chat.php:4882
 msgid "Invite user to private chat:"
 msgstr ""
 
-#: wordpress-chat.php:4888
+#: wordpress-chat.php:4884
 msgid "moderate this message"
 msgstr ""
 
-#: wordpress-chat.php:4895
+#: wordpress-chat.php:4891
 msgid "moderate IP address:"
 msgstr ""
 
-#: wordpress-chat.php:4961
+#: wordpress-chat.php:4957
 msgid "Enter Name"
 msgstr ""
 
-#: wordpress-chat.php:4962
+#: wordpress-chat.php:4958
 msgid "Email"
 msgstr ""
 
-#: wordpress-chat.php:4962
+#: wordpress-chat.php:4958
 msgid "Enter Email"
 msgstr ""
 
-#: wordpress-chat.php:5317
+#: wordpress-chat.php:5313
 msgid "missing POST user_info"
 msgstr ""
 
-#: wordpress-chat.php:5328 wordpress-chat.php:5338
+#: wordpress-chat.php:5324 wordpress-chat.php:5334
 msgid "Please provide valid Name and Email."
 msgstr ""
 
-#: wordpress-chat.php:5348
+#: wordpress-chat.php:5344
 msgid "Name already registered. Try something unique"
 msgstr ""
 
-#: wordpress-chat.php:5357
+#: wordpress-chat.php:5353
 msgid "Email already registered. Try something  unique"
 msgstr ""
 
-#: wordpress-chat.php:5459
+#: wordpress-chat.php:5455
 msgid "User has declined the private chat invitation."
 msgstr ""
 
-#: wordpress-chat.php:5541
+#: wordpress-chat.php:5537
 msgid "Invalid auth_hash"
 msgstr ""
 
-#: wordpress-chat.php:5566 wordpress-chat.php:5572 wordpress-chat.php:5580
-#: wordpress-chat.php:5615 wordpress-chat.php:5622 wordpress-chat.php:5630
-#: wordpress-chat.php:5692 wordpress-chat.php:5698 wordpress-chat.php:5707
+#: wordpress-chat.php:5562 wordpress-chat.php:5568 wordpress-chat.php:5576
+#: wordpress-chat.php:5611 wordpress-chat.php:5618 wordpress-chat.php:5626
+#: wordpress-chat.php:5688 wordpress-chat.php:5694 wordpress-chat.php:5703
 msgid "Invalid chat_auth [type]"
 msgstr ""
 
-#: wordpress-chat.php:5599
+#: wordpress-chat.php:5595
 msgid "Not moderator"
 msgstr ""
 
-#: wordpress-chat.php:5657
+#: wordpress-chat.php:5653
 msgid "Invalid chat_session"
 msgstr ""
 
-#: wordpress-chat.php:5666
+#: wordpress-chat.php:5662
 msgid "Invalid chat_id"
 msgstr ""
 
-#: wordpress-chat.php:5674 wordpress-chat.php:5683
+#: wordpress-chat.php:5670 wordpress-chat.php:5679
 msgid "Invalid chat_session_status"
 msgstr ""
 
-#: wordpress-chat.php:5716
+#: wordpress-chat.php:5712
 msgid "not moderator"
 msgstr ""
 
-#: wordpress-chat.php:6361
+#: wordpress-chat.php:6357
 msgid "(P)"
 msgstr ""
 #. Plugin Name of the plugin/theme
