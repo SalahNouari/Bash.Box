@@ -1,8 +1,9 @@
 NextGEN Gallery
 by Photocrati Media
 
-= V2.1.20 - 12.23.2015 =
-* Fixed:   Removed inner redundant nextgen-gallery directory
+= V2.1.23 - 01.05.2015 =
+* Secured: XSS vulnerabilities in Manage Gallery pages
+* Secured: Ability to browse and import gallery folders
 
 = V2.1.19 - 12.23.2015 =
 * Fixed:   PHP warning about incorrect usage of parse_url()

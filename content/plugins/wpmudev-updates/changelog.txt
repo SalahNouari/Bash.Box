@@ -1,9 +1,24 @@
 Plugin Name: WPMU DEV Dashboard
-Author: Aaron Edwards
+Author: Aaron Edwards, Philipp Stracker
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+4.0.2 - 1/13/2016 - Philipp
+----------------------------------------------------------------------
+- Fix an incorrectly initialized dashboard setting, that could cause troubles with other WPMUDEV plugins
+- Fix several minor UI issues (borders, margins, ...)
+- Fix problem with empty dashboard after update forcing an API-refresh on first activation
+
+4.0.1 - 1/13/2016 - Philipp
+----------------------------------------------------------------------
+- Fix broken dashboard layout that was caused by certain third-party plugins.
+- Fix a typo.
+
+4.0.0 - 1/13/2016 - Philipp
+----------------------------------------------------------------------
+- Complete redesign with new UI
 
 3.5.3 - 6/05/2015 - Aaron
 ----------------------------------------------------------------------
@@ -272,4 +287,4 @@ Added option to disable admin notices.
 Initial Release.
 
 
-133620-1433686979-au
+133620-1452728971-au

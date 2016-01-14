@@ -58,7 +58,7 @@ if (!class_exists('AcmeeFramework')) {
         function createOptionsmenu() {
             global $aof_page;
             $default = array(
-                'capability' => 'edit_themes',
+                'capability' => 'manage_options',
                 'page_title' => __('Acmee Options Page', 'aof'),
                 'menu_title' => __('Acmee Options', 'aof'),
                 'menu_slug' => 'acm_options',

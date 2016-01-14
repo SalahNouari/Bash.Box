@@ -743,9 +743,9 @@ if ( ( ! class_exists( 'SnapshotDestinationGoogleDrive' ) ) && ( version_compare
 									<p><?php _e( 'Instructions', SNAPSHOT_I18N_DOMAIN ) ?></p>
 									<ol>
 										<li><?php echo sprintf( __( 'Go to the %s', SNAPSHOT_I18N_DOMAIN ), '<a href="https://console.developers.google.com/project">' . __( 'Google Project Console', SNAPSHOT_I18N_DOMAIN ) . '</a>' ) ?></li>
-										<li><?php _e( 'Select existing of Add a new Project. If you add a new project you will see a popup. Enter a project name. The Project ID is not important and can be ignored.', SNAPSHOT_I18N_DOMAIN ); ?></li>
-										<li><?php _e( 'Once the Project creation is completed go to the <strong>APIs & auth > APIs</strong> section. Here you need to enable the <strong>Drive API</strong> and <strong>Drive SDK</strong> APIs', SNAPSHOT_I18N_DOMAIN ) ?></li>
-										<li><?php _e( 'Next, go to the <strong>APIs & auth > Credentials</strong> section. Click on the <strong>CREATE NEW CLIENT ID</strong> button. In the popup select the Application Type as <strong>Web application</strong>. In the field <strong>Authorized redirect URI</strong> copy the value from the Redirect URI field to the left. Then click the <strong>Create Client ID</strong> button.', SNAPSHOT_I18N_DOMAIN ) ?></li>
+										<li><?php _e( 'Select existing or Add a new Project. If you add a new project you will see a popup. Enter a project name. The Project ID is not important and can be ignored.', SNAPSHOT_I18N_DOMAIN ); ?></li>
+										<li><?php _e( 'Once the Project creation is completed go to the <strong>API Manager</strong>. Here you need to enable the <strong>Drive API</strong>', SNAPSHOT_I18N_DOMAIN ) ?></li>
+										<li><?php _e( 'Next, go to the <strong>API Manager > Credentials</strong> section. Click <strong>Add New Credentials > OAuth 2.0 client ID</strong>. In the popup select the <strong>Application Type</strong> as <strong>Web application</strong>. In the field <strong>Authorized redirect URI</strong> copy the value from the <strong>Redirect URI</strong> field to the left. Then click the <strong>Create Client ID</strong> button.', SNAPSHOT_I18N_DOMAIN ) ?></li>
 										<li><?php _e( 'After the popup closes copy the Client ID and Client Secret from the Google page and paste into the form fields on the left.', SNAPSHOT_I18N_DOMAIN ) ?></li>
 									</ol>
 								</td>

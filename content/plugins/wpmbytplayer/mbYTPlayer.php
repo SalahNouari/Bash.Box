@@ -4,14 +4,14 @@ Plugin Name: mb.YTPlayer background video
 Plugin URI: http://pupunzi.com/#mb.components/mb.YTPlayer/YTPlayer.html
 Description: Play a Youtube video as background of your page. <strong>Go to settings > mbYTPlayer</strong> to activate the background video option for your homepage. Or use the short code following the reference in the settings panel.
 Author: Pupunzi (Matteo Bicocchi)
-Version: 2.0.4
+Version: 2.0.5
 Author URI: http://pupunzi.com
-Text Domain: mbYTPlayer
+Text Domain: wpmbytplayer
 */
 
-define("MBYTPLAYER_VERSION", "2.0.4");
+define("MBYTPLAYER_VERSION", "2.0.5");
 
-function isMobile(){
+function isMbMobile(){
 // Check the server headers to see if they're mobile friendly
     if (isset($_SERVER["HTTP_X_WAP_PROFILE"])) {
         return true;
@@ -307,7 +307,7 @@ function mbYTPlayer_player_head()
 {
     global $mbYTPlayer_home_video_url, $mbYTPlayer_show_controls, $mbYTPlayer_ratio, $mbYTPlayer_show_videourl, $mbYTPlayer_start_at, $mbYTPlayer_stop_at, $mbYTPlayer_mute, $mbYTPlayer_loop, $mbYTPlayer_opacity, $mbYTPlayer_quality, $mbYTPlayer_add_raster, $mbYTPlayer_track_ga,$mbYTPlayer_realfullscreen, $mbYTPlayer_stop_on_blur, $mbYTPlayer_home_video_page, $mbYTPlayer_Home_is_active, $mbYTPlayer_audio_volume;
 
-    /*    if (isMobile())
+    /*    if (isMbMobile())
             return false;*/
 
     echo '
@@ -341,7 +341,7 @@ function mbYTPlayer_player_head()
     else if ($mbYTPlayer_home_video_page == "both")
         $canShowMovie = is_front_page() || is_home(); // A static page set as home;
 
-    if ($canShowMovie && !isMobile() && $mbYTPlayer_Home_is_active) {
+    if ($canShowMovie && !isMbMobile() && $mbYTPlayer_Home_is_active) {
 
         if (empty($mbYTPlayer_home_video_url))
             return false;

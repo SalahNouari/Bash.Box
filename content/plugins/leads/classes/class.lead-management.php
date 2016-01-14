@@ -112,8 +112,15 @@ if (!class_exists('Leads_Manager')) {
 			}
 
 			wp_enqueue_script( array('jquery', 'jqueryui' , 'jquery-ui-selectable' , 'editor', 'thickbox', 'media-upload') );
-			wp_enqueue_script( 'selectjs', WPL_URLPATH . '/shared/assets/js/admin/select2.min.js');
-			wp_enqueue_style( 'selectjs', WPL_URLPATH . '/shared/assets/css/admin/select2.css');
+
+			if (defined('INBOUND_PRO_URLPATH')) {
+			    wp_enqueue_script( 'selectjs', INBOUND_PRO_URLPATH . 'core/shared/assets/js/admin/select2.min.js');
+			    wp_enqueue_style( 'selectjs', INBOUND_PRO_URLPATH . 'core/shared/assets/css/admin/select2.css');
+			} else {
+					wp_enqueue_script( 'selectjs', WPL_URLPATH . '/shared/assets/js/admin/select2.min.js');
+					wp_enqueue_style( 'selectjs', WPL_URLPATH . '/shared/assets/css/admin/select2.css');
+			}
+
 			wp_enqueue_script( 'tablesort', WPL_URLPATH . '/assets/js/management/tablesort.min.js');
 
 			wp_enqueue_script( 'light-table-filter', WPL_URLPATH . '/assets/js/management/light-table-filter.min.js');
@@ -820,6 +827,8 @@ if (!class_exists('Leads_Manager')) {
 					unset($this_lead_data['wpleads_referral_data']);
 					unset($this_lead_data['wpleads_conversion_data']);
 					unset($this_lead_data['wpleads_raw_post_data']);
+					unset($this_lead_data['wpleads_ip_address']);
+					unset($this_lead_data['call_to_action_clicks']);
 
 					foreach ($this_lead_data as $key => $val) {
 						$lead_meta_pairs[$key] = $key;

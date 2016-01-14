@@ -1,8 +1,64 @@
 Plugin Name: Membership 2
-Author: Philipp Stracker, Fabio Jun, Rheinard Khorf
+Author: Philipp Stracker, Ashok Kumar Nath, Fabio Jun, Rheinard Khorf
 
 Change Log:
 ----------------------------------------------------------------------
+
+1.0.2.6
+----------------------------------------------------------------------
+- Added: Constant 'MS_DISABLE_WP_NEW_USER_NOTIFICATION' to disable WP default welcome on registration
+- Added: Constant 'MS_PAYPAL_TRIAL_SUBSCRIPTION' to enable subscription for Paypal when trial mode is enabled (works only at Paypal)
+- Added: Constant 'MS_PROCESS_PER_BATCH' to set number of members for processing per batch
+- Added: Addon - WP reCaptcha integration
+- Added: Batch Process - Membership Status check, helpful when you have lots of members
+- Enhancement: Display warning in HELP page if cron jobs are disabled
+- Fixed: User could not use same invitation code for different memberships
+- Fixed: Confirmation emails not sent when registering new user from admin end
+- Fixed: Category protected posts was being appeared in home and search result page
+- Fixed: Warning on edit membership screen when % sign is in the membership name
+- Fixed: Subsite users subscription details can't be edited
+- Fixed: Visitors coming from search engines links get blank page, Error 500
+- Fixed: Upgrade path is ignored when a member is logged in but has no subscription
+- Fixed: Media Protection - Individual Media files protection doesn't work if embedded
+- Fixed: Media Protection - changes attachment URLs but does not revert when disabled
+- Fixed: Media Protection - changing URL of non protected media items
+- Fixed: Media Protection - Linked media URL was not masking
+- Fixed: Media Protection - Video file was not playing
+- Fixed: XProfile Date field was not being saved in registration form
+- Fixed: White screen in WP-Touch settings page
+- Fixed: BuddyPress Members directory could not be protected
+- Fixed: BuddyPress sitewide pages are not protected
+- Fixed: Welcome to BuddyPress Admin Item shows twice in Admin Side Protection Rules
+- Fixed: Typos in Automated Response Email Default Text
+- Fixed: Admin Protection - Direct link can be accessed
+- Fixed: Protected post are being appeared in feed
+- Fixed: Network Protection - Selected pages can't be viewed from network admin interface
+- Fixed: Inernal Server Error on adding a member in a multisite configuration
+
+1.0.2.5
+----------------------------------------------------------------------
+- Added: Constant M2_FORCE_NO_SSL to avoid forcing SSL in Stripe Live Mode
+- Fixed: Manual Payment Gateway always in Sandbox Mode
+- Fixed: Free Payment Gateway always in Sandbox Mode
+- Fixed: Membership Payment amount could not be saved in Firefox
+- Fixed: BuddyPress Integration - No xProfile field validation
+- Fixed: BuddyPress Integration - No validation error message shown
+- Fixed: Select drop down in Authorize.net checkout was broken
+- Fixed: JS conflict with Visual Composer
+- Fixed: JS conflict with Be Theme
+- Fixed: JS conflict with LayerSlider
+- Fixed: Pagination was not working for Classifieds plugin
+- Fixed: Search was not working on front-end
+- Fixed: Upgrade path settings for memberships were being ignored
+- Fixed: Junk error message on Add Member page
+- Fixed: Currency was always USD in 2CO gateway
+- Fixed: Search was not working in Members Capability page
+- Fixed: Invitation Code - Max uses features were ignored
+- Fixed: Invitation Code - New code created automatically if wrong code is provided
+- Fixed: Some post types were not working for protection
+- Fixed: Recurring events are not showing in event calendar (Events+)
+- Fixed: Menu item protection was not working for Guest Membership
+- Fixed: Force SSL on Stripe checkout page in Live Mode
 
 1.0.2.4
 ----------------------------------------------------------------------
@@ -492,4 +548,4 @@ Membership2 1.0.0.0
 - Initial version.
 
 
-133620-1449637589-au
+133620-1452728945-au

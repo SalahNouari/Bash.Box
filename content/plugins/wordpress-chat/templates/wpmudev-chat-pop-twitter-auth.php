@@ -1,5 +1,7 @@
 <?php
-session_start();
+if(session_id() == '') {
+	session_start();
+}
 
 global $wpmudev_chat;
 
@@ -49,7 +51,7 @@ if ( ( isset( $_GET['oauth_token'] ) ) && ( ! empty( $_GET['oauth_token'] ) )
 
 					unset( $_SESSION['wpmudev-chat-twitter-tokens'] );
 
-					setcookie( 'wpmudev-chat-auth', json_encode( $wpmudev_chat->chat_auth ) );
+					setcookie( 'wpmudev-chat-auth', json_encode( $wpmudev_chat->chat_auth ), null, '/', COOKIE_DOMAIN );
 					wp_redirect( esc_url_raw( remove_query_arg( array(
 						'wpmudev-chat-action',
 						'oauth_token',

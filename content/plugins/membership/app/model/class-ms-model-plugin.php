@@ -1,10 +1,15 @@
 <?php
 /**
+ * M2 Model file.
+ *
+ * @package Membership2
+ * @subpackage Model
+ */
+
+/**
  * Main class for protection.
  *
  * @since  1.0.0
- * @package Membership2
- * @subpackage Model
  */
 class MS_Model_Plugin extends MS_Model {
 
@@ -15,7 +20,7 @@ class MS_Model_Plugin extends MS_Model {
 	 *
 	 * @var string $member
 	 */
-	private $member;
+	public $member;
 
 	/**
 	 * Full admin menu, used by the Adminside rule.
@@ -30,12 +35,30 @@ class MS_Model_Plugin extends MS_Model {
 	protected $admin_menu = array();
 
 	/**
+	 * The number of members processed per batch
+	 *
+	 * @since 1.0.2.6
+	 *
+	 * @var $_process_per_batch
+	 */
+	private $_process_per_batch = 500;
+
+	/**
 	 * Prepare object.
 	 *
 	 * @since  1.0.0
 	 */
 	public function __construct() {
 		do_action( 'ms_model_plugin_constructor', $this );
+
+                /**
+                 * Define MS_PROCESS_PER_BATCH, set the number of members will be processed per batch
+                 *
+                 * Default value is 500
+                 */
+		if ( defined( 'MS_PROCESS_PER_BATCH' ) && MS_PROCESS_PER_BATCH ) {
+			$this->_process_per_batch = intval( MS_PROCESS_PER_BATCH );
+		}
 
 		// Upgrade membership database if needs to.
 		MS_Model_Upgrade::init();
@@ -93,7 +116,7 @@ class MS_Model_Plugin extends MS_Model {
 
 		$this->add_action( 'template_redirect', 'protect_current_page', 1 );
 
-		// Init gateways and communications to register actions/filters
+		// Init gateways and communications to register actions/filters.
 		$this->run_action( 'init', array( 'MS_Model_Gateway', 'get_gateways' ), 2 );
 		$this->run_action( 'init', array( 'MS_Model_Communication', 'init' ), 2 );
 
@@ -104,6 +127,7 @@ class MS_Model_Plugin extends MS_Model {
 				'red'
 			);
 		}
+
 	}
 
 	/**
@@ -300,8 +324,8 @@ class MS_Model_Plugin extends MS_Model {
 				$access = lib3()->session->get_clear( 'ms-access' );
 				lib3()->session->add( 'ms-access', $Info );
 				for ( $i = 0; $i < 9; $i += 1 ) {
-					if ( isset( $access[$i] ) ) {
-						lib3()->session->add( 'ms-access', $access[$i] );
+					if ( isset( $access[ $i ] ) ) {
+						lib3()->session->add( 'ms-access', $access[ $i ] );
 					}
 				}
 
@@ -313,10 +337,15 @@ class MS_Model_Plugin extends MS_Model {
 
 					lib3()->debug->stacktrace_off();
 					foreach ( $access as $item ) {
+						if ( $item['has_access'] ) {
+							$label = __( 'Allow', 'membership2' );
+						} else {
+							$label = __( 'Deny', 'membership2' );
+						}
 						printf(
 							'<a href="%1$s">%1$s</a>: <strong>%2$s</strong>',
-							$item['url'],
-							$item['has_access'] ? __( 'Allow', 'membership2' ) : __( 'Deny', 'membership2' )
+							esc_url( $item['url'] ),
+							esc_attr( $label )
 						);
 						// Intended debug output, leave it here.
 						lib3()->debug->dump( $item );
@@ -340,7 +369,7 @@ class MS_Model_Plugin extends MS_Model {
 	public function protect_current_page() {
 		do_action( 'ms_model_plugin_protect_current_page_before', $this );
 
-		// Admin user has access to everything
+		// Admin user has access to everything.
 		if ( $this->member->is_normal_admin() ) {
 			return;
 		}
@@ -388,7 +417,7 @@ class MS_Model_Plugin extends MS_Model {
 	public function load_addons() {
 		do_action( 'ms_load_addons', $this );
 
-		// Initialize all Add-ons
+		// Initialize all Add-ons.
 		MS_Model_Addon::get_addons();
 	}
 
@@ -418,6 +447,7 @@ class MS_Model_Plugin extends MS_Model {
 	 * - ms_init_done
 	 *
 	 * @since  1.0.0
+	 * @throws Exception When function is called too early.
 	 */
 	public function setup_rules() {
 		// Make sure we stick to the correct workflow.
@@ -447,6 +477,7 @@ class MS_Model_Plugin extends MS_Model {
 	 * - ms_init_done
 	 *
 	 * @since  1.0.0
+	 * @throws Exception When function called too early.
 	 */
 	public function setup_protection() {
 		if ( is_admin() ) { return; }
@@ -470,7 +501,7 @@ class MS_Model_Plugin extends MS_Model {
 			$membership = $subscription->get_membership();
 			$membership->initialize( $subscription );
 
-			// Protection is not applied for Admin users
+			// Protection is not applied for Admin users.
 			if ( ! $this->member->is_normal_admin() ) {
 				$membership->protect_content();
 			}
@@ -486,6 +517,7 @@ class MS_Model_Plugin extends MS_Model {
 	 * - ms_init_done
 	 *
 	 * @since  1.0.0
+	 * @throws Exception When function is called too early.
 	 */
 	public function setup_admin_protection() {
 		if ( ! is_admin() ) { return; }
@@ -509,7 +541,7 @@ class MS_Model_Plugin extends MS_Model {
 			$membership = $subscription->get_membership();
 			$membership->initialize( $subscription );
 
-			// Protection is not applied for Admin users
+			// Protection is not applied for Admin users.
 			if ( ! $this->member->is_normal_admin() ) {
 				$membership->protect_admin_content();
 			}
@@ -526,6 +558,8 @@ class MS_Model_Plugin extends MS_Model {
 	 * - cron_schedules
 	 *
 	 * @since  1.0.0
+	 * @param  array $periods Default Cron-Job period values; we add new ones.
+	 * @return array Modified list of Cron-Job periods.
 	 */
 	public function cron_time_period( $periods ) {
 		if ( ! is_array( $periods ) ) {
@@ -534,11 +568,11 @@ class MS_Model_Plugin extends MS_Model {
 
 		$periods['6hours'] = array(
 			'interval' => 6 * HOUR_IN_SECONDS,
-			'display' => __( 'Every 6 Hours', 'membership2' )
+			'display' => __( 'Every 6 Hours', 'membership2' ),
 		);
 		$periods['30mins'] = array(
 			'interval' => 30 * MINUTE_IN_SECONDS,
-			'display' => __( 'Every 30 Mins', 'membership2' )
+			'display' => __( 'Every 30 Mins', 'membership2' ),
 		);
 
 		return apply_filters(
@@ -552,6 +586,7 @@ class MS_Model_Plugin extends MS_Model {
 	 * This function is used to manually trigger the cron services.
 	 *
 	 * @since  1.0.0
+	 * @param  string $hook Cron-Job to run on next page load.
 	 */
 	public function run_cron_services( $hook ) {
 		wp_clear_scheduled_hook( $hook );
@@ -573,6 +608,7 @@ class MS_Model_Plugin extends MS_Model {
 	 * "Membership2 > Settings" and adding URL param "&run_cron=1"
 	 *
 	 * @since  1.0.0
+	 * @param  string $reschedule Optional. Hook to re-schedule.
 	 */
 	public function setup_cron_services( $reschedule = null ) {
 		do_action( 'ms_model_plugin_setup_cron_services_before', $this );
@@ -606,13 +642,45 @@ class MS_Model_Plugin extends MS_Model {
 			return;
 		}
 
+		/*
+		 * For performance reasons we only process a small batch at once.
+		 * Here we find out, which subscriptions should be processed during
+		 * the current request.
+		 */
+		$offset = (int) MS_Factory::get_option( 'ms_batch_check_offset_flag' );
+
+		// Find the next X subscriptions from DB.
 		$args = apply_filters(
 			'ms_model_plugin_check_membership_status_get_subscription_args',
-			array( 'status' => 'valid' )
+			array(
+				'status' => 'valid',
+				'orderby' => 'ID',
+				'posts_per_page' => $this->_process_per_batch,
+				'offset' => $offset,
+				'nopaging' => false,
+			)
 		);
 		$subscriptions = MS_Model_Relationship::get_subscriptions( $args );
 
+		if ( count( $subscriptions ) < $this->_process_per_batch ) {
+			// We processed all subscriptions. Clean up.
+			MS_Factory::delete_option( 'ms_batch_check_offset_flag' );
+		} else {
+			// We did not process all subscriptions. Remember where to continue.
+			MS_Factory::update_option(
+				'ms_batch_check_offset_flag',
+				$offset + $this->_process_per_batch
+			);
+
+			// Re-scheduling the cron job will run it again on next page load.
+			$hook = 'ms_cron_check_membership_status';
+			wp_clear_scheduled_hook( $hook );
+			$this->setup_cron_services( $hook );
+		}
+
+		// Perform the actual status checks!
 		foreach ( $subscriptions as $subscription ) {
+                    error_log( 'This is ' . $subscription->id );
 			$subscription->check_membership_status();
 		}
 
@@ -638,10 +706,10 @@ class MS_Model_Plugin extends MS_Model {
 			);
 		} else {
 			foreach ( $menu as $pos => $item ) {
-				$this->admin_menu['main'][$pos] = $item;
+				$this->admin_menu['main'][ $pos ] = $item;
 			}
 			foreach ( $submenu as $parent => $item ) {
-				$this->admin_menu['sub'][$parent] = $item;
+				$this->admin_menu['sub'][ $parent ] = $item;
 			}
 			ksort( $this->admin_menu['main'] );
 		}
@@ -657,5 +725,4 @@ class MS_Model_Plugin extends MS_Model {
 	public function get_admin_menu() {
 		return $this->admin_menu;
 	}
-
 }

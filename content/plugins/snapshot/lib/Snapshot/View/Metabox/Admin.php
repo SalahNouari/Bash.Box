@@ -918,7 +918,7 @@ if ( ! class_exists( "Snapshot_View_Metabox_Admin" ) ) {
 											</select>
 										</div>
 										<div class="interval-offset-weekly" <?php
-										if ( $item_interval == "snapshot-weekly" ) {
+										if ( ( $item_interval == "snapshot-weekly" ) || ( $item_interval == "snapshot-twiceweekly" ) ) {
 											echo ' style="display: block;" ';
 										} else {
 											echo ' style="display: none;" ';

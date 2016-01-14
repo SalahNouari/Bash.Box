@@ -3,7 +3,7 @@
 Plugin Name: Landing Pages
 Plugin URI: http://www.inboundnow.com/landing-pages/
 Description: The first true all-in-one Landing Page solution for WordPress, including ongoing conversion metrics, a/b split testing, unlimited design options and so much more!
-Version: 2.0.3
+Version: 2.0.5
 Author: Inbound Now
 Author URI: http://www.inboundnow.com/
 Text Domain: landing-pages
@@ -38,7 +38,7 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
 		*/
 		private static function load_constants() {
 
-			define('LANDINGPAGES_CURRENT_VERSION', '2.0.3' );
+			define('LANDINGPAGES_CURRENT_VERSION', '2.0.5' );
 			define('LANDINGPAGES_URLPATH', plugins_url( '/' , __FILE__ ) );
 			define('LANDINGPAGES_PATH', WP_PLUGIN_DIR.'/'.plugin_basename( dirname(__FILE__) ).'/' );
 			define('LANDINGPAGES_PLUGIN_SLUG', plugin_basename( dirname(__FILE__) ) );
@@ -110,9 +110,9 @@ if (!class_exists('Inbound_Landing_Pages_Plugin')) {
          * Load Shared Files at priority 2
          */
 		private static function load_shared_files() {
-			if (!defined('INBOUND_PRO_PATH')) {
-				require_once('shared/classes/class.load-shared.php');
-				add_action( 'plugins_loaded', array( 'Inbound_Load_Shared' , 'init') , 3 );
+			if (!defined('INBOUND_PRO_PATH')) { 
+				require_once( LANDINGPAGES_PATH . 'shared/classes/class.load-shared.php');
+				add_action( 'plugins_loaded', array( 'Inbound_Load_Shared' , 'init') , 2 );
 			}
 		}
 

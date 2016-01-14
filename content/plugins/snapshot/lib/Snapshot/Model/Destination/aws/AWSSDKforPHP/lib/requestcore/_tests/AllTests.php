@@ -22,7 +22,7 @@
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'Console_CommandLine_AllTests::main');	     	 	 				 	 	
+    define('PHPUnit_MAIN_METHOD', 'Console_CommandLine_AllTests::main');
 }
 
 require_once 'PHPUnit/Autoload.php';

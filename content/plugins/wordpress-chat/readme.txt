@@ -18,6 +18,10 @@ Add a chat to your blog and allow your readers to chat with you.
 
 == ChangeLog ==
 
+= 2.1.2 = Umesh Kumar =
+
+* Fixed: Chat login issue for users
+
 = 2.1.1 = Umesh Kumar =
 
 * Fixed: Emoji issue in Safari
@@ -453,4 +457,4 @@ Add a chat to your blog and allow your readers to chat with you.
 * Initial release
 
 
-133620-1450932153-au
+133620-1452728970-au

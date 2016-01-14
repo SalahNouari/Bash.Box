@@ -37,7 +37,7 @@ class MS_View_Billing_List extends MS_View {
 				if ( 1 == $error_count ) {
 					$message = __( 'One transaction failed. Please %2$sreview the logs%3$s and decide if you want to ignore the transaction or manually assign it to an invoice.', 'membership2' );
 				} else {
-					$message = __( '%1$s transactions failed. Please %2$sreview the logs%3$s and decide if you want to ignore the transaction or manually assign it to an invoice.', 'membership2' );
+					$message = __( '%1$s transactions failed. Please %2$sreview the logs%3$s and decide if you want to ignore the transaction or manually assign it to an invoice.', 'membership2' );	   	 	 		 	  					  
 				}
 				$review_url = MS_Controller_Plugin::get_admin_url(
 					'billing',

@@ -1,3 +1,28 @@
+2016-01-13 - 1.5.5.1
+-------------------------------
+- Fixed: Week days were not translatable
+- Fixed: Timetables were selecting wrong service in some cases
+
+2016-01-11 - 1.5.5
+-------------------------------
+- Fixed: Exporting Appointments was throwing a fatal error
+- Fixed: Loader GIF not showing on confirmation
+- Fixed: GCal was not appearing on confirmation
+- Fixed: error with MarketPress integration
+- Fixed: Deprecated/Warnings in some parts of the code
+- Fixed: Errors when processing Appointments by AJAX
+- Fixed: Confirmation fields were not appearing in Confirmation Shortcode
+- Fixed: Confirmation emails were not sent
+- Fixed: Some cache issues
+- Enhancement: Timetables code bottleneck
+- Enhancement: Timetables are now  cached for 24h
+- Enhancement: Services Shortcode markup and JS
+- Enhancement: Reduced number of queries in monthly shortcode
+- Enhancement: Many performance improvements
+- Improved Confirmation Shortcode Javascript
+- New: many new functions to interact with workers, appointments and services in an easier way
+- New: Classes for workers, services and appointments with better error handlings
+- New: Unit Tests
 
 
 2015-11-25 - 1.5.4
@@ -470,4 +495,4 @@ V1.0.0:
 - Initial release
 
 
-133620-1448471088-au
+133620-1452728913-au

@@ -226,6 +226,8 @@ class Mixin_NextGen_Gallery_Validation
     {
         // If a title is present, we can auto-populate some other properties
         if ($this->object->title) {
+            // Strip html
+            $this->object->title = M_NextGen_Data::strip_html($this->object->title, TRUE);
             // If no name is present, use the title to generate one
             if (!$this->object->name) {
                 $this->object->name = sanitize_file_name(sanitize_title($this->object->title));
@@ -241,6 +243,9 @@ class Mixin_NextGen_Gallery_Validation
             $storage = C_Gallery_Storage::get_instance();
             $this->object->path = $storage->get_upload_relpath($this->object);
             unset($storage);
+        } else {
+            $this->object->path = M_NextGen_Data::strip_html($this->object->path);
+            $this->object->path = str_replace(array('"', '\'\'', '>', '<'), array('', '', '', ''), $this->object->path);
         }
         $this->object->validates_presence_of('title');
         $this->object->validates_presence_of('name');
@@ -1728,6 +1733,13 @@ class Mixin_NextGen_Gallery_Image_Validation extends Mixin
 {
     public function validation()
     {
+        // Additional checks...
+        if (isset($this->object->description)) {
+            $this->object->description = M_NextGen_Data::strip_html($this->object->description, TRUE);
+        }
+        if (isset($this->object->alttext)) {
+            $this->object->alttext = M_NextGen_Data::strip_html($this->object->alttext, TRUE);
+        }
         $this->validates_presence_of('galleryid', 'filename', 'alttext', 'exclude', 'sortorder', 'imagedate');
         $this->validates_numericality_of('galleryid');
         $this->validates_numericality_of($this->id());

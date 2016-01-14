@@ -77,4 +77,17 @@ a.app-remove_break, a.app-remove_break:hover, a.app-remove_break:active { color:
 }
 
 
-/* 133620-1448471088-au */
+#dashboard_right_now a.app-pending:before,
+#dashboard_right_now a.app-active:before {
+	content: '\f469';
+}
+
+#dashboard_right_now a.app-active:before {
+	color: #56b086;
+}
+#dashboard_right_now a.app-pending:before {
+	color: #ffa26d;
+}
+
+
+/* 133620-1452728913-au */

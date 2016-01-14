@@ -1882,6 +1882,9 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
 #wpwrap .ms-wrap tr.ms-assigned .ms-empty-note-wrapper {
   display: none;
 }
+#wpwrap .ms-wrap tr.ms-assigned .column-match .wpmui-select-wrapper .select2-selection__rendered {
+  color: #777;
+}
 #wpwrap .ms-wrap tr.ms-assigned .wpmui-select-wrapper .ms-memberships {
   margin: 0;
   width: 100%;
@@ -3350,4 +3353,4 @@ body #wpwrap .ms-wrap .wpmui-radio-slider-wrapper.inline-label .wpmui-field-labe
 }
 
 
-/* 133620-1449637589-au */
+/* 133620-1452728945-au */

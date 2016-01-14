@@ -3,8 +3,8 @@
 Contributors: pupunzi
 Tags: video player, youtube, full background, video, HTML5, flash, mov, jquery, pupunzi, mb.components, cover video, embed, embed videos, embed youtube, embedding, plugin, shortcode, video cover, video HTML5, youtube, youtube embed, youtube player, youtube videos
 Requires at least: 3.0
-Tested up to: 4.2
-Stable tag:  2.0.4
+Tested up to: 4.4
+Stable tag:  2.0.5
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DSHAHSJJCQ53Y
 License: GPLv2 or later
 
@@ -92,6 +92,9 @@ The mb.YTPlayer doesn't work on any mobile devices (iOs, Android, Windows, etc.)
 Adding a background image to the body as mobile devices fallback is a good practice and it will also prevent unwanted white flickering on desktop browsers when the video is buffering.
 
 == Changelog ==
+
+= 2.0.5 =
+* Update the jquery.mb.YTPlayer.js file with better performances for the initial video start.
 
 = 2.0.4 =
 * Add the text-domain declaration for the translate.wordpress.org.

@@ -863,7 +863,7 @@ class ProSites_Module_BulkUpgrades {
 							$psts->get_setting( 'bu_price_3' ),
 							$psts->get_level_setting( $psts->get_setting( 'bu_level' ), 'name' )
 						), $psts->get_setting( 'bu_option_msg' ) );
-						echo '<tr class="supporterlist"><td valign="middle"><h4>' . $psts->format_currency( false, $psts->get_setting( 'bu_price_3' ) / $psts->get_setting( 'bu_credits_3' ) ) . '<span> ' . __( 'Per Site', 'psts' ) . '</span></h4><p>' . $payment_message . '</p></td><td align="center" valign="middle"><h4 style="margin-bottom: 0px;" class="supportercost">' . $psts->format_currency( false, $psts->get_setting( 'bu_price_3' ) ) . '</h4><span class="supportercosthead">' . __( 'Per Year', 'psts' ) . '</span><p class="supportercostperday">' . sprintf( __( 'For %d Sites', 'psts' ), $psts->get_setting( 'bu_credits_3' ) ) . '</p></td><td align="right">';	     	 	   	  	 	
+						echo '<tr class="supporterlist"><td valign="middle"><h4>' . $psts->format_currency( false, $psts->get_setting( 'bu_price_3' ) / $psts->get_setting( 'bu_credits_3' ) ) . '<span> ' . __( 'Per Site', 'psts' ) . '</span></h4><p>' . $payment_message . '</p></td><td align="center" valign="middle"><h4 style="margin-bottom: 0px;" class="supportercost">' . $psts->format_currency( false, $psts->get_setting( 'bu_price_3' ) ) . '</h4><span class="supportercosthead">' . __( 'Per Year', 'psts' ) . '</span><p class="supportercostperday">' . sprintf( __( 'For %d Sites', 'psts' ), $psts->get_setting( 'bu_credits_3' ) ) . '</p></td><td align="right">';
 						echo self::paypal_button_output( 3 );
 						echo '</td></tr>';
 					}

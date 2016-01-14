@@ -18,7 +18,7 @@ add_thickbox();
 <?php
 
 if ( 100 == ( int ) $progress ) {
-	$complete_message         = '<span class="unit-archive-course-complete cp-wrap"><i class="fa fa-check-circle"></i> ' . __( 'Course Complete', 'cp' ) . '</span>';
+	$complete_message         = '<span class="unit-archive-course-complete cp-wrap"><i class="fa fa-check-circle"></i> ' . __( 'Course Complete', 'cp' ) . '</span>';									   	 	   		
 	$workbook_course_progress = '';
 } else {
 	$complete_message         = '';

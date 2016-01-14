@@ -192,7 +192,7 @@ if ( ! class_exists( 'WpSmushNextGenStats' ) ) {
 					//Show detailed stats if available
 					if ( ! empty( $wp_smush_data['sizes'] ) ) {
 						//Detailed Stats Link
-						$status_txt .= '<br /><a href="#" class="smush-stats-details">' . esc_html__( "Smush stats", 'wp-smushit' ) . ' [<span class="stats-toggle">+</span>]</a>';								 	 	   		   
+						$status_txt .= '<br /><a href="#" class="smush-stats-details">' . esc_html__( "Smush stats", 'wp-smushit' ) . ' [<span class="stats-toggle">+</span>]</a>';
 
 						//Get metadata For the image
 						// Registry Object for NextGen Gallery

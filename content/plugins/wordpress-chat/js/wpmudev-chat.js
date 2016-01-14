@@ -69,7 +69,7 @@ var wpmudev_chat = jQuery.extend(wpmudev_chat || {}, {
         });
 
         wpmudev_chat.settings['auth'] = {};
-        if ((wpmudev_chat_localized['auth'].length > 0 ) /*&& (!jQuery.isEmptyObject(wpmudev_chat_localized['auth'])) */) {
+        if ((wpmudev_chat_localized['auth'] != 'undefined' ) /*&& (!jQuery.isEmptyObject(wpmudev_chat_localized['auth'])) */) {
             if (wpmudev_chat_localized['auth']['type'] != 'invalid') {
                 wpmudev_chat.settings['auth'] = wpmudev_chat_localized['auth'];
             }
@@ -3051,8 +3051,8 @@ var wpmudev_chat = jQuery.extend(wpmudev_chat || {}, {
                     // Does this cookie string begin with the name we want?
                     if (cookie.substring(0, name.length + 1) == (name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        if( cookieValue.length > 0 && cookieValue != '{}' ) {
-                            break;
+                        if( cookieValue.length > 0 ) {
+                                break;
                         }
                     }
                 }

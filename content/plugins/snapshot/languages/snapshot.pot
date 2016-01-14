@@ -1,14 +1,14 @@
-# Copyright (C) 2015 WPMU DEV
+# Copyright (C) 2016 WPMU DEV
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
 "Project-Id-Version: Snapshot 2.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/snapshot\n"
-"POT-Creation-Date: 2015-10-06 12:27:39+00:00\n"
+"POT-Creation-Date: 2016-01-07 11:40:35+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 0.4.9\n"
@@ -721,26 +721,25 @@ msgstr ""
 
 #: lib/Snapshot/Model/Destination/google-drive/index.php:746
 msgid ""
-"Select existing of Add a new Project. If you add a new project you will see "
+"Select existing or Add a new Project. If you add a new project you will see "
 "a popup. Enter a project name. The Project ID is not important and can be "
 "ignored."
 msgstr ""
 
 #: lib/Snapshot/Model/Destination/google-drive/index.php:747
 msgid ""
-"Once the Project creation is completed go to the <strong>APIs & auth > "
-"APIs</strong> section. Here you need to enable the <strong>Drive "
-"API</strong> and <strong>Drive SDK</strong> APIs"
+"Once the Project creation is completed go to the <strong>API "
+"Manager</strong>. Here you need to enable the <strong>Drive API</strong>"
 msgstr ""
 
 #: lib/Snapshot/Model/Destination/google-drive/index.php:748
 msgid ""
-"Next, go to the <strong>APIs & auth > Credentials</strong> section. Click "
-"on the <strong>CREATE NEW CLIENT ID</strong> button. In the popup select "
-"the Application Type as <strong>Web application</strong>. In the field "
-"<strong>Authorized redirect URI</strong> copy the value from the Redirect "
-"URI field to the left. Then click the <strong>Create Client ID</strong> "
-"button."
+"Next, go to the <strong>API Manager > Credentials</strong> section. Click "
+"<strong>Add New Credentials > OAuth 2.0 client ID</strong>. In the popup "
+"select the <strong>Application Type</strong> as <strong>Web "
+"application</strong>. In the field <strong>Authorized redirect URI</strong> "
+"copy the value from the <strong>Redirect URI</strong> field to the left. "
+"Then click the <strong>Create Client ID</strong> button."
 msgstr ""
 
 #: lib/Snapshot/Model/Destination/google-drive/index.php:749

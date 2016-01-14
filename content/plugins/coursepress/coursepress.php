@@ -6,7 +6,7 @@ Description: CoursePress Pro turns WordPress into a powerful online learning pla
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 Developers: Marko Miljus ( https://twitter.com/markomiljus ), Rheinard Korf ( https://twitter.com/rheinardkorf )
-Version: 1.2.6.6
+Version: 1.2.6.7
 TextDomain: cp
 Domain Path: /languages/
 WDP ID: 913071
@@ -67,7 +67,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 		 * @since 1.0.0
 		 * @var string
 		 */
-		public $version = '1.2.6.6';
+		public $version = '1.2.6.7';
 
 		/**
 		 * Plugin friendly name.
@@ -182,6 +182,11 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			$GLOBALS['instructor_profile_slug'] = $this->get_instructor_profile_slug();
 			$GLOBALS['enrollment_process_url']  = $this->get_enrollment_process_slug( true );
 			$GLOBALS['signup_url']              = $this->get_signup_slug( true );
+
+			/**
+			 * CoursePress Utilities
+			 */
+			require_once( $this->plugin_dir . 'includes/classes/class.coursepress-utility.php' );
 
 			/**
 			 * CoursePress Sessions
@@ -1052,6 +1057,10 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			 * @since 1.0.0
 			 */
 			if ( cp_use_woo() ) {
+				add_action( 'woocommerce_order_status_processing', array(
+					$this,
+					'woo_listen_for_paid_status_for_courses'
+				), 10, 1 );
 				add_action( 'woocommerce_order_status_completed', array(
 					$this,
 					'woo_listen_for_paid_status_for_courses'
@@ -1741,15 +1750,11 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			global $mp;
 
 			$course     = new Course( $course_id );
-			$product_id = $course->mp_product_id();
-
-			// Try some MP alternatives
-			$product_id = empty( $product_id ) ? (int) get_post_meta( $course_id, 'mp_product_id', true ) : $product_id;
-			$product_id = empty( $product_id ) ? (int) get_post_meta( $course_id, 'marketpress_product', true ) : $product_id;
 
 			if( $is_paid ) {
 				if ( cp_use_woo() ) {
 					global $woocommerce;
+					$product_id = CP_WooCommerce_Integration::woo_product_id( $course_id );
 					if ( ! empty( $product_id ) ) {
 						$signup_steps = array_merge( $signup_steps, array(
 							'payment_checkout'  => array(
@@ -1781,6 +1786,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 						) );
 					}
 				} else {
+					$product_id = $course->mp_product_id();
 					if ( $mp && ! empty( $product_id ) ) {
 
 						$cart_url = home_url( $mp->get_setting( 'slugs->store' ) . '/' . $mp->get_setting( 'slugs->cart' ) . '/' );
@@ -2161,14 +2167,13 @@ if ( ! class_exists( 'CoursePress' ) ) {
 						}
 					}
 				}
-			} else {
-				if ( isset( $post ) && $post->post_type == 'product' && $wp_query->is_page ) {
-					if ( isset( $post->post_parent ) ) {//parent course
-						if ( $post->post_parent !== 0 && get_post_type( $post->post_parent ) == 'course' ) {
-							$course = new Course( $post->post_parent );
-							wp_redirect( $course->get_permalink() );
-							exit;
-						}
+			} elseif( cp_redirect_mp_to_course() ) {
+				if ( isset( $post ) && $post->post_type == 'product' && $wp_query->is_single ) {
+					$course_id = (int) get_post_meta( $post->ID, 'course_id', true );
+					if ( !empty($course_id) ) {//related course
+						$course = new Course( $course_id );
+						wp_redirect( $course->get_permalink() );
+						exit;
 					}
 				}
 			}
@@ -2858,7 +2863,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 					$theme_file = locate_template( array( 'archive-unit.php' ) );
 
 					if ( $theme_file != '' ) {
-						do_shortcode( '[course_units_loop]' );
+//						do_shortcode( '[course_units_loop]' );
 						require_once( $theme_file );
 						exit;
 					} else {
@@ -6099,7 +6104,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 
 			foreach ( $items as $item ) {
 				$course_id = get_post_meta( $item['product_id'], 'cp_course_id', true );
-				if ( ! empty( $course_id ) ) {
+				if ( ! empty( $course_id ) && ! $student->user_enrolled_in_course($course_id) ) {
 					$student->enroll_in_course( $course_id );
 				}
 			}
@@ -6186,3 +6191,14 @@ if ( ! class_exists( 'CoursePress' ) ) {
 CoursePress::instance( new CoursePress() );
 global $coursepress;
 $coursepress = CoursePress::instance();
+
+
+//DEBUG
+//add_action( 'init', '_20151203_test' );
+//function _20151203_test () {
+//	$test = Course::get_units_with_modules( 77 );
+//	$test2 = Course::get_units_with_modules( 5489 );
+//	$test3 = Course::get_units_with_modules( 2382 );
+//	$test4 = Course::get_units_with_modules( 1480 );
+//	$test5 = Course::get_units_with_modules( 4943 );
+//}

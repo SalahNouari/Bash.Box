@@ -27,7 +27,7 @@ if ( ( isset( $_GET['wpmudev-chat-key'] ) ) && ( ! empty( $_GET['wpmudev-chat-ke
 		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
 		<title><?php
 			if ( ! empty( $chat_session['box_title'] ) ) {
-				echo sanitize_text_field( $chat_session['box_title'] ) . " &ndash; ";	     	 	 	  	  		
+				echo sanitize_text_field( $chat_session['box_title'] ) . " &ndash; ";
 			} ?></title>
 		<?php $wpmudev_chat->wp_enqueue_scripts(); ?>
 		<?php $wpmudev_chat->wp_head(); ?>

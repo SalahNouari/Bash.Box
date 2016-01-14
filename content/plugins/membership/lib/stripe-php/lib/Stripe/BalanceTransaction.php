@@ -22,7 +22,7 @@ class M2_Stripe_BalanceTransaction extends M2_Stripe_ApiResource
   public static function retrieve($id, $apiKey=null)
   {
     $class = get_class();
-    return self::_scopedRetrieve($class, $id, $apiKey);	   	 	 		 	  					  
+    return self::_scopedRetrieve($class, $id, $apiKey);
   }
 
   /**

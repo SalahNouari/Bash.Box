@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Snapshot
-Version: 2.5
+Version: 2.5.0.1
 Description: This plugin allows you to take quick on-demand backup snapshots of your working WordPress database. You can select from the default WordPress tables as well as custom plugin tables within the database structure. All snapshots are logged, and you can restore the snapshot as needed.
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
@@ -91,7 +91,7 @@ if ( ! class_exists( 'WPMUDEVSnapshot' ) ) {
 			$this->plugin_url  = plugin_dir_url( __FILE__ );
 
 			$this->DEBUG                         = false;
-			$this->_settings['SNAPSHOT_VERSION'] = '2.5';
+			$this->_settings['SNAPSHOT_VERSION'] = '2.5.0.1';
 
 			if ( is_multisite() ) {
 				$this->_settings['SNAPSHOT_MENU_URL'] = network_admin_url() . 'admin.php?page=';
@@ -3290,7 +3290,7 @@ if ( ! class_exists( 'WPMUDEVSnapshot' ) ) {
 						if ( ( $_max_depth > 0 ) && ( ! empty( $_path ) ) ) {
 							foreach ( $_files as $_idx => $_file ) {
 								$_new_file    = str_replace( $_path, '', $_file );
-								$_slash_parts = split( '/', $_new_file );
+								$_slash_parts = explode( '/', $_new_file );
 								if ( count( $_slash_parts ) > $_max_depth ) {
 
 									// We first remove the file from this section...

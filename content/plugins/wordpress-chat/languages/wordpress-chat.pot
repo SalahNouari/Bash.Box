@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the WordPress Chat package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WordPress Chat 2.1.1\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wordpress-chat\n"
-"POT-Creation-Date: 2015-12-21 08:40:14+00:00\n"
+"Project-Id-Version: WordPress Chat 2.1.2\n"
+"Report-Msgid-Bugs-To: http://premium.wpmudev.org/contact\n"
+"POT-Creation-Date: 2015-12-29 06:24:39+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2658,7 +2658,7 @@ msgstr ""
 msgid "To"
 msgstr ""
 
-#: templates/wpmudev-chat-pop-twitter-auth.php:36
+#: templates/wpmudev-chat-pop-twitter-auth.php:38
 msgid "ERROR:"
 msgstr ""
 
