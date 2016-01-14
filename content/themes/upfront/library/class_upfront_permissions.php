@@ -99,7 +99,7 @@ class Upfront_Permissions {
 		) return false;
 
 		// Allow anonymous boot
-		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && self::ANONYMOUS === $level) return true;
+		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && self::ANONYMOUS === $level) return true;	     	 		 		  	 		 	
 
 		return !empty($arg)
 			? current_user_can($level, $arg)
