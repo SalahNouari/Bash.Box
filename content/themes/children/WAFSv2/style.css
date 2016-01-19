@@ -143,8 +143,8 @@ Defaults
 --------------------------------------------- */
 
 body {
-	background: url("images/veg.jpg") no-repeat scroll 0% 0% / 100% auto #D4EAFF;
-	color: #a5a5a3;
+	background: url("images/leather.jpg") no-repeat scroll 0% 0% / 100% auto #814b08;
+	color: #636363;
 	font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
 	font-size: 16px;
 	font-weight: 300;
@@ -470,8 +470,8 @@ Structure and Layout
 --------------------------------------------- */
 
 .site-container {
-	background-color: rgba(255, 255, 255, 0.7);
-	box-shadow: 0 0 5px #ddd;
+	background-color: rgba(255, 255, 255, 0.8);
+/* 	box-shadow: 0 0 5px #ddd; */
 	margin: auto;
 	max-width: 1140px;
 	overflow: hidden;
@@ -1618,7 +1618,7 @@ Theme Colors
 }
 
 .lifestyle-pro-mustard .button,
-.lifestyle-pro-mustard .genesis-nav-menu a,
+/* .lifestyle-pro-mustard .genesis-nav-menu a, */
 .lifestyle-pro-mustard .site-footer a,
 .lifestyle-pro-mustard .site-title a,
 .lifestyle-pro-mustard .site-title a:hover {
@@ -1642,7 +1642,7 @@ Theme Colors
 .lifestyle-pro-mustard .button,
 .lifestyle-pro-mustard .entry-content .button,
 .lifestyle-pro-mustard .site-footer,
-.lifestyle-pro-mustard .site-header,
+/* .lifestyle-pro-mustard .site-header, */
 .lifestyle-pro-mustard button,
 .lifestyle-pro-mustard input[type="button"],
 .lifestyle-pro-mustard input[type="reset"],
@@ -1660,9 +1660,11 @@ Theme Colors
 	background-color: #eeeee8;
 }
 
+/*
 .lifestyle-pro-mustard .nav-secondary {
 	background-color: #f5d85a;
 }
+*/
 
 /* Lifestyle Pro Purple
 --------------------------------------------- */
