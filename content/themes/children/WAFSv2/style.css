@@ -143,7 +143,7 @@ Defaults
 --------------------------------------------- */
 
 body {
-	background: url("images/leather.jpg") no-repeat scroll 0% 0% / 100% auto #814b08;
+	background: url("images/leather.jpg") no-repeat fixed 0% 0% / 100% auto #814b08;
 	color: #636363;
 	font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
 	font-size: 16px;
