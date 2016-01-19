@@ -56,7 +56,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 
 	public static function add_dependencies () {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			upfront_add_element_style('upfront_widget', array('css/widget.css', dirname(__FILE__)));
+			upfront_add_element_style('upfront_widget', array('css/widget.css', dirname(__FILE__)));	     	 		 		  	 		 	
 		}
 	}
 

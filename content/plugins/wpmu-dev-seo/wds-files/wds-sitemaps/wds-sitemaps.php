@@ -69,14 +69,8 @@ class WDS_XML_Sitemap {
 		}
 		$map .= "</urlset>";
 
-		if (!$this->_is_admin_mapped()) {
-			$this->_write_sitemap($map);
-			$this->_postprocess_sitemap();
-		} else {
-			$file = wds_get_sitemap_path();
-			@unlink($file);
-			@unlink("{$file}.gz");
-		}
+        $this->_write_sitemap($map);
+        $this->_postprocess_sitemap();
 	}
 
 	protected function _set_time_limit ($amount=120) {
@@ -109,7 +103,7 @@ class WDS_XML_Sitemap {
 
 		if ($forced || @$wds_options['ping-google']) {
 			do_action('wds_before_search_engine_update', 'google');
-			$resp = wp_remote_get('http://www.google.com/webmasters/tools/ping?sitemap=' . esc_url(/*$wds_options['sitemapurl']*/wds_get_sitemap_url()));
+			$resp = wp_remote_get('http://www.google.com/webmasters/tools/ping?sitemap=' . esc_url(wds_get_sitemap_url()));
 			$result['google'] = array(
 				'response' => $resp,
 				'time' => $now,
@@ -123,7 +117,7 @@ class WDS_XML_Sitemap {
 
 		if ($forced || @$wds_options['ping-bing']) {
 			do_action('wds_before_search_engine_update', 'bing');
-			$resp = wp_remote_get('http://www.bing.com/webmaster/ping.aspx?sitemap=' . esc_url(/*$wds_options['sitemapurl']*/wds_get_sitemap_url()));
+			$resp = wp_remote_get('http://www.bing.com/webmaster/ping.aspx?sitemap=' . esc_url(wds_get_sitemap_url()));
 			$result['bing'] = array(
 				'response' => $resp,
 				'time' => $now,
@@ -174,7 +168,7 @@ class WDS_XML_Sitemap {
 		// Update sitemap meta data
 		update_option('wds_sitemap_dashboard', array(
 			'items' => count($this->_items),
-			'time' => time(),
+			'time' => current_time('timestamp'),
 		));
 	}
 
@@ -222,9 +216,9 @@ class WDS_XML_Sitemap {
 		$offset = date("O", $time);
 
 		$item = array (
-			'loc' => $url,
+			'loc' => esc_url($url), // Sanitize all URLs
 			'lastmod' => date("Y-m-d\TH:i:s",$time).substr($offset,0,3).":".substr($offset,-2),//date('Y-m-d', $time),
-			'changefreq' => strtolower($freq),
+			'changefreq' => strtolower( apply_filters('wds_sitemap_changefreq', $freq, $url, $priority, $time, $content ) ),
 			'priority' => sprintf("%.1f", $priority),
 		);
 
@@ -473,13 +467,10 @@ function wds_get_sitemap_url () {
 	$sitemap_url = @$sitemap_options['sitemapurl'];
 
 	if (is_multisite() && class_exists('domain_map')) {
+		$sitemap_url = home_url(false) . '/sitemap.xml';
+
 		if (defined('WDS_SITEMAP_DM_SIMPLE_DISCOVERY_FALLBACK') && WDS_SITEMAP_DM_SIMPLE_DISCOVERY_FALLBACK) {
 			$sitemap_url = (is_network_admin() ? '../../' : (is_admin() ? '../' : '/')) . 'sitemap.xml'; // Simplest possible logic
-		}
-
-		global $dm_map;
-		if ($dm_map && is_object($dm_map) && method_exists($dm_map, 'domain_mapping_siteurl')) {
-			$sitemap_url = trailingslashit($dm_map->domain_mapping_siteurl(false)) . 'sitemap.xml';
 		}
 	}
 	return apply_filters('wds-sitemaps-sitemap_url', $sitemap_url);

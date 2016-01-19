@@ -62,6 +62,9 @@ class WPMUDEV_Dashboard_Ui {
 			$urls->support_url   = admin_url( 'admin.php?page=wpmudev-support' );
 		}
 
+		// This URL changes depending on the current admin page.
+		$urls->real_support_url = $urls->support_url;
+
 		if ( WPMUDEV_CUSTOM_API_SERVER ) {
 			$urls->remote_site = trailingslashit( WPMUDEV_CUSTOM_API_SERVER );
 		} else {
@@ -302,7 +305,7 @@ class WPMUDEV_Dashboard_Ui {
 			$support_icon = '';
 			if ( $remote_granted ) {
 				$support_icon = sprintf(
-					' <i class="dashicons dashicons-unlock icon-access-granted" title="%s"></i>',
+					' <i class="dashicons dashicons-unlock wdev-access-granted" title="%s"></i>',
 					__( 'Support Access enabled', 'wpmudev' )
 				);
 			}
@@ -326,6 +329,31 @@ class WPMUDEV_Dashboard_Ui {
 			);
 
 			do_action( 'wpmudev_dashboard_setup_menu', 'end' );
+		}
+	}
+
+	/**
+	 * Compatibility URLs with old plugin version.
+	 * This can be dropped sometime in the future, when members updated to v4
+	 *
+	 * @since  4.0.3
+	 */
+	public function admin_menu_redirect_compat() {
+		global $pagenow;
+		if ( 'admin.php' && isset( $_GET['page'] ) ) {
+			$redirect_to = false;
+
+			switch ( $_GET['page'] ) {
+				case 'wpmudev-updates':
+					$redirect_to = $this->page_urls->dashboard_url;
+					break;
+			}
+
+			if ( $redirect_to ) {
+				header( 'X-Redirect-From: UI redirect_compat' );
+				wp_safe_redirect( $redirect_to );
+				exit;
+			}
 		}
 	}
 
@@ -427,7 +455,7 @@ class WPMUDEV_Dashboard_Ui {
 	 * @internal Action hook
 	 */
 	public function notification_styles() {
-		echo '<style>#toplevel_page_wpmudev .icon-access-granted { font-size: 14px; line-height: 13px; height: 13px; float: right; color: #1ABC9C; }</style>';
+		echo '<style>#toplevel_page_wpmudev .wdev-access-granted { font-size: 14px; line-height: 13px; height: 13px; float: right; color: #1ABC9C; }</style>';
 	}
 
 	/**
@@ -549,16 +577,20 @@ class WPMUDEV_Dashboard_Ui {
 
 			// Add the menu icon to the admin menu.
 			if ( is_multisite() ) {
-				add_action(
-					'network_admin_menu',
-					array( $this, 'setup_menu' )
-				);
+				$menu_hook = 'network_admin_menu';
 			} else {
-				add_action(
-					'admin_menu',
-					array( $this, 'setup_menu' )
-				);
+				$menu_hook = 'admin_menu';
 			}
+
+			add_action(
+				$menu_hook,
+				array( $this, 'admin_menu_redirect_compat' )
+			);
+
+			add_action(
+				$menu_hook,
+				array( $this, 'setup_menu' )
+			);
 
 			// Always load notification css.
 			add_action(
@@ -703,6 +735,16 @@ class WPMUDEV_Dashboard_Ui {
 		$updates = WPMUDEV_Dashboard::$site->get_transient( 'update_themes', false );
 
 		if ( ! empty( $updates->response[ $theme ] ) ) {
+			/*
+			 * If we just installed Upfront (parent theme) then don't show the
+			 * action links which won't work for the parent theme.
+			 */
+			if ( 'upfront' == $theme ) {
+				unset( $update_actions['network_enable'] );
+				unset( $update_actions['activate'] );
+				unset( $update_actions['preview'] );
+			}
+
 			if ( WPMUDEV_Dashboard::$api->is_server_url( $updates->response[ $theme ]['package'] ) ) {
 				$update_actions['themes_page'] = sprintf(
 					'<a href="%s" title="%s" target="_parent">%s</a>',
@@ -810,8 +852,14 @@ class WPMUDEV_Dashboard_Ui {
 			// User has no permission to view the page.
 			$this->load_template( 'no_access' );
 		} else {
+
+			/**
+			 * Custom hook to display own notifications inside Dashboard.
+			 */
+			do_action( 'wpmudev_dashboard_notice-dashboard' );
+
 			if ( $project_id ) {
-				$my_project = $data['projects'][ $type ];
+				$my_project = WPMUDEV_Dashboard::$site->get_project_infos( $project_id );
 			}
 
 			$this->load_template(
@@ -843,6 +891,11 @@ class WPMUDEV_Dashboard_Ui {
 		$tags = $this->tags_data( 'plugin' );
 		$urls = $this->page_urls;
 
+		/**
+		 * Custom hook to display own notifications inside Dashboard.
+		 */
+		do_action( 'wpmudev_dashboard_notice-plugins' );
+
 		echo '<div id="container" class="wrap wrap-plugins">';
 		$this->load_template(
 			'plugins',
@@ -851,7 +904,7 @@ class WPMUDEV_Dashboard_Ui {
 		echo '</div>';
 
 		if ( 'full' != $data['membership'] ) {
-			$this->render_upgrade_box( 'single' );
+			$this->render_upgrade_box( 'single', false );
 		}
 	}
 
@@ -879,6 +932,11 @@ class WPMUDEV_Dashboard_Ui {
 			}
 		}
 
+		/**
+		 * Custom hook to display own notifications inside Dashboard.
+		 */
+		do_action( 'wpmudev_dashboard_notice-themes' );
+
 		echo '<div id="container" class="wrap wrap-themes">';
 		$this->load_template(
 			'themes',
@@ -887,7 +945,7 @@ class WPMUDEV_Dashboard_Ui {
 		echo '</div>';
 
 		if ( 'full' != $data['membership'] ) {
-			$this->render_upgrade_box( 'single' );
+			$this->render_upgrade_box( 'single', false );
 		}
 	}
 
@@ -903,6 +961,8 @@ class WPMUDEV_Dashboard_Ui {
 			$this->load_template( 'no_access' );
 		}
 
+		$this->page_urls->real_support_url = $this->page_urls->remote_site . 'dashboard/support/';
+
 		$profile = WPMUDEV_Dashboard::$api->get_profile();
 		$data    = WPMUDEV_Dashboard::$api->get_membership_data();
 		$spinner = WPMUDEV_Dashboard::$site->plugin_url . 'includes/images/spinner-dark.gif';
@@ -915,6 +975,11 @@ class WPMUDEV_Dashboard_Ui {
 		} else {
 			$access_logs = $access['logins'];
 		}
+
+		/**
+		 * Custom hook to display own notifications inside Dashboard.
+		 */
+		do_action( 'wpmudev_dashboard_notice-support' );
 
 		echo '<div id="container" class="wrap wrap-support">';
 		$this->load_template(
@@ -945,9 +1010,14 @@ class WPMUDEV_Dashboard_Ui {
 
 		if ( 'full' == $data['membership'] ) {
 			$membership_label = __( 'Full', 'wpmudev' );
-		} elseif ( isnumeric( $data['membership'] ) ) {
+		} elseif ( is_numeric( $data['membership'] ) ) {
 			$membership_label = __( 'Single', 'wpmudev' );
 		}
+
+		/**
+		 * Custom hook to display own notifications inside Dashboard.
+		 */
+		do_action( 'wpmudev_dashboard_notice-settings' );
 
 		echo '<div id="container" class="wrap wrap-settings">';
 		$this->load_template(
@@ -965,14 +1035,18 @@ class WPMUDEV_Dashboard_Ui {
 	 */
 	protected function render_header( $page_title ) {
 		$urls = $this->page_urls;
-		$url_support = $urls->support_url;
+		$url_support = $urls->real_support_url;
 		$url_dash = 'https://premium.wpmudev.org/dashboard/';
 		$url_logout = $urls->dashboard_url . '&clear_key=1';
+
+		if ( $url_support != $urls->support_url ) {
+			$support_target = '_blank';
+		}
 
 		?>
 		<section id="header">
 			<div class="actions">
-				<a href="<?php echo esc_url( $url_support ); ?>" class="button">
+				<a href="<?php echo esc_url( $url_support ); ?>" target="<?php echo esc_url( $support_target ); ?>" class="button">
 					<?php esc_html_e( 'Get Support', 'wpmudev' ); ?>
 				</a>
 				<a href="<?php echo esc_url( $url_dash ); ?>" target="_blank" class="button button-light">
@@ -1041,6 +1115,11 @@ class WPMUDEV_Dashboard_Ui {
 				$item
 			);
 		}
+
+		/**
+		 * Custom hook to display own notifications inside Dashboard.
+		 */
+		do_action( 'wpmudev_dashboard_notice' );
 	}
 
 	/**
@@ -1048,8 +1127,9 @@ class WPMUDEV_Dashboard_Ui {
 	 *
 	 * @since  4.0.0
 	 * @param  string $reason The reason why the user needs to upgrade.
+	 * @param  string $auto_show If the popup should be displayed on page load.
 	 */
-	protected function render_upgrade_box( $reason ) {
+	protected function render_upgrade_box( $reason, $auto_show = true ) {
 		$is_logged_in = WPMUDEV_Dashboard::$api->has_key();
 		$urls = $this->page_urls;
 		$user = wp_get_current_user();
@@ -1064,7 +1144,7 @@ class WPMUDEV_Dashboard_Ui {
 
 		$this->load_template(
 			'popup-no-access',
-			compact( 'is_logged_in', 'urls', 'username', 'reason' )
+			compact( 'is_logged_in', 'urls', 'username', 'reason', 'auto_show' )
 		);
 	}
 

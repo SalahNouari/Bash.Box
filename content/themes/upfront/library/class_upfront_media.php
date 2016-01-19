@@ -2,7 +2,7 @@
 
 abstract class Upfront_Media {
 
-	const MIME_TYPE_IMAGES = 'image/jpeg,image/png,image/gif';	     	 		 		  	 		 	
+	const MIME_TYPE_IMAGES = 'image/jpeg,image/png,image/gif';
 	const MIME_TYPE_AUDIOS = 'audio/mpeg';
 	const MIME_TYPE_VIDEOS = 'video/mp4';
 	const MIME_TYPE_OTHER = ':other:';

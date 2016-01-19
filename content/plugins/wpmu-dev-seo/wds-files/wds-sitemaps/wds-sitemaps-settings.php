@@ -99,7 +99,7 @@ function wds_sitemaps_settings() {
 				'name' => 'sitemapurl',
 				'title' => __( 'URL to the XML Sitemap' , 'wds'),
 				'description' => '',
-				'text' => '<p><a href="' . $sitemap_options['sitemapurl'] . '" target="_blank">' . $sitemap_options['sitemapurl'] . '</a></p>' // Removed plain content type
+				'text' => '<p><a href="' . wds_get_sitemap_url() . '" target="_blank">' . wds_get_sitemap_url() . '</a></p>' // Removed plain content type
 			)
 		)
 	);

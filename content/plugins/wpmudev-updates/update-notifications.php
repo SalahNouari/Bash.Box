@@ -4,7 +4,7 @@
  * Plugin URI:  https://premium.wpmudev.org/project/wpmu-dev-dashboard/
  * Description: Brings the power of WPMU DEV direct to you, it'll revolutionize how you use WordPress, activate now!
  * Author:      WPMU DEV
- * Version:     4.0.2
+ * Version:     4.0.4
  * Author URI:  http://premium.wpmudev.org/
  * Text Domain: wpmudev
  * Domain Path: includes/languages/
@@ -42,7 +42,7 @@ class WPMUDEV_Dashboard {
 	 *
 	 * @var string (Version number)
 	 */
-	static public $version = '4.0.2';
+	static public $version = '4.0.4';
 
 	/**
 	 * Holds the API module.
@@ -163,9 +163,6 @@ class WPMUDEV_Dashboard {
 		WPMUDEV_Dashboard::$site->set_option( 'refresh_remote_flag', 1 );
 		WPMUDEV_Dashboard::$site->set_option( 'refresh_local_flag', 1 );
 		WPMUDEV_Dashboard::$site->set_option( 'refresh_profile_flag', 1 );
-
-		// Try to load the membership details (only works if logged in).
-		WPMUDEV_Dashboard::$api->refresh_membership_data();
 	}
 };
 

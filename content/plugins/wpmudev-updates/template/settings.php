@@ -38,25 +38,25 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 <div class="col-half">
 <section class="box-membership dev-box">
 	<div class="box-title">
-		<h3><?php _e( 'Membership', 'wpmudev' ); ?></h3>
+		<h3><?php esc_html_e( 'Membership', 'wpmudev' ); ?></h3>
 	</div>
 	<div class="box-content">
-		<h4><?php _e( 'Current subscription', 'wpmudev' ); ?></h4>
+		<h4><?php esc_html_e( 'Current subscription', 'wpmudev' ); ?></h4>
 		<div class="subscription-detail">
-			<span class="label"><?php _e( 'Type:', 'wpmudev' ); ?></span>
+			<span class="label"><?php esc_html_e( 'Type:', 'wpmudev' ); ?></span>
 			<span class="value">
-				<?php echo $membership_label; ?>
+				<?php echo esc_html( $membership_label ); ?>
 				<i class="status-ok dev-icon dev-icon-radio_checked"></i>
 			</span>
 		</div>
 		<div class="subscription-detail">
-			<span class="label"><?php _e( 'Member since:', 'wpmudev' ); ?></span>
+			<span class="label"><?php esc_html_e( 'Member since:', 'wpmudev' ); ?></span>
 			<span class="value">
-				<?php echo date_i18n( 'F d, Y', $profile['member_since'] ); ?>
+				<?php echo esc_html( date_i18n( 'F d, Y', $profile['member_since'] ) ); ?>
 			</span>
 		</div>
-		<a href="<?php echo $url_membership; ?>" target="_blank" class="button">
-			<?php _e( 'Change plan', 'wpmudev' ); ?>
+		<a href="<?php echo esc_url( $url_membership ); ?>" target="_blank" class="button">
+			<?php esc_html_e( 'Change plan', 'wpmudev' ); ?>
 		</a>
 	</div>
 </section>
@@ -64,20 +64,20 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 <section class="box-apikey dev-box">
 	<div class="box-title">
 		<span class="buttons">
-			<a href="<?php echo $url_api_setting; ?>" class="button button-small button-grey" target="_blank">
-				<?php _e( 'Manage global API settings', 'wpmudev' ); ?>
+			<a href="<?php echo esc_url( $url_api_setting ); ?>" class="button button-small button-grey" target="_blank">
+				<?php esc_html_e( 'Manage global API settings', 'wpmudev' ); ?>
 			</a>
 		</span>
-		<h3><?php _e( 'API KEY', 'wpmudev' ); ?></h3>
+		<h3><?php esc_html_e( 'API KEY', 'wpmudev' ); ?></h3>
 	</div>
 	<div class="box-content">
 		<p>
-			<?php _e( 'This is your WPMU DEV API Key.', 'wpmudev' ); ?>
+			<?php esc_html_e( 'This is your WPMU DEV API Key.', 'wpmudev' ); ?>
 		</p>
 		<input
 			type="text"
 			readonly="readonly"
-			value="<?php echo strtolower( WPMUDEV_Dashboard::$api->get_key() ); ?>"
+			value="<?php echo esc_attr( strtolower( WPMUDEV_Dashboard::$api->get_key() ) ); ?>"
 			class="block disabled apikey sel-all" />
 	</div>
 </section>
@@ -86,16 +86,16 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 <div class="col-half">
 <section class="box-settings dev-box">
 	<div class="box-title">
-		<h3><?php _e( 'General settings', 'wpmudev' ); ?></h3>
+		<h3><?php esc_html_e( 'General settings', 'wpmudev' ); ?></h3>
 	</div>
 	<div class="box-content">
 		<p>
 			<span class="toggle float-r">
-				<input type="checkbox" class="toggle-checkbox" id="chk_autoupdate" name="autoupdate_dashboard" data-action="save-setting-bool" data-hash="<?php echo wp_create_nonce( 'save-setting-bool' ); ?>" <?php checked( $auto_update ); ?> />
+				<input type="checkbox" class="toggle-checkbox" id="chk_autoupdate" name="autoupdate_dashboard" data-action="save-setting-bool" data-hash="<?php echo esc_attr( wp_create_nonce( 'save-setting-bool' ) ); ?>" <?php checked( $auto_update ); ?> />
 				<label class="toggle-label" for="chk_autoupdate"></label>
 			</span>
 			<label class="inline-label" for="chk_autoupdate">
-				<?php _e( 'Enable automatic updates for the WPMU DEV plugin', 'wpmudev' ); ?>
+				<?php esc_html_e( 'Enable automatic updates for the WPMU DEV plugin', 'wpmudev' ); ?>
 			</label>
 		</p>
 	</div>
@@ -103,7 +103,7 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 <section class="box-permissions dev-box">
 	<div class="box-title">
-		<h3><?php _e( 'Permissions', 'wpmudev' ); ?></h3>
+		<h3><?php esc_html_e( 'Permissions', 'wpmudev' ); ?></h3>
 	</div>
 	<div class="box-content">
 		<ul class="dev-list userlist">
@@ -112,9 +112,9 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 				<span class="list-label">
 				<?php
 				if ( $can_manage_users ) {
-					_e( 'Control which administrators (manage_options enabled) can access/see the WPMU DEV Dashboard plugin and announcements. Note: ONLY these users will see announcements.', 'wpmudev' );
+					esc_html_e( 'Control which administrators (manage_options enabled) can access/see the WPMU DEV Dashboard plugin and announcements. Note: ONLY these users will see announcements.', 'wpmudev' );
 				} else {
-					_e( 'The following admin users can access/see the WPMU DEV Dashboard plugin and announcements. Note: ONLY these users will see announcements.', 'wpmudev' );
+					esc_html_e( 'The following admin users can access/see the WPMU DEV Dashboard plugin and announcements. Note: ONLY these users will see announcements.', 'wpmudev' );
 				}
 				?>
 				</span>
@@ -137,13 +137,13 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 			<li class="user-<?php echo esc_attr( $user['id'] ); ?>">
 			<div class="has-hover">
 				<span class="list-label">
-					<a href="<?php echo $user['profile_link']; ?>">
+					<a href="<?php echo esc_url( $user['profile_link'] ); ?>">
 						<?php echo get_avatar( $user['id'], 40 ); ?>
 						<?php echo esc_html( ucwords( $user['name'] ) ); ?>
 					</a>
 					<?php if ( $can_manage_users && $user['is_me'] ) : ?>
-					<span class="dev-label" tooltip="<?php _e( 'You cannot remove yourself', 'wpmudev' ); ?>">
-						<?php _e( 'You', 'wpmudev' ); ?>
+					<span class="dev-label" tooltip="<?php esc_attr_e( 'You cannot remove yourself', 'wpmudev' ); ?>">
+						<?php esc_html_e( 'You', 'wpmudev' ); ?>
 					</span>
 					<?php endif; ?>
 				</span>
@@ -162,7 +162,7 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 			<li>
 			<div>
 				<em class="list-label tc" style="width: 100%">
-				<?php _e( 'To manage user permissions here you need to remove the constant <code>WPMUDEV_LIMIT_TO_USER</code> from your wp-config file.', 'wpmudev' ); ?>
+				<?php esc_html_e( 'To manage user permissions here you need to remove the constant <code>WPMUDEV_LIMIT_TO_USER</code> from your wp-config file.', 'wpmudev' ); ?>
 				</em>
 			</div>
 			</li>
@@ -180,15 +180,15 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 						<input
 							type="search"
 							name="user"
-							placeholder="<?php _e( "Type an admin user's name", 'wpmudev' ); ?>"
+							placeholder="<?php esc_attr_e( "Type an admin user's name", 'wpmudev' ); ?>"
 							id="user-search"
 							class="user-search"
-							data-hash="<?php echo wp_create_nonce( 'usersearch' ); ?>"
-							data-empty-msg="<?php _e( 'We did not find an admin user with this name...', 'wpmudev' ); ?>" />
+							data-hash="<?php echo esc_attr( wp_create_nonce( 'usersearch' ) ); ?>"
+							data-empty-msg="<?php esc_attr_e( 'We did not find an admin user with this name...', 'wpmudev' ); ?>" />
 					</span>
 					<span class="list-detail">
 						<button id="user-add" type="submit" class="button one-click">
-							<?php _e( 'Add', 'wpmudev' ); ?>
+							<?php esc_html_e( 'Add', 'wpmudev' ); ?>
 						</button>
 					</span>
 				</form>

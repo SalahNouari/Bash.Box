@@ -273,6 +273,18 @@ $this->render_header( $page_title );
 		</div>
 	</div>
 
+	<?php if ( ! empty( $_COOKIE['wpmudev_is_staff'] ) || ! empty( $_GET['staff'] ) ) : ?>
+	<div class="tab">
+		<input type="radio" id="tab-notifications" name="sysinfo">
+		<label for="tab-notifications">Notifications</label>
+
+		<div class="content">
+			<p class="tc"><em>- Additional briefing for support heroes -</em></p>
+			<?php echo WPMUDEV_Dashboard::$notice->dump_queue(); ?>
+		</div>
+	</div>
+	<?php endif; ?>
+
 </div>
 </div>
 

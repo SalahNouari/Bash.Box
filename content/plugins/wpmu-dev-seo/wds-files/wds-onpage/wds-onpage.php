@@ -206,6 +206,21 @@ class WDS_OnPage {
 		}
 	}
 
+	function wds_rel_canonical() {
+		if (!is_singular()) return;
+
+		global $wp_the_query;
+		if (!$id = $wp_the_query->get_queried_object_id()) return;
+
+		$link = get_permalink($id);
+		if ($page = get_query_var('cpage')) $link = get_comments_pagenum_link($page);
+
+		// new code
+		$link = apply_filters("wds_filter_canonical", $link);
+
+		echo "<link rel='canonical' href='$link' />\n";
+	}
+
 	function wds_canonical () {
 		global $wds_options;
 		global $wp_query, $paged;
@@ -224,7 +239,7 @@ class WDS_OnPage {
 		} else {
 			if (is_singular()) {
 				echo "\t";
-				rel_canonical();
+				$this->wds_rel_canonical();
 			} else {
 				$canonical = '';
 				if (is_front_page()) {

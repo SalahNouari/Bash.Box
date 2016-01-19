@@ -323,7 +323,7 @@ class WDS_Metabox {
 			"nosnippet" => __( 'No Snippet' , 'wds'),
 		);
 		/*
-		$robots_advanced = '<select name="wds_meta-robots-adv[]" id="wds_meta-robots-adv" multiple="multiple" size="' . count($advanced) . '" style="height:' . count($advanced) * 1.2 . 'em;">';
+		$robots_advanced = '<select name="wds_meta-robots-adv[]" id="wds_meta-robots-adv" multiple="multiple" size="' . count($advanced) . '" style="height:' . count($advanced) * 1.2 . 'em;">';	     	 	 	  		 		
 		foreach ($advanced as $key => $label) {
 			$robots_advanced .= "<option value='{$key}' " . (in_array($key, $adv_value) ? 'selected="selected"' : '') . ">{$label}</option>";
 		}

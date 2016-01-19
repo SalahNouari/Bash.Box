@@ -27,7 +27,7 @@ class WPS_AutoLinks {
 			: 99
 		;
 
-	  	if (!empty($wds_options['post']) || !empty($wds_options['page'])) add_filter('the_content', array($this, 'the_content_filter'), $content_filter_order);
+	  	add_filter('the_content', array($this, 'the_content_filter'), $content_filter_order);
 		if (!empty( $wds_options['comment'])) add_filter('comment_text', array($this, 'comment_text_filter'), 10);
 
 		add_action('create_category', array($this, 'delete_cache'));
@@ -363,6 +363,9 @@ class WPS_AutoLinks {
 	}
 
 	function the_content_filter($text) {
+		$post_type = get_post_type();
+		if (empty($this->settings[$post_type])) return $text;
+
 		$result = $this->process_text($text, 0);
 
 		$options = $this->settings;

@@ -4,6 +4,12 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+1.7.7 - 2016-01-18
+----------------------------------------------------------------------
+- Allow for filterable canonical URLs.
+- Add just-in-time post type recognition.
+- Fix: use current local time for timestamp items generation.
+
 1.7.6 - 2015-08-25
 ----------------------------------------------------------------------
 - Add advanced robots options info on listing pages.
@@ -342,4 +348,4 @@ exist yet
 - Initial Release.
 
 
-133620-1440528257-au
+133620-1453183802-au

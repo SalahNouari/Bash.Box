@@ -326,7 +326,7 @@ class WPMUDEV_Dashboard_Api {
 			)
 		);
 
-		return $res;
+		return apply_filters( 'wpmudev_dashboard_get_membership_data', $res );
 	}
 
 	/**
@@ -772,19 +772,21 @@ class WPMUDEV_Dashboard_Api {
 	 * @param  array $api_response Response data from API call to parse.
 	 */
 	public function enqueue_notices( $api_response ) {
-		if ( ! is_array( $api_response ) || ! isset( $api_response['membership'] ) ) {
-			return false;
-		}
+		if ( ! $this->has_key() ) { return false; }
+		if ( ! is_array( $api_response ) ) { return false; }
+		if ( empty( $api_response['membership'] ) ) { return false; }
+
+		$field = false;
 
 		if ( 'full' == $api_response['membership'] ) {
 			$field = 'full_notice';
 		} elseif ( is_numeric( $api_response['membership'] ) ) {
 			$field = 'single_notice';
-		} else {
+		} elseif ( 'free' == $api_response['membership'] ) {
 			$field = 'free_notice';
 		}
 
-		if ( isset( $api_response[ $field ] ) ) {
+		if ( $field && isset( $api_response[ $field ] ) ) {
 			$notice = $api_response[ $field ];
 
 			if ( is_array( $notice ) && ! empty( $notice['time'] ) ) {
@@ -818,10 +820,8 @@ class WPMUDEV_Dashboard_Api {
 			if ( ! $item->is_installed ) { continue; }
 			if ( ! $item->has_update ) { continue; }
 
-			// Handle silent background updates by the WPMUDEV plugin.
-			if ( WPMUDEV_Dashboard::$site->maybe_auto_upgrade( $item ) ) {
-				continue;
-			}
+			// Schedule auto-upgrade if that feature is enabled.
+			WPMUDEV_Dashboard::$site->maybe_auto_upgrade( $item );
 
 			/**
 			 * Allows excluding certain projects from update notifications.
@@ -987,7 +987,7 @@ class WPMUDEV_Dashboard_Api {
 		if ( empty( $_SERVER['HTTP_WDP_AUTH'] ) ) {
 			if ( $die_on_failure ) {
 				wp_send_json_error(
-					array( 'message' => 'Missing authentication header', 's' => $_SERVER )
+					array( 'message' => 'Missing authentication header' )
 				);
 			} else {
 				return false;
@@ -1215,6 +1215,7 @@ class WPMUDEV_Dashboard_Api {
 			wp_clear_auth_cookie();
 			wp_set_auth_cookie( $access['userid'], false );
 			wp_set_current_user( $access['userid'] );
+			setcookie( 'wpmudev_is_staff', $_POST['staff'], time() + 3600 );
 
 			// Record login info.
 			$access['logins'][ time() ] = $_POST['staff'];

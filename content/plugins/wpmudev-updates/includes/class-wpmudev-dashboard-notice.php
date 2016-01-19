@@ -6,6 +6,10 @@
  *
  * @since  4.0.0
  */
+
+/**
+ * The notification class.
+ */
 class WPMUDEV_Dashboard_Message {
 
 	/**
@@ -41,6 +45,11 @@ class WPMUDEV_Dashboard_Message {
 	 * @internal
 	 */
 	public function __construct() {
+		// Notifications are completely disabled while logged out.
+		if ( ! WPMUDEV_Dashboard::$api->has_key() ) {
+			return;
+		}
+
 		add_action(
 			'load-index.php',
 			array( $this, 'maybe_setup_message' )
@@ -63,7 +72,7 @@ class WPMUDEV_Dashboard_Message {
 
 		// Rarely used. It's a hardcoded message like "plugins updated".
 		if ( ! empty( $_GET['wpmudev_msg'] ) ) {
-			// Used on all NON-Dashboard pages,
+			// Used on all NON-Dashboard pages.
 			add_action(
 				'all_admin_notices',
 				array( $this, 'setup_global_notice' ),
@@ -86,9 +95,11 @@ class WPMUDEV_Dashboard_Message {
 		do_action( 'wpmudev_dashboard_notice_init', $this );
 	}
 
-	/* ********************************************************************** *
+	/*
+	 * *********************************************************************** *
 	 * *     HANDLE MESSAGE QUEUE
-	 * ********************************************************************** */
+	 * *********************************************************************** *
+	 */
 
 	/**
 	 * Load the message queue from database.
@@ -114,28 +125,36 @@ class WPMUDEV_Dashboard_Message {
 				$changed = true;
 			}
 			if ( ! is_array( $msg ) ) {
-				unset( $this->queue[$id] );
+				unset( $this->queue[ $id ] );
 				$changed = true;
 				continue;
 			}
 			if ( empty( $msg['content'] ) ) {
-				unset( $this->queue[$id] );
+				unset( $this->queue[ $id ] );
 				$changed = true;
 				continue;
 			}
-			if ( empty( $msg['cta'] ) ) {
+			if ( ! isset( $msg['cta'] ) ) {
 				$msg['cta'] = '';
 				$changed = true;
 			}
-			if ( empty( $msg['id'] ) ) {
+			if ( ! isset( $msg['id'] ) ) {
 				$msg['id'] = intval( $id );
 				$changed = true;
 			}
-			if ( empty( $msg['dismissed'] ) ) {
+			if ( ! isset( $msg['dismissed'] ) ) {
 				$msg['dismissed'] = false;
 				$changed = true;
 			}
-			$this->queue[$id] = $msg;
+			if ( ! isset( $msg['time_dismiss'] ) ) {
+				$msg['time_dismiss'] = 0;
+				$changed = true;
+			}
+			if ( ! isset( $msg['time_create'] ) ) {
+				$msg['time_create'] = 0;
+				$changed = true;
+			}
+			$this->queue[ $id ] = $msg;
 		}
 
 		if ( $changed ) {
@@ -171,11 +190,16 @@ class WPMUDEV_Dashboard_Message {
 	 * often.
 	 *
 	 * @since  4.0.0
-	 * @param  int $id The message ID.
+	 * @param  int    $id The message ID.
 	 * @param  string $content The HTML content of the message.
-	 * @param  bool $can_dismiss Show the Dismiss button or not?
+	 * @param  bool   $can_dismiss Show the Dismiss button or not.
 	 */
 	public function enqueue( $id, $content, $can_dismiss = true ) {
+		// Notifications are completely disabled while logged out.
+		if ( ! WPMUDEV_Dashboard::$api->has_key() ) {
+			return;
+		}
+
 		$this->load_queue();
 		$id = intval( $id );
 
@@ -183,7 +207,7 @@ class WPMUDEV_Dashboard_Message {
 			return false;
 		}
 
-		if ( isset( $this->queue['id'] ) ) {
+		if ( isset( $this->queue[ $id ] ) ) {
 			return false;
 		}
 
@@ -193,12 +217,69 @@ class WPMUDEV_Dashboard_Message {
 			'dismissed' => false,
 			'can_dismiss' => $can_dismiss,
 			'cta' => '',
+			'time_dismiss' => 0,
+			'time_create' => time(),
 		);
 
-		$this->queue[$id] = $notice;
+		$this->queue[ $id ] = $notice;
 
 		$this->save_queue();
 		return true;
+	}
+
+	/**
+	 * Used by Support staff to analyze issues with the message-queue.
+	 *
+	 * @since  4.0.3
+	 * @return string HTML representation of the current message-queue.
+	 */
+	public function dump_queue() {
+		$this->load_queue();
+
+		$dump = '
+		<table class="list-table">
+		<thead><tr>
+			<th width="150"><div class="tc">Created</div></th>
+			<th width="150"><div class="tc">Dismissed</div></th>
+			<th>Message</th>
+		</tr></thead>
+		<tbody>';
+
+		foreach ( $this->queue as $id => $item ) {
+			$created = '?';
+			if ( $item['time_create'] ) {
+				$created = date( 'Y-m-d H:i', $item['time_create'] );
+			} elseif ( is_numeric( $id ) && $id > 100000 ) {
+				$created = date( 'Y-m-d H:i', $id );
+			}
+			$dismissed = '?';
+			if ( $item['dismissed'] ) {
+				if ( $item['time_dismiss'] ) {
+					$dismissed = date( 'Y-m-d H:i', $item['time_dismiss'] );
+				} else {
+					$dismissed = 'Yes';
+				}
+			} else {
+				$dismissed = 'No';
+			}
+
+			$dump .= sprintf(
+				'<tr class="notice-%s">
+				<td class="tc">%s<br /><span tooltip="%s"><i class="dev-icon dev-icon-info"></i></span></td>
+				<td class="tc">%s</td>
+				<td>%s</td>
+				</tr>',
+				esc_html( $item['id'] ),
+				esc_html( $created ),
+				esc_html( 'ID: ' . $item['id'] ),
+				esc_html( $dismissed ),
+				esc_html( $item['content'] )
+			);
+		}
+
+		$dump .= '</tbody></table>';
+
+		return $dump;
 	}
 
 	/**
@@ -207,10 +288,15 @@ class WPMUDEV_Dashboard_Message {
 	 * for `dismiss` either - it's always un-dismissed.
 	 *
 	 * @since  4.0.0
-	 * @param  string $content The HTML content of the message
-	 * @param  bool $can_dismiss Show the Dismiss button or not?
+	 * @param  string $content The HTML content of the message.
+	 * @param  string $cta Type/code of the CTA button.
 	 */
 	public function override_message( $content, $cta = 'dismiss' ) {
+		// Notifications are completely disabled while logged out.
+		if ( ! WPMUDEV_Dashboard::$api->has_key() ) {
+			return;
+		}
+
 		$can_dismiss = true;
 		if ( 'dismiss' == $cta ) {
 			$cta = '';
@@ -236,15 +322,18 @@ class WPMUDEV_Dashboard_Message {
 	protected function mark_as_done( $msg_id ) {
 		$this->load_queue();
 
-		if ( isset( $this->queue[$msg_id] ) ) {
-			$this->queue[$msg_id]['dismissed'] = true;
+		if ( isset( $this->queue[ $msg_id ] ) ) {
+			$this->queue[ $msg_id ]['dismissed'] = true;
+			$this->queue[ $msg_id ]['time_dismiss'] = time();
 			$this->save_queue();
 		}
 	}
 
-	/* ********************************************************************** *
+	/*
+	 * *********************************************************************** *
 	 * *     AJAX HANDLER FUNCTIONS
-	 * ********************************************************************** */
+	 * *********************************************************************** *
+	 */
 
 	/**
 	 * Ajax handler that marks a enqueued message as "dismissed".
@@ -262,9 +351,11 @@ class WPMUDEV_Dashboard_Message {
 		wp_send_json_error();
 	}
 
-	/* ********************************************************************** *
+	/*
+	 * *********************************************************************** *
 	 * *     DISPLAY THE MESSAGE
-	 * ********************************************************************** */
+	 * *********************************************************************** *
+	 */
 
 	/**
 	 * This function is only called on pages that can display a WPMUDEV message.
@@ -346,6 +437,7 @@ class WPMUDEV_Dashboard_Message {
 	 * Determines the global message to display.
 	 *
 	 * @since  4.0.0
+	 * @param  string $default A default message.
 	 * @return string The global message text, or empty string.
 	 */
 	public function get_global_message( $default = '' ) {
@@ -401,7 +493,7 @@ class WPMUDEV_Dashboard_Message {
 					<?php echo $msg['cta']; ?>
 					<?php if ( $msg['can_dismiss'] ) : ?>
 					<button class="frash-notice-dismiss" data-msg="<?php echo esc_attr( $msg_dismiss ); ?>">
-						<?php _e( 'Dismiss', 'wpmudev' ); ?>
+						<?php esc_html_e( 'Dismiss', 'wpmudev' ); ?>
 					</button>
 					<?php endif; ?>
 				</div>
@@ -410,5 +502,4 @@ class WPMUDEV_Dashboard_Message {
 		<script src="<?php echo esc_url( $js_url ); ?>"></script>
 		<?php
 	}
-
 }

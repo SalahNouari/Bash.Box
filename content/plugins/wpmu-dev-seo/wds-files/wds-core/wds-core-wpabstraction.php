@@ -40,7 +40,7 @@ if ( !function_exists( 'add_blog_option' ) ) {
 
 if ( !function_exists( 'update_blog_option' ) ) {
 	function update_blog_option( $blog_id, $option_name, $option_value ) {
-		return update_option( $option_name, $option_value );	     	 	 	  		 		
+		return update_option( $option_name, $option_value );
 	}
 }
 

@@ -452,11 +452,48 @@ WDP.wpmuTabs = function(el) {
 		jq.height(content.outerHeight() + current.outerHeight() - 6);
 	}
 
+	// Updates the URL hash to keep tab open during page refresh
+	function updateHash() {
+		var current = jq.find('.tab > input:checked');
+
+		if (current.attr('id').length) {
+			WDP.updateHash(current.attr('id'));
+		}
+		resizeArea();
+	}
+
+	// Open the tab that is specified in window URL hash
+	function switchTab() {
+		var curTab,
+			route = window.location.hash.replace( /[^\w-_]/g, '' );
+
+		if (route) {
+			curTab = jq.find('input#' + route);
+
+			if (curTab.length && ! curTab.prop('checked')) {
+				curTab.prop('checked', true);
+				scrollWindow();
+			}
+		}
+	}
+
+	// Scroll the window to top of the tab list.
+	function scrollWindow() {
+		resizeArea();
+		jQuery('html, body').scrollTop(
+			jq.offset().top
+			- parseInt( jQuery('html').css('paddingTop') )
+			- 20
+		);
+	}
+
 	// Constructor.
 	function init() {
-		jq.on('click', '.tab > label', resizeArea);
+		jq.on('click', '.tab > input[type=radio]', updateHash);
+		jQuery(window).on('hashchange', switchTab);
 
 		resizeArea();
+		switchTab();
 	}
 
 	init();
@@ -500,13 +537,50 @@ WDP.wpmuVerticalTabs = function(el) {
 		});
 	}
 
+	// Updates the URL hash to keep tab open during page refresh
+	function updateHash() {
+		var current = jq.find('.tab > input:checked');
+
+		if (current.attr('id').length) {
+			WDP.updateHash(current.attr('id'));
+		}
+		resizeArea();
+	}
+
+	// Open the tab that is specified in window URL hash
+	function switchTab() {
+		var curTab,
+			route = window.location.hash.replace( /[^\w-_]/g, '' );
+
+		if (route) {
+			curTab = jq.find('input#' + route);
+
+			if (curTab.length && ! curTab.prop('checked')) {
+				curTab.prop('checked', true);
+				scrollWindow();
+			}
+		}
+	}
+
+	// Scroll the window to top of the tab list.
+	function scrollWindow() {
+		resizeArea();
+		jQuery('html, body').scrollTop(
+			jq.offset().top
+			- parseInt( jQuery('html').css('paddingTop') )
+			- 20
+		);
+	}
+
 	// Constructor.
 	function init() {
-		jq.on('click', '.tab > label', resizeArea);
+		jq.on('click', '.tab > input[type=radio]', updateHash);
 		jQuery(window).on('resize', calcMinHeight);
+		jQuery(window).on('hashchange', switchTab);
 
 		calcMinHeight();
 		resizeArea();
+		switchTab();
 	}
 
 	init();
@@ -1021,3 +1095,40 @@ WDP.showError = function(action) {
 
 	return WDP;
 };
+
+/**
+ * Updates the hash-value in the current windows URL without scrolling to the
+ * element.
+ *
+ * @since  4.0.3
+ */
+WDP.updateHash = function(newHash) {
+	newHash = newHash.replace( /^#/, '' );
+
+	var fx,
+		node = jQuery( '#' + newHash );
+
+	if (node.length) {
+		// Remove the ID value from the actual element.
+		node.attr('id', '');
+
+		// Create a dummy element at current position with the specific ID.
+		fx = jQuery('<div></div>')
+			.css({
+				position: 'absolute',
+				visibility: 'hidden',
+				top: jQuery(document).scrollTop() + 'px'
+			})
+			.attr('id', newHash)
+			.appendTo(document.body);
+	}
+
+	// Change hash value in the URL. Browser will scroll to _current position_.
+	document.location.hash = newHash;
+
+	// Undo the changes from first part.
+	if (node.length) {
+		fx.remove();
+		node.attr('id', newHash);
+	}
+}

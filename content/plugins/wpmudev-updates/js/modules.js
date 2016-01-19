@@ -56,8 +56,9 @@ jQuery(function initModules() {
 
 		// Parse the local routes after a short delay.
 		window.setTimeout(function(){
-			if ('pid' === WDP.localRoutes.action) {
-				showProjectInfo(WDP.localRoutes.param);
+			switch (WDP.localRoutes.action) {
+				case 'pid':    showProjectInfo(WDP.localRoutes.param); break;
+				case 'update': showUpdateInfo(WDP.localRoutes.param); break;
 			}
 		}, 20);
 
@@ -105,8 +106,9 @@ jQuery(function initModules() {
 
 		// Parse the local routes after a short delay.
 		window.setTimeout(function(){
-			if ('pid' === WDP.localRoutes.action) {
-				showProjectInfo(WDP.localRoutes.param);
+			switch (WDP.localRoutes.action) {
+				case 'pid':    showProjectInfo(WDP.localRoutes.param); break;
+				case 'update': showUpdateInfo(WDP.localRoutes.param); break;
 			}
 		}, 20);
 
@@ -383,12 +385,14 @@ jQuery(function initModules() {
 		if (!cat) { cat = '0'; }
 
 		// 1. Update the titles/toggle buttons.
-		if ( '0' === cat ) {
-			uninstTitle.text(uninstTitle.data('title').replace( /%s/, '' ));
-			instTitle.text(instTitle.data('title').replace( /%s/, '' ));
-		} else {
-			uninstTitle.text(uninstTitle.data('title').replace( /%s/, title ));
-			instTitle.text(instTitle.data('title').replace( /%s/, title ));
+		if (instBox.length && uninstBox.length) {
+			if ('0' === cat) {
+				uninstTitle.text(uninstTitle.data('title').replace( /%s/, '' ));
+				instTitle.text(instTitle.data('title').replace( /%s/, '' ));
+			} else {
+				uninstTitle.text(uninstTitle.data('title').replace( /%s/, title ));
+				instTitle.text(instTitle.data('title').replace( /%s/, title ));
+			}
 		}
 
 		items.removeClass('tag-hide');

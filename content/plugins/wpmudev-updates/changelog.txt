@@ -5,6 +5,25 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+4.0.4 - 1/18/2016 - Philipp
+----------------------------------------------------------------------
+- Important: Turn off automatic updates in Manage page to upgrade to this version!
+
+- Fixed the automatic updates feature, if you enable it. The Dashboard plugin will stay up to date from now on!
+- Our members with a Single-Membership can now use the Plugins and Themes page to install updates.
+
+4.0.3 - 1/15/2016 - Philipp
+----------------------------------------------------------------------
+- Add a new notification in Themes page when an update for Upfront parent is available
+- Fix bug that would show dismissed Dashboard notifications again after each API sync
+- Fix incorrect message "Theme is at latest version" during theme update
+- Fix the URL of "Get Support" button on the Support page
+- Add new button to Support page to open a new ticket if no tickets are open
+- Display error message if plugin or theme installation fails
+- Fix the "Back to Dashboard" link that is displayed right after update from v 3.5
+- Fix permission check to not display notifications while logged out
+- Fix several small PHP warnings, JS errors and layout issues
+
 4.0.2 - 1/13/2016 - Philipp
 ----------------------------------------------------------------------
 - Fix an incorrectly initialized dashboard setting, that could cause troubles with other WPMUDEV plugins
@@ -287,4 +306,4 @@ Added option to disable admin notices.
 Initial Release.
 
 
-133620-1452728971-au
+133620-1453183803-au

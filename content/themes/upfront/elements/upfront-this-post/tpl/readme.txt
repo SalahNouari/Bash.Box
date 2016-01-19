@@ -18,8 +18,4 @@ These are templates for the parts of a post. If you are used to the usual WP tem
 %thumbnail% - get_the_post_thumbnail();
 
 
-<<<<<<< c923d6c9552225dd4c1e77fff6f1e847516d5961
-133620-1452731820-au
-=======
-133620-1452732040-au
->>>>>>> Update Genesis and Upfront
+133620-1453183823-au

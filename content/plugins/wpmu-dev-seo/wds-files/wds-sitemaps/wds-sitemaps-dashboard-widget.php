@@ -15,7 +15,7 @@ function wds_sitemaps_dashboard_widget () {
 	$sitemap_url = wds_get_sitemap_url();
 
 	echo "<div style='width:45%;float:left'>";
-		echo '<div>' . sprintf(__('Your sitemap contains <a href="%s" target="_blank"><b>%d</b> items</a>.', 'wds'), /*$sitemap['sitemapurl']*/$sitemap_url, (int)@$opts['items']) . '</div>';
+		echo '<div>' . sprintf(__('Your sitemap contains <a href="%s" target="_blank"><b>%d</b> items</a>.', 'wds'), $sitemap_url, (int)@$opts['items']) . '</div>';
 		echo "<br />{$datetime}";
 		echo "<p><a href='#update_sitemap' id='wds_update_now'>{$update_sitemap}</a></p>";
 	echo "</div>";
