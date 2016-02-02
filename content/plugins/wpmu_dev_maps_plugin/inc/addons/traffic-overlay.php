@@ -59,8 +59,8 @@ class Agm_Traffic_AdminPages {
 			),
 		);
 
-		WDev()->add_data( '_agmTraffic', $data );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/traffic.min.js' );
+		lib3()->ui->data( '_agmTraffic', $data );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/traffic.min.js' );
 	}
 
 	/**
@@ -131,7 +131,7 @@ class Agm_Traffic_UserPages {
 	 * @since 1.0
 	 */
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/traffic.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/traffic.min.js', 'front' );
 	}
 
 	/**

@@ -888,8 +888,8 @@ class Agm_UCI_UserProfile extends Agm_UCI_Shared {
 		);
 
 		// Add the admin-js in the user profile.
-		WDev()->add_ui( AGM_PLUGIN_URL . 'css/user-check-in-admin.min.css', 'profile.php' );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/user-check-in.min.js', 'profile.php' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'css/user-check-in-admin.min.css', 'profile.php' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/user-check-in.min.js', 'profile.php' );
 	}
 
 	/**
@@ -1521,7 +1521,7 @@ class Agm_UCI_AdminPages extends Agm_UCI_Shared {
 	 * @since  1.0.0
 	 */
 	public function enqueue_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/user-check-in.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/user-check-in.min.js' );
 	}
 
 	/**
@@ -1962,9 +1962,9 @@ class Agm_UCI_UserPages extends Agm_UCI_Shared {
 					'lang' => $lang,
 				);
 
-				WDev()->add_data( '_agmUci', $data, 'front' );
-				WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/user-check-in.min.js', 'front' );
-				WDev()->add_ui( AGM_PLUGIN_URL . 'css/user-check-in.min.css', 'front' );
+				lib3()->ui->data( '_agmUci', $data, 'front' );
+				lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/user-check-in.min.js', 'front' );
+				lib3()->ui->add( AGM_PLUGIN_URL . 'css/user-check-in.min.css', 'front' );
 			}
 
 			// Prevent double enqueueing of these scripts.

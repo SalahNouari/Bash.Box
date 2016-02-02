@@ -52,7 +52,7 @@ if ( ! is_admin() ) { // Doesn't work on admin
 		 * Include Google Maps dependencies.
 		 */
 		public static function js_google_maps_api() {
-			WDev()->add_data(
+			lib3()->ui->data(
 				'l10nStrings',
 				array(
 					'close' => __( 'Close', AGM_LANG ),
@@ -68,8 +68,8 @@ if ( ! is_admin() ) { // Doesn't work on admin
 				'front'
 			);
 
-			WDev()->add_ui( AGM_PLUGIN_URL . 'js/loader.min.js', 'front' );
-			WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/google-maps.min.js', 'front' );
+			lib3()->ui->add( AGM_PLUGIN_URL . 'js/loader.min.js', 'front' );
+			lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/google-maps.min.js', 'front' );
 
 			do_action( 'agm-user-scripts' );
 		}
@@ -90,7 +90,7 @@ if ( ! is_admin() ) { // Doesn't work on admin
 				apply_filters( 'agm_google_maps-javascript-data_object-user', $defaults )
 			);
 
-			WDev()->add_data( '_agm', $vars );
+			lib3()->ui->data( '_agm', $vars );
 		}
 
 		/**
@@ -110,7 +110,7 @@ if ( ! is_admin() ) { // Doesn't work on admin
 		 * Includes required styles.
 		 */
 		public static function css_load_styles() {
-			WDev()->add_ui( AGM_PLUGIN_URL . 'css/google_maps_user.min.css', 'front' );
+			lib3()->ui->add( AGM_PLUGIN_URL . 'css/google_maps_user.min.css', 'front' );
 		}
 
 	}

@@ -36,7 +36,7 @@ class Agm_Cm_AdminPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/center-map.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/center-map.min.js' );
 	}
 
 	public function sanitize_options( $options, $raw ) {
@@ -82,7 +82,7 @@ class Agm_Cm_PublicPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/center-map.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/center-map.min.js', 'front' );
 	}
 
 	public function prepare_for_load( $options, $raw ) {

@@ -143,7 +143,7 @@ class App_MP_Bridge {
 ;(function ($) {
 	$(document).on('app-confirmation-response_received', function (e, response) {
 		if (response && response.mp && 1 == response.mp) {
-			$(".appointments-confirmation-wrapper").replaceWith('<p class="app-confirmation-marketpress"><a href="{$href}">{$message}</a></p>');
+			$(".appointments-confirmation-wrapper").replaceWith('<p class="app-confirmation-marketpress"><a href="{$href}">{$message}</a></p>');		   		 	  		  	 	 	
 		}
 	});
 })(jQuery);

@@ -43,8 +43,8 @@ class Agm_DZ_AdminPages {
 			),
 		);
 
-		WDev()->add_data( '_agmDS', $data );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/disable-scroll.min.js' );
+		lib3()->ui->data( '_agmDS', $data );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/disable-scroll.min.js' );
 	}
 
 	public function sanitize_options( $options, $raw ) {
@@ -90,7 +90,7 @@ class Agm_DZ_UserPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/disable-scroll.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/disable-scroll.min.js', 'front' );
 	}
 
 	public function prepare_for_load( $options, $raw ) {

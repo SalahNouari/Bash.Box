@@ -12,7 +12,7 @@ function add_appointments_css_style() {
 	global $appointments;
 	$appointments->load_scripts_styles( );
 }
-add_action( 'template_redirect', 'add_appointments_css_style' );		   		 	  		  	 	 	
+add_action( 'template_redirect', 'add_appointments_css_style' );
 
 */
 

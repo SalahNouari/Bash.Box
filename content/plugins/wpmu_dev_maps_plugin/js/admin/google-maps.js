@@ -40,6 +40,11 @@ jQuery(function( ) {
 
 		function populateDefaults() {
 			originalData = data;
+
+			if ( data.defaults === undefined ) {
+				data.defaults = {};
+			}
+
 			data.zoom = data.zoom || data.defaults.zoom;
 			data.zoom = parseInt(data.zoom) ? parseInt(data.zoom) : 1;
 			data.show_map = ("show_map" in data) ? data.show_map : 1;

@@ -516,7 +516,7 @@ class Appointments_Admin {
 				$dismiss_id = get_user_meta( $current_user->ID, 'app_dismiss', true );
 				if ( $dismiss_id )
 					$dismissed = true;
-				if ( $appointments->get_workers() && !$appointments->get_workers_by_service( $result->ID ) && !$dismissed ) {
+				if ( appointments_get_workers() && !appointments_get_workers_by_service( $result->ID ) && !$dismissed ) {
 					echo '<div class="error"><p>' .
 					     __('<b>[Appointments+]</b> One of your services does not have a service provider assigned. Delete services you are not using.', 'appointments') .
 					     '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a title="'.__('Dismiss this notice for this session', 'appointments').'" href="' . $_SERVER['REQUEST_URI'] . '&app_dismiss=1"><small>'.__('Dismiss', 'appointments').'</small></a>'.
@@ -917,6 +917,8 @@ class Appointments_Admin {
 						if ( $r )
 							$result = true;
 					}
+
+					do_action( 'app-workers-worker-updated', $worker_id );
 				}
 				elseif ( ! $worker_exists && ! empty( $worker["services_provided"] ) ) {
 					// Insert
@@ -929,8 +931,7 @@ class Appointments_Admin {
 					);
 					$inserted = appointments_insert_worker( $args );
 
-					if ( $inserted )
-						do_action( 'app-workers-worker-updated', $worker_id );
+					do_action( 'app-workers-worker-updated', $worker_id );
 				}
 
 			}
@@ -1074,8 +1075,7 @@ class Appointments_Admin {
 		?>
 		<div class="wrap">
 			<div class="icon32" style="margin:10px 0 0 0"><img src="<?php echo $appointments->plugin_url . '/images/general.png'; ?>" /></div>
-			<h2><?php echo __('Appointments+ Settings','appointments'); ?></h2>
-			<h3 class="nav-tab-wrapper">
+			<h2 class="nav-tab-wrapper">
 				<?php
 				$tab = ( !empty($_GET['tab']) ) ? $_GET['tab'] : 'main';
 
@@ -1106,7 +1106,7 @@ class Appointments_Admin {
 
 				echo implode( "\n", $tabhtml );
 				?>
-			</h3>
+			</h2>
 			<div class="clear"></div>
 			<?php App_Template::admin_settings_tab($tab); ?>
 		</div>

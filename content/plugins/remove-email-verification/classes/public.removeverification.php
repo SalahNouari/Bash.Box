@@ -17,12 +17,12 @@ class removeemailverification {
         //filters for overriding other functions
         add_filter('wpmu_signup_blog_notification', '__return_false');
 
-        add_filter('wpmu_welcome_notification', '__return_false');
-
         add_filter('wpmu_signup_user_notification', '__return_false');
 
         if( apply_filters( 'removeev_disable_welcome_email', false ) ){ // Remove MS welcome email disabled by default.
-            remove_filter('site_option_welcome_user_email', 'welcome_user_msg_filter');
+            add_filter( 'wpmu_welcome_notification', '__return_false' );
+            add_filter( 'wpmu_welcome_user_notification', '__return_false' );
+            remove_filter( 'site_option_welcome_user_email', 'welcome_user_msg_filter' );
         }
 
         // Blog signup - autoactivate
@@ -33,10 +33,6 @@ class removeemailverification {
 
         // Lets assume we successfully activated the user account
         add_filter('bp_registration_needs_activation',  '__return_false');
-
-        add_filter('wpmu_welcome_notification', array(&$this, 'remove_bp_activation'));
-
-        add_filter('wpmu_welcome_user_notification', array(&$this, 'remove_bp_activation'));
 
         // User signup - autoactivate
         add_filter('wpmu_signup_user_notification', array(&$this, 'activate_on_user_signup'), 10, 4);
@@ -163,7 +159,7 @@ class removeemailverification {
 
                 <?php
                 if ($signup->domain . $signup->path != '') {
-                    printf(__('<p class="lead-in">Your blog at <a href="%1$s">%2$s</a> is active. You may now login to your blog using your chosen username of "%3$s".  Please check your email inbox at %4$s for your password and login instructions.  If you do not receive an email, please check your junk or spam folder.  If you still do not receive an email within an hour, you can <a href="%5$s">reset your password</a>.</p>', 'removeev'), 'http://' . $signup->domain, $signup->domain, $signup->user_login, $signup->user_email, 'http://' . $current_site->domain . $current_site->path . 'wp-login.php?action=lostpassword');
+                    printf(__('<p class="lead-in">Your blog at <a href="%1$s">%2$s</a> is active. You may now login to your blog using your chosen username of "%3$s".  Please check your email inbox at %4$s for your password and login instructions.  If you do not receive an email, please check your junk or spam folder.  If you still do not receive an email within an hour, you can <a href="%5$s">reset your password</a>.</p>', 'removeev'), 'http://' . $signup->domain, $signup->domain, $signup->user_login, $signup->user_email, 'http://' . $current_site->domain . $current_site->path . 'wp-login.php?action=lostpassword');	     	 	   					 
                 }
             } else {
                 ?>

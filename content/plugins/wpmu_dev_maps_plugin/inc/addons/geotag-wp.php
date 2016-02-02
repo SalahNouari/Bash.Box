@@ -98,7 +98,7 @@ class Agm_GwpAdminPages {
 			return false; // Invalid post type
 		}
 
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/geotag-wp.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/geotag-wp.min.js' );
 	}
 
 	public function render_metabox() {
@@ -416,7 +416,7 @@ class Agm_GwpUserPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/geotag-wp.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/geotag-wp.min.js', 'front' );
 	}
 }
 

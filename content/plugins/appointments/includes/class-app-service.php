@@ -170,11 +170,10 @@ function appointments_update_service( $service_id, $args ) {
 
 
 /**
- * Get a service
+ * Get a single service with given ID
  *
- * @param $service_id
- *
- * @return Appointments_Service|bool
+ * @param ID: Id of the service to be retrieved
+ * @return object
  */
 function appointments_get_service( $service_id ) {
 	global $wpdb;
@@ -203,11 +202,18 @@ function appointments_get_service( $service_id ) {
 }
 
 /**
- * Return a set of services
+ * Get a list of services
  *
- * @param array $args
+ * @param array $args {
+ *     Optional. Arguments to retrieve services.
  *
- * @return array|int
+ *     @type string         $orderby          orderby field (possible values ID, ID ASC, ID DESC, name ASC, name DESC). Default ID
+ *     @type bool|int       $page             Filter by attached page to service. Default false
+ *     @type bool           $count            If set to true, it will return the number of services found. Default false
+ *     @type bool|string    $fields           Fields to be returned (false or 'ID'). If false it will return all fields. Default false.
+ * }
+ *
+ * @return array of Appointments_Service
  */
 function appointments_get_services( $args = array() ) {
 	global $wpdb;
@@ -321,6 +327,28 @@ function appointments_get_services( $args = array() ) {
 
 }
 
+/**
+ * Get smallest service ID
+ *
+ * @return integer
+ */
+function appointments_get_services_min_id() {
+	global $wpdb;
+
+	$min = wp_cache_get( 'min_service_id', 'appointments_services' );
+	if ( false === $min ) {
+		$table = appointments_get_table( 'services' );
+		$min = $wpdb->get_var( "SELECT MIN(ID) FROM $table");
+		if ( ! $min ) {
+			$min = 0;
+		}
+
+		$min = absint( $min );
+		wp_cache_set( 'min_service_id', $min, 'appointments_services' );
+	}
+	return apply_filters( 'app-services-first_service_id', $min );
+}
+
 function appointments_count_services( $args = array() ) {
 	$args['count'] = true;
 	return appointments_get_services( $args );
@@ -381,6 +409,7 @@ function appointments_delete_service_cache( $service_id ) {
 	wp_cache_delete( $service_id, 'app_services' );
 	wp_cache_delete( 'app_get_services' );
 	wp_cache_delete( 'app_count_services' );
+	wp_cache_delete( 'min_service_id', 'appointments_services' );
 	appointments_delete_timetables_cache();
 }
 

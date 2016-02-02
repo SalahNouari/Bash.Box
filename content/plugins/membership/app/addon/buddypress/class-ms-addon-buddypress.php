@@ -445,7 +445,7 @@ class MS_Addon_BuddyPress extends MS_Addon {
             if ( ! empty( $bp->signup->errors ) ) {
                 // There is error, so show errors using action hook
                 foreach ( (array) $bp->signup->errors as $fieldname => $error_message ) {
-                    add_action( 'bp_' . $fieldname . '_errors', create_function( '', 'echo apply_filters(\'bp_members_signup_error_message\', "<div class=\"error\">" . stripslashes( \'' . addslashes( $error_message ) . '\' ) . "</div>" );' ) );
+                    add_action( 'bp_' . $fieldname . '_errors', create_function( '', 'echo apply_filters(\'bp_members_signup_error_message\', "<div class=\"error\">" . stripslashes( \'' . addslashes( $error_message ) . '\' ) . "</div>" );' ) );	   	 	 		 	  					  
                 }
             }
         }

@@ -146,18 +146,25 @@ window.AgmMapHandler = function (selector, data) {
 	};
 
 	var getDirections = function () {
-		var locA = jQuery(selector + ' .agm_waypoint_a').val();
-		var locB = jQuery(selector + ' .agm_waypoint_b').val();
+		var loc_a = jQuery(selector + ' .agm_waypoint_a').val();
+		var loc_b = jQuery(selector + ' .agm_waypoint_b').val();
 
-		if ( ! locA || ! locB ) {
+		if ( ! loc_a || ! loc_b ) {
 			window.alert( l10nStrings.missing_waypoint );
 			return false;
 		}
 
+		var unit_system = 0;
+		if ( 'defaults' in data && 'units' in data.defaults ) {
+			unit_system = data.defaults.units;
+		} else if ( 'units' in data ) {
+			unit_system = data.units;
+		}
+
 		var request = {
-			"origin": locA,
-			"destination": locB,
-			"unitSystem": data.defaults.units,
+			"origin": loc_a,
+			"destination": loc_b,
+			"unitSystem": unit_system,
 			"travelMode": travelType
 		};
 
@@ -572,7 +579,7 @@ window.AgmMapHandler = function (selector, data) {
 				data.defaults.units = window.google.maps.UnitSystem.METRIC;
 			}
 		} catch (e) {
-			data.defaults.units = window.google.maps.UnitSystem.METRIC;
+			data.units = window.google.maps.UnitSystem.METRIC;
 		}
 
 		data.zoom = parseInt(data.zoom, 10) ? parseInt(data.zoom, 10) : 1;

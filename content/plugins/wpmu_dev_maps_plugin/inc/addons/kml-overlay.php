@@ -36,7 +36,7 @@ class Agm_Kml_AdminPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/kml-overlay.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/kml-overlay.min.js' );
 	}
 
 	public function prepare_for_save( $options, $raw ) {
@@ -98,7 +98,7 @@ class Agm_Kml_UserPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/kml-overlay.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/kml-overlay.min.js', 'front' );
 	}
 
 	public function prepare_for_load( $options, $raw ) {

@@ -105,7 +105,7 @@ if ( defined( 'BP_PLUGIN_DIR' ) ) :
 		}
 
 		public function load_scripts() {
-			WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/geotag-bp.min.js', 'front' );
+			lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/geotag-bp.min.js', 'front' );
 
 			if ( bp_is_activity_component() ) {
 				add_thickbox();

@@ -223,7 +223,7 @@ class AgmAdminMaps {
 			array( $this, 'create_admin_page' )
 		);
 
-		WDev()->add_ui( 'vnav', $hook );
+		lib3()->ui->add( TheLib_Ui::MODULE_VNAV, $hook );
 	}
 
 	/**
@@ -240,10 +240,10 @@ class AgmAdminMaps {
 	 */
 	public function load_scripts( $screen ) {
 		if ( 'post' == @$screen->base || 'widgets' == @$screen->base ) {
-			WDev()->add_ui( 'core' );
-			WDev()->add_ui( 'select' );
-		} else if ( 'settings_page_agm_google_maps' == $screen->base ) {
-			WDev()->add_ui( AGM_PLUGIN_URL . 'css/google_maps_admin.min.css' );
+			lib3()->ui->add( TheLib_Ui::MODULE_CORE );
+			lib3()->ui->add( TheLib_Ui::MODULE_SELECT );
+		} elseif ( 'settings_page_agm_google_maps' == $screen->base ) {
+			lib3()->ui->add( AGM_PLUGIN_URL . 'css/google_maps_admin.min.css' );
 		}
 	}
 
@@ -263,13 +263,13 @@ class AgmAdminMaps {
 			apply_filters( 'agm_google_maps-javascript-data_object-admin', $defaults )
 		);
 
-		WDev()->add_data( '_agm', $vars );
-		WDev()->add_data( '_agm_root_url', AGM_PLUGIN_URL );
+		lib3()->ui->data( '_agm', $vars );
+		lib3()->ui->data( '_agm_root_url', AGM_PLUGIN_URL );
 
-		WDev()->add_js( 'wpdialogs' );
-		WDev()->add_js( 'jquery-ui-dialog' );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/loader.min.js' );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/google-maps.min.js' );
+		lib3()->ui->js( 'wpdialogs' );
+		lib3()->ui->js( 'jquery-ui-dialog' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/loader.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/google-maps.min.js' );
 	}
 
 	/**
@@ -278,7 +278,7 @@ class AgmAdminMaps {
 	public function js_editor_button() {
 		$agm_map = 'agm_map' == AgmMapModel::get_config( 'shortcode_map' );
 
-		WDev()->add_data(
+		lib3()->ui->data(
 			'l10nEditor',
 			array(
 				'loading' => __( 'Loading maps... please wait', AGM_LANG ),
@@ -308,7 +308,7 @@ class AgmAdminMaps {
 			)
 		);
 
-		WDev()->add_data(
+		lib3()->ui->data(
 			'_agmConfig',
 			array(
 				'shortcode' => ($agm_map ? 'agm_map' : 'map'),
@@ -316,11 +316,11 @@ class AgmAdminMaps {
 		);
 
 		$this->shared_scripts();
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/editor.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/editor.min.js' );
 	}
 
 	public function js_widget_editor() {
-		WDev()->add_data(
+		lib3()->ui->data(
 			'l10nEditor',
 			array(
 				'add_map' => __( 'Add Map', AGM_LANG ),
@@ -329,14 +329,14 @@ class AgmAdminMaps {
 		);
 
 		$this->shared_scripts();
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/widget-editor.min.js' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/widget-editor.min.js' );
 	}
 
 	/**
 	 * Include Google Maps dependencies.
 	 */
 	public function js_google_maps_api() {
-		WDev()->add_data(
+		lib3()->ui->data(
 			'l10nStrings',
 			array(
 				'geocoding_error' => __( 'There was an error geocoding your location. Check the address and try again', AGM_LANG ),
@@ -392,8 +392,8 @@ class AgmAdminMaps {
 	 * Includes required styles.
 	 */
 	public function css_load_styles() {
-		WDev()->add_css( 'wp-jquery-ui-dialog' );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'css/google_maps_admin.min.css' );
+		lib3()->ui->css( 'wp-jquery-ui-dialog' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'css/google_maps_admin.min.css' );
 	}
 
 	/**

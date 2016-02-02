@@ -4,6 +4,11 @@ Author: Ve Bailovity (Incsub), Philipp Stracker (Incsub)
 Change Log:
 ----------------------------------------------------------------------
 
+2.9.0.8
+----------------------------------------------------------------------
+- Fix Google Maps Settings page in WordPress 4.3.5 and higher
+- Fix a bug caused by incomplete maps in cache
+       
 2.9.0.7
 ----------------------------------------------------------------------
 - Fix rendering issue in some browsers (e.g. Chrome 39)
@@ -265,4 +270,4 @@ Change Log:
 - Saving maps in Street View
 
 
-133620-1422153885-au
+133620-1454456271-au

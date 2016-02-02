@@ -1,14 +1,18 @@
 <?php
-/*
-Plugin Name: Google Maps
-Plugin URI:  http://premium.wpmudev.org/project/wordpress-google-maps-plugin
-Description: Easily embed, customize, and use Google maps on your WordPress site - in posts, pages or as an easy to use widget, display local images and let your site visitors get directions in seconds.
-Version:     2.9.0.7
-Text Domain: agm_google_maps
-Author:      WPMU DEV
-Author URI:  http://premium.wpmudev.org
-WDP ID:      216
+/**
+ * Plugin Name: Google Maps
+ * Plugin URI:  http://premium.wpmudev.org/project/wordpress-google-maps-plugin
+ * Description: Easily embed, customize, and use Google maps on your WordPress site - in posts, pages or as an easy to use widget, display local images and let your site visitors get directions in seconds.
+ * Version:     2.9.0.8
+ * Text Domain: agm_google_maps
+ * Author:      WPMU DEV
+ * Author URI:  http://premium.wpmudev.org
+ * WDP ID:      216
+ *
+ * @package  AgmMaps
+ */
 
+/*
 Copyright 2009-2011 Incsub (http://incsub.com)
 Author - Ve Bailovity (Incsub)
 This program is free software; you can redistribute it and/or modify

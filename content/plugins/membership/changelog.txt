@@ -4,6 +4,36 @@ Author: Philipp Stracker, Ashok Kumar Nath, Fabio Jun, Rheinard Khorf
 Change Log:
 ----------------------------------------------------------------------
 
+1.0.2.7
+----------------------------------------------------------------------
+- Added: Constant 'MS_LOG_EMAILS' to enable log and display email logs
+- Added: Constant 'MS_PROTECTED_MESSAGE_REVERSE_RULE' to implement reverse logic on membership based protection message
+- Added: Bulk Delete Membership feature
+- Fixed: BuddyPress Integration addon: "All BuddyPress Pages" rule being overwritten by rule set in Pages
+- Fixed: Warning when the database table prefix is not the default "wp_"
+- Fixed: Login on non-SSL page is broken when SSL forced for wp-admin
+- Fixed: "Already have an account" link not sending user to login form after failed register attempt
+- Fixed: "Already have a user account" doesn't redirect to purchase subscription after login
+- Fixed: HTTPS not being forced when Stripe gateway is set to Live mode
+- Fixed: Expired email sent even the user is not really expired
+- Fixed: Invitation code addon: conflict with Yoast SEO plugin
+- Fixed: Invitation code addon: usage count wasn't decreased when user removed it when signing up
+- Fixed: Multiple Membership addon: Membership was not removed when set as cancel in upgrade path and pay later
+- Fixed: Expired trial is not going to payment gateway when clicking "sign up" in invoice.
+- Fixed: Taxamo addon: tax was not added as tax in PayPal and 2Checkout gateways
+- Fixed: User can't register in Opera Mini browser
+- Fixed: Membership based protection message
+- Fixed: Advanced Menu Protection Replace Menu not working
+- Fixed: Simulation Box on frontend overlaps with navigation
+- Fixed: Content Protection Message based on membership protection
+- Fixed: Gateway mode changed from Sandbox to Live on plugin update
+- Fixed: Expired date mismatch with the original expired date in PayPal
+- Fixed: Expiry date not set while importing data in Finite membership
+- Fixed: Finite paid membership turned into free membership while importing data
+- Fixed: Finite paid membership subscription period gets doubled for a member while importing data
+- Fixed: Gateway mode changed into Live mode when something is changed in settings
+
+
 1.0.2.6
 ----------------------------------------------------------------------
 - Added: Constant 'MS_DISABLE_WP_NEW_USER_NOTIFICATION' to disable WP default welcome on registration
@@ -548,4 +578,4 @@ Membership2 1.0.0.0
 - Initial version.
 
 
-133620-1452728945-au
+133620-1454456284-au

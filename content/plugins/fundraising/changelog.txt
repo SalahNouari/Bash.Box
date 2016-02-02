@@ -5,6 +5,9 @@ Contributors: Cole Stevenson, Jose Jaureguiberry
 
 == Changelog ==
 
+= 2.6.3 =
+Fixed issues with tutorial
+
 = 2.6.2 =
 Added support for refunds in recurring payments
 Fixed recurring payments amount problem for currencies different than US Dollars
@@ -248,4 +251,4 @@ New custom template structure for your theme
 Addition of several action and filter hooks for external plugins or theme function files.
 
 
-133620-1445126721-au
+133620-1454456270-au

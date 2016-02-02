@@ -1,3 +1,26 @@
+2016-01-28 - 1.5.7
+-------------------------------
+- Fixed: Timetables cache issue when services had different durations
+- Fixed: Some language domains
+- Enhancement: Added some love to FAQ screen
+- Enhancement: Improved some admin styles
+- Deprecated: Deprecated some old functions
+
+2016-01-18 - 1.5.6
+-------------------------------
+- Enhancement: Clearing cache properly when upgrading version
+- Enhancement: Added capacity cache
+- Enhancement: Added CSS classes in every time in timetables
+- Enhancement: Appointments and Workers cache are now much faster when processing timetables
+- Enhancement: Saving timetables cache at shutdown to avoid more queries
+- Fixed Locations Add-on: Warnings in Locations screen
+- Fixed Locations Add-on: Locations were not saved in Services Providers screen
+- Fixed Paddings Add-on: Paddings were not being saved in Service Providers screen
+- Fixed GCal bug: Timetables were not being updated when importing events
+- Fixed minor performance issues when Durations add-on was active
+- Fixed: Worker is not selected automatically by default and timetable displays wrong times in some rare cases
+- Fixed: order by parameter not working when orderby = name in get_workers function
+
 2016-01-13 - 1.5.5.1
 -------------------------------
 - Fixed: Week days were not translatable
@@ -495,4 +518,4 @@ V1.0.0:
 - Initial release
 
 
-133620-1452728913-au
+133620-1454456268-au

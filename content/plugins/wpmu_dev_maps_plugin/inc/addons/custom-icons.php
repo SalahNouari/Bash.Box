@@ -32,10 +32,10 @@ class Agm_Icons_AdminPages {
 			'lang' => array(),
 		);
 
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/admin/custom-icons.min.js', 'settings_page_agm_google_maps' );
-		WDev()->add_ui( AGM_PLUGIN_URL . 'css/icons-admin.min.css', 'settings_page_agm_google_maps' );
-		WDev()->add_ui( 'media', 'settings_page_agm_google_maps' );
-		WDev()->add_data( '_agmIcons', $data, 'settings_page_agm_google_maps' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/admin/custom-icons.min.js', 'settings_page_agm_google_maps' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'css/icons-admin.min.css', 'settings_page_agm_google_maps' );
+		lib3()->ui->add( 'media', 'settings_page_agm_google_maps' );
+		lib3()->ui->data( '_agmIcons', $data, 'settings_page_agm_google_maps' );
 
 		// Add our own options to the plugin config page.
 		add_action(

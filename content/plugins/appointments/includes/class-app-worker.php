@@ -50,6 +50,11 @@ class Appointments_Worker {
 		return array_map( 'appointments_get_service', $this->services_provided );
 	}
 
+	public function get_name() {
+		global $appointments;
+		return $appointments->get_worker_name( $this->ID );
+	}
+
 }
 
 function appointments_get_worker( $worker_id ) {
@@ -298,6 +303,24 @@ function appointments_update_worker( $worker_id, $args = array() ) {
 	return (bool)$result;
 }
 
+/**
+ * Get a list of workers
+ *
+ * @param array $args {
+ *     Optional. Arguments to retrieve workers.
+ *
+ *     @type int            $user_id          Filter workers by user ID. Default false
+ *     @type string         $orderby          orderby field (possible values ID, ID ASC, ID DESC, name ASC, name DESC). Default ID
+ *     @type bool|int       $page             Filter by attached page to worker. Default false
+ *     @type bool           $count            If set to true, it will return the number of workers found. Default false
+ *     @type bool|string    $fields           Fields to be returned (false or 'ID'). If false it will return all fields. Default false.
+ *     @type bool|int       $service          Filter by service ID. Default false.
+ *     @type bool           $with_page        Retrieve only workers with page attached. Default false.
+ *     @type bool|int       $limit            Max number of workers to return. If false will return all. Default false.
+ * }
+ *
+ * @return array of Appointments_Worker
+ */
 function appointments_get_workers( $args = array() ) {
 	global $wpdb;
 
@@ -313,6 +336,17 @@ function appointments_get_workers( $args = array() ) {
 	);
 
 	$args = wp_parse_args( $args, $defaults );
+
+	$serialized_args = maybe_serialize( $args );
+	$cache_key = md5( $serialized_args );
+	$cached_queries = wp_cache_get( 'app_get_workers' );
+	if ( ! is_array( $cached_queries ) ) {
+		$cached_queries = array();
+	}
+
+	if ( isset( $cached_queries[ $cache_key ] ) && ! $args['count'] ) {
+		return $cached_queries[ $cache_key ];
+	}
 
 	$table = appointments_get_table( 'workers' );
 
@@ -336,15 +370,59 @@ function appointments_get_workers( $args = array() ) {
 	}
 
 	// @TODO: We need to move this to somewhere else
-	$allowed_orderby = $whitelist = apply_filters( 'app_order_by_whitelist', array( 'ID', 'name', 'start', 'end', 'duration', 'price',
-		'ID DESC', 'name DESC', 'start DESC', 'end DESC', 'duration DESC', 'price DESC', 'RAND()', 'name ASC', 'name DESC' ) );
-
-	$order_query = "";
-
-	if ( in_array( $args['orderby'], $allowed_orderby ) ) {
-		$orderby = apply_filters( 'app_get_workers_orderby', $args['orderby'] );
-		$order_query = "ORDER BY $orderby";
+	$order_by = '';
+	$order = '';
+	if ( $args['orderby'] ) {
+		$order_by = explode( ' ', $args['orderby'] );
+		if ( is_array( $order_by ) && count( $order_by ) == 2 ) {
+			// orderby is like "ID ASC"
+			$order = strtoupper( $order_by[1] );
+			$order_by = $order_by[0];
+		}
+		elseif ( is_array( $order_by ) && count( $order_by ) == 1 ) {
+			$order_by = $order_by[0];
+		}
+		else {
+			$order_by = $args['orderby'];
+		}
 	}
+
+	// We need to make this complex due to legacy stuff
+
+	// Allowed to add into the query itself
+	$allowed_orderby_in_query = array( 'ID' );
+
+	// This will be the order post-query
+	$allowed_orderby = array( 'name' );
+
+	$allowed_order = array( 'ASC', 'DESC' );
+	if ( ! in_array( $order, $allowed_order ) ) {
+		$order = '';
+	}
+
+	if ( ! in_array( $order_by, $allowed_orderby_in_query ) ) {
+		$order_by = 'ID';
+	}
+
+	//$allowed_orderby = $whitelist = apply_filters( 'app_order_by_whitelist', array( 'ID', 'name', 'start', 'end', 'duration', 'price',
+		//'ID DESC', 'name DESC', 'start DESC', 'end DESC', 'duration DESC', 'price DESC', 'RAND()', 'name ASC', 'name DESC' ) );
+
+	$order_by = apply_filters( 'app_get_workers_orderby', $order_by );
+	$order_query = "";
+	if ( in_array( $args['orderby'], $allowed_orderby ) ) {
+		$order_query = "ORDER BY $order_by $order";
+	}
+
+	if ( ! in_array( $order_by, $allowed_orderby_in_query ) ) {
+		$order_by = 'ID';
+	}
+
+	//$allowed_orderby = $whitelist = apply_filters( 'app_order_by_whitelist', array( 'ID', 'name', 'start', 'end', 'duration', 'price',
+		//'ID DESC', 'name DESC', 'start DESC', 'end DESC', 'duration DESC', 'price DESC', 'RAND()', 'name ASC', 'name DESC' ) );
+
+	$order_by = apply_filters( 'app_get_workers_orderby', $order_by );
+	$order_query = "";
+	$order_query = "ORDER BY $order_by $order";
 
 	$limit_query = '';
 	$limit = absint( $args['limit'] );
@@ -366,32 +444,17 @@ function appointments_get_workers( $args = array() ) {
 		else
 			$get_col = false;
 
-		if ( $get_col )
+		if ( $get_col ) {
 			$query = "SELECT $field FROM $table w $where $order_query $limit_query";
-		else
+		} else {
 			$query = "SELECT * FROM $table w $where $order_query $limit_query";
-
-		$cache_key = md5( $query . '-' . 'app_get_workers' );
-		$cached_queries = wp_cache_get( 'app_get_workers' );
-
-		if ( ! is_array( $cached_queries ) )
-			$cached_queries = array();
-
-		if ( ! isset( $cached_queries[ $cache_key ] ) ) {
-
-			if ( $get_col )
-				$results = $wpdb->get_col( $query );
-			else
-				$results = $wpdb->get_results( $query );
-
-			if ( ! empty( $results ) ) {
-				$cached_queries[ $cache_key ] = $results;
-				wp_cache_set( 'app_get_workers', $cached_queries );
-			}
-
 		}
-		else {
-			$results = $cached_queries[ $cache_key ];
+
+
+		if ( $get_col ) {
+			$results = $wpdb->get_col( $query );
+		} else {
+			$results = $wpdb->get_results( $query );
 		}
 
 		$workers = array();
@@ -405,6 +468,47 @@ function appointments_get_workers( $args = array() ) {
 			$workers = $results;
 		}
 
+		// Post-query ordering
+		$allowed_orderby = array( 'name' );
+
+		// And, yes, we need to do this one more time
+		if ( $args['orderby'] ) {
+			$order_by = explode( ' ', $args['orderby'] );
+			if ( is_array( $order_by ) && count( $order_by ) == 2 ) {
+				// orderby is like "ID ASC"
+				$order = strtoupper( $order_by[1] );
+				$order_by = $order_by[0];
+			}
+			elseif ( is_array( $order_by ) && count( $order_by ) == 1 ) {
+				$order_by = $order_by[0];
+			}
+			else {
+				$order_by = $args['orderby'];
+			}
+		}
+
+		if ( ! in_array( $order, $allowed_order ) ) {
+			$order = '';
+		}
+
+		if ( ! in_array( $order_by, $allowed_orderby ) ) {
+			$order_by = '';
+		}
+
+		if ( in_array( $order_by, $allowed_orderby ) ) {
+			if ( 'DESC' === $order ) {
+				@usort( $workers, '_appointments_get_workers_desc' );
+			}
+			else {
+				@usort( $workers, '_appointments_get_workers_asc' );
+			}
+		}
+
+
+		if ( ! empty( $workers ) ) {
+			$cached_queries[ $cache_key ] = $workers;
+			wp_cache_set( 'app_get_workers', $cached_queries  );
+		}
 
 		return $workers;
 
@@ -433,7 +537,45 @@ function appointments_get_workers( $args = array() ) {
 	}
 }
 
+/**
+ * @param Appointments_Worker $a
+ * @param Appointments_Worker $b
+ *
+ * @return int
+ */
+function _appointments_get_workers_desc( $a, $b ) {
+	return strcmp( $b->get_name(), $a->get_name() );
+}
+
+/**
+ * @param Appointments_Worker $a
+ * @param Appointments_Worker $b
+ *
+ * @return int
+ */
+function _appointments_get_workers_asc( $a, $b ) {
+	return strcmp( $a->get_name(), $b->get_name() );
+}
+
+/**
+ * Get a list of workers attached to a service
+ *
+ * @param $service_id
+ * @param string $order_by See appointments_get_workers() for more details
+ *
+ * @return array of Appointments_Worker
+ */
 function appointments_get_workers_by_service( $service_id, $order_by = 'ID' ) {
+	$workers_by_service = wp_cache_get( 'app_workers_by_service' );
+	if ( false === $workers_by_service ) {
+		$workers_by_service = array();
+	}
+
+	$cache_key = $service_id . $order_by;
+	if ( isset( $workers_by_service[ $cache_key ] ) ) {
+		return $workers_by_service[ $cache_key ];
+	}
+
 	$workers = appointments_get_workers( array( 'orderby' => $order_by ) );
 	$filtered_workers = array();
 	foreach ( $workers as $worker ) {
@@ -442,6 +584,9 @@ function appointments_get_workers_by_service( $service_id, $order_by = 'ID' ) {
 			$filtered_workers[] = $worker;
 		}
 	}
+
+	$workers_by_service[ $cache_key ] = $filtered_workers;
+	wp_cache_set( 'app_workers_by_service', $workers_by_service );
 
 	return $filtered_workers;
 
@@ -500,10 +645,29 @@ function appointments_delete_worker_exceptions( $worker_id ) {
 	$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE worker = %d", $worker_id ) );
 }
 
+function appointments_get_all_workers() {
+	global $wpdb;
+
+	$table = appointments_get_table( 'workers' );
+
+	$workers = wp_cache_get( 'app_all_workers' );
+	if ( false === $workers ) {
+		$workers = array();
+		$_workers = $wpdb->get_results( "SELECT * FROM $table" );
+		foreach ( $_workers as $_worker ) {
+			$workers[] = new Appointments_Worker( $_worker );
+		}
+		wp_cache_set( 'app_all_workers', $workers );
+	}
+
+	return $workers;
+}
 
 function appointments_delete_worker_cache( $worker_id ) {
 	wp_cache_delete( $worker_id, 'app_workers' );
 	wp_cache_delete( 'app_get_workers' );
 	wp_cache_delete( 'app_count_workers' );
+	wp_cache_delete( 'app_all_workers' );
+	wp_cache_delete( 'app_workers_by_service' );
 	appointments_delete_timetables_cache();
 }

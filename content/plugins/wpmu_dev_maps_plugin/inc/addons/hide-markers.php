@@ -39,7 +39,7 @@ class Agm_Hacm_UserPages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/hide-markers.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/hide-markers.min.js', 'front' );
 	}
 
 	public function autogen_hide( $args ) {

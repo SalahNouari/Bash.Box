@@ -29,10 +29,17 @@ class MS_Addon_BuddyPress_Rule_Model extends MS_Rule {
         public function __construct( $membership_id ) {
             parent::__construct( $membership_id );
 
-            $this->add_filter(
+            /*$this->add_filter(
                 'ms_model_plugin_get_access_info',
-                'protect_member_page'
-            );
+                'protect_member_page',
+                9999
+            );*/
+
+            /*$this->add_filter(
+                'ms_rule_page_model_has_access',
+                'override_ms_rule_page_model_has_access',
+                999, 3
+            );*/
         }
 
         /**
@@ -42,7 +49,8 @@ class MS_Addon_BuddyPress_Rule_Model extends MS_Rule {
          *
          * @param array $Info
          */
-        public function protect_member_page( $Info ) {
+        /*public function protect_member_page( $Info ) {
+
             $has_access = $Info['has_access'];
             $admin_has_access = true;
 
@@ -73,11 +81,11 @@ class MS_Addon_BuddyPress_Rule_Model extends MS_Rule {
             }
 
             $Info['has_access'] = $has_access;
-            $Info['reason'][] = 'Allow: BuddyPress Directory';
+            $Info['reason'][] = 'Allow: BuddyPress Member Directory';
             $Info['deciding_rule'][] = 'buddypress';
 
             return $Info;
-        }
+        }*/
 
 	/**
 	 * Verify access to the current content.
@@ -143,6 +151,50 @@ class MS_Addon_BuddyPress_Rule_Model extends MS_Rule {
 			$this
 		);
 	}
+
+        /**
+	 * Verify access to the current content overwriting page rule
+	 *
+	 *
+	 * @since  1.0.2.7
+	 *
+	 * @param bool $has_access If user has access or not
+	 * @param int $id The content post ID to verify access.
+	 * @param MS_Rule_Page_Model $obj Instance of MS_Rule_Page_Model
+	 *
+	 * @return bool|null True if has access, false otherwise.
+	 *     Null means: Rule not relevant for current page.
+	 */
+        public function override_ms_rule_page_model_has_access( $has_access, $id, $obj ) {
+
+            if ( is_buddypress() ) {
+                    // Check if access to *all* BuddyPress pages is restricted
+                    $has_access = parent::has_access(
+                            MS_Addon_BuddyPress_Rule::PROTECT_ALL,
+                            $admin_has_access
+                    );
+            }
+
+            if( $has_access ) {
+                $component = bp_current_component();
+                if ( ! empty( $component ) ) {
+                        if ( 'members' == $component || bp_is_user() ) {
+                                // Member listing or member profile access.
+                                $has_access = parent::has_access(
+                                        MS_Addon_BuddyPress_Rule::PROTECT_MEMBERS,
+                                        $admin_has_access
+                                );
+                        }
+                }
+            }
+
+            return apply_filters(
+                    'ms_rule_buddypress_overwrite_page_has_access',
+                    $has_access,
+                    $id,
+                    $obj
+            );
+        }
 
 	/**
 	 * Set initial protection.

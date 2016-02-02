@@ -124,7 +124,7 @@ class AgmPluginsHandler {
 		$active = self::get_active_plugins();
 		if ( in_array( $plugin, $active ) ) {
 			$key = array_search( $plugin, $active );
-			if ( $key !== false ) {
+			if ( false !== $key ) {
 				unset( $active[$key] );
 			}
 		}
@@ -143,6 +143,7 @@ class AgmPluginsHandler {
 		$all = self::get_all_plugins();
 
 		for ( $key = count( $active ); $key >= 0; $key -= 1 ) {
+			if ( ! isset( $active[$key] ) ) { continue; }
 			if ( ! in_array( $active[$key], $all ) ) {
 				unset( $active[$key] );
 			}

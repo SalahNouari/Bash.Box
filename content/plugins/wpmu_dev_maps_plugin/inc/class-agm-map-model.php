@@ -604,7 +604,7 @@ class AgmMapModel {
 		global $wpdb;
 
 		// Make sure the $map['id'] field exists.
-		WDev()->load_fields( $map, 'id' );
+		lib3()->array->equip( $map, 'id' );
 
 		$id = absint( $map['id'] );
 		$table = $this->get_table_name();
@@ -617,13 +617,18 @@ class AgmMapModel {
 		} else {
 			$result = $wpdb->insert( $table, $data );
 			$ret = $result ? $wpdb->insert_id : false;
-
-			// Fix bug with memcache: Map was cached without the ID.
-			$map['id'] = $ret;
 		}
 
 		if ( $ret ) {
-			wp_cache_set( $ret, $map, 'agm_map' );
+			/*
+			 * When a map is changed then clear the object cache.
+			 * The cache will be re-created on next get_map() call.
+			 *
+			 * Problem was, that new maps were missing some defaults settings,
+			 * so the preview/rendering of the map failed due to a javascript
+			 * error on WP-Engine (or with Memcache enabled)
+			 */
+			wp_cache_delete( $ret, 'agm_map' );
 		}
 
 		return $ret;
@@ -908,7 +913,7 @@ class AgmMapModel {
 		$map['show_map'] = 1;
 		$map['show_markers'] = 1;
 		$map['markers'] = array( $geo );
-        $map['show_posts'] = $args['show_posts'];
+		$map['show_posts'] = $args['show_posts'];
 
 		if ( $do_associate ) {
 			$map['post_ids'] = array("{$associated_post_id}");
@@ -1044,7 +1049,7 @@ class AgmMapModel {
 		if ( ! $json ) {
 			return false;
 		}
-		return $json->results[0];
+		return isset( $json->results[0] ) ? $json->results[0] : false;
 	}
 };
 

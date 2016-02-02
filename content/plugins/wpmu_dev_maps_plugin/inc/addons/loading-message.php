@@ -87,7 +87,7 @@ class Agm_Mlm_Pages {
 	}
 
 	public function load_scripts() {
-		WDev()->add_ui( AGM_PLUGIN_URL . 'js/user/message.min.js', 'front' );
+		lib3()->ui->add( AGM_PLUGIN_URL . 'js/user/message.min.js', 'front' );
 	}
 
 	public function apply_loading_message( $msg, $map ) {

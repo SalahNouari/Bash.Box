@@ -25,7 +25,7 @@ class AgmMapsWidget extends WP_Widget {
 			'show_posts',
 			'zoom',
 		);
-		WDev()->load_fields( $instance, $fields );
+		lib3()->array->equip( $instance, $fields );
 
 		$title = esc_attr( $instance['title'] );
 		$height = esc_attr( $instance['height'] );
@@ -83,7 +83,7 @@ class AgmMapsWidget extends WP_Widget {
 			'show_posts',
 			'zoom',
 		);
-		WDev()->load_fields( $new_instance, $fields );
+		lib3()->array->equip( $new_instance, $fields );
 
 		$instance = $old_instance;
 		$instance['title']        = strip_tags( $new_instance['title'] );
@@ -117,7 +117,7 @@ class AgmMapsWidget extends WP_Widget {
 			'show_images',
 			'show_posts',
 		);
-		WDev()->load_fields( $instance, $fields );
+		lib3()->array->equip( $instance, $fields );
 
 		extract( $args );
 		$title        = apply_filters( 'widget_title', $instance['title'] );
