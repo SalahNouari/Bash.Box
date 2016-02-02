@@ -1939,8 +1939,22 @@ div#widgets-right .widgets-holder-wrap.widget-hover{
 	background: #fff;
 }
 
+
+.nav-menus-php .item-edit{
+	height: 45px;
+       color: transparent;
+}
+
 .menu-item-settings, .menu-item-bar .menu-item-handle{
-	width: 422px;
+	
+}
+
+.menu-item-settings .description-thin, .menu-item-settings .description-wide{
+	margin-bottom: 10px;
+}
+
+.menu-item-actions{
+	padding-top: 0px;
 }
 
 .menu-item-transport{
@@ -1955,6 +1969,13 @@ div#widgets-right .widgets-holder-wrap.widget-hover{
 	color: #f95e44;
 }
 
+.my-sites-php .wrap .submit{
+	padding-left: 0px;
+}
+
+#update-themes-table{
+	margin-bottom: 20px;
+}
 
 /*Theme Editor*/
 
@@ -3759,6 +3780,10 @@ div#widgets-right .widgets-sortables {
     background: #757575;
     border-left: 0;
     outline: #444 solid 0px;
+}
+
+.widget-control-edit{
+	border-left: 0px solid transparent;
 }
 
 .control-section .accordion-section-title:after {

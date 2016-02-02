@@ -83,6 +83,7 @@ ol.sortUls a.plus:before, ol.sortUls a.minus:before { color: <?php echo $this->a
 
 /* Message box */
 div.updated { border-left: 4px solid <?php echo $this->aof_options['msgbox_border_color']; ?>; background-color: <?php echo $this->aof_options['msg_box_color']; ?>; color: <?php echo $this->aof_options['msgbox_text_color']; ?>; }
+div.updated #bulk-titles div a:before, .notice-dismiss:before, .tagchecklist span a:before, .welcome-panel .welcome-panel-close:before { <?php echo $this->aof_options['msg_box_color']; ?>; color: <?php echo $this->aof_options['msgbox_text_color']; ?>; }
 div.updated a { color: <?php echo $this->aof_options['msgbox_link_color']; ?>; }
 div.updated a:hover { color: <?php echo $this->aof_options['msgbox_link_hover_color']; ?>; }
 
@@ -104,7 +105,8 @@ tr.wpshapere_privilege_users {
 	-webkit-box-shadow: none !important;
 	-moz-box-shadow: none !important;
 	box-shadow: none !important;
-	border: none;
+	border: none !important;
+                    text-shadow: none !important;
 }
 input[type=checkbox], input[type=radio], #update-nag, .update-nag, .wp-list-table, .widefat, input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=url], select, textarea, #adminmenu .wp-submenu, .folded #adminmenu .wp-has-current-submenu .wp-submenu, .folded #adminmenu a.wp-has-current-submenu:focus+.wp-submenu, .mce-toolbar .mce-btn-group .mce-btn.mce-listbox, .wp-color-result, .widget-top, .widgets-holder-wrap { 
 	-webkit-box-shadow: none !important;

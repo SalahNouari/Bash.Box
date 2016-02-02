@@ -94,10 +94,10 @@ if (!class_exists('WPSHAPERE')) {
 	}
 
 	public function initFunctionss(){
-		if($this->aof_options['disable_auto_updates'] === true)
+		if($this->aof_options['disable_auto_updates'] == 1)
 			add_filter( 'automatic_updater_disabled', '__return_true' );
 		
-		if($this->aof_options['disable_update_emails'] === true)
+		if($this->aof_options['disable_update_emails'] == 1)
 			add_filter( 'auto_core_update_send_email', '__return_false' );
 		
 		if($this->aof_options['email_settings'] != 3) {
@@ -105,7 +105,7 @@ if (!class_exists('WPSHAPERE')) {
 			add_filter( 'wp_mail_from_name', array($this, 'custom_email_name') );
 		}
 		
-		if($this->aof_options['hide_profile_color_picker'] === true) {
+		if($this->aof_options['hide_profile_color_picker'] == 1) {
 			remove_action( 'admin_color_scheme_picker', 'admin_color_scheme_picker' );
 		}		
 		register_nav_menus(array(			
@@ -121,10 +121,9 @@ if (!class_exists('WPSHAPERE')) {
 	}
 	public function wpshapereAssets($nowpage) 
 	{ 
-            wp_enqueue_script('jquery');
+                        wp_enqueue_script('jquery');
 	    wp_enqueue_style( 'dashicons' );
 	    wp_enqueue_style('fontAwesome-css', WPSHAPERE_DIR_URI . 'assets/font-awesome/css/font-awesome.min.css', '', WPSHAPERE_VERSION);
-	    //wp_enqueue_style('wpshapereOptions-css', admin_url('admin-ajax.php').'?action=wpshapeOptionscss', '', WPSHAPERE_VERSION);
 	    wp_enqueue_style('wpshapereMain-css', WPSHAPERE_DIR_URI . 'assets/css/wpshapere.styles.css', '', WPSHAPERE_VERSION);
 	    wp_enqueue_script( 'wps-livepreview', WPSHAPERE_DIR_URI . 'assets/js/live-preview.js', array( 'jquery' ), '', true );
 	    if($nowpage == 'wpshapere_page_wps_admin_menuorder') {	            
@@ -329,6 +328,9 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	
 	public function customize_admin_menu(){
 	    global $menu, $submenu;
+//            if ( !is_super_admin() ) {
+//                 remove_submenu_page('profile.php');
+//            }
 	    $wps_sorteddmenu = $this->get_wps_option_data($this->wps_menuorder_options);
                         $privilege_data = (!empty($this->aof_options['privilege_users'])) ? $this->aof_options['privilege_users'] : "";
 	    $privilege_users = (is_serialized( $privilege_data )) ? unserialize( $privilege_data ) : $privilege_data;
@@ -816,7 +818,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	public function frontendActions()
 	{
 	    //remove admin bar	
-	    if($this->aof_options['hide_admin_bar'] === true) {
+	    if($this->aof_options['hide_admin_bar'] == 1) {
 		add_filter( 'show_admin_bar', '__return_false' );
 		echo '<style type="text/css">html { margin-top: 0 !important; }</style>';
 	    }
@@ -845,6 +847,10 @@ background-image:url(<?php echo $admin_logo_url;  ?>) !important; background-rep
 		<?php
 	    }
 	}
+        
+                    public function hideupdateNotices() {
+                            echo '<style>.update-nag, .updated, .notice { display: none; }</style>';
+                    }
 
 	public static function deleteOptions()
 	{

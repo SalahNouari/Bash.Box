@@ -3,7 +3,7 @@
 Plugin Name: WPSHAPERE
 Plugin URI: http://acmeedesign.com
 Description: WPShapere is a wordpress plugin to customize the WordPress Admin theme and elements as your wish. Make WordPress a complete CMS with WPShapere.
-Version: 3.1
+Version: 3.2
 Author: KannanC
 Author URI: http://acmeedesign.com
 Text-Domain: wps
@@ -14,7 +14,7 @@ Text-Domain: wps
 *   WPSHAPERE Version
 */
 
-define( 'WPSHAPERE_VERSION' , '3.1' );    
+define( 'WPSHAPERE_VERSION' , '3.2' );    
 
 /*
 *   WPSHAPERE Path Constant
@@ -79,7 +79,7 @@ include_once WPSHAPERE_PATH . 'includes/wpshapere.class.php';
 include_once WPSHAPERE_PATH . 'includes/wpsthemes.class.php';
 
 
-register_deactivation_hook( __FILE__, array( 'WPSHAPERE', 'deleteOptions') );
+//register_deactivation_hook( __FILE__, array( 'WPSHAPERE', 'deleteOptions') );
 
 /*add_action('plugins_loaded', 'wps_load_textdomain');
 
