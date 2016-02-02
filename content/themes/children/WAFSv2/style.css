@@ -1025,7 +1025,7 @@ Site Navigation
 .genesis-nav-menu a:hover,
 .genesis-nav-menu .current-menu-item > a {
 	background-color: #fff;
-	color: #a5a5a3;
+	color: #6b6b6b;
 }
 
 .genesis-nav-menu .sub-menu {
@@ -1044,7 +1044,7 @@ Site Navigation
 .genesis-nav-menu > li:hover .sub-menu a,
 .genesis-nav-menu .sub-menu a {
 	background-color: #fafafa;
-	color: #a5a5a3;
+	color: #8d8d8d;
 	font-size: 12px;
 	padding: 16px 24px;
 	position: relative;
@@ -1614,7 +1614,7 @@ Theme Colors
 .lifestyle-pro-mustard .archive-pagination li.active a,
 .lifestyle-pro-mustard .entry-title a:hover,
 .lifestyle-pro-mustard a  {
-	color: #edce4a;
+	color: rgba(95, 49, 13, 1);
 }
 
 .lifestyle-pro-mustard .button,
@@ -1636,7 +1636,7 @@ Theme Colors
 .lifestyle-pro-mustard .genesis-nav-menu .current-menu-item > a,
 .lifestyle-pro-mustard .genesis-nav-menu .sub-menu a,
 .lifestyle-pro-mustard .nav-primary a {
-	color: #a5a5a3;
+	color: rgba(151, 92, 22, 1);
 }
 
 .lifestyle-pro-mustard .button,
@@ -1648,7 +1648,7 @@ Theme Colors
 .lifestyle-pro-mustard input[type="reset"],
 .lifestyle-pro-mustard input[type="submit"],
 .lifestyle-pro-mustard.lifestyle-pro-home .content .widget-title {
-	background-color: #edce4a;
+	background-color: rgba(95, 49, 13, 1);
 }
 
 .lifestyle-pro-mustard .button:hover,
@@ -1657,7 +1657,7 @@ Theme Colors
 .lifestyle-pro-mustard input:hover[type="button"],
 .lifestyle-pro-mustard input:hover[type="reset"],
 .lifestyle-pro-mustard input:hover[type="submit"] {
-	background-color: #eeeee8;
+	background-color: rgba(151, 92, 22, 1);
 }
 
 /*
