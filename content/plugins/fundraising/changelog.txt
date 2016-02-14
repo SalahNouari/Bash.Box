@@ -5,6 +5,10 @@ Contributors: Cole Stevenson, Jose Jaureguiberry
 
 == Changelog ==
 
+= 2.6.4 =
+Fixed compatibility with PayPal changes
+Fixed widget's edit screen markup
+
 = 2.6.3 =
 Fixed issues with tutorial
 
@@ -251,4 +255,4 @@ New custom template structure for your theme
 Addition of several action and filter hooks for external plugins or theme function files.
 
 
-133620-1454456270-au
+133620-1454691763-au

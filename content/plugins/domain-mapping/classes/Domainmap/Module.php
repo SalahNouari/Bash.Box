@@ -74,6 +74,8 @@ class Domainmap_Module extends domain_map{
 		$this->_plugin = $plugin;
 		$this->_http = new CHttpRequest();
 		$this->_http->init();
+
+		$this->_add_action("domainmapping_delete_mapped_domain", "delete_mapped_domain");
 	}
 
 	/**
@@ -167,7 +169,7 @@ class Domainmap_Module extends domain_map{
 		$check = sha1( time() );
 
 		switch_to_blog( 1 );
-        $scheme = self::get_mapped_domain_scheme( $domain );
+        $scheme = self::utils()->get_mapped_domain_scheme( $domain );
 		$ajax_url =  $scheme ?  set_url_scheme( admin_url( 'admin-ajax.php' ), $scheme ) : set_url_scheme( admin_url( 'admin-ajax.php' ), "http" );
 		$ajax_url = str_replace( parse_url( $ajax_url, PHP_URL_HOST ), $domain, $ajax_url );
 		restore_current_blog();
@@ -200,17 +202,6 @@ class Domainmap_Module extends domain_map{
 			return true;
 		}
 
-	}
-
-	/**
-	 * Checks if current domain is a subdomain
-	 *
-	 * @since 4.2.0.4
-	 * @return bool
-	 */
-	protected function is_subdomain(){
-		$network_domain =  parse_url( network_home_url(), PHP_URL_HOST );
-		return apply_filters("dm_is_subdomain",  (bool) str_replace( $network_domain, "", $_SERVER['HTTP_HOST']));
 	}
 
 	/**
@@ -265,14 +256,16 @@ class Domainmap_Module extends domain_map{
 		return $valid;
 	}
 
+
 	/**
-	 * Returns current domain
+	 * Deletes a map domain
 	 *
-	 * @since 4.3.1
-	 * @return mixed
+	 * @param $domain
+	 * @return bool
 	 */
-	protected function get_current_domain(){
-		$home = home_url( '/' );
-		return parse_url( $home, PHP_URL_HOST );
+	public function delete_mapped_domain($domain ){
+		$result  = (bool) $this->_wpdb->delete( DOMAINMAP_TABLE_MAP, array( 'domain' => $domain ), array( '%s' ) );
+		delete_transient( "domainmapping-{$domain}-health" );
+		return $result;
 	}
 }

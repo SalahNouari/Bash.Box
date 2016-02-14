@@ -257,10 +257,8 @@ class Domainmap_Module_Ajax_Map extends Domainmap_Module_Ajax {
 		$show_form = false;
 		$domain = strtolower( trim( filter_input( INPUT_GET, 'domain' ) ) );
         $success = false;
-		if ( $this->_is_domain( $domain ) ) {
-            $success = (bool) $this->_wpdb->delete( DOMAINMAP_TABLE_MAP, array( 'domain' => $domain ), array( '%s' ) );
-
-			delete_transient( "domainmapping-{$domain}-health" );
+		if ( self::utils()->is_domain( $domain ) ) {
+            $success = $this->delete_mapped_domain( $domain );
 
 			// check if we need to show form
 			$show_form = $this->_get_domains_count() == 0 || domain_map::allow_multiple();
@@ -404,7 +402,6 @@ class Domainmap_Module_Ajax_Map extends Domainmap_Module_Ajax {
 
 		update_option( 'domainmap_frontend_mapping', $mapping );
 		wp_send_json_success();
-		exit;
 	}
 
 
@@ -424,9 +421,11 @@ class Domainmap_Module_Ajax_Map extends Domainmap_Module_Ajax {
      }
 
      if( $result ){
-       wp_send_json_success(array( "schema" => $new_schema ));
+		$transient_key = self::FORCE_SSL_KEY_PREFIX . $domain;
+		set_transient($transient_key, $new_schema, 30 * MINUTE_IN_SECONDS);
+		wp_send_json_success(array( "schema" => $new_schema ));
      }else{
-       wp_send_json_error();
+		wp_send_json_error();
      }
    }
 

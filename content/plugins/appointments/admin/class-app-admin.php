@@ -3,19 +3,24 @@
 class Appointments_Admin {
 
 	public function __construct() {
+		$this->includes();
+
 		add_action( 'admin_menu', array( $this, 'admin_init' ) ); 						// Creates admin settings window
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) ); 				// Warns admin
 		add_action( 'admin_print_scripts', array( $this, 'admin_scripts') );			// Load scripts
 		add_action( 'admin_print_styles', array( $this, 'admin_css') );
-
-		//@TODO: This filter is deprecated
-		add_action( 'dashboard_glance_items', array($this, 'add_app_counts') );
 
 		add_action( 'show_user_profile', array( $this, 'show_profile') );
 		add_action( 'edit_user_profile', array( $this, 'show_profile') );
 		add_action( 'personal_options_update', array( $this, 'save_profile') );
 		add_action( 'edit_user_profile_update', array( $this, 'save_profile') );
 
+		new Appointments_Admin_Dashboard_Widget();
+		//include( APP_PLUGIN_DIR . '/admin/admin-helpers.php' );
+	}
+
+	private function includes() {
+		include_once( appointments_plugin_dir() . 'admin/widgets/class-app-dashboard-widget.php' );
 	}
 
 	/**
@@ -97,7 +102,7 @@ class Appointments_Admin {
 		if ( isset( $_POST['app_confirm'] ) && is_array( $_POST['app_confirm'] ) && !empty( $_POST['app_confirm'] ) ) {
 			foreach ( $_POST['app_confirm'] as $app_id=>$value ) {
 				if ( $appointments->change_status( 'confirmed', $app_id ) ) {
-					$appointments->log( sprintf( __('Service Provider %s manually confirmed appointment with ID: %s','appointments'), $appointments->get_worker_name( $current_user->ID ), $app_id ) );
+					$appointments->log( sprintf( __('Service Provider %s manually confirmed appointment with ID: %s','appointments'), appointments_get_worker_name( $current_user->ID ), $app_id ) );
 					$appointments->send_confirmation( $app_id );
 				}
 			}
@@ -162,7 +167,7 @@ class Appointments_Admin {
 
 			}
 			if ( $result || $result2 ) {
-				$message = sprintf( __('%s edited his working hours.', 'appointments'), $appointments->get_worker_name( $profileuser_id ) );
+				$message = sprintf( __('%s edited his working hours.', 'appointments'), appointments_get_worker_name( $profileuser_id ) );
 				$appointments->log( $message );
 				// Employer can be noticed here
 				do_action( "app_working_hour_update", $message, $profileuser_id );
@@ -237,7 +242,7 @@ class Appointments_Admin {
 				<tr>
 					<th><label><?php _e("My Appointments", 'appointments'); ?></label></th>
 					<td>
-						<?php echo do_shortcode("[app_my_appointments allow_cancel=1 client_id=".$profileuser->ID." ".$gcal."]") ?>
+						<?php echo do_shortcode("[app_my_appointments allow_cancel=1 title='' client_id=".$profileuser->ID." ".$gcal."]") ?>
 					</td>
 				</tr>
 			<?php
@@ -350,40 +355,6 @@ class Appointments_Admin {
 		<?php
 	}
 
-	/**
-	 * Add app status counts in admin Right Now Dashboard box
-	 * http://codex.wordpress.org/Plugin_API/Action_Reference/right_now_content_table_end
-	 */
-	function add_app_counts( $items ) {
-
-		global $wpdb, $appointments;
-
-		$new_items = array();
-
-		$num_active = $wpdb->get_var("SELECT COUNT(ID) FROM " . $appointments->app_table . " WHERE status='paid' OR status='confirmed' " );
-
-		if ( $num_active ) {
-			$num = number_format_i18n( $num_active );
-			$text = sprintf( _n( '%d Active Appointment', '%d Active Appointments', intval( $num_active ) ), $num );
-			if ( App_Roles::current_user_can( 'manage_options', App_Roles::CTX_DASHBOARD ) )
-				$items[] = '<a class="app-active" href="admin.php?page=appointments">' . $text . '</a>';
-			else
-				$items[] = $text;
-		}
-
-		$num_pending = $wpdb->get_var("SELECT COUNT(ID) FROM " . $appointments->app_table . " WHERE status='pending' " );
-
-		if ( $num_pending > 0 ) {
-			$num = number_format_i18n( $num_pending );
-			$text = sprintf( _n( '%d Pending Appointment', '%d Pending Appointments', intval( $num_pending ) ), $num );
-			if ( App_Roles::current_user_can( 'manage_options', App_Roles::CTX_DASHBOARD ) )
-				$items[] = '<a class="app-pending" href="admin.php?page=appointments&type=pending">' . $text . '</a>';
-			else
-				$items[] = $text;
-		}
-
-		return $items;
-	}
 
 	function admin_css() {
 		global $appointments;
@@ -566,13 +537,7 @@ class Appointments_Admin {
 		return $r;
 	}
 
-	/**
-	 *	Creates the list for Appointments admin page
-	 */
-	function appointment_list() {
-		App_Template::admin_appointments_list();
 
-	}
 
 	function transactions () {
 		App_Template::admin_transactions_list();
@@ -597,7 +562,7 @@ class Appointments_Admin {
 		<div class="wrap">
 			<div class="icon32" style="margin:10px 0 0 0"><img src="<?php echo $appointments->plugin_url . '/images/general.png'; ?>" /></div>
 			<h2><?php echo __('Appointments+ FAQ','appointments'); ?></h2>
-			<?php if (file_exists(APP_PLUGIN_DIR . '/includes/support/app-faq.php')) include(APP_PLUGIN_DIR . '/includes/support/app-faq.php'); ?>
+			<?php if (file_exists(APP_ADMIN_PLUGIN_DIR . '/app-faq.php')) include(APP_ADMIN_PLUGIN_DIR . '/app-faq.php'); ?>
 		</div>
 		<?php
 	}
@@ -612,18 +577,19 @@ class Appointments_Admin {
 		if ( !session_id() )
 			@session_start();
 
-		$page = add_menu_page('Appointments', __('Appointments','appointments'), App_Roles::get_capability('manage_options', App_Roles::CTX_PAGE_APPOINTMENTS),  'appointments', array(&$this,'appointment_list'),'dashicons-clock');
+		include_once( APP_PLUGIN_DIR . '/admin/pages/class-admin-appointments-page.php' );
+		$appointments_page = new Appointments_Admin_Appointments_Page();
 		add_submenu_page('appointments', __('Transactions','appointments'), __('Transactions','appointments'), App_Roles::get_capability('manage_options', App_Roles::CTX_PAGE_TRANSACTIONS), "app_transactions", array(&$this,'transactions'));
 		add_submenu_page('appointments', __('Settings','appointments'), __('Settings','appointments'), App_Roles::get_capability('manage_options', App_Roles::CTX_PAGE_SETTINGS), "app_settings", array(&$this,'settings'));
 		add_submenu_page('appointments', __('Shortcodes','appointments'), __('Shortcodes','appointments'), App_Roles::get_capability('manage_options', App_Roles::CTX_PAGE_SHORTCODES), "app_shortcodes", array(&$this,'shortcodes_page'));
 		add_submenu_page('appointments', __('FAQ','appointments'), __('FAQ','appointments'), App_Roles::get_capability('manage_options', App_Roles::CTX_PAGE_FAQ), "app_faq", array(&$this,'faq_page'));
 		// Add datepicker to appointments page
-		add_action( "admin_print_scripts-$page", array( &$this, 'admin_scripts' ) );
 
-		do_action('app-admin-admin_pages_added', $page);
+
+		do_action('app-admin-admin_pages_added', $appointments_page->page_id );
 
 		if ( isset($_POST["action_app"]) && !wp_verify_nonce($_POST['app_nonce'],'update_app_settings') ) {
-			add_action( 'admin_notices', array( &$this, 'warning' ) );
+			add_action( 'admin_notices', array( &$appointments, 'warning' ) );
 			return;
 		}
 
@@ -715,6 +681,7 @@ class Appointments_Admin {
 
 			$appointments->options['allow_cancel'] 				= @$_POST['allow_cancel'];
 			$appointments->options['cancel_page'] 				= @$_POST['cancel_page'];
+			$appointments->options['thank_page'] 				= @$_POST['thank_page'];
 
 			$appointments->options["records_per_page"]			= (int)trim( @$_POST["records_per_page"] );
 
@@ -1071,7 +1038,6 @@ class Appointments_Admin {
 			wp_die( __('You do not have sufficient permissions to access this page.','appointments') );
 		}
 		$appointments->get_lsw();
-		global $wpdb;
 		?>
 		<div class="wrap">
 			<div class="icon32" style="margin:10px 0 0 0"><img src="<?php echo $appointments->plugin_url . '/images/general.png'; ?>" /></div>

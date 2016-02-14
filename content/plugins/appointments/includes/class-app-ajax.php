@@ -160,7 +160,7 @@ class Appointments_AJAX {
 		$app_id = $_POST["app_id"];
 		$end_datetime = '';
 		if ( $app_id ) {
-			$app = $wpdb->get_row( $wpdb->prepare("SELECT * FROM {$appointments->app_table} WHERE ID=%d", $app_id) );
+			$app = appointments_get_appointment( $app_id );
 			$start_date_timestamp = date("Y-m-d", strtotime($app->start));
 			if ( $appointments->locale_error ) {
 				$start_date = date( $safe_date_format, strtotime( $app->start ) );
@@ -306,7 +306,7 @@ class Appointments_AJAX {
 				}
 				else
 					$sel = '';
-				$html .= '<option value="' . esc_attr($worker->ID) . '"'.$sel.'>'. $appointments->get_worker_name( $worker->ID, false ) . '</option>';
+				$html .= '<option value="' . esc_attr($worker->ID) . '"'.$sel.'>'. appointments_get_worker_name( $worker->ID, false ) . '</option>';
 			}
 		}
 		$html .= '</select>';
@@ -915,7 +915,7 @@ class Appointments_AJAX {
 		;
 
 		$worker = !empty($worker)
-			? '<label><span>' . __('Service provider: ', 'appointments' ) . '</span>'. apply_filters('app_confirmation_worker', stripslashes($appointments->get_worker_name($worker)), $worker) . '</label>'
+			? '<label><span>' . __('Service provider: ', 'appointments' ) . '</span>'. apply_filters('app_confirmation_worker', stripslashes(appointments_get_worker_name($worker)), $worker) . '</label>'
 			: ''
 		;
 
@@ -1048,7 +1048,7 @@ class Appointments_AJAX {
 		else if ( 'service' == $key )
 			$value = $appointments->get_service_name( $value );
 		else if ( 'worker' == $key )
-			$value = $appointments->get_worker_name( $value );
+			$value = appointments_get_worker_name( $value );
 	}
 
 	function setup_api_logins () {

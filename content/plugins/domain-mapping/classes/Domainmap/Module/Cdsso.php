@@ -137,7 +137,8 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 	 * @access public
 	 */
 	public function logout_user_from_everywhere($redirect_to) {
-        WP_User_Meta_Session_Tokens::drop_sessions();
+		$manager = WP_User_Meta_Session_Tokens::get_instance( get_current_user_id() );
+		$manager->destroy_all();
         return $redirect_to;
 	}
 
@@ -157,8 +158,9 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 	public function set_interim_login( $redirect_to, $requested_redirect_to, $user ) {
 
 		global $interim_login;
+
 		if ( is_a( $user, 'WP_User' ) && get_current_blog_id() != 1 ) {
-			if ( $this->is_mapped_domain()  || $this->is_subdomain() ) {
+			if ( self::utils()->is_mapped_domain()  || self::utils()->is_subdomain() ) {
 				$interim_login = $this->_do_propagation = true;
 			}
 		}
@@ -183,7 +185,7 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 	}
 
 	/**
-	 * Adds propagation scripts at interim login page after successfull login.
+	 * Adds propagation scripts at interim login page after successful login.
 	 *
 	 * @since 4.1.2
 	 * @access login_footer
@@ -253,21 +255,40 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 
 	}
 
+	/**
+	 * Adds sync authorization script to settup sso
+	 *
+	 *
+	 */
 	private function _add_auth_script_sync(){
 
 		$url = add_query_arg( 'dm_action', self::ACTION_SETUP_CDSSO, $this->_get_sso_endpoint_url() );
+		$url = apply_filters("dm_sync_auth_script_url", $url);
 		$this->_add_script( esc_url_raw( $url ) );
 	}
 
+	/**
+	 * Adds async authorization script to start to check login status
+	 *
+	 *
+	 */
 	private function _add_auth_script_async(){
-
+		global $redirect_to;
 		$url = add_query_arg( array(
 			'dm_action' => self::ACTION_CHECK_LOGIN_STATUS,
 			'domain' =>  $_SERVER['HTTP_HOST'] ,
 		), $this->_get_sso_endpoint_url()
 		);
 
-		$this->_add_iframe( esc_url_raw( $url ) );
+
+		$url = apply_filters("dm_async_auth_script_url", $url);
+
+		/**
+		 * @var $redirect_to string|false the url to which browser should redirect after login or false to allow refresh
+		 * variable to work
+		 */
+		$redirect_to = apply_filters("dm_async_sso_redirect", $redirect_to);
+		$this->_add_iframe( esc_url_raw( $url ), $redirect_to );
 	}
 
 	/**
@@ -427,6 +448,7 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 
 		$domain_name = filter_input( INPUT_GET, 'domain' );
 		$admin_mapping = $this->_plugin->get_option("map_force_admin_ssl");
+
 	?>
 		// Starting Domain Mapping SSO
 		<?php
@@ -441,6 +463,9 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 		$url = add_query_arg( $args, $this->_get_sso_endpoint_url( true, $domain_name ) );
 
 		$url = set_url_scheme( $url, "http" );
+
+
+
 		$this->_add_inner_iframe( esc_url_raw( $url ) );
 
 		if( $admin_mapping ){ // set user cookie for https as well and refresh
@@ -448,6 +473,7 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 			$url = add_query_arg( $args, $this->_get_sso_endpoint_url( true, $domain_name ) );
 			$this->_add_inner_iframe( esc_url_raw( $url ) );
 		}
+
 	}
 
 	/**
@@ -457,10 +483,17 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 	 * @since 4.4.0
 	 * @param $url
 	 */
-	private function _add_iframe( $url ){
+	private function _add_iframe( $url, $redirect_to ){
 		?>
 		<script type="text/javascript">
 			(function(window) {
+				window.dm_redirect_to = function(){
+					if( "<?php echo $redirect_to ?>" ){
+						window.location.href = "<?php echo $redirect_to ?>";
+					}else{
+						window.location.reload();
+					}
+				};
 				var document = window.document;
 				var url = '<?php echo $url; ?>';
 				var iframe = document.createElement('iframe');
@@ -525,6 +558,8 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 					? $_GET['redirect_to']
 					: add_query_arg( array( self::ACTION_KEY => false, 'auth' => false ) );
 
+				$redirect_to = apply_filters("dm_sync_sso_redirect", $redirect_to);
+
 				wp_redirect( esc_url_raw( $redirect_to ) );
 				exit;
 			} else {
@@ -544,13 +579,12 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 		$user_id = wp_validate_auth_cookie( filter_input( INPUT_GET, 'auth' ), 'auth' );
 		$refresh = filter_input( INPUT_GET, 'refresh' );
 
+
 		if ( $user_id ) {
 		wp_set_auth_cookie( $user_id );
-			if( $refresh ){
 			?>
-				window.top.location.reload();
+				window.top.dm_redirect_to();
 			<?php
-			}
 		}
 	}
 
@@ -567,6 +601,7 @@ class Domainmap_Module_Cdsso extends Domainmap_Module {
 
 		if ( get_current_blog_id() == 1 ) {
 			$user_id = wp_validate_auth_cookie( filter_input( INPUT_GET, 'auth' ), 'auth' );
+
 			if ( $user_id ) {
 				wp_set_auth_cookie( $user_id );
 				echo 'if (typeof domainmap_do_redirect === "function") domainmap_do_redirect();';

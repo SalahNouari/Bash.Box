@@ -169,7 +169,7 @@ class Domainmap_Render_Reseller_Enom_Settings extends Domainmap_Render {
 	 * @access private
 	 */
 	private function _render_sslverification_settings() {
-		$selected = isset( $this->sslverification ) ? $this->sslverification : 1;
+		$selected = isset( $this->sslverification ) ? $this->sslverification : 1;	     	 	  	 	 			
 
 		$options = array(
 			1 => __( 'Enable SSL verification', 'domainmap' ),
