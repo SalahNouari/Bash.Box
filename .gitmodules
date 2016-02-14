@@ -6,14 +6,6 @@
 
 ################################################
 ## Plugins
-[submodule "Sync DB"]
-	path = content/plugins/wp-sync-db
-	url = git@github.com:lakesareadesign/wp-sync-db.git
-
-[submodule "Sync DB Media Files"]
-	path = content/plugins/wp-sync-db-media-files
-	url = git@github.com:lakesareadesign/wp-sync-db-media-files.git
-
 [submodule "Woocommerce"]
 	path = content/plugins/woocommerce
 	url = git@github.com:lakesareadesign/woocommerce.git
