@@ -14,7 +14,3 @@
 	path = daux
 	url = git@github.com:lakesareadesign/daux.git
 
-[submodule "TGM-Plugin-Activation"]
-	path = TGM-Plugin-Activation
-	url = git@github.com:lakesareadesign/TGM-Plugin-Activation.git
-	
