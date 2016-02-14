@@ -251,8 +251,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if(isset($options['contents'])){
 			$col_size = isset($properties['colSize']) ? $properties['colSize'] : 45;
-			$paddingLeft = $options['contents']['padding_left'] * $col_size;
-			$paddingRight = $options['contents']['padding_right'] * $col_size;
+			$paddingLeft = isset($options['contents']['padding_left']) ? $options['contents']['padding_left'] * $col_size : 0;
+			$paddingRight = isset($options['contents']['padding_right']) ? $options['contents']['padding_right'] * $col_size : 0;
 			$rules = '#' . $properties['element_id'] . ' .post_content>* { padding-left: ' . $paddingLeft . 'px; padding-right: ' . $paddingRight . 'px; }';
 		}
 
@@ -354,6 +354,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 
 			foreach($w['objects'] as $k => $o){
+				$o['slug'] = isset($o['slug']) ? $o['slug'] : 'spacer';
+				$layout['wrappers'][$i]['objects'][$k]['slug'] = $o['slug'];
 
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
@@ -482,11 +484,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
-			if(file_exists($cascade[$i]))
+			if(file_exists($cascade[$i])) {
 				$found = require $cascade[$i];
+			}
 			$i++;
 		}
-
 		return $found;
 	}
 
@@ -536,8 +538,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 		// to get the same output than in the frontend
 		global $current_screen;
 		if (!class_exists('WP_Screen')) {
-			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
-			else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) {
+				require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
+				if (!function_exists('get_current_screen')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+			} else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
 		}
 		if (class_exists('WP_Screen')) $current_screen = WP_Screen::get('front');
 

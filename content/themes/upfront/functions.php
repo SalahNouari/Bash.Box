@@ -18,6 +18,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_endpoint.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_compat.php');
 
 
 Upfront_Behavior::debug()->set_baseline();
@@ -52,6 +53,7 @@ class Upfront {
 		$me = new self;
 		$me->_add_hooks();
 		$me->_add_supports();
+
 	}
 
 	private function _add_hooks () {
@@ -67,11 +69,13 @@ class Upfront {
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
 
-		$this->_load_textdomain();
+
+
 	}
 
-	private function _load_textdomain () {
+	public static function load_textdomain () {
 		$path = untrailingslashit(self::get_root_dir()) . '/languages';
+
 		load_theme_textdomain('upfront', $path);
 
 		// Now let's try the child theme...
@@ -83,6 +87,7 @@ class Upfront {
 		if (!empty($child_domain) && 'upfront' !== $child_domain) {
 			load_child_theme_textdomain($child_domain, get_stylesheet_directory() . '/languages');
 		}
+
 	}
 
 	private function _add_supports () {
@@ -113,14 +118,13 @@ class Upfront {
 		return get_template_directory();
 	}
 
-
 	public function add_edit_menu ($wp_admin_bar) {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
 		$item = array(
 			'id' => 'upfront-edit_layout',
-			'title' => __('Upfront', 'upfront'),
-			'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
+            'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Upfront', 'upfront') . '</span>',
+			'href' => (is_admin() ? home_url('/?editmode=true', is_ssl() ? "https" : null) : '#'),
 			'meta' => array(
 				'class' => 'upfront-edit_layout upfront-editable_trigger'
 			),
@@ -304,6 +308,7 @@ EOAdditivemarkup;
 
 }
 add_action('init', array('Upfront', 'serve'), 0);
+add_action('after_setup_theme', array('Upfront', "load_textdomain"));
 
 /**
  * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
@@ -366,3 +371,11 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 	 return Upfront_ThisPostView::get_post_image_markup($data);
 
 }
+
+/**
+ * Loads iconfont in admin to display toolbar icon.
+ */
+function uf_admin_bar_styles() {
+    wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
+}
+add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );

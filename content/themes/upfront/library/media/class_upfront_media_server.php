@@ -10,6 +10,9 @@ class Upfront_MediaServer extends Upfront_Server {
 	private function _add_hooks () {
 		$this->augment_attachments();
 
+		// Fix WP srcset creation
+		add_filter('wp_calculate_image_srcset', array($this, 'fix_srcset'));
+
 		add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
 
 		// Do not show media labels in posts taxonomy selection list
@@ -42,6 +45,25 @@ class Upfront_MediaServer extends Upfront_Server {
 		}
 	}
 
+	/**
+	 * Fix srcset sources not being escaped.
+	 *
+	 * @param array $sources Array of srcset sources, as exposed by `wp_calculate_image_srcset` filter
+	 *
+	 * @return array
+	 */
+	public function fix_srcset ($sources) {
+		if (empty($sources)) return $sources; // Short out if we can
+
+		foreach ($sources as $idx => $src) {
+			if (empty($src['url'])) continue;
+			$src['url'] = esc_url($src['url']);
+			$sources[$idx] = $src;
+		}
+
+		return $sources;
+	}
+
 	public function add_l10n_strings ($strings) {
 		if (!empty($strings['media'])) return $strings;
 		$strings['media'] = $this->_get_l10n();
@@ -69,6 +91,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'showing_total_results' => __("Showing {{total}} results for", 'upfront'),
 			'active_filters' => __("Active filters", 'upfront'),
 			'filter_label' => __("Filter Media by:", 'upfront'),
+			'select_filter' => __("Select Filter", 'upfront'),
 			'media_type' => __("Media type", 'upfront'),
 			'date' => __("Date", 'upfront'),
 			'file_name' => __("File Name", 'upfront'),

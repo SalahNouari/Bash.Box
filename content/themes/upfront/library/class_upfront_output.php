@@ -17,9 +17,11 @@ class Upfront_Output {
 
 		self::$grid = Upfront_Grid::get_grid();
 	}
+
 	public static function get_post_id () {
 		return is_singular() ? get_the_ID() : false;
 	}
+
 	public static function get_layout ($layout_ids, $apply = false) {
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
@@ -202,15 +204,10 @@ abstract class Upfront_Entity {
 		"} {$post}") . "\n";
 	}
 
-	public function get_front_context () {
-		return 'default';
-	}
-
 	public function get_css_class () {
 		$type = strtolower(str_replace("_", "-", $this->_type));
 		$classes = array(
-			"upfront-output-" . $type,
-			$this->get_front_context()
+			"upfront-output-" . $type
 		);
 		$name = $this->get_name();
 		if ( $name != 'anonymous' )
@@ -236,6 +233,16 @@ abstract class Upfront_Entity {
 
 	protected function _get_property ($prop) {
 		return upfront_get_property_value($prop, $this->_data);
+	}
+
+	/**
+	 * Retrieves translated property
+	 *
+	 * @param $prop
+	 * @return string|void
+	 */
+	protected function _get_property_t($prop) {
+		return __($this->_get_property( $prop ), "upfront");
 	}
 
 	protected function _get_breakpoint_property ($prop, $id) {
@@ -311,7 +318,7 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
-		if (!$type || in_array($type, array('image', 'color', 'featured'))) {
+		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
 			if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
 			}
@@ -332,7 +339,6 @@ abstract class Upfront_Entity {
 				$css[] = 'background-color: ' . $background_color;
 			}
 		}
-
 		if (!empty($breakpoint_id) && ($default_type == 'image' || $default_type == 'featured')) {
 			$css[] = 'background-image: none';
 		}
@@ -495,61 +501,105 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_children;
 	protected $_child_view_class;
 	protected $_wrapper;
+	protected $_wrapper_is_spacer;
 
 	public function get_markup () {
 		$html='';
 		$wrap='';
 
-		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
-			$child_view = $this->instantiate_child($child, $idx);
-			if ($child_view instanceof Upfront_Container){
-				// Have wrapper? If so, then add wrappers
-				$wrapper = $child_view->get_wrapper();
+		if (!empty($this->_data[$this->_children])) {
+			foreach ($this->_data[$this->_children] as $idx => $child) {
+				$child_view = $this->instantiate_child($child, $idx);
+				if ($child_view instanceof Upfront_Container) {
+					// Have wrapper? If so, then add wrappers
+					$wrapper = $child_view->get_wrapper();
+					$wrapper_is_spacer = ($child_view instanceof Upfront_Module && $child_view->is_spacer());
 
-				if ( $wrapper && !$this->_wrapper )
-					$this->_wrapper = $wrapper;
-				if ( $wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id() ){
-					$wrap .= $child_view->get_markup();
-				}
-				else if ( $wrapper ) {
-					$html .= $this->_wrapper->wrap($wrap);
-					$this->_wrapper = $wrapper;
-					$wrap = $child_view->get_markup();
-				}
-			}
-			// No wrapper, just appending html
-			if ( !isset($wrapper) || !$wrapper ){
-				if($this->_child_view_class == 'Upfront_Object'){
-					$theme_style = upfront_get_property_value('theme_style', $child);
-					if($theme_style)
-						$theme_style = strtolower($theme_style);
-					$breakpoint = upfront_get_property_value('breakpoint', $child);
-					$theme_styles = array( 'default' => $theme_style );
-					$theme_styles_attr = '';
-					if ( $breakpoint ) {
-						foreach ( $breakpoint as $id => $props ){
-							if ( !empty($props['theme_style']) )
-								$theme_styles[$id] = strtolower($props['theme_style']);
-						}
-						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
+					if ($wrapper && !$this->_wrapper) {
+						$this->_wrapper = $wrapper;
+						$this->_wrapper_is_spacer = $wrapper_is_spacer;
 					}
-					$slug = upfront_get_property_value('id_slug', $child);
-					if($slug === 'ucomment' && is_single() && !comments_open())
-						return $html;
-
-					$classes = $this->_get_property('class');
-					$column = upfront_get_class_num('c', $classes);
-					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+					if ($wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id()) {
+						$wrap .= $child_view->get_markup();
+					} else if ($wrapper) {
+						// Check spacer and don't render wrapper if it is
+						if ($this->_wrapper_is_spacer) {
+							$html .= $wrap;
+						} else {
+							$html .= $this->_wrapper->wrap($wrap);
+						}
+						$this->_wrapper = $wrapper;
+						$this->_wrapper_is_spacer = $wrapper_is_spacer;
+						$wrap = $child_view->get_markup();
+					}
 				}
-				else
-					$html .= $child_view->get_markup();
+				// No wrapper, just appending html
+				if (!isset($wrapper) || !$wrapper) {
+					if ($this->_child_view_class == 'Upfront_Object') {
+						$theme_style = upfront_get_property_value('theme_style', $child);
+						if ($theme_style) {
+							$theme_style = strtolower($theme_style);
+						}
+
+						// So let's map out the breakpoints/presets map
+						$preset_map = array();
+						$raw_preset_map = upfront_get_property_value('breakpoint_presets', $child);
+						if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
+							if (empty($pst['preset'])) continue;
+							$preset_map[$bp] = esc_js($pst['preset']);
+						}
+						// Now we have a map of breakpoint/presets we can encode as the attribute
+						// This will be used for the breakpoint preset toggling
+
+						// We also preserve the current preset class, so it all
+						// just works without JS requirement on client
+						$preset = upfront_get_property_value('preset', $child);
+
+						// Also, if we have a preset map and a default grid breakpoint
+						// mapped, let's try to use this as default preset
+						if (!empty($preset_map)) {
+							$default_bp = Upfront_Output::$grid->get_default_breakpoint();
+							if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
+								$bp = $default_bp->get_id();
+								if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
+							}
+						}
+
+						$breakpoint = upfront_get_property_value('breakpoint', $child);
+						$theme_styles = array('default' => $theme_style);
+						$theme_styles_attr = '';
+						if ($breakpoint) {
+							foreach ($breakpoint as $id => $props) {
+								if (!empty($props['theme_style']))
+									$theme_styles[$id] = strtolower($props['theme_style']);
+							}
+							$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
+						}
+						$slug = upfront_get_property_value('id_slug', $child);
+						if ($slug === 'ucomment' && is_single() && !comments_open())
+							return $html;
+
+						$classes = $this->_get_property('class');
+						$column = upfront_get_class_num('c', $classes);
+						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
+						$usingNew = upfront_get_property_value('usingNewAppearance', $child);
+						if(!empty( $usingNew )) {
+						// Augment the output with preset map, in addition to other stuff going on in there
+							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+						} else {
+							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+						}
+					} else {
+						$html .= $child_view->get_markup();
+					}
+				}
 			}
 		}
 
 		// Have wrapper, append the last one
-		if ( isset($wrapper) && $wrapper )
+		if ( isset($wrapper) && $wrapper && $this->_wrapper ) {
 			$html .= $this->_wrapper->wrap($wrap);
+		}
 		return $this->wrap($html);
 	}
 
@@ -1038,8 +1088,12 @@ class Upfront_Module_Group extends Upfront_Container {
 		$classes = parent::get_css_class();
 		$classes .= ' upfront-module-group';
 		$theme_style = $this->_get_property('theme_style');
-		if($theme_style)
+		if ($theme_style) {
 			$classes .= ' ' . strtolower($theme_style);
+		}
+		$prop_class = $this->_get_property('class');
+		$column = upfront_get_class_num('c', $prop_class);
+		$classes .= ' c' . $column;
 		return $classes;
 	}
 
@@ -1124,6 +1178,13 @@ class Upfront_Module extends Upfront_Container {
 	}
 
 	public function get_markup () {
+		if ($this->is_spacer()) {
+			return '<!-- Spacer data '. "\n" .
+				'class: ' . upfront_get_property_value('class', $this->_data) . "\n" .
+				'default: ' . upfront_get_property_value('hide', $this->_data) . "\n" .
+				'breakpoint: ' . json_encode(upfront_get_property_value('breakpoint', $this->_data)) . "\n" .
+			' -->';
+		}
 		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {
@@ -1146,6 +1207,15 @@ class Upfront_Module extends Upfront_Container {
         $more_classes[] = 'c' . $column;
         return $classes . ' ' . join(' ', $more_classes);
     }
+
+	public function is_spacer () {
+		$spacer_props = Upfront_UspacerView::default_properties();
+		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
+		if (!empty($children)) {
+			$type = upfront_get_property_value('type', $children[0]);
+		}
+		return ($type == $spacer_props['type']);
+	}
 }
 
 class Upfront_Object extends Upfront_Entity {
@@ -1154,6 +1224,15 @@ class Upfront_Object extends Upfront_Entity {
 	public function __construct ($data) {
 		//Make sure all the properties are initialized
 		$data['properties'] = $this->merge_default_properties($data);
+
+		// Take care of old preset API
+		$currentpreset = upfront_get_property_value('currentpreset', $data);
+		if ($currentpreset) {
+			// Unset currentpreset property and set preset to correct value
+			$data = upfront_set_property_value('preset', $currentpreset, $data);
+			$data = upfront_set_property_value('currentpreset', false, $data);
+		}
+
 		parent::__construct($data);
 		Upfront_Output::$current_object = $this;
 	}

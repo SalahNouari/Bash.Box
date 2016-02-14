@@ -46,6 +46,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function add_style_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_styles();
+		if (empty($raw_cache_key)) return $urls;
 
 		$url = $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key);
 		$urls[] = $url;
@@ -71,7 +72,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			foreach ($styles as $key => $frags) {
 				if (empty($frags)) continue;
 				$style = $this->_get_style_contents($frags);
-				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
+				if (!empty($style))  $cache .= "/* ~~~~~ [STYLE DEBUG]: {$key} ~~~~~ */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$cache = Upfront_StylePreprocessor::compress($cache);
@@ -152,6 +153,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function add_script_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_scripts();
+		if (empty($raw_cache_key)) return $urls;
+
 		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
@@ -165,7 +168,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _get_cached_scripts () {
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		$scripts = $hub->get_all();
-		if (empty($scripts)) return isset( $urls ) ? $urls : false; // Todo Ve: where does this $url come from?
+		if (empty($scripts)) return false;
 
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 

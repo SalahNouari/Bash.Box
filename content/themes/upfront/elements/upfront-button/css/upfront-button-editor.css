@@ -149,5 +149,24 @@ div.upfront-button:hover .redactor_air {
 	width: 100%;
 }
 
+.upfront-button div.upfront-object-content.editing {
+   display: table;
+   width: 100%;
+}
 
-/* 133620-1453183823-au */
+.upfront-button div.upfront-object-content.editing > div.redactor-box {
+	display: table-row;
+}
+
+.upfront-button div.upfront-object-content.editing > div.redactor-box > a.upfront_cta {
+	display: table-cell;
+}
+/*
+//this css is conflicting with the visitlink icons in the link panel
+i.upfront-icon-region-visit-link-entry:before {
+	background-image: url(../../../img/uf-core-el-sprite.svg)!important;
+	background-position: -703px -169px!important;
+}*/
+
+
+/* 133620-1455487867-au */

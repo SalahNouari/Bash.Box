@@ -29,7 +29,8 @@ class Upfront_LikeBoxView extends Upfront_Object {
 		}
 		if($url) {
 			$parts = parse_url($url);
-			$fbname = end(explode('/', trim($parts['path'], '/')));
+			$path = explode('/', trim($parts['path'], '/'));
+			$fbname = end($path);
 
 			$wide = intval($element_size['width'])-30;
 
@@ -100,6 +101,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
 			'element_name' => __('Like Box', 'upfront'),
 			'url_nag' => __('You need to set a Facebook URL in your global social settings.', 'upfront'),
 			'container_label' => __('Container', 'upfront'),
+			'facebook_account' => __('Facebook Account', 'upfront'),
 			'container_info' => __('Facebook box wrapper layer.', 'upfront'),
 			'placeholder_guide' => __('Enter your Facebook Page URL:', 'upfront'),
 			'placeholder' => __('facebook.com/yourPageName', 'upfront'),
@@ -118,7 +120,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
 				'hide_cover' => __('Hide Cover Photo', 'upfront'),
 				'show_posts' => __('Show Page Posts', 'upfront'),
 			),
-
+			'general_settings' => __('General Settings', 'upfront'),
 			'settings' => __('LikeBox settings', 'upfront'),
 		);
 		return !empty($key)
