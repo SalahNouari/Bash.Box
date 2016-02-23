@@ -4,7 +4,7 @@ Contributors: pupunzi
 Tags: video player, youtube, full background, video, HTML5, flash, mov, jquery, pupunzi, mb.components, cover video, embed, embed videos, embed youtube, embedding, plugin, shortcode, video cover, video HTML5, youtube, youtube embed, youtube player, youtube videos
 Requires at least: 3.0
 Tested up to: 4.4
-Stable tag:  2.0.5
+Stable tag:  2.0.6
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DSHAHSJJCQ53Y
 License: GPLv2 or later
 
@@ -33,7 +33,7 @@ If you doesn't want ADs on your background video and you are the owner of it you
 
 Links:/Users/mbicocchi/Dropbox/wordpress/My-Game/wordpress/wp-content/themes/myGame/templates/urban-1/css/intro.css
 
-* demo: http://pupunzi.com/mb.components/mb.YTPlayer/demo/demo_background.html
+* demo: http://pupunzi.com/mb.components/mb.YTPlayer/demo/demo.html
 * video: http://www.youtube.com/watch?v=lTW937ld02Y
 * pupunzi blog: http://pupunzi.open-lab.com
 * pupunzi site: http://pupunzi.com
@@ -93,6 +93,9 @@ Adding a background image to the body as mobile devices fallback is a good pract
 
 == Changelog ==
 
+= 2.0.6 =
+* Bug fix: the volume value was not preserved in the settings page.
+
 = 2.0.5 =
 * Update the jquery.mb.YTPlayer.js file with better performances for the initial video start.
 
@@ -111,121 +114,6 @@ Adding a background image to the body as mobile devices fallback is a good pract
 
 = 2.0.0 =
 * Bugfix: updated to the new Google API 3 fixing the display of the poster-frame if used as in-line player.
-
-= 1.9.8 =
-* Added the volume slider on the player control.
-* Bugfix: removed the "stopMovieOnClick" option.
-
-= 1.9.7 =
-* Added: An option to set the volume of the video.
-
-= 1.9.6 =
-* Added: An option to choose on which page the background video should be shown (static Home or blog index or both).
-* Added: An option to deactivate the video without removing the video URL from the settings.
-
-= 1.9.5 =
-* Fix: Something changed in the YT API that was preventing Firefox to get .getVideoLoadedFraction() at video load.
-* Added: uninstall.php to clean the settings when the plugin is deleted.
-
-= 1.9.4 =
-* Feature: You can now specify the width and height of an in-line player as percentage of its container.
-* It has been updated to jquery.mb.YTPlayer 2.7.6 (http://pupunzi.open-lab.com/mb-jquery-components/jquery-mb-ytplayer/).
-
-= 1.9.3 =
-* Bugfix: The "stopAt" parameter was not persisted.
-
-= 1.9.2 =
-* Update: Updated the mbYTPlayer-admin.php using the Wordpress "Settings API".
-
-= 1.9.1 =
-* Bug fix: Fixed a bug on the settings window (the raster image could not be removed) introduced with one of the previous updates.
-
-= 1.9.0 =
-* Bug fix: Chrome problems on start playing the video.
-
-= 1.8.9 =
-* Bug fix: Fixed a conflict with the Bootstrap framework.
-* Bug fix: Something is changed in the Youtube API that was preventing the auto-play of the video; now the "can play state" is more accurate and should speed up the start of the video.
-
-= 1.8.8 =
-* bug fix: The mute/unmute randomly didn't apply.
-
-= 1.8.7 =
-* New feature: Added support for Google Analytic Universal event tracking; before this update the "play" event was tracked only if the standard version of GA was present on the page; now it works also if the latest Universal GA is installed.
-
-= 1.8.6 =
-* bugfix: Fixed a bug that prevents the player to run correctly within certain environments.
-
-= 1.8.5 =
-* bugfix: Fixed a conflict with the default mediaelementjs; The default WP media player now works fine together with the YTPlayer.
-
-= 1.8.4 =
-* bugfix: the shortcode editor didn't consider the video url after last update. solved.
-
-= 1.8.3 =
-* New feature: You can now add a comma separated list of YT videos; every time you load the page one of them will be randomly chosen (thanx to Giampaolo D'Amico).
-
-= 1.8.2 =
-* Bug fix: Updated to solve a problem with the "YTPEnd" event that was not firing anymore.
-
-= 1.8.1 =
-* Major update: Updated to solve issue compatibilities with the latest 3.9 Wordpress release.
-
-= 1.8.0 =
-* Bugfix: Removed a blocking bug introduced with the 1.7.9 release.
-
-= 1.7.9 =
-* Feature: Added the possibility choose which video should be tracked by Google Analytics checking the apposite checkbox both in the preferences window and in the edit window.
-
-= 1.7.8 =
-* Bugfix: With the latest Chrome release something was lost with the aspect ratio.
-
-= 1.7.7 =
-* bugfox for the startAt behavior.
-
-= 1.7.6 =
-* Added internationalization. In addition to English are now available the Italian translation and the Spanish translation (thanks to Andrew Kurtis http://www.webhostinghub.com ).
-  If you want to translate the YTPlayer plugin in your language here is the .POT file: http://pupunzi.open-lab.com/wp-translations/mbYTPlayer.pot
-  Send me the translation once finished; it'll be available with the next update.
-
-= 1.7.5 =
-* fixed bug on the shortcode editor window where the "autoplay" option where shown only if "is inline" was checked.
-* Added the "stopAt" option to set when the video should stop.
-
-= 1.7.4 =
-* fixed bug that prevented the player to start muted.
-
-= 1.7.3 =
-* fixed a vulnerability issue in the TinyMCE popup.
-* fixed bug that prevented the correct behavior of the switch between the two full-screen modality.
-
-= 1.7.2 =
-* Bug fix: Better detection of the video availability to check when to start the video.
-
-= 1.7.1 =
-* Bug fix:
-If the default Wordpress audio player was instanced in a page together with the YTPlayer, the YTPlayer didn't work.
-That was for a conflict with the "mediaelement".
-
-= 1.7.0 =
-* Bug fix:
-Solved a problem in the TinyMCE editor that prevented the fullscreen option to be checked.
-
-= 1.6.9 =
-* Bug fix:
-added wp_enqueue_script('yt_api_player', '//www.youtube.com/player_api', false, $mbYTPlayer_version, false) in mbYTPlayer.php to solve audio short-code incompatibility.
-
-= 1.6.8 =
-* Feature: Added _GA event track to get statistics if GA Analytics is active (under the Events section): _gaq.push(['_trackEvent', 'YTPlayer', 'Play', (YTPlayer.title || YTPlayer.videoID.toString())]);.
-
-= 1.6.7 =
-* Feature: "autoplay = false" works also for background videos.
-
-= 1.6.6 =
-* Bug fix: the fullscreen method switcher didn't work from the TinyMCE editor.
-
-= 1.6.5 =
-* New feature: You can choose if the fullscreen behavior should be contained into the browser window or cover all the screen.
 
 ...
 

@@ -65,5 +65,17 @@ div.upfront_login-item-display_trigger div.upfront-settings-item {
   padding-top: 0;
 }
 
+div.upfront-login_element-module,
+div.upfront-login_element-module.upfront-module-active {
+  z-index: 80;
+}
 
-/* 133620-1455487867-au */
+div.upfront-login_element-module .upfront_login.upfront_login-hover,
+div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_login-hover,
+div.upfront-login_element-module .upfront_login.upfront_login-click,
+div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_login-click {
+  z-index: 15;
+}
+
+
+/* 133620-1456260851-au */

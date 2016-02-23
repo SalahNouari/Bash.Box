@@ -6,6 +6,9 @@ Contributors: Cole, Andrey
 
 == Changelog ==
 
+= 2.7.3.2 =
+* Fixed removing wrong data when plugin is network activated
+
 = 2.7.3.1 =
 * Improved compatibility with other plugins
 
@@ -465,4 +468,4 @@ Contributors: Cole, Andrey
 * Initial Release;
 
 
-133620-1452728933-au
+133620-1456260715-au

@@ -276,7 +276,7 @@ function mbYTPlayer_options_page() { 	// Output the options page
             <tr valign="top">
                 <th scope="row"><?php _e('Set the audio volume:', 'wpmbytplayer'); ?></th>
                 <td>
-                    <input type="text" name="mbYTPlayer_audio_volume" value="50" style="width:10%" />
+                    <input type="text" name="mbYTPlayer_audio_volume" value="<?php echo esc_attr( get_option('mbYTPlayer_audio_volume')) ?>" style="width:10%" />
                     <p><?php _e('Set the volume for the video (from 0 to 100)', 'wpmbytplayer'); ?>.</p>
                 </td>
             </tr>

@@ -165,6 +165,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$properties = $_POST['data'];
 
+		//Check if preset_style is defined
+		if(isset($properties['preset_style'])) {
+			$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
+		}
+
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
@@ -176,10 +181,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				if ($preset['id'] === $properties['id']) {
 					continue;
 				}
+
 				$result[] = $preset;
 			}
 
+
 			$result[] = $properties;
+
+
 
 			$this->update_presets($result);
 		}
