@@ -6,10 +6,6 @@
 
 ################################################
 ## Plugins
-[submodule "Woocommerce"]
-	path = content/plugins/woocommerce
-	url = git@github.com:lakesareadesign/woocommerce.git
-
 [submodule "daux"]
 	path = daux
 	url = git@github.com:lakesareadesign/daux.git
