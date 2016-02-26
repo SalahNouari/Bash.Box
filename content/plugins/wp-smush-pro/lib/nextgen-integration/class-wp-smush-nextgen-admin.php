@@ -462,7 +462,7 @@ if ( ! class_exists( 'WpSmushNextGenAdmin' ) ) {
 				<p>
 				<?php
 				// let the user know that there's an alternative
-				printf( __( 'You can also smush images individually from your <a href="%s">Media Library</a>.', 'wp-smushit' ), admin_url( 'upload.php' ) );
+				printf( __( 'You can also smush images individually from your <a href="%s">Media Library</a>.', 'wp-smushit' ), admin_url( 'upload.php' ) );								 	 	   		   
 				?>
 				</p><?php
 			}

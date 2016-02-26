@@ -114,6 +114,8 @@
 		$ultimatemember->user->set_registration_details( $args['submitted'] );
 		
 		$ultimatemember->user->set_plain_password( $args['user_password'] );
+
+		$ultimatemember->user->set_last_login();
 		
 		do_action('um_new_user_registration_plain');
 		
@@ -193,9 +195,10 @@
 				}
 				
 				if ( um_user( $status . '_action' ) == 'show_message' && um_user( $status . '_message' ) != '' ) {
-					$url = um_get_core_page('register');
+					$url = $ultimatemember->permalinks->get_current_url();
 					$url =  add_query_arg( 'message', esc_attr( $status ), $url );
 					$url =  add_query_arg( 'uid', esc_attr( um_user('ID') ), $url );
+
 					exit( wp_redirect( $url ) );
 				}
 				
