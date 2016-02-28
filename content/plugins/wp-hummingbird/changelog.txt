@@ -1,0 +1,12 @@
+Plugin Name: WP Smush Pro
+Author: Ignacio Cruz, Ricardo Freitas
+Tested up to: 4.2.2
+
+Change Log:
+
+1.0 - 2016-02-23
+----------------------------------------------------------------------
+- First release
+
+
+133620-1456637134-ai
