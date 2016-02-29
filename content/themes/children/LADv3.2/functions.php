@@ -146,6 +146,20 @@ function centric_remove_comment_form_allowed_tags( $defaults ) {
 //* Add support for 4-column footer widgets
 add_theme_support( 'genesis-footer-widgets', 4 );
 
+add_filter( 'genesis_footer_creds_text', 'lad_footer_creds_text' );
+function lad_footer_creds() {
+}
+
+add_filter( 'genesis_footer_output', 'lad_footer_output', 10, 3 );
+function lad_footer_output() {
+	echo '<a href="#" class="top">Return to top of page</a>';
+	echo '<p>';
+	echo 'Copyright &copy; ';
+	echo date('Y');
+	echo ' &middot; <a href="http://www.lakesareadesign.com/" title="Lakes Area Design">Lakes Area Design</a>';
+	echo '</p>';
+}
+
 //* Add support for after entry widget
 add_theme_support( 'genesis-after-entry-widget-area' );
 
