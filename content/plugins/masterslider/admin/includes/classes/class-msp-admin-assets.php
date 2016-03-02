@@ -319,7 +319,7 @@ class MSP_Admin_Assets {
             trigger_error(
                 sprintf( 'A third party plugin or a custom script has intruptted the original path to upload directory "%s", please contact your administarator.', $uploads['baseurl'] )
             );
-            $uploads['baseurl'] = trailingslashit( $siteurl ) . trim( get_option( 'upload_path' ) );
+            $uploads['baseurl'] = trailingslashit( $siteurl ) . trim( $uploads['baseurl'] );
         }
 
 		// define admin ajax address and master slider page

@@ -207,9 +207,10 @@ class MSP_List_Table extends Axiom_List_Table {
 		$order 			= 'DESC';
 		$total_items 	= $this->get_total_count();
 
+        // skip if the current page is out of bound
+        $current_page = min( $current_page, ceil( $total_items / $perpage ) );
 
-		$this->items 	= $this->get_records( $perpage, $current_page, $orderby, $order );
-		// echo '<pre>'; print_r( $this->items ); echo '</pre>';
+        $this->items 	= $this->get_records( $perpage, $current_page, $orderby, $order );
 
 		// tell the class the total number of items and how many items to show on a page
 		$this->set_pagination_args( array(

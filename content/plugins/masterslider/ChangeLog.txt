@@ -1,4 +1,13 @@
 
+Version 2.28.1 / (02.03.2016)
+============================
+- [Fix]: An issue with generating alias after importing slider fixed
+- [Improvement]: Improvement in sliders list page in admin panel
+- [Improvement]: Now images are fully compatible with SSL
+- [Improvement]: Max slide duration limit changed to 600 sec
+- [Fix]: Addressed some bugs while importing sliders
+- [Fix]: A fix for those websites with custom upload path added
+
 Version 2.26.0 / (06.01.2016)
 ============================
 - [Fix]: An issue with the third party upload path checker in ssl fixed

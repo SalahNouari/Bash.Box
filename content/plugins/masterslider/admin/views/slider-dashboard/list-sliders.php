@@ -71,8 +71,8 @@
 
 	    		foreach ( $section_fields as $starter_data ) {
 
-	    			$selected_attr  = ( 'true' == $starter_data['selected'] ) ? 'selected' : '';
-	    			$is_unavailable = isset( $starter_data['disable'] ) && 'true' == $starter_data['disable'] ? ' is-unavailable' : '';
+	    			$selected_attr  = isset( $starter_data['selected'] ) && 'true' == $starter_data['selected'] ? 'selected'        : '';
+	    			$is_unavailable = isset( $starter_data['disable'] )  && 'true' == $starter_data['disable']  ? ' is-unavailable' : '';
 	    			$disabled_msg   = isset( $starter_data['disabled_msg'] ) && ! empty( $starter_data['disabled_msg'] ) ? $starter_data['disabled_msg'] : '';
 
 	    			?>

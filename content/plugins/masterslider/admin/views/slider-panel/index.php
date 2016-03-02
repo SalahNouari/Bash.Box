@@ -924,7 +924,7 @@
     <div class="msp-metabox-row">
         <label><?php _e('New layer :', MSWP_TEXT_DOMAIN); ?> </label> {{view MSPanel.AddLayer}}
         <span class="msp-form-space"></span>
-        <label><?php _e('Slide duration :', MSWP_TEXT_DOMAIN); ?> </label> {{number-input class="msp-number-input" min=0 max=300 step="0.1" value=slide.duration}} s
+        <label><?php _e('Slide duration :', MSWP_TEXT_DOMAIN); ?> </label> {{number-input class="msp-number-input" min=0 max=600 step="0.1" value=slide.duration}} s
         <span class="msp-form-space"></span>
         {{view MSPanel.PreviewSlideBtn}}
     </div>

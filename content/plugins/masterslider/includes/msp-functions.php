@@ -573,7 +573,7 @@ function msp_the_post_thumbnail( $post_id = null, $size = array( null, null ), $
 
             $image = msp_get_auto_post_thumbnail_src( $post_id, $image_from, $size, $crop, $quality );
 
-            return $image_src ? '<img src="'.$image[0].'" alt="'.$post->post_title.'" />' : '';
+            return isset( $image[0] ) && ! empty( $image[0] ) ? '<img src="'.$image[0].'" alt="'.$post->post_title.'" />' : '';
         }
 
     }
