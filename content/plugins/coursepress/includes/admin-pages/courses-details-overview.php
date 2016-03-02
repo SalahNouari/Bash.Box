@@ -590,7 +590,6 @@ $offer_paid = apply_filters( 'coursepress_offer_paid_courses', true );
 
 																							<label for="unit_<?php echo $unit_id; ?>">
 																								<div class="tree-unit-left"><?php echo( $unit_post->post_status != 'publish' ? __( '[draft] ', 'cp' ) : '' ); ?><?php echo $unit_post->post_title; ?></div>
-
 																								<div class="tree-unit-right">
 																									<input type='checkbox' class="module_show" id='show-<?php echo $unit_id; ?>' data-id="<?php echo esc_attr( $unit_id ); ?>" name='meta_show_unit[<?php echo $unit_id; ?>]' <?php
 																									if ( isset( $show_unit[ $unit_id ] ) ) {

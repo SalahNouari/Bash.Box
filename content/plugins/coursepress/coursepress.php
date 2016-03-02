@@ -6,13 +6,13 @@ Description: CoursePress Pro turns WordPress into a powerful online learning pla
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 Developers: Marko Miljus ( https://twitter.com/markomiljus ), Rheinard Korf ( https://twitter.com/rheinardkorf )
-Version: 1.2.6.7
+Version: 1.3
 TextDomain: cp
 Domain Path: /languages/
 WDP ID: 913071
 License: GNU General Public License ( Version 2 - GPLv2 )
 
-Copyright 2015 Incsub ( http://incsub.com )
+Copyright 2016 Incsub ( http://incsub.com )
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License ( Version 2 - GPLv2 ) as published by
@@ -67,7 +67,7 @@ if ( ! class_exists( 'CoursePress' ) ) {
 		 * @since 1.0.0
 		 * @var string
 		 */
-		public $version = '1.2.6.7';
+		public $version = '1.3';
 
 		/**
 		 * Plugin friendly name.
@@ -164,12 +164,13 @@ if ( ! class_exists( 'CoursePress' ) ) {
 
 
 
-			// Initiate sessions
-			if ( ! session_id() ) {
-				session_start();
-			}
-			$_SESSION['coursepress_student']         = array();
-			$_SESSION['coursepress_unit_completion'] = array();
+			/**
+			 * CoursePress Sessions
+			 * Better handling of session data using WP_Session_Tokens introduced in 4.0.
+			 */
+			require_once( $this->plugin_dir . 'includes/classes/class.session.php' );
+			CoursePress_Session::session_start();
+
 
 			// Register Globals
 			$GLOBALS['plugin_dir']              = $this->plugin_dir;
@@ -187,12 +188,6 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			 * CoursePress Utilities
 			 */
 			require_once( $this->plugin_dir . 'includes/classes/class.coursepress-utility.php' );
-
-			/**
-			 * CoursePress Sessions
-			 * Better handling of session data using WP_Session_Tokens introduced in 4.0.
-			 */
-			require_once( $this->plugin_dir . 'includes/classes/class.session.php' );
 
 			/**
 			 * CoursePress custom non-persistent cache.
@@ -1303,6 +1298,12 @@ if ( ! class_exists( 'CoursePress' ) ) {
 			// Get post types
 			if ( $query->is_search ) {
 				if ( ! is_admin() ) {
+
+					// Bail if it is a bbpress topic-reply query.
+					if ( function_exists('bbp_get_topic_post_type') &&
+						( array( bbp_get_topic_post_type(), bbp_get_reply_post_type() ) === $query->get( 'post_type' ) ) ) {
+						return $query;
+					}
 
 					$post_types = get_post_types( array( 'public' => true ), 'objects' );
 
@@ -4586,7 +4587,8 @@ if ( ! class_exists( 'CoursePress' ) ) {
 									unset( $invites[ $key ] );
 									update_post_meta( $course_id, 'instructor_invites', $invites );
 
-									$course_link = '<a href ="' . admin_url( 'admin.php?page = course_details&course_id =' . $course_id ) . '">' . get_the_title( $course_id ) . '</a>';
+									// Don't add space between =
+									$course_link = '<a href ="' . admin_url( 'admin.php?page=course_details&course_id=' . $course_id ) . '">' . get_the_title( $course_id ) . '</a>';
 
 									$title   = __( '<h3>Invitation activated.</h3>', 'cp' );
 									$content = do_shortcode( sprintf( __( '<p>Congratulations. You are now an instructor in the following course:</p>
@@ -4998,6 +5000,11 @@ if ( ! class_exists( 'CoursePress' ) ) {
 
 		function admin_header_actions() {
 			global $pagenow;
+
+			/** Bail when in category page. **/
+			if( $pagenow == 'edit-tags.php' ) {
+				return;
+			}
 
 			if ( is_admin() && ! CoursePress_Capabilities::is_campus() ) {
 				if ( ( isset( $_GET['cp_admin_ref'] ) && $_GET['cp_admin_ref'] == 'cp_course_creation_page' ) || ( isset( $_POST['cp_admin_ref'] ) && $_POST['cp_admin_ref'] == 'cp_course_creation_page' ) ) {

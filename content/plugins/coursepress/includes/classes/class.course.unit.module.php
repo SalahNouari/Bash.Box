@@ -157,28 +157,51 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 			self::kill( self::TYPE_UNIT_MODULES, $unit_id );
 			self::kill( self::TYPE_UNIT_MODULES_PERF, get_post_field( 'post_parent', $unit_id ) );
 
-			if ( get_post_type( $id ) == 'module' ) {
-				wp_delete_post( $id, $force_delete ); //Whether to bypass trash and force deletion
-			}
-			//Delete unit module responses
+			try {
+				// Using transaction to make sure that the completion metadata updates consistently.
+				$wpdb->query( 'START TRANSACTION' );
 
-			$args = array(
-				'posts_per_page' => - 1,
-				'post_parent'    => $id,
-				'post_type'      => array( 'module_response' ),
-				'post_status'    => 'any',
-			);
-
-			$units_module_responses = get_posts( $args );
-
-			foreach ( $units_module_responses as $units_module_response ) {
-				if ( get_post_type( $units_module_response->ID ) == 'module_response' ) {
-					wp_delete_post( $units_module_response->ID, true );
+				if ( get_post_type( $id ) == 'module' ) {
+					wp_delete_post( $id, $force_delete ); //Whether to bypass trash and force deletion
 				}
-			}
+				//Delete unit module responses
 
-			// Remove input module meta
-			Unit::delete_input_module_meta( $unit_id, $id );
+				$args = array(
+					'posts_per_page' => - 1,
+					'post_parent'    => $id,
+					'post_type'      => array( 'module_response' ),
+					'post_status'    => 'any',
+				);
+
+				$units_module_responses = get_posts( $args );
+
+				foreach ( $units_module_responses as $units_module_response ) {
+					if ( get_post_type( $units_module_response->ID ) == 'module_response' ) {
+						wp_delete_post( $units_module_response->ID, true );
+					}
+				}
+
+				// Remove input module meta
+				Unit::delete_input_module_meta( $unit_id, $id );
+
+				// Reset student's session data.
+				$unit_object = new Unit( $unit_id );
+				$unit = $unit_object->get_unit();
+				$course_id = $unit->post_parent;
+				$students = Course::get_course_students_ids( $course_id );
+
+				foreach( $students as $idx => $student_id){
+					$student_session = WP_Session_Tokens::get_instance( $student_id );
+					$student_session->destroy('coursepress_'.$student_id);
+				}
+
+				$wpdb->query( 'COMMIT' );
+
+			} catch ( Exception $e ) {
+				// There was an error adding order data!
+				$wpdb->query( 'ROLLBACK' );
+				return new WP_Error( 'checkout-error', $e->getMessage() );
+			}
 
 			/**
 			 * Perform actions after a Unit Module is deleted.
@@ -234,7 +257,7 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 		}
 
 		function update_module_response( $data ) {
-			global $user_id, $wpdb, $coursepress;
+			global $user_id;
 
 			$user_id   = get_current_user_id();
 			$unit_id   = get_post_ancestors( $data->response_id );
@@ -415,13 +438,12 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 		}
 
 		function get_modules_admin_forms( $unit_id = 0 ) {
-			global $coursepress_modules;
-
 			$modules = self::get_modules( $unit_id );
 
 			foreach ( $modules as $mod ) {
 				$class_name = $mod->module_type;
 				if ( class_exists( $class_name ) ) {
+
 					$module = new $class_name();
 					$module->admin_main( $mod );
 				}
@@ -827,11 +849,6 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 						continue;
 					}
 
-					if ( get_post_meta( $ungraded_response->post_parent, 'gradable_answer', true ) != 'yes' ) {
-						unset( $ungraded_responses[ $key ] );
-						continue;
-					}
-
 					if ( get_user_option( 'role', $ungraded_response->post_author ) !== 'student' ) {
 						unset( $ungraded_responses[ $key ] );
 						continue;
@@ -890,11 +907,6 @@ if ( ! class_exists( 'Unit_Module' ) ) {
 
 				//Count only ungraded responses from STUDENTS!
 				foreach ( $ungraded_responses as $key => $ungraded_response ) {
-
-					if ( get_post_meta( $ungraded_response->post_parent, 'gradable_answer', true ) != 'yes' ) {
-						unset( $ungraded_responses[ $key ] );
-						continue;
-					}
 
 					if ( get_user_option( 'role', $ungraded_response->post_author ) !== 'student' ) {
 						unset( $ungraded_responses[ $key ] );

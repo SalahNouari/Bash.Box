@@ -2469,6 +2469,9 @@ if ( ! class_exists( 'CoursePress_Shortcodes' ) ) {
 			if ( ! empty( $course_id ) ) {
 				$course_id = (int) $course_id;
 			}
+			else {
+				$course_id = do_shortcode( '[get_parent_course_id]' );
+			}
 			$label           = sanitize_text_field( $label );
 			$label_plural    = sanitize_text_field( $label_plural );
 			$label_delimeter = sanitize_text_field( $label_delimeter );
@@ -2817,7 +2820,7 @@ if ( ! class_exists( 'CoursePress_Shortcodes' ) ) {
 				$dropdown .= '<option value="">' . esc_html( $general_title ) . '</option>';
 			}
 			foreach ( $units as $unit ) {
-				$dropdown .= '<option value="' . esc_attr( $unit['post']->ID ) . '">' . esc_html( $unit_post->post_title ) . '</option>';
+				$dropdown .= '<option value="' . esc_attr( $unit['post']->ID ) . '">' . esc_html( $unit['post']->post_title ) . '</option>';
 			}
 			$dropdown .= '</select></div>';
 
@@ -3964,7 +3967,7 @@ if ( ! class_exists( 'CoursePress_Shortcodes' ) ) {
 			$login_tag          = sanitize_html_class( $login_tag );
 			$login_title        = sanitize_text_field( $login_title );
 			$signup_url         = esc_url_raw( $signup_url );
-			$redirect_url       = esc_url_raw( $redirect_url );
+			$redirect_url       = esc_url_raw( urldecode( $redirect_url ) );
 
 
 			$page = in_array( $page, $allowed ) ? $page : 'signup';
@@ -4338,7 +4341,7 @@ if ( ! class_exists( 'CoursePress_Shortcodes' ) ) {
 			$input_modules_count            = count( $criteria['all_input_ids'] );
 			$assessable_input_modules_count = count( $criteria['gradable_modules'] );
 			$mandatory_input_elements       = count( $criteria['mandatory_modules'] );
-			$mandatory_responses            = Student_Completion::get_mandatory_steps_completed( get_current_user_id(), $course_id, $unit_id );
+			$mandatory_responses            = Student_Completion::get_mandatory_modules_answered( get_current_user_id(), $course_id, $unit_id );
 			//			$all_responses					 = do_shortcode( '[course_unit_details field="student_module_responses"]' );
 			// $is_unit_available				 = do_shortcode( '[course_unit_details field="is_unit_available"]' );
 			//			$input_modules_count			 = do_shortcode( '[course_unit_details field="input_modules_count"]' );
@@ -4355,7 +4358,7 @@ if ( ! class_exists( 'CoursePress_Shortcodes' ) ) {
 				<span class="unit-archive-single-module-status"><?php
 					if ( $unit_available ) {
 						if ( $mandatory_input_elements > 0 ) {
-							echo sprintf( $message, $mandatory_responses, $mandatory_input_elements );
+							echo sprintf( $message, count( $mandatory_responses ), $mandatory_input_elements );
 						}
 					} else {
 						if ( isset( $unit->status ) && $unit->status['mandatory_required']['enabled'] && ! $unit->status['mandatory_required']['result'] && ! $unit->status['completion_required']['enabled'] ) {
@@ -4364,7 +4367,7 @@ if ( ! class_exists( 'CoursePress_Shortcodes' ) ) {
 							esc_html_e( 'Previous unit must be completed successfully.', 'cp' );
 						}
 						if ( isset( $unit->status ) && ! $unit->status['date_restriction']['result'] ) {
-							echo __( 'Available', 'cp' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( do_shortcode( '[course_unit_details field="unit_availability"]' ) ) );
+							echo __( 'Available', 'cp' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( do_shortcode( '[course_unit_details field="unit_availability" unit_id="' . $unit_id . '"]' ) ) );
 						}
 					}
 					?></span>

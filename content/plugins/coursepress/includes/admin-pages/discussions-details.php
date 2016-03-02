@@ -115,6 +115,7 @@ if ( isset( $_GET['discussion_id'] ) ) {
 										);
 
 										$courses = get_posts( $args );
+										$available_course_options = 0;
 
 										foreach ( $courses as $course ) {
 
@@ -135,7 +136,10 @@ if ( isset( $_GET['discussion_id'] ) ) {
 													$available_course_options ++;
 												}
 											} else {//check for update capabilities
-												if ( current_user_can( 'manage_options' ) || current_user_can( 'coursepress_update_discussion_cap' ) || ( current_user_can( 'coursepress_update_my_discussion_cap' ) && $notification_details->post_author == get_current_user_ID() ) /* || (current_user_can('coursepress_create_my_assigned_notification_cap') && $my_course) */ ) {
+												if ( current_user_can( 'manage_options' ) || current_user_can( 'coursepress_update_discussion_cap' )
+													|| ( current_user_can( 'coursepress_update_my_discussion_cap' ) && $discussion_details->post_author == get_current_user_ID()
+														&& ( $course->post_author == get_current_user_ID() || $my_course || current_user_can( 'coursepress_create_discussion_cap' ) ) ) // Make sure that instructor can't move discussions to courses were he has no permissions to create discussions.
+												) {
 													?>
 													<option value="<?php echo $course->ID; ?>" <?php selected( $meta_course_id, $course->ID ); ?>><?php echo $course->post_title; ?></option>
 													<?php
@@ -151,7 +155,7 @@ if ( isset( $_GET['discussion_id'] ) ) {
 
 								<div class="buttons">
 									<?php
-									if ( current_user_can( 'manage_options' ) || ( $discussion_id == 0 && current_user_can( 'coursepress_create_discussion_cap' ) ) || ( $discussion_id != 0 && current_user_can( 'coursepress_update_discussion_cap' ) ) || ( $discussion_id != 0 && current_user_can( 'coursepress_update_my_discussion_cap' ) && $discussion_details->post_author == get_current_user_id() ) ) {//do not show anything
+									if ( $available_course_options > 0 ) {
 										?>
 										<input type="submit" value="<?php ( $discussion_id == 0 ? _e( 'Create', 'cp' ) : _e( 'Update', 'cp' ) ); ?>" class="button-primary"/>
 									<?php

@@ -94,15 +94,17 @@ if ( ! class_exists( 'CoursePress_MarketPress3_Integration' ) ) {
 					add_filter( 'mp_order/notification_subject', array(
 						__CLASS__,
 						'cp_mp_order_notification_subject',
-						10,
-						2
-					) );
+					), 10, 2 );
+
 					add_filter( 'mp_order/notification_body', array(
 						__CLASS__,
-						'cp_mp_order_notification_body',
-						10,
-						2
-					) );
+						'cp_mp_order_notification_body'
+					), 10, 2 );
+
+					add_filter( 'mp_order/print_download_link', array(
+						__CLASS__,
+						'cp_mp_print_download_link'
+					), 10, 3 );
 
 					add_filter( 'mp_meta/product', array( __CLASS__, 'verify_meta' ), 10, 3 );
 
@@ -483,7 +485,8 @@ if ( ! class_exists( 'CoursePress_MarketPress3_Integration' ) ) {
 			$course      = new Course( (int) $course_id );
 			$paid_course = ( CoursePress_MarketPress_Integration::is_active() || cp_use_woo() ) ? $course->details->paid_course : false;
 
-			$auto_sku    = $course->details->auto_sku;
+			// Add condition to remove php warnings
+			$auto_sku    = isset( $course->details->auto_sku ) ? $course->details->auto_sku : '';
 			$mp_settings = get_option( 'mp_settings' );
 			$gateways    = 0;
 
@@ -865,6 +868,12 @@ if ( ! class_exists( 'CoursePress_MarketPress3_Integration' ) ) {
 			} else {
 				return $content;
 			}
+		}
+
+		static function cp_mp_print_download_link( $value, $product, $product_id){
+			$print_link = Course::get_course_id_by_marketpress_product_id( $product_id) ? false : true;
+
+			return $print_link;
 		}
 
 		public static function verify_meta( $value, $post_id, $name ) {

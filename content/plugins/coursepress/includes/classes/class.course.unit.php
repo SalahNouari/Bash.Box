@@ -58,10 +58,6 @@ if ( ! class_exists( 'Unit' ) ) {
 					$unit->post_title = __( 'Untitled', 'cp' );
 				}
 
-				if ( $unit->post_status == 'private' || $unit->post_status == 'draft' ) {
-					$unit->post_status = 'unpublished';
-				}
-
 				// Set parent ID
 				$course_id       = get_post_meta( $unit->ID, 'course_id', true );
 				$unit->course_id = $course_id;
@@ -314,10 +310,6 @@ if ( ! class_exists( 'Unit' ) ) {
 
 		function delete_all_unit_auto_drafts( $course_id = false ) {
 			global $wpdb;
-
-			if ( ! $unit_id ) {
-				$unit_id = $this->course_id;
-			}
 
 			$course_id = (int) $course_id;
 
