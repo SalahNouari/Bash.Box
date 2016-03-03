@@ -101,6 +101,16 @@
                 });
             }
 
+            // If a hash is present in URL, let's open the rule extra content
+            var hash = window.location.hash;
+            if ( hash ) {
+                var row = $( hash );
+                if ( row.length ) {
+                    row.find( '.trigger-additional-content').trigger( 'click' );
+                }
+
+            }
+
             return this;
 
         },
@@ -654,7 +664,21 @@
                             value: value
                         }
                     }
+                })
+                .done( function() {
+                    var notice = $('#wphb-notice-minification-settings-updated');
+                    notice.slideDown();
+                    setTimeout( function() {
+                        notice.slideUp();
+                    }, 5000 );
                 });
+            });
+
+            $('.wphb-performance-report-item').click( function( e ) {
+                var url = $(this).data( 'performance-url' );
+                if ( url ) {
+                    location.href = url;
+                }
             });
             return this;
         }

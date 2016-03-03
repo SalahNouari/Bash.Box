@@ -101,8 +101,14 @@
 	***/
 	function um_control_admin_bar( $content ){
 		
-		if ( um_user('can_not_see_adminbar') )
-			return false;
+		if( is_user_logged_in() ){
+			
+			if ( um_user('can_not_see_adminbar') ){
+				return false;
+			}
+
+			return true;
+		}
 
 		return $content;
 	}

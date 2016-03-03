@@ -26,7 +26,8 @@ class WP_Hummingbird_Module_Smush extends WP_Hummingbird_Module {
 		$url = '';
 		if ( wphb_is_member() ) {
 			// Return the pro plugin URL
-			$url = WPMUDEV_Dashboard::$site->auto_install_url( 912164 );
+			$url = WPMUDEV_Dashboard::$ui->page_urls->plugins_url;
+			$url = $url . '#pid=912164';
 		}
 		else {
 			// Return the free URL

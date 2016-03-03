@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Hummingbird 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-hummingbird\n"
-"POT-Creation-Date: 2016-02-23 16:04:33+00:00\n"
+"POT-Creation-Date: 2016-03-03 15:37:29+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,9 @@ msgstr ""
 
 #: admin/abstract-class-admin-page.php:55
 #: admin/views/dashboard-minification-error-meta-box.php:4
-msgid "Unable to create cache directory. Minification will not work, you need to create the folder manually %s"
+msgid ""
+"Unable to create cache directory. Minification will not work, you need to "
+"create the folder manually %s"
 msgstr ""
 
 #: admin/abstract-class-admin-page.php:206
@@ -41,22 +43,22 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: admin/class-admin.php:35
+#: admin/class-admin.php:40
 msgid "Go to WP Hummingbird Dashboard"
 msgstr ""
 
-#: admin/class-admin.php:35 admin/class-admin.php:61 admin/class-admin.php:84
+#: admin/class-admin.php:40 admin/class-admin.php:66 admin/class-admin.php:89
 msgid "Dashboard"
 msgstr ""
 
-#: admin/class-admin.php:60 admin/class-admin.php:75 admin/class-admin.php:83
+#: admin/class-admin.php:65 admin/class-admin.php:80 admin/class-admin.php:88
 #: admin/views/dashboard-performance-module-resume-meta-box.php:7
 #: admin/views/dashboard-welcome-meta-box.php:4
 #: admin/views/membership-modal.php:21
 msgid "Hummingbird"
 msgstr ""
 
-#: admin/class-admin.php:62 admin/class-admin.php:85
+#: admin/class-admin.php:67 admin/class-admin.php:90
 #: admin/class-dashboard-page.php:88 admin/class-dashboard-page.php:93
 #: admin/class-dashboard-page.php:94 admin/class-dashboard-page.php:97
 #: admin/class-dashboard-page.php:100 admin/class-dashboard-page.php:311
@@ -65,7 +67,7 @@ msgstr ""
 msgid "Performance Report"
 msgstr ""
 
-#: admin/class-admin.php:63 admin/class-admin.php:75
+#: admin/class-admin.php:68 admin/class-admin.php:80
 #: admin/class-dashboard-page.php:109 admin/class-dashboard-page.php:119
 #: admin/class-dashboard-page.php:122 admin/class-dashboard-page.php:248
 #: admin/views/dashboard-minification-disabled-meta-box.php:5
@@ -74,21 +76,21 @@ msgstr ""
 msgid "Minification"
 msgstr ""
 
-#: admin/class-admin.php:64 admin/class-admin.php:86
+#: admin/class-admin.php:69 admin/class-admin.php:91
 #: admin/class-dashboard-page.php:129 admin/class-dashboard-page.php:132
 #: admin/class-dashboard-page.php:192
 #: admin/views/dashboard-caching-disabled-meta-box.php:5
 msgid "Browser Caching"
 msgstr ""
 
-#: admin/class-admin.php:65 admin/class-admin.php:87
+#: admin/class-admin.php:70 admin/class-admin.php:92
 #: admin/class-dashboard-page.php:138 admin/class-dashboard-page.php:141
 #: admin/class-dashboard-page.php:273
 #: admin/views/dashboard-gzip-disabled-meta-box.php:5
 msgid "GZIP Compression"
 msgstr ""
 
-#: admin/class-admin.php:66 admin/class-admin.php:88
+#: admin/class-admin.php:71 admin/class-admin.php:93
 #: admin/class-dashboard-page.php:148 admin/class-dashboard-page.php:150
 #: admin/class-dashboard-page.php:153 admin/class-dashboard-page.php:199
 #: admin/views/dashboard-uptime-disabled-meta-box.php:5
@@ -96,7 +98,7 @@ msgstr ""
 msgid "Uptime Monitoring"
 msgstr ""
 
-#: admin/class-admin.php:66 admin/class-admin.php:88
+#: admin/class-admin.php:71 admin/class-admin.php:93
 #: admin/class-uptime-page.php:17 admin/class-uptime-page.php:20
 #: admin/class-uptime-page.php:23 admin/class-uptime-page.php:172
 #: admin/views/dashboard-uptime-module-meta-box.php:5
@@ -111,11 +113,15 @@ msgid "Code snippet updated"
 msgstr ""
 
 #: admin/class-caching-page.php:14 admin/class-gzip-page.php:8
-msgid "Hummingbird could not update or write your .htaccess file. Please, make .htaccess writable or paste the code yourself."
+msgid ""
+"Hummingbird could not update or write your .htaccess file. Please, make ."
+"htaccess writable or paste the code yourself."
 msgstr ""
 
 #: admin/class-caching-page.php:18
-msgid "Apache <strong>.htaccess</strong> file updated. Please, wait while Hummingbird recheck expirations..."
+msgid ""
+"Apache <strong>.htaccess</strong> file updated. Please, wait while "
+"Hummingbird recheck expirations..."
 msgstr ""
 
 #: admin/class-caching-page.php:24
@@ -137,12 +143,14 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
-#: admin/class-caching-page.php:106 admin/class-caching-page.php:164
+#: admin/class-caching-page.php:106 admin/class-caching-page.php:165
 msgid "Enable Caching"
 msgstr ""
 
 #: admin/class-dashboard-page.php:25
-msgid "Having problems? Start fresh and go back to the defaults <strong>[Reset Settings]</strong>"
+msgid ""
+"Having problems? Start fresh and go back to the defaults <strong>[Reset "
+"Settings]</strong>"
 msgstr ""
 
 #: admin/class-dashboard-page.php:26
@@ -191,11 +199,14 @@ msgid "OTHER"
 msgstr ""
 
 #: admin/class-performance-page.php:20
-msgid "Your last performance test was on <strong>%s</strong> at <strong>%s</strong>"
+msgid ""
+"Your last performance test was on <strong>%s</strong> at <strong>%s</strong>"
 msgstr ""
 
 #: admin/class-performance-page.php:22
-msgid "Hummingbird is just catching her breath. <strong>Run again in %d minutes</strong>"
+msgid ""
+"Hummingbird is just catching her breath. <strong>Run again in %d minutes</"
+"strong>"
 msgstr ""
 
 #: admin/class-performance-page.php:26
@@ -230,7 +241,9 @@ msgstr ""
 
 #: admin/views/caching-enable-meta-box.php:7
 #: admin/views/gzip-enable-meta-box.php:5
-msgid "WP Hummingbird will try to write into your <strong>.htaccess</strong> file for you"
+msgid ""
+"WP Hummingbird will try to write into your <strong>.htaccess</strong> file "
+"for you"
 msgstr ""
 
 #: admin/views/caching-enable-meta-box.php:8
@@ -238,23 +251,34 @@ msgstr ""
 msgid "Want to do it manually?"
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:13
+#: admin/views/caching-enable-meta-box.php:10
+#: admin/views/caching-enable-meta-box.php:39
+#: admin/views/caching-enable-meta-box.php:65
+#: admin/views/caching-enable-meta-box.php:73
+msgid "Your browser caching is already enabled and working well"
+msgstr ""
+
+#: admin/views/caching-enable-meta-box.php:15
 #: admin/views/gzip-enable-meta-box.php:11
 msgid "For Apache servers:"
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:16
-msgid "Copy the generated code into your <strong>vhosts.conf</strong> or <strong>httpd.conf</strong> file."
+#: admin/views/caching-enable-meta-box.php:18
+msgid ""
+"Copy the generated code into your <strong>vhosts.conf</strong> or "
+"<strong>httpd.conf</strong> file."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:17
+#: admin/views/caching-enable-meta-box.php:19
 #: admin/views/caching-how-to-meta-box.php:4
 #: admin/views/gzip-code-snippet-meta-box.php:14
 #: admin/views/gzip-how-to-meta-box.php:4
-msgid "Look for your site in the file and find the line that starts with <Directory> - add the code above into that section and save the file."
+msgid ""
+"Look for your site in the file and find the line that starts with "
+"<Directory> - add the code above into that section and save the file."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:18
+#: admin/views/caching-enable-meta-box.php:20
 #: admin/views/caching-how-to-meta-box.php:5
 #: admin/views/gzip-code-snippet-meta-box.php:15
 #: admin/views/gzip-enable-meta-box.php:16
@@ -262,8 +286,8 @@ msgstr ""
 msgid "Reload Apache."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:21
-#: admin/views/caching-enable-meta-box.php:45
+#: admin/views/caching-enable-meta-box.php:23
+#: admin/views/caching-enable-meta-box.php:50
 #: admin/views/caching-how-to-meta-box.php:8
 #: admin/views/caching-how-to-meta-box.php:19
 #: admin/views/gzip-code-snippet-meta-box.php:18
@@ -275,8 +299,8 @@ msgstr ""
 msgid "Still having trouble? "
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:21
-#: admin/views/caching-enable-meta-box.php:45
+#: admin/views/caching-enable-meta-box.php:23
+#: admin/views/caching-enable-meta-box.php:50
 #: admin/views/caching-how-to-meta-box.php:8
 #: admin/views/caching-how-to-meta-box.php:19
 #: admin/views/gzip-code-snippet-meta-box.php:18
@@ -288,27 +312,30 @@ msgstr ""
 msgid "Open a support ticket."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:36
+#: admin/views/caching-enable-meta-box.php:41
 #: admin/views/gzip-enable-meta-box.php:34
 msgid "For NGINX servers:"
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:39
+#: admin/views/caching-enable-meta-box.php:44
 #: admin/views/caching-how-to-meta-box.php:13
 #: admin/views/gzip-code-snippet-meta-box.php:23
 #: admin/views/gzip-enable-meta-box.php:37
 #: admin/views/gzip-how-to-meta-box.php:13
-msgid "Copy the generated code into your <strong>nginx.conf</strong> usually located at <strong>/etc/nginx/nginx.conf</strong> or <strong>/usr/local/nginx/conf/nginx.conf</strong>"
+msgid ""
+"Copy the generated code into your <strong>nginx.conf</strong> usually "
+"located at <strong>/etc/nginx/nginx.conf</strong> or <strong>/usr/local/"
+"nginx/conf/nginx.conf</strong>"
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:40
+#: admin/views/caching-enable-meta-box.php:45
 #: admin/views/caching-how-to-meta-box.php:14
 #: admin/views/gzip-code-snippet-meta-box.php:24
 #: admin/views/gzip-how-to-meta-box.php:14
 msgid "Add the code above to the <strong>http</strong> section in the file."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:41
+#: admin/views/caching-enable-meta-box.php:46
 #: admin/views/caching-how-to-meta-box.php:15
 #: admin/views/gzip-code-snippet-meta-box.php:25
 #: admin/views/gzip-enable-meta-box.php:39
@@ -316,20 +343,22 @@ msgstr ""
 msgid "Reload NGINX."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:44
+#: admin/views/caching-enable-meta-box.php:49
 #: admin/views/caching-how-to-meta-box.php:18
 #: admin/views/gzip-code-snippet-meta-box.php:28
 #: admin/views/gzip-enable-meta-box.php:42
 #: admin/views/gzip-how-to-meta-box.php:18
-msgid "If you do not have access to your NGINX config files you will need to contact your hosting provider to make these changes."
+msgid ""
+"If you do not have access to your NGINX config files you will need to "
+"contact your hosting provider to make these changes."
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:57
+#: admin/views/caching-enable-meta-box.php:67
 #: admin/views/gzip-enable-meta-box.php:55
 msgid "For IIS servers, <a href=\"%s\">visit Microsoft TechNet</a>"
 msgstr ""
 
-#: admin/views/caching-enable-meta-box.php:61
+#: admin/views/caching-enable-meta-box.php:75
 #: admin/views/gzip-enable-meta-box.php:59
 msgid "For IIS 7 servers, <a href=\"%s\">visit Microsoft TechNet</a>"
 msgstr ""
@@ -338,7 +367,9 @@ msgstr ""
 #: admin/views/gzip-code-snippet-meta-box.php:13
 #: admin/views/gzip-enable-meta-box.php:14
 #: admin/views/gzip-how-to-meta-box.php:3
-msgid "Copy the generated code into your <strong>.htaccess</strong>, <strong>vhosts.conf</strong> or <strong>httpd.conf</strong> file."
+msgid ""
+"Copy the generated code into your <strong>.htaccess</strong>, <strong>vhosts."
+"conf</strong> or <strong>httpd.conf</strong> file."
 msgstr ""
 
 #: admin/views/caching-how-to-meta-box.php:29
@@ -360,7 +391,9 @@ msgid "Browser Caching is not working properly:"
 msgstr ""
 
 #: admin/views/caching-summary-meta-box.php:7
-msgid "Your server may not have the \"expires\" module enabled (mod_expires for Apache, ngx_http_headers_module for NGINX)"
+msgid ""
+"Your server may not have the \"expires\" module enabled (mod_expires for "
+"Apache, ngx_http_headers_module for NGINX)"
 msgstr ""
 
 #: admin/views/caching-summary-meta-box.php:8
@@ -370,7 +403,9 @@ msgstr ""
 
 #: admin/views/caching-summary-meta-box.php:10
 #: admin/views/gzip-summary-meta-box.php:8
-msgid "If re-checking and restarting does not resolve, please check with your host or <a href=\"%s\" target=\"_blank\">open a support ticket with us</a>."
+msgid ""
+"If re-checking and restarting does not resolve, please check with your host "
+"or <a href=\"%s\" target=\"_blank\">open a support ticket with us</a>."
 msgstr ""
 
 #: admin/views/caching-summary-meta-box.php:17
@@ -424,7 +459,9 @@ msgstr ""
 
 #: admin/views/caching-summary-meta-box.php:48
 #: admin/views/dashboard-caching-module-meta-box.php:37
-msgid "The recommended value for this file type is at least %s. The longer the better!"
+msgid ""
+"The recommended value for this file type is at least %s. The longer the "
+"better!"
 msgstr ""
 
 #: admin/views/caching-welcome-meta-box.php:5 core/class-core.php:45
@@ -436,11 +473,18 @@ msgid "No cache? That's like no recycling, %s"
 msgstr ""
 
 #: admin/views/caching-welcome-meta-box.php:10
-msgid "Hummingbird has detected that you aren't currently caching your static resources. This means that repeat<br> visitors have to download everything every time they visit. Turn on caching to make sure they only<br> have to download stuff once - they'll love your for it!"
+msgid ""
+"Hummingbird has detected that you aren't currently caching your static "
+"resources. This means that repeat<br> visitors have to download everything "
+"every time they visit. Turn on caching to make sure they only<br> have to "
+"download stuff once - they'll love your for it!"
 msgstr ""
 
 #: admin/views/dashboard-caching-disabled-meta-box.php:8
-msgid "Caching stores temporary data on your visitor's browsers so that they don't have to download assets twice if they don't have to. We give you give full control over the cache periods of each file type."
+msgid ""
+"Caching stores temporary data on your visitor's browsers so that they don't "
+"have to download assets twice if they don't have to. We give you give full "
+"control over the cache periods of each file type."
 msgstr ""
 
 #: admin/views/dashboard-caching-disabled-meta-box.php:9
@@ -457,7 +501,10 @@ msgstr ""
 
 #: admin/views/dashboard-gzip-disabled-meta-box.php:8
 #: admin/views/wphb-gzip-page.php:3
-msgid "Gzip compresses your HTML, JavaScript, and Style Sheets before sending them over to the browser. This drastically reduces transfer time since the files are much smaller."
+msgid ""
+"Gzip compresses your HTML, JavaScript, and Style Sheets before sending them "
+"over to the browser. This drastically reduces transfer time since the files "
+"are much smaller."
 msgstr ""
 
 #: admin/views/dashboard-gzip-disabled-meta-box.php:9
@@ -485,7 +532,11 @@ msgid "Gzip compression is %s for %s"
 msgstr ""
 
 #: admin/views/dashboard-message-active-meta-box.php:1
-msgid "We've tested your website performance and have suggested improvements to increase your page speed. Have a look below and get tweaking! In addition, you can enable our Uptime monitoring service to track your response times and be notified when your website goes down."
+msgid ""
+"We've tested your website performance and have suggested improvements to "
+"increase your page speed. Have a look below and get tweaking! In addition, "
+"you can enable our Uptime monitoring service to track your response times "
+"and be notified when your website goes down."
 msgstr ""
 
 #: admin/views/dashboard-minification-checking-files-meta-box.php:6
@@ -495,7 +546,9 @@ msgstr ""
 #: admin/views/dashboard-minification-checking-files-meta-box.php:7
 #: admin/views/dashboard-performance-running-test-meta-box.php:7
 #: admin/views/performance-running-test-meta-box.php:7
-msgid "This test is running in the background, you can check back anytime to see progress"
+msgid ""
+"This test is running in the background, you can check back anytime to see "
+"progress"
 msgstr ""
 
 #: admin/views/dashboard-minification-checking-files-meta-box.php:10
@@ -507,11 +560,17 @@ msgstr ""
 
 #: admin/views/dashboard-minification-checking-files-meta-box.php:14
 #: admin/views/minification-enqueued-files-empty-meta-box.php:33
-msgid "Check Files is running in the background, you can check back anytime to see progress..."
+msgid ""
+"Check Files is running in the background, you can check back anytime to see "
+"progress..."
 msgstr ""
 
 #: admin/views/dashboard-minification-disabled-meta-box.php:8
-msgid "Minifying, combining, and positioning JavaScript and CSS files can have a huge impact on how long it takes your website to load for visitors. We give you full control to optimise all your files, including those from plugins and themes."
+msgid ""
+"Minifying, combining, and positioning JavaScript and CSS files can have a "
+"huge impact on how long it takes your website to load for visitors. We give "
+"you full control to optimise all your files, including those from plugins "
+"and themes."
 msgstr ""
 
 #: admin/views/dashboard-minification-disabled-meta-box.php:9
@@ -553,23 +612,33 @@ msgid "Stylesheets"
 msgstr ""
 
 #: admin/views/dashboard-minification-network-module-meta-box.php:8
-msgid "Minification can be a bit daunting to configure for beginners, and has the potential to break the frontend of a site. You can choose here who can configure Minification options on subsites in your Multisite install."
+msgid ""
+"Minification can be a bit daunting to configure for beginners, and has the "
+"potential to break the frontend of a site. You can choose here who can "
+"configure Minification options on subsites in your Multisite install."
 msgstr ""
 
 #: admin/views/dashboard-minification-network-module-meta-box.php:11
+msgid "Minification settings updated"
+msgstr ""
+
+#: admin/views/dashboard-minification-network-module-meta-box.php:16
 msgid "Deactivate completely"
 msgstr ""
 
-#: admin/views/dashboard-minification-network-module-meta-box.php:12
+#: admin/views/dashboard-minification-network-module-meta-box.php:17
 msgid "Blog Admins can minify"
 msgstr ""
 
-#: admin/views/dashboard-minification-network-module-meta-box.php:13
+#: admin/views/dashboard-minification-network-module-meta-box.php:18
 msgid "Only Super Admins can minify"
 msgstr ""
 
 #: admin/views/dashboard-performance-disabled-meta-box.php:8
-msgid "Hummingbird will scan your website and detect what improvements you can make. We’ll give you a score out of 100 for each item, with custom recommendations on how to improve!"
+msgid ""
+"Hummingbird will scan your website and detect what improvements you can "
+"make. We’ll give you a score out of 100 for each item, with custom "
+"recommendations on how to improve!"
 msgstr ""
 
 #: admin/views/dashboard-performance-disabled-meta-box.php:9
@@ -639,7 +708,11 @@ msgid "Improvement"
 msgstr ""
 
 #: admin/views/dashboard-performance-no-membership-meta-box.php:8
-msgid "Hummingbird can scan your website and detect what performance improvements you can make. We’ll give you a score out of 100 for each item, with everything benchmarked by Google PageSpeed!<br> This service requires an active WPMU DEV Membership, get one today!"
+msgid ""
+"Hummingbird can scan your website and detect what performance improvements "
+"you can make. We’ll give you a score out of 100 for each item, with "
+"everything benchmarked by Google PageSpeed!<br> This service requires an "
+"active WPMU DEV Membership, get one today!"
 msgstr ""
 
 #: admin/views/dashboard-performance-no-membership-meta-box.php:9
@@ -663,11 +736,17 @@ msgid "WP Smush"
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:9
-msgid "Make your site load fast and rank high in search with WP Smush Pro!<br> Install, set and forget for automatic lossless compression.<br> WP Smush Pro is a premium plugin that comes with a WPMU DEV Membership, get one today!"
+msgid ""
+"Make your site load fast and rank high in search with WP Smush Pro!<br> "
+"Install, set and forget for automatic lossless compression.<br> WP Smush Pro "
+"is a premium plugin that comes with a WPMU DEV Membership, get one today!"
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:12
-msgid "Make your site load fast and rank high in search with WP Smush Pro - included in your membership!<br> Install, set and forget for automatic lossless compression."
+msgid ""
+"Make your site load fast and rank high in search with WP Smush Pro - "
+"included in your membership!<br> Install, set and forget for automatic "
+"lossless compression."
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:13
@@ -675,7 +754,9 @@ msgid "Install WP Smush Pro"
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:15
-msgid "WP Smush Pro is installed but not <strong>activated!<strong><br></strong>Activate and set up now</strong> to reduce page load time."
+msgid ""
+"WP Smush Pro is installed but not <strong>activated!<strong><br></"
+"strong>Activate and set up now</strong> to reduce page load time."
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:16
@@ -683,7 +764,9 @@ msgid "Activate WP Smush Pro"
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:19
-msgid "WP Smush Pro is installed but no images have been smushed yet.<br> Get in there any smush away!"
+msgid ""
+"WP Smush Pro is installed but no images have been smushed yet.<br> Get in "
+"there any smush away!"
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:20
@@ -691,11 +774,16 @@ msgid "Smart Smush"
 msgstr ""
 
 #: admin/views/dashboard-smush-meta-box.php:22
-msgid "WP Smush Pro is installed. So far you've saved <strong>%s</strong> of space.<br>That's a total savings of <strong>%s</strong>. Nice one!"
+msgid ""
+"WP Smush Pro is installed. So far you've saved <strong>%s</strong> of space."
+"<br>That's a total savings of <strong>%s</strong>. Nice one!"
 msgstr ""
 
 #: admin/views/dashboard-uptime-disabled-meta-box.php:9
-msgid "We can monitor your website's response time and let you know when you experience downtime. It’s included with your WPMU DEV Membership and all you have to do is flick a switch. What are you waiting for, %s?"
+msgid ""
+"We can monitor your website's response time and let you know when you "
+"experience downtime. It’s included with your WPMU DEV Membership and all you "
+"have to do is flick a switch. What are you waiting for, %s?"
 msgstr ""
 
 #: admin/views/dashboard-uptime-disabled-meta-box.php:10
@@ -718,15 +806,23 @@ msgid "Last Down"
 msgstr ""
 
 #: admin/views/dashboard-uptime-no-membership-meta-box.php:8
-msgid "Uptime can monitor your website and let you know when it goes down.<br> In addition, he’ll also let you know the response time of your server which directly impacts how fast visitors can access your site.<br> This service requires an active WPMU DEV Membership, get one today!"
+msgid ""
+"Uptime can monitor your website and let you know when it goes down.<br> In "
+"addition, he’ll also let you know the response time of your server which "
+"directly impacts how fast visitors can access your site.<br> This service "
+"requires an active WPMU DEV Membership, get one today!"
 msgstr ""
 
 #: admin/views/dashboard-welcome-meta-box.php:9
-msgid "Lets get you humming, %s!"
+msgid "Let's get you humming, %s!"
 msgstr ""
 
 #: admin/views/dashboard-welcome-meta-box.php:12
-msgid "Hummingbird is a performance and speed focused plugin that allows you to control minification and concatenation of files, browser caching and gzip compression. WPMU DEV members also get custom performance reports and uptime monitoring. Get started below!"
+msgid ""
+"Hummingbird is a performance and speed focused plugin that allows you to "
+"control minification and concatenation of files, browser caching and gzip "
+"compression. WPMU DEV members also get custom performance reports and uptime "
+"monitoring. Get started below!"
 msgstr ""
 
 #: admin/views/enqueued-files-meta-box-footer.php:1
@@ -752,7 +848,9 @@ msgid "Enable compression"
 msgstr ""
 
 #: admin/views/gzip-enable-meta-box.php:15
-msgid "Look for your site in the file and find the line that starts with <Directory> - add the code below into that section and save the file."
+msgid ""
+"Look for your site in the file and find the line that starts with "
+"<Directory> - add the code below into that section and save the file."
 msgstr ""
 
 #: admin/views/gzip-enable-meta-box.php:38
@@ -776,7 +874,9 @@ msgid "gzip is not working properly:"
 msgstr ""
 
 #: admin/views/gzip-summary-meta-box.php:5
-msgid "Your server may not have the \"deflate\" module enabled (mod_deflate for Apache, ngx_http_gzip_module for NGINX)"
+msgid ""
+"Your server may not have the \"deflate\" module enabled (mod_deflate for "
+"Apache, ngx_http_gzip_module for NGINX)"
 msgstr ""
 
 #: admin/views/membership-modal.php:1 admin/views/membership-modal.php:12
@@ -798,7 +898,9 @@ msgid "24/7 expert WordPress support"
 msgstr ""
 
 #: admin/views/membership-modal.php:18
-msgid "Already a member? You need to <a href=\"%s\">download</a> the WPMU DEV Dashboard plugin & <a href=\"%s\">login</a>!"
+msgid ""
+"Already a member? You need to <a href=\"%s\">download</a> the WPMU DEV "
+"Dashboard plugin & <a href=\"%s\">login</a>!"
 msgstr ""
 
 #: admin/views/minification-enqueued-files-empty-meta-box.php:7
@@ -806,11 +908,17 @@ msgid "Reduce your page load time!"
 msgstr ""
 
 #: admin/views/minification-enqueued-files-empty-meta-box.php:15
-msgid "Cache folder creation failed. You need to manually create the folder %s for minification to work"
+msgid ""
+"Cache folder creation failed. You need to manually create the folder %s for "
+"minification to work"
 msgstr ""
 
 #: admin/views/minification-enqueued-files-empty-meta-box.php:22
-msgid "Hummingbird's Minification engine can combine and minify the files your website outputs when a <br> user visits your website. The less requests your visitors have to make to your server, the <br> better. <strong>Let's check to see what we can optimise, %s!</strong>"
+msgid ""
+"Hummingbird's Minification engine can combine and minify the files your "
+"website outputs when a <br> user visits your website. The less requests your "
+"visitors have to make to your server, the <br> better. <strong>Let's check "
+"to see what we can optimise, %s!</strong>"
 msgstr ""
 
 #: admin/views/minification-enqueued-files-empty-meta-box.php:23
@@ -897,7 +1005,10 @@ msgid "Let's see what we can improve!"
 msgstr ""
 
 #: admin/views/performance-empty-summary-meta-box.php:10
-msgid "For us to know what to improve we need to scan your website. All testing is done in the background via our <br> secure servers. Once complete, we'll give you a list of things to improve, and how to do it."
+msgid ""
+"For us to know what to improve we need to scan your website. All testing is "
+"done in the background via our <br> secure servers. Once complete, we'll "
+"give you a list of things to improve, and how to do it."
 msgstr ""
 
 #: admin/views/performance-empty-summary-meta-box.php:13
@@ -906,11 +1017,16 @@ msgid "Scanning your website for performance improvements"
 msgstr ""
 
 #: admin/views/performance-empty-summary-meta-box.php:21
-msgid "This test is running in the background, you can check back anytime to see progress..."
+msgid ""
+"This test is running in the background, you can check back anytime to see "
+"progress..."
 msgstr ""
 
 #: admin/views/performance-summary-membership-meta-box.php:15
-msgid "%s, performance is only available to people with active WPMU DEV memberships. Get access to all of our premium plugins and themes, as well as 24/7 support today. It's easy to join and only takes a minute!"
+msgid ""
+"%s, performance is only available to people with active WPMU DEV "
+"memberships. Get access to all of our premium plugins and themes, as well as "
+"24/7 support today. It's easy to join and only takes a minute!"
 msgstr ""
 
 #: admin/views/performance-summary-meta-box.php:19
@@ -938,7 +1054,9 @@ msgid "Benchmarks"
 msgstr ""
 
 #: admin/views/performance-uptime-meta-box.php:8
-msgid "Know when you website goes down with our <br><strong>free Uptime monitoring</strong>!"
+msgid ""
+"Know when you website goes down with our <br><strong>free Uptime monitoring</"
+"strong>!"
 msgstr ""
 
 #: admin/views/performance-uptime-meta-box.php:9
@@ -950,7 +1068,9 @@ msgid "WP Academy"
 msgstr ""
 
 #: admin/views/performance-wpacademy-meta-box.php:8
-msgid "Learn how to speed up your website via our <br><strong>free WP Academy Course</strong>!"
+msgid ""
+"Learn how to speed up your website via our <br><strong>free WP Academy "
+"Course</strong>!"
 msgstr ""
 
 #: admin/views/performance-wpacademy-meta-box.php:9
@@ -962,7 +1082,10 @@ msgid "Monitor your website"
 msgstr ""
 
 #: admin/views/uptime-disabled-meta-box.php:10
-msgid "We can monitor your website's response time and let you know when you experience downtime. It's included with your WPMU DEV Membership and all <br> you have to do is flick a switch. What are you waiting for, %s?"
+msgid ""
+"We can monitor your website's response time and let you know when you "
+"experience downtime. It's included with your WPMU DEV Membership and all "
+"<br> you have to do is flick a switch. What are you waiting for, %s?"
 msgstr ""
 
 #: admin/views/uptime-disabled-meta-box.php:11
@@ -1002,7 +1125,9 @@ msgid "Average response time"
 msgstr ""
 
 #: admin/views/uptime-meta-box.php:142
-msgid "This graph shows how fast visitors can access your site, a lower response time is better!"
+msgid ""
+"This graph shows how fast visitors can access your site, a lower response "
+"time is better!"
 msgstr ""
 
 #: admin/views/uptime-meta-box.php:159
@@ -1018,15 +1143,24 @@ msgid "Load more"
 msgstr ""
 
 #: admin/views/uptime-summary-membership-meta-box.php:15
-msgid "%s, Uptime is only available to people with active WPMU DEV memberships. Get access to all of our premium plugins and themes, as well as 24/7 support today. It's easy to join and only takes a minute!"
+msgid ""
+"%s, Uptime is only available to people with active WPMU DEV memberships. Get "
+"access to all of our premium plugins and themes, as well as 24/7 support "
+"today. It's easy to join and only takes a minute!"
 msgstr ""
 
 #: admin/views/wphb-caching-page.php:3
-msgid "Caching stores temporary data on your visitors devices so that they don't have to download assets twice if they don't have to. This results in a much faster second time around page load speed. Enabling caching will set the recommended expiry times for your content."
+msgid ""
+"Caching stores temporary data on your visitors devices so that they don't "
+"have to download assets twice if they don't have to. This results in a much "
+"faster second time around page load speed. Enabling caching will set the "
+"recommended expiry times for your content."
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:3
-msgid "Minifying, combining and positioning files can have a huge impact on how long it takes your website to load for visitors."
+msgid ""
+"Minifying, combining and positioning files can have a huge impact on how "
+"long it takes your website to load for visitors."
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:16
@@ -1034,7 +1168,9 @@ msgid "Select files"
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:17
-msgid "Select what files you want to include or leave out. The less your visitors have to load, the better. Be sure to test your site when removing files."
+msgid ""
+"Select what files you want to include or leave out. The less your visitors "
+"have to load, the better. Be sure to test your site when removing files."
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:29
@@ -1042,7 +1178,10 @@ msgid "Minify and/or combine files"
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:30
-msgid "Choose whether you want to minify (reduce size) and/or combine into single files. The less requests to the server and the more you can minify, the better."
+msgid ""
+"Choose whether you want to minify (reduce size) and/or combine into single "
+"files. The less requests to the server and the more you can minify, the "
+"better."
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:42
@@ -1050,15 +1189,22 @@ msgid "Choose position"
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:43
-msgid "Choose whether to load the files in the header or footer of the page, or leave them in their original position. The more you load in the header of the page, the slower your website will load."
+msgid ""
+"Choose whether to load the files in the header or footer of the page, or "
+"leave them in their original position. The more you load in the header of "
+"the page, the slower your website will load."
 msgstr ""
 
 #: admin/views/wphb-minification-page.php:60
-msgid "%s, moving files between the header and footer of your page can break your website. We recommend tweaking and checking each file as you go and if a setting causes errors then revert the setting here."
+msgid ""
+"%s, moving files between the header and footer of your page can break your "
+"website. We recommend tweaking and checking each file as you go and if a "
+"setting causes errors then revert the setting here."
 msgstr ""
 
 #: core/api/class-wp-hummingbird-api.php:70
-msgid "Have you installed and logged in to the latest version of WPMUDEV Dashboard?"
+msgid ""
+"Have you installed and logged in to the latest version of WPMUDEV Dashboard?"
 msgstr ""
 
 #: core/class-core.php:48
@@ -1071,7 +1217,11 @@ msgid "You need to be a WPMU DEV Member"
 msgstr ""
 
 #: core/modules/class-module-performance.php:101
-msgid "The performance scan didn't return any results. This probably means you're on a local website (which we can't scan) or something went wrong trying to access WPMU DEV. Try again and if this error continues to appear please open a ticket with our support heroes"
+msgid ""
+"The performance scan didn't return any results. This probably means you're "
+"on a local website (which we can't scan) or something went wrong trying to "
+"access WPMU DEV. Try again and if this error continues to appear please open "
+"a ticket with our support heroes"
 msgstr ""
 
 #: core/modules/minify/class-sources-group.php:472
@@ -1079,7 +1229,10 @@ msgid "Minification Error: Incorrect type for the group"
 msgstr ""
 
 #: core/modules/minify/class-sources-group.php:519
-msgid "It looks like this file is empty or there was an error trying to get its content."
+#: core/modules/minify/class-sources-group.php:597
+msgid ""
+"It looks like this file is empty or there was an error trying to get its "
+"content."
 msgstr ""
 
 #: core/modules/minify/class-sources-group.php:541
@@ -1090,7 +1243,7 @@ msgstr ""
 msgid "Minification failed."
 msgstr ""
 
-#: core/modules/minify/class-sources-group.php:603
+#: core/modules/minify/class-sources-group.php:607
 msgid "Error saving compressed file"
 msgstr ""
 
@@ -1225,11 +1378,11 @@ msgstr ""
 #. translators: To add an additional Open Sans character subset specific to
 #. your language, translate this to 'greek', 'cyrillic' or 'vietnamese'. Do not
 #. translate into your own language.
-
 #: tests/test-minifier.php:130
 msgctxt "Open Sans font: add new subset (greek, cyrillic, vietnamese)"
 msgid "no-subset"
 msgstr ""
+
 #. Plugin Name of the plugin/theme
 msgid "WP Hummingbird"
 msgstr ""
@@ -1239,7 +1392,10 @@ msgid "https://premium.wpmudev.org/project/1081721/"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid "Hummingbird zips through your site finding new ways to make it load faster, from file compression and minification to browser caching – because when it comes to pagespeed, every millisecond counts."
+msgid ""
+"Hummingbird zips through your site finding new ways to make it load faster, "
+"from file compression and minification to browser caching – because when it "
+"comes to pagespeed, every millisecond counts."
 msgstr ""
 
 #. Author of the plugin/theme

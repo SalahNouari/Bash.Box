@@ -156,8 +156,9 @@ class WP_Hummingbird_Caching_Page extends WP_Hummingbird_Admin_Page {
 
 		$htaccess_written = wphb_is_htaccess_written( 'caching' );
 		$htaccess_writable = wphb_is_htaccess_writable();
+		$already_enabled = $this->is_caching_fully_enabled() && ! wphb_is_htaccess_written( 'caching' );
 
-		$this->view( 'caching-enable-meta-box', array( 'snippets' => $snippets, 'htaccess_written' => $htaccess_written, 'htaccess_writable' => $htaccess_writable ) );
+		$this->view( 'caching-enable-meta-box', array( 'snippets' => $snippets, 'htaccess_written' => $htaccess_written, 'htaccess_writable' => $htaccess_writable, 'already_enabled' => $already_enabled ) );
 	}
 
 	public function caching_enable_metabox_header() {
@@ -165,9 +166,31 @@ class WP_Hummingbird_Caching_Page extends WP_Hummingbird_Admin_Page {
 	}
 
 	public function caching_enable_metabox_footer() {
+		$disable_enable_button = ! wphb_is_htaccess_written( 'caching' ) && $this->is_caching_fully_enabled();
 		$enable_link = add_query_arg( array( 'run' => 'true', 'enable' => 'true' ) );
 		$disable_link = add_query_arg( array( 'run' => 'true', 'disable' => 'true' ) );
-		$this->view( 'caching-enable-meta-box-footer', array( 'server_type' => wphb_get_server_type(), 'enable_link' => $enable_link, 'disable_link' => $disable_link ) );
+		$this->view( 'caching-enable-meta-box-footer', array( 'server_type' => wphb_get_server_type(), 'enable_link' => $enable_link, 'disable_link' => $disable_link, 'disable_enable_button' => $disable_enable_button ) );
+	}
+
+	public function is_caching_fully_enabled() {
+		$recommended = wphb_get_recommended_caching_values();
+
+		$results = wphb_get_caching_status();
+		if ( false === $results ) {
+			// Force only when we don't have any data yet
+			$results = wphb_get_caching_status( true );
+		}
+
+		$result_sum = 0;
+
+		foreach ( $results as $key => $result ) {
+			if ( $result >= $recommended[ $key ]['value'] ) {
+				$result_sum++;
+			}
+		}
+
+		return $result_sum === count( $results );
+
 	}
 
 

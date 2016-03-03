@@ -10,7 +10,7 @@
 	<tbody>
 
 		<?php foreach ( $report->rule_result as $rule => $rule_result ): ?>
-			<tr class="wphb-performance-report-item">
+			<tr class="wphb-performance-report-item" data-performance-url="<?php echo esc_url( wphb_get_admin_menu_url( 'performance' ) ); ?>#rule-<?php echo $rule; ?>">
 				<td class="wphb-performance-report-item-recommendation">
 					<span class="list-label-link">
 						<?php echo $rule_result->label; ?>

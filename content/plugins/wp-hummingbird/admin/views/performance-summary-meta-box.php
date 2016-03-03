@@ -24,7 +24,7 @@
 			<tbody>
 				<?php foreach ( $last_test->rule_result as $rule => $rule_result ): ?>
 					<?php $has_url_blocks = ! empty( $rule_result->urlblocks ) && is_array( $rule_result->urlblocks ) && ! empty( $rule_result->urlblocks[0] ); ?>
-					<tr class="wphb-performance-report-item">
+					<tr class="wphb-performance-report-item" id="rule-<?php echo esc_attr( $rule ); ?>">
 						<td class="wphb-performance-report-item-recommendation">
 							<a href="#"><?php echo $rule_result->label; ?></a>
 						</td><!-- end wphb-performance-report-item-recommendation -->

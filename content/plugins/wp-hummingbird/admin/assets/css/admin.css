@@ -1608,6 +1608,9 @@
 	text-transform: none;
 }
 
+.wpmud .box-dashboard-performance-module .dashboard-performance-report-table .wphb-performance-report-item > * {
+	cursor:pointer;
+}
 
 /* ****************************************************************************
  * 5. PEFORMANCE
@@ -2128,4 +2131,4 @@
 }
 
 
-/* 133620-1456637134-ai */
+/* 133620-1457029059-au */

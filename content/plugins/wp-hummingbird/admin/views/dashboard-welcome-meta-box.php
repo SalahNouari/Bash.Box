@@ -6,7 +6,7 @@
 
 	<div class="wphb-block-entry-content">
 
-		<h2 class="title"><?php echo sprintf( __( 'Lets get you humming, %s!', 'wphb' ), $user ); ?></h2>
+		<h2 class="title"><?php echo sprintf( __( 'Let\'s get you humming, %s!', 'wphb' ), $user ); ?></h2>
 
 		<div class="content">
 			<p><?php _e( 'Hummingbird is a performance and speed focused plugin that allows you to control minification and concatenation of files, browser caching and gzip compression. WPMU DEV members also get custom performance reports and uptime monitoring. Get started below!', 'wphb' ); ?></p>

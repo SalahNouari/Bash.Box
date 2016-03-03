@@ -23,8 +23,10 @@ class WP_Hummingbird_Admin {
 		add_action( 'admin_footer', array( $this, 'maybe_check_report' ) );
 
 		add_filter( 'network_admin_plugin_action_links_wp-hummingbird/wp-hummingbird.php', array( $this, 'add_plugin_action_links' ) );
+		add_filter( 'plugin_action_links_wp-hummingbird/wp-hummingbird.php', array( $this, 'add_plugin_action_links' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_icon_styles' ) );
+
 		/**
 		 * Triggered when Hummingbird Admin is loaded
 		 */
@@ -37,7 +39,13 @@ class WP_Hummingbird_Admin {
 
 	public function add_plugin_action_links( $actions ) {
 		if ( current_user_can( wphb_get_admin_capability() ) ) {
-			$actions['dashboard'] = '<a href="' . wphb_get_admin_menu_url( '' ) . '" aria-label="' . esc_attr( __( 'Go to WP Hummingbird Dashboard', 'wphb' ) ) . '">' . esc_html__( 'Dashboard', 'wphb' ) . '</a>';
+			if ( is_multisite() && ! is_network_admin() ) {
+				$url = network_admin_url( 'admin.php?page=wphb' );
+			}
+			else {
+				$url = wphb_get_admin_menu_url( '' );
+			}
+			$actions['dashboard'] = '<a href="' . $url . '" aria-label="' . esc_attr( __( 'Go to WP Hummingbird Dashboard', 'wphb' ) ) . '">' . esc_html__( 'Settings', 'wphb' ) . '</a>';
 		}
 
 		return $actions;

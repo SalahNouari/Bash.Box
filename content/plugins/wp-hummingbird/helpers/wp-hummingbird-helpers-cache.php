@@ -3,9 +3,9 @@
 /**
  * Flush all WP Hummingbird Cache
  */
-function wphb_flush_cache() {
+function wphb_flush_cache( $clear_settings = true ) {
 	// Minification data
-	wphb_clear_minification_cache();
+	wphb_clear_minification_cache( $clear_settings );
 
 	// GZip data
 	wphb_clear_gzip_cache();
@@ -29,6 +29,8 @@ function wphb_flush_cache() {
 
 /**
  * Clear all data saved in Minification
+ *
+ * @param bool $clear_settings If set to true will set Minification settings to default (that includes files positions)
  */
 function wphb_clear_minification_cache( $clear_settings = true ) {
 	WP_Hummingbird_Module_Minify::clear_cache( $clear_settings );

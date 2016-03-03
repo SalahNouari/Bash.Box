@@ -593,49 +593,43 @@ class WP_Hummingbird_Sources_Group {
 			}
 		}
 
-		$contents = '/** handles (' . $this->type . ') :' . join( ' | ', $this->get_handles() ) . '  */' . $contents;
-
-		// Put new contents in file
-		wphb_include_file_cache_class();
-		$cache_file = new WP_Hummingbird_Cache_File( $this->get_srcs_hash(), $this->type );
-		$result = $cache_file->save( $contents );
-		if ( ! $result ) {
-			$minification_module->errors_controller->add_error( array_keys( $srcs ), $this->type, 'file-save', __( 'Error saving compressed file', 'wphb' ), array( 'minify', 'combine' ) );
+		if ( empty( $contents ) ) {
+			$minification_module->errors_controller->add_error( $this->get_handles(), $this->type, 'empty-content', __( 'It looks like this file is empty or there was an error trying to get its content.', 'wphb' ), array( 'minify', 'combine' ) );
 		}
 		else {
-			$minification_module->errors_controller->clear_handle_error( array_keys( $srcs ), $this->type );
+			// Put new contents in file
+			$contents = '/** handles (' . $this->type . ') :' . join( ' | ', $this->get_handles() ) . '  */' . $contents;
+			wphb_include_file_cache_class();
+			$cache_file = new WP_Hummingbird_Cache_File( $this->get_srcs_hash(), $this->type );
+			$result = $cache_file->save( $contents );
 
-			$options = wphb_get_settings();
-			$expire_on = $options['file_age'] + time();
-
-			$this->set_group_src( $cache_file->get_src() );
-
-			$cache_info = array(
-				'expires' => $expire_on,
-				'ver_hash' => $this->get_versions_hash(),
-				'src' => $this->get_group_src(),
-				'last_modified' => current_time( 'timestamp' ),
-				'compressed_sizes' => $compressed_sizes,
-				'original_sizes' => $original_sizes
-			);
-
-			$this->update_cache_info( $cache_info );
-		}
-
-		if ( ! empty( $errors ) ) {
-			// There has been errors
-			$wp_errors = new WP_Error();
-			foreach ( $errors as $error ) {
-				$wp_errors->add( $error['code'], $error['message'], $error['data'] );
+			if ( ! $result ) {
+				$minification_module->errors_controller->add_error( array_keys( $srcs ), $this->type, 'file-save', __( 'Error saving compressed file', 'wphb' ), array( 'minify', 'combine' ) );
 			}
+			else {
+				$minification_module->errors_controller->clear_handle_error( array_keys( $srcs ), $this->type );
 
-			$errors = $wp_errors;
+				$options = wphb_get_settings();
+				$expire_on = $options['file_age'] + time();
+
+				$this->set_group_src( $cache_file->get_src() );
+
+				$cache_info = array(
+					'expires' => $expire_on,
+					'ver_hash' => $this->get_versions_hash(),
+					'src' => $this->get_group_src(),
+					'last_modified' => current_time( 'timestamp' ),
+					'compressed_sizes' => $compressed_sizes,
+					'original_sizes' => $original_sizes
+				);
+
+				$this->update_cache_info( $cache_info );
+
+				return $cache_file->get_src();
+			}
 		}
 
-		return array(
-			'cache_src' => $cache_file->get_src(),
-			'errors' => $errors
-		);
+		return false;
 	}
 
 	/**

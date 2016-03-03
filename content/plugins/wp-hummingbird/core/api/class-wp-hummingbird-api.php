@@ -49,15 +49,15 @@ class WP_Hummingbird_API {
 	 * @return array|mixed|object|WP_Error
 	 */
 	public function uptime_get_stats( $time = 'day' ) {
-		return $this->request( 'uptime', 'stats/' . $time, 'GET', 10 );
+		return $this->request( 'uptime', 'stats/' . $time, 'GET', 20 );
 	}
 
 	public function uptime_enable() {
-		return $this->request( 'uptime', 'monitoring/', 'POST' );
+		return $this->request( 'uptime', 'monitoring/', 'POST', 20 );
 	}
 
 	public function uptime_disable() {
-		return $this->request( 'uptime', 'monitoring/', 'DELETE' );
+		return $this->request( 'uptime', 'monitoring/', 'DELETE', 20 );
 	}
 
 	public function request( $module, $path, $method, $timeout = false ) {
@@ -103,7 +103,15 @@ class WP_Hummingbird_API {
 			$args['timeout'] = $timeout;
 		}
 
+		$this->log( "WPHB API: Sending request to $url" );
+		$this->log( "WPHB API: Arguments:" );
+		$this->log( $args );
+
 		$response = wp_remote_post( $url, $args );
+
+		$this->log( "WPHB API: Response:" );
+		$this->log( $response );
+
 		$code = wp_remote_retrieve_response_code( $response );
 		$error = false;
 		$message = '';
@@ -132,6 +140,16 @@ class WP_Hummingbird_API {
 		}
 
 		return $body;
+	}
+
+	private function log( $message ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+			$date = current_time( 'mysql' );
+			if ( ! is_string( $message ) ) {
+				$message = print_r( $message, true );
+			}
+			error_log( '[' . $date . '] - ' . $message );
+		}
 	}
 
 

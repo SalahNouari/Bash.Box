@@ -115,26 +115,29 @@ class WP_Hummingbird_Module_Minify extends WP_Hummingbird_Module {
 	}
 
 	public function run() {
+		global $wp_customize;
 
 		// Init the chart data collector
 		$this->chart = new WP_Hummingbird_Minification_Chart();
 
-		if ( ! is_admin() ) {
-			wphb_include_sources_collector();
-
-			// Init the collector
-			$this->collector = new WP_Hummingbird_Sources_Collector();
-
-
-			// Only minify on front
-			add_filter( 'print_styles_array', array( $this, 'filter_styles' ), 5 );
-			add_filter( 'print_scripts_array', array( $this, 'filter_scripts' ), 5 );
-			add_action( 'wp_head', array( $this, 'print_styles' ), 900 );
-			add_action( 'wp_head', array( $this, 'print_scripts' ), 900 );
-			add_action( 'wp_print_footer_scripts', array( $this, 'print_late_resources' ), 900 );
-
-			add_action( 'shutdown', array( $this, 'save_data' ) );
+		if ( is_admin() || is_customize_preview() || is_a( $wp_customize, 'WP_Customize_Manager' ) ) {
+			return;
 		}
+
+		wphb_include_sources_collector();
+
+		// Init the collector
+		$this->collector = new WP_Hummingbird_Sources_Collector();
+
+
+		// Only minify on front
+		add_filter( 'print_styles_array', array( $this, 'filter_styles' ), 5 );
+		add_filter( 'print_scripts_array', array( $this, 'filter_scripts' ), 5 );
+		add_action( 'wp_head', array( $this, 'print_styles' ), 900 );
+		add_action( 'wp_head', array( $this, 'print_scripts' ), 900 );
+		add_action( 'wp_print_footer_scripts', array( $this, 'print_late_resources' ), 900 );
+
+		add_action( 'shutdown', array( $this, 'save_data' ) );
 	}
 
 	/**

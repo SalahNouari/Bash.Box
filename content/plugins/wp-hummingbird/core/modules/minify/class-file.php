@@ -47,7 +47,7 @@ class WP_Hummingbird_Cache_File {
 	}
 
 	public function delete() {
-		unlink( $this->get_path() );
+		@unlink( $this->get_path() );
 	}
 
 

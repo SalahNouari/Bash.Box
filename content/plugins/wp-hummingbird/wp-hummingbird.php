@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Hummingbird
- * Version: 1.0
+ * Version: 1.0.1
  * Plugin URI:  https://premium.wpmudev.org/project/1081721/
  * Description: Hummingbird zips through your site finding new ways to make it load faster, from file compression and minification to browser caching – because when it comes to pagespeed, every millisecond counts.
  * Author: WPMU DEV
@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 
-define( 'WPHB_VERSION', '1.0' );
+define( 'WPHB_VERSION', '1.0.1' );
 /**
  * Class WP_Hummingbird
  *
@@ -328,7 +328,7 @@ function wphb_activate_blog() {
  * Deactivate the plugin
  */
 function wphb_deactivate() {
-	wphb_flush_cache();
+	wphb_flush_cache( false );
 	delete_site_option( 'wphb_version' );
 	delete_option( 'wphb_cache_folder_error' );
 	delete_option( 'wphb-minification-check-files' );
