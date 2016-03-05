@@ -89,7 +89,7 @@ class WD_Change_Default_Admin extends WD_Hardener_Abstract {
 	 * @return bool|void
 	 */
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -145,7 +145,7 @@ class WD_Change_Default_Admin extends WD_Hardener_Abstract {
 		), array(
 			'ID' => $admin_data->ID
 		) );
-		clean_user_cache( $admin_data->ID );
+
 		if ( is_multisite() ) {
 			$this->log( 'start update new username into site_admins network meta' );
 			$site_admins = get_site_option( 'site_admins' );
@@ -161,7 +161,7 @@ class WD_Change_Default_Admin extends WD_Hardener_Abstract {
 				}
 			}
 		}
-
+		clean_user_cache( $admin_data->ID );
 		return true;
 		$is_added = $wpdb->insert( $wpdb->users, array(
 			'user_login'          => $new_user_name,

@@ -25,7 +25,7 @@
 									<strong><?php _e( "Last scan:", wp_defender()->domain ) ?></strong>
 									<?php
 									$date = $model->get_raw_post()->post_date;
-									echo date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date ) )
+									echo date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date ) )
 									?>
 								</p>
 								<?php if ( WD_Scan_Api::maybe_scan() ): ?>

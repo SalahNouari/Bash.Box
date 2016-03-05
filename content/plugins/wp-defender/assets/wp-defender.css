@@ -499,7 +499,7 @@
       @media only screen and (max-width: 480px) {
         .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group {
           text-align: center; }
-          .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group label, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group input, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group select, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group .select-container {	  	 	   	 		 		 				
+          .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group label, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group input, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group select, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group .select-container {
             display: block; }
           .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group .select-container {
             width: 80%;
@@ -994,4 +994,4 @@
 /*# sourceMappingURL=wp-defender.css.map */
 
 
-/* 133620-1456899711-ai */
+/* 133620-1457147030-au */

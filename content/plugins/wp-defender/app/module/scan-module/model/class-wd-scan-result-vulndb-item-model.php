@@ -67,6 +67,7 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 				$version = $this->object->Version;
 			}
 		}
+
 		if ( $is_raw == true ) {
 			return $version;
 		}
@@ -208,8 +209,9 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 			wp_update_plugins();
 			$plugins            = get_site_transient( 'update_plugins' );
 			$plugin_update_form = '';
+
 			foreach ( $plugins->response as $key => $plugin ) {
-				if ( $plugin->slug == $this->name ) {
+				if ( $plugin->plugin == $this->object['slug'] ) {
 					$plugin_update_form .= '<form class="wd-inline float-l" action="' . admin_url( 'update.php' ) . '" target="_blank" method="get">';
 					$plugin_update_form .= wp_nonce_field( 'upgrade-plugin_' . $key, '_wpnonce', true, false );
 					$plugin_update_form .= '<input type="hidden" name="action" value="upgrade-plugin">';
@@ -290,7 +292,7 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 		// due to this native, we can't have a better place for hook when it update.
 		//so we will flag for submit the api here, and remove this out of the result queue,
 		//this will prevent duplicate submit to API
-		if ( version_compare( floatval( $this->get_sub( true ) ), $fixed_in, '>=' ) ) {
+		if ( version_compare( $this->get_sub( true ), $fixed_in, '>=' ) ) {
 			$model = WD_Scan_Api::get_last_scan();
 			$model->delete_item_from_result( $this->id );
 			WD_Utils::flag_for_submitting();
@@ -352,11 +354,11 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 					<form method="post" class="wd-resolve-frm">
 						<input type="hidden" name="action" value="wd_resolve_result">
 						<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-						<input type="hidden" value="<?php echo get_class( $this ) ?>" name="class">
-						<input type="hidden" name="id" value="<?php echo $this->id ?>"/>
+						<input type="hidden" value="<?php echo esc_attr( get_class( $this ) ) ?>" name="class">
+						<input type="hidden" name="id" value="<?php echo esc_attr( $this->id ) ?>"/>
 						<?php if ( $this->can_delete() ): ?>
 							<button data-type="delete" data-confirm-button="<?php echo 'delete_confirm_btn' ?>"
-							        data-confirm="<?php echo $this->delete_confirm_text ?>" type="submit"
+							        data-confirm="<?php echo esc_attr( $this->delete_confirm_text ) ?>" type="submit"
 							        class="button button-red button-small">
 								{{delete_button_text}}
 							</button>

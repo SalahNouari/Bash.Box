@@ -61,7 +61,7 @@ class AutoScan extends WP_UnitTestCase {
 			'day'       => 'monday',
 			'time'      => '4:00',
 		) );
-		$current = mktime( 04, 01, '00', date( 'm', strtotime( 'monday this week' ) ), date( 'd', strtotime( 'monday this week' ) ), date( 'Y' ) );	  	 	   	 		 		 				
+		$current = mktime( 04, 01, '00', date( 'm', strtotime( 'monday this week' ) ), date( 'd', strtotime( 'monday this week' ) ), date( 'Y' ) );
 		//last run will be in random day last month
 		$last_run = date( 'Y-m-d', mktime( 02, 00, 00, date( 'm', strtotime( '-1 month' ) ), rand( 1, 29 ), date( 'Y' ) ) );
 		//should return true

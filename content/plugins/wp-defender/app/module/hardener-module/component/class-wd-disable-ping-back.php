@@ -83,7 +83,7 @@ class WD_Disable_Ping_Back extends WD_Hardener_Abstract {
 	}
 
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 

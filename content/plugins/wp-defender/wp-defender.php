@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: WP Defender
- * Plugin URI:
- * Version:     1.0
+ * Plugin URI: https://premium.wpmudev.org/project/wp-defender/
+ * Version:     1.0.1
  * Description: Get regular security scans, vulnerability reports, safety recommendations and customized hardening for your site in just a few clicks. Defender is the analyst and enforcer who never sleeps.
  * Author:      WPMU DEV
  * Author URI:  http://premium.wpmudev.org/
  * WDP ID:      1081723
  * License:     GNU General Public License (Version 2 - GPLv2)
- * Text Domain: wdf
+ * Text Domain: wpdef
  * Network: true
  */
 
@@ -54,7 +54,7 @@ class WP_Defender {
 	/**
 	 * @var string
 	 */
-	public $domain = 'wdf';
+	public $domain = 'wpdef';
 	/**
 	 * @var array
 	 */
@@ -108,6 +108,7 @@ class WP_Defender {
 	 */
 	public function enqueue_scripts() {
 		//todo merge into one
+		wp_enqueue_style( 'wp-defender-icon', $this->plugin_url . 'assets/defender-icon.css', array(), $this->version );
 		wp_register_style( 'wp-defender', $this->plugin_url . 'assets/wp-defender.css', array(), $this->version );
 		wp_register_script( 'wp-defender', $this->plugin_url . 'assets/javascripts/wp-defender.js', array(
 			'jquery',
@@ -136,20 +137,20 @@ class WP_Defender {
 			'screens' => array(
 				'toplevel_page_wp-defender',
 				'toplevel_page_wp-defender-network',
-				'wp-defender_page_wdf-settings',
-				'wp-defender_page_wdf-settings-network',
-				'wp-defender_page_wdf-backup',
-				'wp-defender_page_wdf-backup-network',
-				'wp-defender_page_wdf-logging',
-				'wp-defender_page_wdf-logging-network',
-				'wp-defender_page_wdf-hardener',
-				'wp-defender_page_wdf-hardener-network',
-				'wp-defender_page_wdf-debug',
-				'wp-defender_page_wdf-debug-network',
-				'wp-defender_page_wdf-scan',
-				'wp-defender_page_wdf-scan-network',
-				'wp-defender_page_wdf-schedule-scan',
-				'wp-defender_page_wdf-schedule-scan-network'
+				'defender_page_wdf-settings',
+				'defender_page_wdf-settings-network',
+				'defender_page_wdf-backup',
+				'defender_page_wdf-backup-network',
+				'defender_page_wdf-logging',
+				'defender_page_wdf-logging-network',
+				'defender_page_wdf-hardener',
+				'defender_page_wdf-hardener-network',
+				'defender_page_wdf-debug',
+				'defender_page_wdf-debug-network',
+				'defender_page_wdf-scan',
+				'defender_page_wdf-scan-network',
+				'defender_page_wdf-schedule-scan',
+				'defender_page_wdf-schedule-scan-network'
 			)
 		);
 		/** @noinspection PhpIncludeInspection */

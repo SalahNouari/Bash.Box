@@ -32,7 +32,7 @@ class WD_Scan_Controller extends WD_Controller {
 	 * Pause/continue a scan
 	 */
 	public function cancel_scan() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -63,7 +63,7 @@ class WD_Scan_Controller extends WD_Controller {
 			return;
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -90,6 +90,12 @@ class WD_Scan_Controller extends WD_Controller {
 	 * maybe we can schedule a scan
 	 */
 	public function maybe_schedule_cron() {
+		if ( $this->is_ajax() ) {
+			return;
+		}
+
+		//we dont queue if we in ajax
+
 		if ( wp_get_schedule( 'wd_scanning_hook' ) ) {
 			//already queued, just return
 			return;
@@ -111,7 +117,16 @@ class WD_Scan_Controller extends WD_Controller {
 		}
 
 		if ( $maybe_process ) {
-			if ( wp_get_schedule( 'wd_scanning_hook' ) == false && ( $model = WD_Scan_Api::get_active_scan() ) ) {
+			$model = WD_Scan_Api::get_active_scan();
+			if ( is_object( $model ) ) {
+				$last_modified = $model->get_raw_post()->post_modified;
+
+				if ( strtotime( '+5 minutes', strtotime( $last_modified ) ) > current_time( 'timestamp' ) ) {
+					//no queue
+					return;
+				}
+			}
+			if ( wp_get_schedule( 'wd_scanning_hook' ) == false && is_object( $model ) ) {
 				if ( is_object( $model ) && in_array( $model->status, array(
 						WD_Scan_Result_Model::STATUS_ERROR,
 						WD_Scan_Result_Model::STATUS_PAUSE
@@ -159,27 +174,37 @@ class WD_Scan_Controller extends WD_Controller {
 	 * an ajax to query scanming progress
 	 */
 	public function check_status() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
 		if ( ! wp_verify_nonce( WD_Utils::http_post( 'wd_scan_nonce' ), 'query_scan_progress' ) ) {
 			return;
 		}
+		ob_start();
 		//clear cache
+		//if we has any cron, remove it immediatly
+		wp_clear_scheduled_hook( 'wd_scanning_hook' );
+		//processing a scan here
+		$this->process_a_scan();
+		//the rest should act normal
 
 		$model = WD_Scan_Api::get_active_scan( true );
 		if ( ! is_object( $model ) ) {
 			$model = WD_Scan_Api::get_last_scan();
+		} else {
+			$model->save();
 		}
-		$progress = get_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) == false ? 0 : get_transient( WD_Scan_Api::CACHE_SCAN_PERCENT );
-		$alert    = get_transient( WD_Scan_Api::ALERT_NESTED_WP );
+		ob_clean();
+		//trigger
+		$progress = get_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) == false ? 0 : get_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT );
+		$alert    = get_site_transient( WD_Scan_Api::ALERT_NESTED_WP );
 		/*if ( $alert ) {
 			$alert = implode( '<br/>', $alert );
 		} else {
 			$alert = 0;
 		}*/
-		$md5_alert = get_transient( WD_Scan_Api::ALERT_NO_MD5 );
+		$md5_alert = get_site_transient( WD_Scan_Api::ALERT_NO_MD5 );
 		wp_send_json( array(
 			'progress'  => $progress,
 			'message'   => $model->message,
@@ -233,9 +258,9 @@ class WD_Scan_Controller extends WD_Controller {
 			$last_updated = $model->get_raw_post()->post_modified;
 			//if the last time is about 20 mins, ignore the lock
 			if ( strtotime( '+20 minutes', strtotime( $last_updated ) ) < current_time( 'timestamp' ) ) {
-				$this->log( 'lock take so long, ignore' );
+				$this->log( 'lock take so long, ignore', self::ERROR_LEVEL_DEBUG, 'lock' );
 			} else {
-				$this->log( 'you should not be here again, locked' );
+				$this->log( 'you should not be here again, locked', self::ERROR_LEVEL_DEBUG, 'lock' );
 
 				return;
 			}
@@ -247,7 +272,7 @@ class WD_Scan_Controller extends WD_Controller {
 				$this->log( 'only first time, this shouldt appear 2 times in a scan' );
 				update_option( 'wd_scan_processing', $model->id );
 				WD_Scan_Api::clear_cache();
-				set_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, 0 );
+				set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, 0 );
 			}
 		}
 
@@ -266,7 +291,7 @@ class WD_Scan_Controller extends WD_Controller {
 		$scan_class = array();
 		foreach ( $scans as $key => $class ) {
 			$scan = new $class();
-			if ( get_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) == 0 ) {
+			if ( get_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) == 0 ) {
 				/*$model->message = sprintf( __( "Gathering information for %s", wp_defender()->domain ), $scan->name );
 				$model->save();*/
 			}
@@ -308,6 +333,10 @@ class WD_Scan_Controller extends WD_Controller {
 			$this->log( 'scan ' . $class );
 			$scan      = $scan_class[ $class ];
 			$next_step = isset( $scans[ $key + 1 ] ) ? $scans[ $key + 1 ] : null;
+			if ( $this->is_ajax() && property_exists( $scan, 'chunk_size' ) ) {
+				//beacuse we based on ajax, so we reduce the chunk
+				$scan->chunk_size = 100;
+			}
 			$scan->process( $model, $next_step );
 			//refresh $model
 			$model = WD_Scan_Api::get_active_scan();
@@ -315,13 +344,14 @@ class WD_Scan_Controller extends WD_Controller {
 			     ( ( $model->current_index >= ( $model->total_files - 1 ) ) ||
 			       //this case for rules doesn't have files number
 			       ( $model->current_index == $model->total_files && $model->total_files == 0 ) ||
-			       ( get_transient( WD_Suspicious_Scan::CACHE_INDEX ) + get_transient( WD_Core_Integrity_Scan::CACHE_INDEX ) >= $model->total_files )
+			       ( get_site_transient( WD_Suspicious_Scan::CACHE_INDEX ) + get_site_transient( WD_Core_Integrity_Scan::CACHE_INDEX ) >= $model->total_files )
 			     )
 			) {
 				//complete
 				$model->status = WD_Scan_Result_Model::STATUS_COMPLETE;
 				$this->unlock();
-				$model->execute_time['end'] = current_time( 'timestamp' );
+				$model->execute_time['end']     = current_time( 'timestamp' );
+				$model->execute_time['end_utc'] = time();
 				$model->save();
 				delete_option( 'wd_scan_processing' );
 				//flag it
@@ -341,7 +371,7 @@ class WD_Scan_Controller extends WD_Controller {
 	 * use ajax to create a scan record
 	 */
 	public function start_a_scan() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -353,7 +383,7 @@ class WD_Scan_Controller extends WD_Controller {
 
 		if ( ! is_wp_error( $scan ) ) {
 			//setup a cronjob
-			wp_schedule_single_event( time(), 'wd_scanning_hook' );
+			//wp_schedule_single_event( time(), 'wd_scanning_hook' );
 			wp_send_json( array(
 				'status'       => 1,
 				'redirect_url' => network_admin_url( 'admin.php?page=wdf-scan' )
@@ -386,13 +416,13 @@ class WD_Scan_Controller extends WD_Controller {
 
 			return;
 		}
-		$this->log( 'locking' );
+		$this->log( 'locking', self::ERROR_LEVEL_DEBUG, 'lock' );
 		//now lock
 		update_site_option( 'wd_scan_lock', 1 );
 	}
 
 	protected function unlock() {
-		$this->log( 'unlock' );
+		$this->log( 'unlock', self::ERROR_LEVEL_DEBUG, 'lock' );
 		delete_site_option( 'wd_scan_lock' );
 	}
 
@@ -424,8 +454,8 @@ class WD_Scan_Controller extends WD_Controller {
 	private function is_in_page() {
 		$screen = get_current_screen();
 		if ( is_object( $screen ) && in_array( $screen->id, array(
-				'wp-defender_page_wdf-scan',
-				'wp-defender_page_wdf-scan-network'
+				'defender_page_wdf-scan',
+				'defender_page_wdf-scan-network'
 			) )
 		) {
 			return true;
@@ -442,7 +472,7 @@ class WD_Scan_Controller extends WD_Controller {
 			wp_localize_script( 'wp-defender', 'wd_scanning', array(
 				'show_log'                  => __( "Show Log", wp_defender()->domain ),
 				'hide_log'                  => __( "Hide Log", wp_defender()->domain ),
-				'ignore_confirm_msg'        => __( "Just a reminder, by ignoring this file Defender will leave it alone and won't warn you about it again. You can add it back to the issues list any time.", wp_defender()->domain ),
+				'ignore_confirm_msg'        => __( "Just a reminder, by ignoring this file Defender will leave it alone and won't warn you about it again unless it changes. You can add it back to the issues list any time.", wp_defender()->domain ),
 				'delete_confirm_msg'        => __( "Deleting this file will remove it from your WordPress installation. Make sure you have a backup of your website before continuing, doing this could break your website.", wp_defender()->domain ),
 				'delete_plugin_confirm_msg' => __( "Deleting this plugin will remove it from your WordPress installation. Make sure you have a backup of your website before continuing.", wp_defender()->domain ),
 				'delete_theme_confirm_msg'  => __( "Deleting this theme will remove it from your WordPress installation. Make sure you have a backup of your website before continuing.", wp_defender()->domain ),
@@ -490,9 +520,6 @@ class WD_Scan_Controller extends WD_Controller {
 			if ( is_object( $model ) ) {
 				$args['model'] = $model;
 				//scanning
-				if ( wp_get_schedule( 'wd_scanning_hook' ) == false ) {
-					wp_schedule_single_event( time(), 'wd_scanning_hook' );
-				}
 				$this->render( 'scan/_scanning', $args, true );
 			} else {
 

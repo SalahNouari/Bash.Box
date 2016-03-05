@@ -7,6 +7,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 	const CACHE_INDEX = 'wd_suspicious_scan_index', CACHE_SIGNATURES = 'wd_signatures_cache';
 	private $internal_index = 0;
 	public $name = '';
+	public $chunk_size = 50;
 
 	public function __construct() {
 		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_SUSPICIOUS_FILE . '_scan', false ) != 1 ) {
@@ -25,7 +26,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		}
 
 		//$this->max_percent        = round( ( count( $this->files_need_scan ) * 100 ) / count( self::get_total_files() ), 2 );
-		$this->internal_index = get_transient( self::CACHE_INDEX );
+		$this->internal_index = get_site_transient( self::CACHE_INDEX );
 	}
 
 	private function get_function_scan_pattern() {
@@ -65,7 +66,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 	 * @return mixed
 	 */
 	private function get_patterns( $key ) {
-		$cache = get_transient( self::CACHE_SIGNATURES );
+		$cache = get_site_transient( self::CACHE_SIGNATURES );
 		if ( $cache !== false && ! is_wp_error( $cache ) ) {
 			$defender_signatures = $cache;
 		} else {
@@ -73,7 +74,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			$defender_signatures = $this->wpmudev_call( $api_endpoint, array(), array(
 				'method' => 'GET'
 			) );
-			set_transient( self::CACHE_SIGNATURES, $defender_signatures );
+			set_site_transient( self::CACHE_SIGNATURES, $defender_signatures );
 		}
 
 		if ( ! is_wp_error( $defender_signatures ) ) {
@@ -92,7 +93,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 	}
 
 	public function flush_cache() {
-		delete_transient( self::CACHE_SIGNATURES );
+		delete_site_transient( self::CACHE_SIGNATURES );
 	}
 
 	public function process( WD_Scan_Result_Model $model, $next_step = null ) {
@@ -114,7 +115,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			$files = array_slice( $files, $this->internal_index, count( $this->files_need_scan ) );
 		}
 		//because this can too much, so just break it into parts
-		$chunks = array_chunk( $files, apply_filters( 'wd_suspicious_chunk_size', 50, $this->files_need_scan ) );
+		$chunks = array_chunk( $files, apply_filters( 'wd_suspicious_chunk_size', $this->chunk_size, $this->files_need_scan ) );
 		$files  = array_shift( $chunks );
 		$files  = array_filter( $files );
 		if ( ! is_array( $files ) ) {
@@ -167,9 +168,9 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			$progress = round( $model->current_index * 100 / $model->total_files, 2 );
 			$this->internal_index += 1;
 
-			set_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
+			set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
 			$this->log( $progress, self::ERROR_LEVEL_DEBUG, 'percent' );
-			set_transient( self::CACHE_INDEX, $this->internal_index );
+			set_site_transient( self::CACHE_INDEX, $this->internal_index );
 
 			$model->current_index += 1;
 			//$model->message = sprintf( __( "Analyzing file %s", wp_defender()->domain ), str_replace( ABSPATH, '', $file ) );

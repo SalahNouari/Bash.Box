@@ -149,7 +149,7 @@ class WD_Disable_Error_Display extends WD_Hardener_Abstract {
 	 * @since 1.0
 	 */
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 

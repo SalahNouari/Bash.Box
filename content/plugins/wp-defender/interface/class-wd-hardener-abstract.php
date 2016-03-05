@@ -175,17 +175,6 @@ abstract class WD_Hardener_Abstract extends WD_Component {
 	}
 
 	/**
-	 * @return bool
-	 */
-	public function is_ajax() {
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * @param $key
 	 * @param $error
 	 *

@@ -275,11 +275,9 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 	 * @return bool
 	 */
 	public static function is_nginx() {
-		if ( strpos( $_SERVER['SERVER_SOFTWARE'], 'nginx' ) !== false ) {
-			return true;
-		}
+		global $is_nginx;
 
-		return false;
+		return $is_nginx;
 	}
 
 	public static function remove_folder( $folder ) {
@@ -541,8 +539,12 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 		$model         = WD_Scan_Api::get_last_scan();
 		$count         = 0;
 		if ( is_object( $model ) ) {
-			$timestamp = strtotime( $model->get_raw_post()->post_modified );
-			$res       = array(
+			if ( isset( $model->execute_time['end_utc'] ) ) {
+				$timestamp = $model->execute_time['end_utc'];
+			} else {
+				$timestamp = strtotime( $model->execute_time['end'] );
+			}
+			$res = array(
 				'core_integrity'   => 0,
 				'vulnerability_db' => 0,
 				'file_suspicious'  => 0
@@ -600,6 +602,15 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 	}
 
 	/**
+	 * @return bool
+	 */
+	public static function check_permission() {
+		$cap = is_multisite() ? 'manage_network_options' : 'manage_options';
+
+		return current_user_can( $cap );
+	}
+
+	/**
 	 * @param $get_avatar
 	 *
 	 * @return mixed
@@ -612,6 +623,26 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 
 	public static function admin_url( $path ) {
 		return is_multisite() ? network_admin_url( $path ) : admin_url( $path );
+	}
+
+	public static function allowed_html() {
+		return array(
+			'i'      => array(
+				'class' => 'wd-text-warning wdv-icon wdv-icon-fw wdv-icon-exclamation-sign'
+			),
+			'strong' => array(),
+			'span'   => array(
+				'class' => array(
+					'wd-suspicious-strong',
+					'wd-suspicious-light',
+					'wd-suspicious-medium'
+				)
+			),
+			'img'    => array(
+				'class' => 'text-warning',
+				'src'   => wp_defender()->get_plugin_url() . 'assets/img/robot.png'
+			)
+		);
 	}
 
 	public static function exclude_extensions() {

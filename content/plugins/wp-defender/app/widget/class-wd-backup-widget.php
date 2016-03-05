@@ -9,7 +9,7 @@ class WD_Backup_Widget extends WD_Controller {
 	}
 
 	public function install_snapshot() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 

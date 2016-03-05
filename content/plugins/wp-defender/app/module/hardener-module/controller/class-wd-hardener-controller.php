@@ -51,8 +51,8 @@ class WD_Hardener_Controller extends WD_Controller {
 	private function is_in_page() {
 		$screen = get_current_screen();
 		if ( is_object( $screen ) && in_array( $screen->id, array(
-				'wp-defender_page_wdf-hardener',
-				'wp-defender_page_wdf-hardener-network'
+				'defender_page_wdf-hardener',
+				'defender_page_wdf-hardener-network'
 			) )
 		) {
 			return true;
@@ -69,6 +69,7 @@ class WD_Hardener_Controller extends WD_Controller {
 			WDEV_Plugin_Ui::load( wp_defender()->get_plugin_url() . 'shared-ui/', false );
 			wp_enqueue_style( 'wp-defender' );
 			wp_enqueue_script( 'wd-rotate' );
+			add_thickbox();
 		}
 	}
 

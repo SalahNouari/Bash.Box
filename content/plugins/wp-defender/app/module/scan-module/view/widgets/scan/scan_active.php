@@ -8,7 +8,7 @@
 			<div
 				class="wd-progress <?php echo $model->status !== WD_Scan_Result_Model::STATUS_PAUSE ? 'animate' : null ?>">
 					<span
-						style="width: <?php echo (int) get_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) ?>%"><?php echo (int) get_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) ?>
+						style="width: <?php echo (int) get_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) ?>%"><?php echo (int) get_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT ) ?>
 						%</span>
 			</div>
 			<?php if ( $model->status != WD_Scan_Result_Model::STATUS_ERROR ): ?>

@@ -10,7 +10,7 @@ class WD_Resolve_Controller extends WD_Controller {
 	}
 
 	public function resolve_result() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -24,7 +24,7 @@ class WD_Resolve_Controller extends WD_Controller {
 		if ( ! is_object( $item ) ) {
 			wp_send_json( array(
 				'status' => 0,
-				'error'  => __( "Can't not find the issue need to be fixed.", wp_defender()->domain )
+				'error'  => __( "Can't not find the issue needing to be fixed.", wp_defender()->domain )
 			) );
 		}
 		$type = WD_Utils::http_post( 'type' );
@@ -39,7 +39,7 @@ class WD_Resolve_Controller extends WD_Controller {
 				wp_send_json( array( 'status' => 1 ) );
 				break;
 			case 'clean':
-				//for now every clean will just rturn instruction (string)
+				//for now every clean will just return instruction (string)
 				$result = $item->clean();
 				wp_send_json( array(
 					'status' => 1,
@@ -84,17 +84,17 @@ class WD_Resolve_Controller extends WD_Controller {
 		?>
 		<tr>
 			<td width="30%" class="file-path">
-				<strong><?php echo $item->get_name() ?></strong>
-				<span><?php echo $item->get_sub() ?></span>
+				<strong><?php echo esc_html( $item->get_name() ) ?></strong>
+				<span><?php echo esc_html( $item->get_sub() ) ?></span>
 			</td>
-			<td width="15%" class="issue-type"><?php echo $item->get_type(); ?></td>
-			<td width="45%"><?php echo $item->get_detail() ?></td>
+			<td width="15%" class="issue-type"><?php echo esc_html( $item->get_type() ); ?></td>
+			<td width="45%"><?php echo wp_kses( $item->get_detail(), WD_Utils::allowed_html() ) ?></td>
 			<td width="10%" class="wd-report-actions">
 				<form method="post" class="wd-resolve-frm">
 					<input type="hidden" name="action" value="wd_resolve_result">
 					<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-					<input type="hidden" value="<?php get_class( $item ) ?>" name="class">
-					<input type="hidden" name="id" value="<?php echo $item->id ?>"/>
+					<input type="hidden" value="<?php esc_attr( get_class( $item ) ) ?>" name="class">
+					<input type="hidden" name="id" value="<?php echo esc_attr( $item->id ) ?>"/>
 
 					<div class="wd-button-group">
 						<button data-type="undo"
@@ -107,7 +107,7 @@ class WD_Resolve_Controller extends WD_Controller {
 							$tooltip     = $item->delete_tooltip;
 							$confirm_key = $item->delete_confirm_text; ?>
 							<button data-type="delete"
-							        data-confirm="<?php echo $confirm_key ?>"
+							        data-confirm="<?php echo esc_attr( $confirm_key ) ?>"
 							        data-confirm-button="<?php echo 'delete_confirm_btn' ?>"
 							        tooltip="<?php echo esc_attr( $tooltip ) ?>"
 							        type="submit" class="button button-light button-small">
@@ -132,19 +132,21 @@ class WD_Resolve_Controller extends WD_Controller {
 	private function get_item_html( $item ) {
 		ob_start();
 		?>
-		<tr data-type="<?php echo $item->get_system_type() ?>">
+		<tr data-type="<?php echo esc_attr( $item->get_system_type() ) ?>">
 			<td width="30%" class="file-path">
-				<strong><?php echo $item->get_name() ?></strong>
-				<span><?php echo $item->get_sub() ?></span>
+				<strong><?php echo esc_html( $item->get_name() ) ?></strong>
+				<span><?php echo esc_html( $item->get_sub() ) ?></span>
 			</td>
-			<td width="15%" class="issue-type"><?php echo $item->get_type(); ?></td>
-			<td width="45%" class="issue-detail"><?php echo $item->get_detail() ?></td>
+			<td width="15%" class="issue-type"><?php echo esc_html( $item->get_type() ); ?></td>
+			<td width="45%"
+			    class="issue-detail"><?php echo wp_kses( $item->get_detail(), WD_Utils::allowed_html() ) ?></td>
 			<td width="10%" class="wd-report-actions">
 				<form method="post" class="wd-resolve-frm">
 					<input type="hidden" name="action" value="wd_resolve_result">
 					<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-					<input type="hidden" value="<?php get_class( $item ) ?>" name="class">
-					<input type="hidden" name="id" value="<?php echo $item->id ?>"/>
+					<input type="hidden" value="<?php esc_attr( get_class( $item ) ) ?>"
+					       name="class">
+					<input type="hidden" name="id" value="<?php echo esc_attr( $item->id ) ?>"/>
 
 					<div class="wd-button-group">
 						<button data-type="clean"
@@ -166,7 +168,7 @@ class WD_Resolve_Controller extends WD_Controller {
 							$tooltip     = $item->delete_tooltip;
 							$confirm_key = $item->delete_confirm_text; ?>
 							<button data-type="delete"
-							        data-confirm="<?php echo $confirm_key ?>"
+							        data-confirm="<?php echo esc_attr( $confirm_key ) ?>"
 							        data-confirm-button="<?php echo 'delete_confirm_btn' ?>"
 							        tooltip="<?php echo esc_attr( $tooltip ) ?>"
 							        type="submit" class="button button-light button-small">

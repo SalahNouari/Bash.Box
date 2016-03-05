@@ -41,9 +41,9 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 	public function get_detail() {
 		$detail = $this->detail;
 		if ( $detail['is_added'] == true ) {
-			return '<strong>' . __( "We found a new file added to your WordPress core", wp_defender()->domain ) . '</strong>';
+			return '<strong>' . esc_html( __( "Unknown file in WordPress core", wp_defender()->domain ) ) . '</strong>';
 		} else {
-			return '<strong>' . __( "We found this file has been modified.", wp_defender()->domain ) . '</strong>';
+			return '<strong>' . esc_html( __( "This WordPress core file appears modified", wp_defender()->domain ) ) . '</strong>';
 		}
 	}
 
@@ -117,7 +117,7 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 			array(
 				$this->name,
 				$this->convert_size( filesize( $this->name ) ),
-				date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), filemtime( $this->name ) )
+				date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), filemtime( $this->name ) )
 			),
 			$output );
 
@@ -125,8 +125,8 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 		if ( count( $groups ) > 1 ) {
 			foreach ( $groups as $item_result ) {
 				if ( $item_result instanceof WD_Scan_Result_File_Item_Model ) {
-					//this mean suspocious found
-					$error_msg = __( "Hmm… Something fishy is going on here. The file below isn’t a WordPress core file. We recommend replacing or isolating it as soon as possible.", wp_defender()->domain );
+					//this mean suspicious found
+					$error_msg = __( "Something fishy is going on here. This file isn’t a WordPress core file and has suspicious content. We recommend replacing or isolating it right away!", wp_defender()->domain );
 				}
 			}
 		}
@@ -143,7 +143,7 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 				$html .= '<ul>';
 				$html .= '<li>' . sprintf( __( "1. Download the source file: <a download target=\"_blank\" href=\"%s\">%s</a>", wp_defender()->domain ), $source_file_url, $source_file_url ) . '</li>';
 				$html .= '<li>' . __( "2. Extract the zip file", wp_defender()->domain ) . '</li>';
-				$html .= '<li>' . sprintf( __( "2. Find the file <strong>%s</strong>, copy it, and replace this file in your WordPress install: <strong>%s</strong>", wp_defender()->domain ),$this->get_sub(), $this->name ) . '</li>';
+				$html .= '<li>' . sprintf( __( "2. Find the file <strong>%s</strong>, copy it, and replace this file in your WordPress install: <strong>%s</strong>", wp_defender()->domain ), $this->get_sub(), $this->name ) . '</li>';
 				$html .= '</ul>';
 				$html .= '</div>';
 				$html .= '</div>';
@@ -155,7 +155,7 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 				$html .= '<p><strong>' . __( "Here’s what you need to do to manually resolve this issue:", wp_defender()->domain ) . '</strong></p>';
 				$html .= '<ul>';
 				$html .= '<li>' . sprintf( __( "1. Download the source file: <a download target=\"_blank\" href=\"%s\">%s</a>", wp_defender()->domain ), $source_file_url, $source_file_url ) . '</li>';
-				$html .= '<li>' . sprintf( __( "2. Find the recent downloaded file, copy it, and replace this file in your WordPress install: <strong>%s</strong>", wp_defender()->domain ), $this->name ) . '</li>';
+				$html .= '<li>' . sprintf( __( "2. Find the downloaded file, copy it, and replace this file in your WordPress install: <strong>%s</strong>", wp_defender()->domain ), $this->name ) . '</li>';
 				$html .= '</ul>';
 				$html .= '</div>';
 				$html .= '</div>';
@@ -173,14 +173,14 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 
 	public function check() {
 		//we will need to lookpup the md5 each request to check this file content
-		$md5 = get_transient( 'wd_md5_checksum' );
+		$md5 = get_site_transient( 'wd_md5_checksum' );
 		if ( $md5 == false ) {
 			$md5 = WD_Scan_Api::download_md5_files();
 			if ( is_wp_error( $md5 ) ) {
 				return false;
 			}
 			//short cache, as user might update the version anytime
-			set_transient( 'wd_md5_checksum', $md5, 3600 );
+			set_site_transient( 'wd_md5_checksum', $md5, 3600 );
 		}
 
 		if ( isset( $md5[ ltrim( $this->get_sub(), '/' ) ] ) ) {
@@ -234,8 +234,8 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 					<form method="post" class="wd-resolve-frm">
 						<input type="hidden" name="action" value="wd_resolve_result">
 						<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-						<input type="hidden" value="<?php echo get_class( $this ) ?>" name="class">
-						<input type="hidden" name="id" value="<?php echo $this->id ?>"/>
+						<input type="hidden" value="<?php echo esc_attr( get_class( $this ) ) ?>" name="class">
+						<input type="hidden" name="id" value="<?php echo esc_attr( $this->id ) ?>"/>
 						<?php if ( $this->can_ignore() ): ?>
 							<button type="submit" data-confirm="<?php echo 'ignore_confirm_msg' ?>"
 							        data-confirm-button="<?php echo 'ignore_confirm_btn' ?>" data-type="ignore"

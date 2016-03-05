@@ -18,7 +18,7 @@ class WD_Scan_Api extends WD_Component {
 	 * @since 1.0
 	 */
 	public static function get_core_files() {
-		$cache = get_transient( self::CACHE_CORE_FILES );
+		$cache = get_site_transient( self::CACHE_CORE_FILES );
 		if ( is_array( $cache ) ) {
 			return $cache;
 		}
@@ -35,8 +35,8 @@ class WD_Scan_Api extends WD_Component {
 		), array(), false );
 		$abs_files = $dir_tree->get_dir_tree();
 		$files     = array_merge( (array) $abs_files, (array) $core_files );
-		set_transient( self::CACHE_CORE_FILES, $files );
-		set_transient( self::CACHE_CORE_FILES . 'count', count( $files ) );
+		set_site_transient( self::CACHE_CORE_FILES, $files );
+		set_site_transient( self::CACHE_CORE_FILES . 'count', count( $files ) );
 
 		return $files;
 	}
@@ -69,7 +69,7 @@ class WD_Scan_Api extends WD_Component {
 				$emails[] = $user->user_email;
 			}
 			$res = sprintf( __( "Automatic scans have been enabled. Expect your first report on <strong>%s</strong> to <strong>%s</strong>", wp_defender()->domain ),
-				date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), self::calculate_next_run() ),
+				date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), self::calculate_next_run() ),
 				implode( ',', $emails ) );
 
 			return '<p class="wd-no-margin"><i class=\"dev-icon dev-icon-tick\"></i>' . $res . '</p>';
@@ -83,29 +83,43 @@ class WD_Scan_Api extends WD_Component {
 	 */
 	public static function calculate_next_run( $last_scan_time = null ) {
 		$args = WD_Utils::get_automatic_scan_settings();
+
 		if ( is_null( $last_scan_time ) ) {
-			$last_scan      = WD_Scan_Api::get_last_scan();
-			$last_scan_time = current_time( 'mysql' );
+			$last_scan = WD_Scan_Api::get_last_scan();
 			if ( is_object( $last_scan ) ) {
 				$post           = $last_scan->get_raw_post();
-				$last_scan_time = $post->post_date;
+				$last_scan_time = strtotime( $post->post_date );
+			} else {
+				$last_scan_time = null;
 			}
 		}
-		$last_scan_time = strtotime( $last_scan_time );
+
 		list( $hour, $minute ) = explode( ':', $args['time'] );
 
 		$next_scan = null;
 		switch ( $args['frequency'] ) {
 			case 1:
 				//tomorrow of the last scan time
+				if ( $last_scan_time == null ) {
+					//null, so never run, today should be the day
+					$last_scan_time = strtotime( 'yesterday', current_time( 'timestamp' ) );
+				}
 				$next_day  = strtotime( 'tomorrow', $last_scan_time );
 				$next_scan = mktime( $hour, $minute, 0, date( 'm', $next_day ), date( 'd', $next_day ), date( 'Y', $next_day ) );
 				break;
 			case 7:
+				if ( $last_scan_time == null ) {
+					//null, so never run, today should be the day
+					$last_scan_time = strtotime( 'yesterday', current_time( 'timestamp' ) );
+				}
 				$next_week = strtotime( 'next ' . $args['day'], $last_scan_time );
 				$next_scan = mktime( $hour, $minute, 0, date( 'm', $next_week ), date( 'd', $next_week ), date( 'Y', $next_week ) );
 				break;
 			case 30:
+				if ( $last_scan_time == null ) {
+					//null, so never run, today should be the day
+					$last_scan_time = strtotime( 'yesterday', current_time( 'timestamp' ) );
+				}
 				$next_month = strtotime( 'first ' . $args['day'] . ' of next month', $last_scan_time );
 				$next_scan  = mktime( $hour, $minute, 0, date( 'm', $next_month ), date( 'd', $next_month ), date( 'Y', $next_month ) );
 				break;
@@ -124,8 +138,9 @@ class WD_Scan_Api extends WD_Component {
 	public static function download_md5_files() {
 		set_time_limit( 0 );
 		global $wp_version;
-		$locale   = get_locale();
-		$url      = "https://api.wordpress.org/core/checksums/1.0/?version={$wp_version}&locale={$locale}";
+		$locale = get_locale();
+		$url    = "https://api.wordpress.org/core/checksums/1.0/?version={$wp_version}&locale={$locale}";
+		@self::log( $url, self::ERROR_LEVEL_DEBUG, 'md5_url' );
 		$response = wp_remote_get( $url, apply_filters( 'wd_vulndb_api_request_arguments',
 			array(
 				'timeout' => 20
@@ -188,7 +203,7 @@ class WD_Scan_Api extends WD_Component {
 	 * @since 1.0
 	 */
 	public static function get_content_files() {
-		$cache = get_transient( self::CACHE_CONTENT_FILES );
+		$cache = get_site_transient( self::CACHE_CONTENT_FILES );
 		if ( is_array( $cache ) ) {
 			return $cache;
 		}
@@ -222,11 +237,11 @@ class WD_Scan_Api extends WD_Component {
 			$alerts = __( "Please note the nested WP install on your site will not be scanned. Install WP Defender there to scan separately.", wp_defender()->domain );
 			//self::log( var_export( $wp_installs, true ), self::ERROR_LEVEL_DEBUG, 'nested' );
 			//$alerts = array_merge( $alerts, $wp_installs );
-			set_transient( self::ALERT_NESTED_WP, $alerts );
+			set_site_transient( self::ALERT_NESTED_WP, $alerts );
 		}
-		set_transient( self::CACHE_CONTENT_FILES, $content_files );
+		set_site_transient( self::CACHE_CONTENT_FILES, $content_files );
 		//just for debug
-		set_transient( self::CACHE_CONTENT_FILES . 'count', count( $content_files ) );
+		set_site_transient( self::CACHE_CONTENT_FILES . 'count', count( $content_files ) );
 
 		//$content_files = array_slice( $content_files, 0, 2000 );
 
@@ -400,6 +415,19 @@ class WD_Scan_Api extends WD_Component {
 	}
 
 	public static function clear_cache() {
+		delete_site_transient( self::CACHE_CONTENT_FILES );
+		delete_site_transient( self::CACHE_CORE_FILES );
+		delete_site_transient( self::CACHE_SCAN_PERCENT );
+		delete_site_transient( WD_Core_Integrity_Scan::CACHE_INDEX );
+		delete_site_transient( WD_Suspicious_Scan::CACHE_INDEX );
+		delete_site_transient( WD_Suspicious_Scan::CACHE_SIGNATURES );
+		delete_site_transient( self::ALERT_NESTED_WP );
+		delete_site_transient( self::ALERT_NO_MD5 );
+		delete_site_option( self::CACHE_SCANNED );
+		delete_site_option( 'wd_scan_lock' );
+		//sometime user upgrade from single to network, we need to remove the lefrover
+		delete_option( self::CACHE_SCANNED );
+		delete_option( 'wd_scan_lock' );
 		delete_transient( self::CACHE_CONTENT_FILES );
 		delete_transient( self::CACHE_CORE_FILES );
 		delete_transient( self::CACHE_SCAN_PERCENT );
@@ -408,10 +436,6 @@ class WD_Scan_Api extends WD_Component {
 		delete_transient( WD_Suspicious_Scan::CACHE_SIGNATURES );
 		delete_transient( self::ALERT_NESTED_WP );
 		delete_transient( self::ALERT_NO_MD5 );
-		delete_site_option( self::CACHE_SCANNED );
-		delete_option( self::CACHE_SCANNED );
-		delete_site_option( 'wd_scan_lock' );
-		delete_option( 'wd_scan_lock' );
 	}
 
 	/**

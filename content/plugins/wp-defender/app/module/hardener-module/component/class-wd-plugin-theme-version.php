@@ -14,6 +14,7 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 
 		$this->add_action( 'admin_footer', 'print_scripts' );
 		$this->add_ajax_action( 'wd_get_plugin_changelog', 'get_changelog' );
+		$this->add_ajax_action( 'wd_listen_pt_version', 'listen_pt_version' );
 	}
 
 	/**
@@ -28,7 +29,7 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 	}
 
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -43,14 +44,11 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 	 * @return array
 	 */
 	public function get_plugins_outdate() {
+		wp_update_plugins();
 		$plugins = get_site_transient( 'update_plugins' );
-		if ( ! $plugins ) {
-			wp_update_plugins();
-			$plugins = get_site_transient( 'update_plugins' );
-		}
 
 		$need_update = array();
-		foreach ( $plugins->response as $key => $plugin ) {
+		foreach ( (array) $plugins->response as $key => $plugin ) {
 			$data = get_plugin_data( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $key );
 			if ( version_compare( $data['Version'], $plugin->new_version ) == - 1 ) {
 				//this case, the version lower than newest
@@ -84,12 +82,8 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 	 * //todo for now, it only can get from wp repo, need to extend it later
 	 */
 	public function get_themes_outdate() {
+		wp_update_themes();
 		$themes = get_site_transient( 'update_themes' );
-		//if last checked lower than 6 hours, we will refresh
-		if ( ! $themes ) {
-			wp_update_themes();
-			$themes = get_site_transient( 'update_themes' );
-		}
 
 		$need_update = array();
 		foreach ( $themes->response as $key => $theme ) {
@@ -183,7 +177,7 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 	 * Ajax function, to getting plugin change logs
 	 */
 	public function get_changelog() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -229,10 +223,68 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 							}
 						}
 					})
+				});
+				$('.wd-theme-version-status').click(function (e) {
+					var that = $(this);
+					var data = {
+						'type': that.data('type'),
+						'slug': that.data('slug'),
+						'action': 'wd_listen_pt_version'
+					}
+					listen_up_to_date();
+					that.attr('disabled', 'disabled');
+					function listen_up_to_date() {
+						setTimeout(function () {
+							$.ajax({
+								type: 'POST',
+								data: data,
+								url: ajaxurl,
+								success: function (data) {
+									if (data.status == 1) {
+										setTimeout(function () {
+											//add more 2s, as the ifram usually slower
+											tb_remove();
+											that.closest('.update-nag').fadeOut(500).remove();
+											if ($('#wp_plugin_theme_version .update-nag').size() == 0) {
+												location.reload();
+											}
+										}, 2000)
+									} else {
+										listen_up_to_date();
+									}
+								}
+							})
+						}, 3000)
+					}
 				})
 			})
 		</script>
 		<?php
+	}
+
+	public function listen_pt_version() {
+		if ( ! WD_Utils::check_permission() ) {
+			return;
+		}
+
+		$slug = WD_Utils::http_post( 'slug' );
+		$type = WD_Utils::http_post( 'type' );
+
+		if ( $type == 'plugin' ) {
+			$data = $this->get_plugins_outdate();
+			foreach ( $data as $plugin ) {
+				if ( $plugin['base'] == $slug ) {
+					wp_send_json( array(
+						'status' => 0
+					) );
+				}
+			}
+			//if goes here, mean plugin updated
+			wp_send_json( array(
+				'status' => 1
+			) );
+		}
+
 	}
 
 	public function display() {
@@ -267,15 +319,20 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 									</div>
 								</div>
 								<div class="col span_4_of_12 tr">
-									<form action="<?php echo network_admin_url( 'update.php' ) ?>" target="_blank"
-									      method="get">
-										<?php wp_nonce_field( 'upgrade-plugin_' . $item['base'] ); ?>
-										<input type="hidden" name="action" value="upgrade-plugin">
-										<input type="hidden" name="plugin" value="<?php echo $item['base'] ?>">
-										<button type="submit" class="button button-small button-secondary wd-button">
-											<?php _e( "Update", wp_defender()->domain ) ?>
-										</button>
-									</form>
+									<?php
+									$url = network_admin_url( 'update.php' ) . '?' . http_build_query( array(
+											'action'    => 'upgrade-plugin',
+											'_wpnonce'  => wp_create_nonce( 'upgrade-plugin_' . $item['base'] ),
+											'plugin'    => $item['base'],
+											'TB_iframe' => true
+										) );
+									?>
+									<a target="_blank" data-type="plugin"
+									   data-slug="<?php echo esc_attr( $item['base'] ) ?>"
+									   href="<?php echo $url ?>"
+									   class="button thickbox wd-theme-version-status button-small button-secondary wd-button">
+										<?php _e( "Update", wp_defender()->domain ) ?>
+									</a>
 								</div>
 								<div class="wd-clearfix"></div>
 							</div>
@@ -292,15 +349,21 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 									</div>
 								</div>
 								<div class="col span_4_of_12 tr">
-									<form action="<?php echo network_admin_url( 'update.php' ) ?>" target="_blank"
-									      method="get">
-										<?php wp_nonce_field( 'upgrade-theme_' . $item['base'] ); ?>
-										<input type="hidden" name="action" value="upgrade-theme">
-										<input type="hidden" name="theme" value="<?php echo $item['base'] ?>">
-										<button type="submit" class="button button-small button-secondary wd-button">
-											<?php _e( "Update", wp_defender()->domain ) ?>
-										</button>
-									</form>
+
+									<?php
+									$url = network_admin_url( 'update.php' ) . '?' . http_build_query( array(
+											'action'    => 'upgrade-theme',
+											'_wpnonce'  => wp_create_nonce( 'upgrade-theme_' . $item['base'] ),
+											'theme'     => $item['base'],
+											'TB_iframe' => true
+										) );
+									?>
+									<a target="_blank" data-type="plugin"
+									   data-slug="<?php echo esc_attr( $item['base'] ) ?>"
+									   href="<?php echo $url ?>"
+									   class="button thickbox wd-theme-version-status button-small button-secondary wd-button">
+										<?php _e( "Update", wp_defender()->domain ) ?>
+									</a>
 								</div>
 								<div class="wd-clearfix"></div>
 							</div>

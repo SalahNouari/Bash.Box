@@ -78,7 +78,7 @@ class WD_Error_Log_Scan extends WD_Hardener_Abstract {
 	 * Using ajax to scan files
 	 */
 	public function scan_files() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			$this->log( 'someone from ip ' . $_SERVER['REMOTE_ADDR'] . ' trying to visit here' );
 
 			return;
@@ -213,7 +213,7 @@ class WD_Error_Log_Scan extends WD_Hardener_Abstract {
 	}
 
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 

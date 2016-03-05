@@ -31,7 +31,7 @@ class WD_Schedule_Scan_Controller extends WD_Controller {
 	 * Save setting for schedule a scan to run
 	 */
 	public function schedule_scan() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -58,7 +58,7 @@ class WD_Schedule_Scan_Controller extends WD_Controller {
 		WD_Utils::do_submitting( true );
 		wp_send_json( array(
 			'status'  => 1,
-			'message' => __( "Congratulation. Your scan schedule on set.", wp_defender()->domain )
+			'message' => __( "Congratulations. Your scan schedule is saved.", wp_defender()->domain )
 		) );
 	}
 
@@ -66,7 +66,7 @@ class WD_Schedule_Scan_Controller extends WD_Controller {
 	 * an ajax function to toggle auto scan
 	 */
 	public function toggle_auto_scan() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -79,7 +79,7 @@ class WD_Schedule_Scan_Controller extends WD_Controller {
 		if ( WD_Utils::get_setting( 'scan->auto_scan', false ) == false ) {
 			$tooltip = __( "Activate Automatic Scans", wp_defender()->domain );
 		} else {
-			$tooltip = __( "De-active Automatic Scans", wp_defender()->domain );
+			$tooltip = __( "Deactivate Automatic Scans", wp_defender()->domain );
 		}
 		WD_Utils::do_submitting( true );
 		wp_send_json( array(
@@ -106,8 +106,8 @@ class WD_Schedule_Scan_Controller extends WD_Controller {
 	private function is_in_page() {
 		$screen = get_current_screen();
 		if ( is_object( $screen ) && in_array( $screen->id, array(
-				'wp-defender_page_wdf-schedule-scan',
-				'wp-defender_page_wdf-schedule-scan-network'
+				'defender_page_wdf-schedule-scan',
+				'defender_page_wdf-schedule-scan-network'
 			) )
 		) {
 			return true;

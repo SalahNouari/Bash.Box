@@ -9,7 +9,7 @@ class WD_Performance_Widget extends WD_Controller {
 	}
 
 	public function install_humming() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -23,7 +23,7 @@ class WD_Performance_Widget extends WD_Controller {
 		//need to check if we got that plugin install
 		$slug = 'wp-hummingbird/wp-hummingbird.php';
 		if ( file_exists( WP_CONTENT_DIR . '/plugins/' . $slug ) ) {
-			//check if pplugn inactive, this mostly happen
+			//check if plugin inactive, this mostly happen
 			if ( is_plugin_inactive( $slug ) ) {
 				$ret = activate_plugin( $slug );
 				if ( ! is_wp_error( $ret ) ) {
@@ -45,7 +45,7 @@ class WD_Performance_Widget extends WD_Controller {
 			if ( $res == false ) {
 				wp_send_json( array(
 					'status' => 0,
-					'error'  => $res
+					'error'  => $errors
 				) );
 			} else {
 				//activate it

@@ -60,19 +60,21 @@
 							</thead>
 							<tbody>
 							<?php foreach ( $res as $item ): ?>
-								<tr data-type="<?php echo $item->get_system_type() ?>">
+								<tr data-type="<?php echo esc_attr( $item->get_system_type() ) ?>">
 									<td width="30%" class="file-path">
-										<strong><?php echo $item->get_name() ?></strong>
-										<span><?php echo $item->get_sub() ?></span>
+										<strong><?php echo esc_html( $item->get_name() ) ?></strong>
+										<span><?php echo esc_html( $item->get_sub() ) ?></span>
 									</td>
-									<td width="15%" class="issue-type"><?php echo $item->get_type(); ?></td>
-									<td width="45%" class="issue-detail"><?php echo $item->get_detail() ?></td>
+									<td width="15%" class="issue-type"><?php echo esc_html( $item->get_type() ); ?></td>
+									<td width="45%"
+									    class="issue-detail"><?php echo wp_kses( $item->get_detail(), WD_Utils::allowed_html() ) ?></td>
 									<td width="10%" class="wd-report-actions">
 										<form method="post" class="wd-resolve-frm">
 											<input type="hidden" name="action" value="wd_resolve_result">
 											<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-											<input type="hidden" value="<?php get_class( $item ) ?>" name="class">
-											<input type="hidden" name="id" value="<?php echo $item->id ?>"/>
+											<input type="hidden" value="<?php esc_attr( get_class( $item ) ) ?>"
+											       name="class">
+											<input type="hidden" name="id" value="<?php echo esc_attr( $item->id ) ?>"/>
 
 											<div class="wd-button-group">
 												<button data-type="clean"
@@ -94,7 +96,7 @@
 													$tooltip     = $item->delete_tooltip;
 													$confirm_key = $item->delete_confirm_text; ?>
 													<button data-type="delete"
-													        data-confirm="<?php echo $confirm_key ?>"
+													        data-confirm="<?php echo esc_attr( $confirm_key ) ?>"
 													        data-confirm-button="<?php echo 'delete_confirm_btn' ?>"
 													        tooltip="<?php echo esc_attr( $tooltip ) ?>"
 													        type="submit" class="button button-light button-small">
@@ -177,17 +179,17 @@
 					<?php foreach ( $ignore_list as $item ): ?>
 						<tr>
 							<td width="30%" class="file-path">
-								<strong><?php echo $item->get_name() ?></strong>
-								<span><?php echo $item->get_sub() ?></span>
+								<strong><?php echo esc_html( $item->get_name() ) ?></strong>
+								<span><?php echo esc_html( $item->get_sub() ) ?></span>
 							</td>
-							<td width="15%" class="issue-type"><?php echo $item->get_type(); ?></td>
-							<td width="45%"><?php echo $item->get_detail() ?></td>
+							<td width="15%" class="issue-type"><?php echo esc_html( $item->get_type() ); ?></td>
+							<td width="45%"><?php echo wp_kses( $item->get_detail(), WD_Utils::allowed_html() ) ?></td>
 							<td width="10%" class="wd-report-actions">
 								<form method="post" class="wd-resolve-frm">
 									<input type="hidden" name="action" value="wd_resolve_result">
 									<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-									<input type="hidden" value="<?php get_class( $item ) ?>" name="class">
-									<input type="hidden" name="id" value="<?php echo $item->id ?>"/>
+									<input type="hidden" value="<?php esc_attr( get_class( $item ) ) ?>" name="class">
+									<input type="hidden" name="id" value="<?php echo esc_attr( $item->id ) ?>"/>
 
 									<div class="wd-button-group">
 										<button data-type="undo"
@@ -200,13 +202,13 @@
 											$tooltip     = $item->delete_tooltip;
 											$confirm_key = $item->delete_confirm_text; ?>
 											<button data-type="delete"
-											        data-confirm="<?php echo $confirm_key ?>"
+											        data-confirm="<?php echo esc_attr( $confirm_key ) ?>"
 											        data-confirm-button="<?php echo 'delete_confirm_btn' ?>"
 											        tooltip="<?php echo esc_attr( $tooltip ) ?>"
 											        type="submit" class="button button-light button-small">
 												<i class="wdv-icon wdv-icon-trash"></i>
 											</button>
-											<?php else: ?>
+										<?php else: ?>
 											<button data-type="delete"
 											        tooltip="<?php esc_attr_e( "Delete", wp_defender()->domain ) ?>"
 											        type="button" disabled
@@ -233,7 +235,7 @@
 			<h3><?php _e( "Automatic Scans", wp_defender()->domain ) ?></h3>
 		</div>
 		<div class="box-content">
-			<p><?php _e( "Did you know you can run these scans automatically? You can set them to run daily, weekly or monthly and have the reports emailed to yours or your client’s inboxes.", wp_defender()->domain ) ?></p>
+			<p><?php _e( "Did you know you can run these scans automatically? You can set them to run daily, weekly or monthly and have the reports emailed to you or your client’s inboxes.", wp_defender()->domain ) ?></p>
 			<a href="<?php echo network_admin_url( 'admin.php?page=wdf-schedule-scan' ) ?>"
 			   class="button wd-button"><?php _e( "Setup Automatic Scans", wp_defender()->domain ) ?></a>
 		</div>

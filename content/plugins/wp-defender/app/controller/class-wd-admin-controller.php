@@ -43,7 +43,7 @@ class WD_Admin_Controller extends WD_Controller {
 
 	public function settings_save() {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -71,7 +71,7 @@ class WD_Admin_Controller extends WD_Controller {
 	}
 
 	public function remove_recipient() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 		$id   = WD_Utils::http_post( 'id' );
@@ -84,7 +84,7 @@ class WD_Admin_Controller extends WD_Controller {
 	}
 
 	public function add_recipient() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -148,7 +148,7 @@ class WD_Admin_Controller extends WD_Controller {
 	 * Ajax to return the username
 	 */
 	public function suggest_user_name() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 		$lists   = WD_Utils::get_setting( 'recipients', array() );
@@ -177,7 +177,7 @@ class WD_Admin_Controller extends WD_Controller {
 	 * This only fired at a first time, then we will use anothe view for dashboard
 	 */
 	public function toggle_showed_intro() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -196,6 +196,7 @@ class WD_Admin_Controller extends WD_Controller {
 	 */
 	public function menu_order( $menu_order ) {
 		global $submenu;
+
 		if ( isset( $submenu['wp-defender'] ) ) {
 			$defender_menu       = $submenu['wp-defender'];
 			$defender_menu[0][0] = __( "Dashboard", wp_defender()->domain );
@@ -213,10 +214,10 @@ class WD_Admin_Controller extends WD_Controller {
 
 	public function admin_menu() {
 		$cap = is_multisite() ? 'manage_network_options' : 'manage_options';
-		add_menu_page( __( "WP Defender", wp_defender()->domain ), __( "WP Defender", wp_defender()->domain ), $cap, 'wp-defender', array(
+		add_menu_page( __( "Defender", wp_defender()->domain ), __( "Defender", wp_defender()->domain ), $cap, 'wp-defender', array(
 			&$this,
 			'main_admin_page'
-		), wp_defender()->get_plugin_url() . 'assets/img/shield.png' );
+		) );
 		add_submenu_page( 'wp-defender', __( "Settings", wp_defender()->domain ), __( "Settings", wp_defender()->domain ), $cap, 'wdf-settings', array(
 			&$this,
 			'settings_page'
@@ -290,8 +291,8 @@ class WD_Admin_Controller extends WD_Controller {
 		if ( is_object( $screen ) && in_array( $screen->id, array(
 				'toplevel_page_wp-defender',
 				'toplevel_page_wp-defender-network',
-				'wp-defender_page_wdf-settings',
-				'wp-defender_page_wdf-settings-network'
+				'defender_page_wdf-settings',
+				'defender_page_wdf-settings-network'
 			) )
 		) {
 			return true;

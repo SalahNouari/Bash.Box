@@ -42,7 +42,7 @@ class WD_Scan_Widget extends WD_Controller {
 				}
 			}
 
-			$res['count'] = $res['core_integrity'] + $res['vulndb'] + $res['file_suspicious'];
+			$res['count'] = $res['core_integrity'] + $res['vulndb'] + $res['file_suspicious'];	  	 	   	 		 		 				
 
 			return $this->render( 'widgets/scan/scan_result', array(
 				'model' => $model,

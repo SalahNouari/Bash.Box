@@ -10,7 +10,7 @@
 							if ( WD_Utils::get_setting( 'scan->auto_scan', false ) == false ) {
 								$tooltip = __( "Activate Automatic Scans", wp_defender()->domain );
 							} else {
-								$tooltip = __( "De-active Automatic Scans", wp_defender()->domain );
+								$tooltip = __( "Deactivate Automatic Scans", wp_defender()->domain );
 							}
 							?>
 							<span

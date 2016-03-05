@@ -61,7 +61,7 @@ class WD_Security_Key extends WD_Hardener_Abstract {
 	 * @return bool|void
 	 */
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 

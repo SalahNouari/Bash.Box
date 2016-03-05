@@ -10,7 +10,7 @@
 						<?php _e( "Blacklisted", wp_defender()->domain ) ?>
 					</span>
 			<?php endif; ?>
-			<span tooltip="<?php esc_attr_e( __( "De-activate Blacklist Monitoring", wp_defender()->domain ) ) ?>" class="toggle float-r">
+			<span tooltip="<?php esc_attr_e( __( "Deactivate Blacklist Monitoring", wp_defender()->domain ) ) ?>" class="toggle float-r">
 									<input type="checkbox" class="toggle-checkbox"
 									       id="toggle_blacklist" <?php checked( true, $controller->get_status() != WD_Blacklist_Widget::STATUS_OFF ) ?>/>
 									<label class="toggle-label" for="toggle_blacklist"></label>

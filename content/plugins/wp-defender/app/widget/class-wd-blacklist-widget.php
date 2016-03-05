@@ -29,7 +29,7 @@ class WD_Blacklist_Widget extends WD_Controller {
 			'method' => 'GET'
 		), true );
 		if ( is_wp_error( $result ) ) {
-			//this mean error when firig to API
+			//this mean error when firing to API
 			$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
 
 			return;
@@ -57,13 +57,21 @@ class WD_Blacklist_Widget extends WD_Controller {
 				$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
 			}
 		}
+
+		if ( $this->status == self::STATUS_BLACKLISTED ) {
+			//we need to check if this is first time activated
+			if ( WD_Utils::get_setting( 'cache->is_blacklist_firsttime', true ) == true ) {
+				$this->status = self::STATUS_CLEAN;
+				WD_Utils::update_setting( 'cache->is_blacklist_firsttime', false );
+			}
+		}
 	}
 
 	/**
 	 * Ajax function for toggle blacklist status on/off
 	 */
 	public function toggle_blacklist() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -92,7 +100,6 @@ class WD_Blacklist_Widget extends WD_Controller {
 			$next_status = 'off';
 		}
 		$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
-		delete_transient( self::BLACKLIST_CACHE );
 		if ( is_wp_error( $result ) ) {
 			wp_send_json( array(
 				'status' => 0,

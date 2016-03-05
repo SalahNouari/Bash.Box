@@ -125,8 +125,8 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 		return array(
 			'file' => $this->name,
 			'type' => 'malicious_code',
-			'date' => filemtime( $this->name ),
-			'size' => filesize( $this->name )
+			'date' => @filemtime( $this->name ),
+			'size' => @filesize( $this->name )
 		);
 	}
 
@@ -182,8 +182,8 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 			),
 			array(
 				$this->name,
-				$this->convert_size( filesize( $this->name ) ),
-				date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), filemtime( $this->name ) )
+				$this->convert_size( @filesize( $this->name ) ),
+				date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), @filemtime( $this->name ) )
 			),
 			$output );
 
@@ -194,7 +194,7 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 			case 'plugin':
 				$plugin = $this->find_plugin_data();
 				if ( ! is_null( $plugin ) ) {
-					$html   = sprintf( __( "Suspicious code has been found in the file <strong>%s</strong>, which is in the plugin <a target='_blank' href=\"%s\">%s</a>.  We recommend re-downloading <a target='_blank' href=\"%s\">%s</a> and replacing your existing files with a newer version, just to be on the safe side. ", wp_defender()->domain ),
+					$html   = sprintf( __( "Suspicious code has been found in the file <strong>%s</strong>, which is in the plugin <a target='_blank' href=\"%s\">%s</a>. We recommend re-downloading <a target='_blank' href=\"%s\">%s</a> and replacing your existing files with a newer version, just to be on the safe side. ", wp_defender()->domain ),
 						$this->get_sub(), $plugin['PluginURI'], $plugin['Name'], $plugin['PluginURI'], $plugin['Name'] );
 					$output = str_replace( '{{delete_button_text}}', __( "Delete this plugin", wp_defender()->domain ), $output );
 				}
@@ -202,7 +202,7 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 			case 'theme':
 				$theme = $this->find_theme_data();
 				if ( ! is_null( $theme ) ) {
-					$html   = sprintf( __( "Suspicious code has been found in the file  <strong>%s</strong>, which inside the theme  <a target='_blank' href=\"%s\">%s</a>.We recommend re-downloading  <a target='_blank' href=\"%s\">%s</a> and replacing your existing files with a newer version, just to be on the safe side. ", wp_defender()->domain ),
+					$html   = sprintf( __( "Suspicious code has been found in the file  <strong>%s</strong>, which inside the theme  <a target='_blank' href=\"%s\">%s</a>. We recommend re-downloading  <a target='_blank' href=\"%s\">%s</a> and replacing your existing files with a newer version, just to be on the safe side. ", wp_defender()->domain ),
 						$this->get_sub(), $theme->get( 'ThemeURI' ), $theme->Name, $theme->get( 'ThemeURI' ), $theme->Name );
 					$output = str_replace( '{{delete_button_text}}', __( "Delete this theme", wp_defender()->domain ), $output );
 				}
@@ -211,7 +211,7 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 				$data = array_values( get_plugin_data( $this->name ) );
 				$data = array_filter( $data );
 				if ( empty( $data ) ) {
-					$html = __( "Hmm… This file doesn’t seem to belong to any of your themes or plugins. We recommend isolating or removing it. ", wp_defender()->domain );
+					$html = __( "This file does’nt seem to belong to any of your themes or plugins. We recommend isolating or removing it. ", wp_defender()->domain );
 				} else {
 					//this has some data, if we can't determine plugin name & url, show info
 					$name = $data['Name'];
@@ -220,7 +220,7 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 						$html = sprintf( __( "Suspicious code has been found in the file <strong>%s</strong>, which is in the plugin <strong>%s</strong>.  We recommend re-downloading <strong>%s</strong> and replacing your existing files with a newer version, just to be on the safe side. ", wp_defender()->domain ),
 							$this->get_sub(), $name, $name );
 					} else {
-						$html = __( "Hmm… This file doesn’t seem to belong to any of your themes or plugins. We recommend isolating or removing it. ", wp_defender()->domain );
+						$html = __( "This file does’nt seem to belong to any of your themes or plugins. We recommend isolating or removing it. ", wp_defender()->domain );
 					}
 
 				}
@@ -228,7 +228,7 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 		}
 		//if still here, means doesnt theme, but injection
 		if ( empty( $html ) ) {
-			$html = __( "Hmm… This file doesn’t seem to belong to any of your themes or plugins. We recommend isolating or removing it. ", wp_defender()->domain );
+			$html = __( "This file does’nt seem to belong to any of your themes or plugins. We recommend isolating or removing it. ", wp_defender()->domain );
 		}
 		//just in case the delete text doesnt replace
 		$output       = str_replace( '{{delete_button_text}}', __( "Delete this file", wp_defender()->domain ), $output );
@@ -317,8 +317,8 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 					<form method="post" class="wd-resolve-frm">
 						<input type="hidden" name="action" value="wd_resolve_result">
 						<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
-						<input type="hidden" value="<?php echo get_class( $this ) ?>" name="class">
-						<input type="hidden" name="id" value="<?php echo $this->id ?>"/>
+						<input type="hidden" value="<?php echo esc_attr( get_class( $this ) ) ?>" name="class">
+						<input type="hidden" name="id" value="<?php echo esc_attr( $this->id ) ?>"/>
 						<?php if ( $this->can_ignore() ): ?>
 							<button type="submit" data-confirm-button="<?php echo 'ignore_confirm_btn' ?>"
 							        data-confirm="<?php echo 'ignore_confirm_msg' ?>" data-type="ignore"
@@ -328,7 +328,7 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 						<?php endif; ?>
 						<?php if ( $this->can_delete() ): ?>
 							<button data-type="delete" data-confirm-button="<?php echo 'delete_confirm_btn' ?>"
-							        data-confirm="<?php echo $this->delete_confirm_text ?>" type="submit"
+							        data-confirm="<?php echo esc_attr( $this->delete_confirm_text ) ?>" type="submit"
 							        class="button button-red button-small">
 								{{delete_button_text}}
 							</button>

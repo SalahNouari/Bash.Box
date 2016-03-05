@@ -11,7 +11,7 @@
 
 			</div>
 			<p>
-				<?php _e( "Defender can check Google’s blacklist to see if your site is checking out OK. All you have to do is turn this on and we’ll scan your site every 6 hours automatically. This is a premium only feature – get a membership today and make sure you’re safe!", wp_defender()->domain ) ?>
+				<?php _e( "Defender can check Google’s blacklist to see if your site is malware free. All you have to do is turn this on and we’ll scan your site every 6 hours automatically. This is a premium only feature – get a membership today and make sure you’re safe!", wp_defender()->domain ) ?>
 			</p>
 			<br/>
 			<a class="button wd-button button-cta"

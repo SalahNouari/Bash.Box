@@ -144,7 +144,7 @@ class WD_DB_Prefix extends WD_Hardener_Abstract {
 	public function process() {
 		$this->log( 'Start updating db prefix', self::ERROR_LEVEL_DEBUG );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 

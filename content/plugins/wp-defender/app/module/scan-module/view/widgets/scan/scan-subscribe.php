@@ -19,7 +19,7 @@
 			<br/>
 			<?php
 			if ( WD_Utils::is_wpmudev_dashboard_installed() ) {
-				$link = sprintf( __( "Already have a membership? <a href=\"%s\">You might need to login</a>", wp_defender()->domain ), network_site_url( 'admin.php?page=wpmudev' ) );
+				$link = sprintf( __( "Already have a membership? <a href=\"%s\">You might need to login</a>", wp_defender()->domain ), network_admin_url( 'admin.php?page=wpmudev' ) );
 			} else {
 				$link = sprintf( __( "Already have a membership? <a href=\"%s\">Install the Dashboard</a>", wp_defender()->domain ), 'https://premium.wpmudev.org/project/wpmu-dev-dashboard/' );
 			}

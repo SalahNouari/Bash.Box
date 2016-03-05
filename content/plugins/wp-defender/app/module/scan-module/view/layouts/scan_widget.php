@@ -12,7 +12,7 @@
 		<div class="box-content">
 			<?php
 			$date = $model->get_raw_post()->post_date;
-			$date = date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date ) );
+			$date = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date ) );
 			echo '<p>' . sprintf( __( "Your last scan was on <strong>%s</strong>", wp_defender()->domain ), $date ) . '</p'; ?>
 			<br/><br/>
 			{{contents}}

@@ -496,7 +496,7 @@ WDefender.scanning = function () {
                             }
                             setTimeout(function () {
                                 jq('#secret_key_scanning').submit();
-                            }, 1500)
+                            }, 3000)
                         }
                     }
                 })

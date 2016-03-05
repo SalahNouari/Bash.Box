@@ -8,6 +8,8 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 	private $internal_index = 0;
 	public $name = '';
 
+	//public $chunk_size = 200;
+
 	public function __construct() {
 		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_CORE_INTEGRITY . '_scan' ) != 1 ) {
 			$this->is_enabled = false;
@@ -20,7 +22,7 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 		$this->dashboard_required = false;
 		$this->files_need_scan    = WD_Scan_Api::get_core_files();
 		//$this->max_percent        = round( ( count( $this->files_need_scan ) * 100 ) / count( self::get_total_files() ), 2 );
-		$this->internal_index = get_transient( self::CACHE_INDEX );
+		$this->internal_index = get_site_transient( self::CACHE_INDEX );
 	}
 
 	public function process( WD_Scan_Result_Model $model, $next_step = null ) {
@@ -39,8 +41,8 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 			$files = array_slice( $files, $this->internal_index, count( $this->files_need_scan ) );
 		}
 
-		//$chunk = array_chunk( $files, apply_filters( 'wd_core_integrity_chunk_size', 200, $this->files_need_scan ) );
-		//$files = array_shift( $chunk );
+		$chunk = array_chunk( $files, apply_filters( 'wd_core_integrity_chunk_size', 200, $this->files_need_scan ) );
+		$files = array_shift( $chunk );
 
 		$last_scan = WD_Scan_Api::get_last_scan();
 
@@ -83,10 +85,10 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 					$model->save();
 				} elseif ( $result === - 1 ) {
 					//this mean no signatures
-					set_transient( WD_Scan_Api::ALERT_NO_MD5, __( "There are no available checksums for your WordPress version, the scan will skip the core integrity check.", wp_defender()->domain ) );
+					set_site_transient( WD_Scan_Api::ALERT_NO_MD5, __( "There are no available checksums for your WordPress version, the scan will skip the core integrity check.", wp_defender()->domain ) );
 					$model->current_index = count( $this->files_need_scan );
 					$progress             = round( $model->current_index * 100 / $model->total_files, 2 );
-					set_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
+					set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
 					update_post_meta( $model->id, 'current_index', $model->current_index );
 					if ( ! empty( $next_step ) ) {
 						$model->current_action = $next_step;
@@ -103,9 +105,9 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 
 			$progress = round( $model->current_index * 100 / $model->total_files, 2 );
 			$this->internal_index += 1;
-			set_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
+			set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
 			$this->log( $progress, self::ERROR_LEVEL_DEBUG, 'percent' );
-			set_transient( self::CACHE_INDEX, $this->internal_index );
+			set_site_transient( self::CACHE_INDEX, $this->internal_index );
 			WD_Scan_Api::log_scanned_file( $file . ' - ' . ( ( isset( $detail ) && is_array( $detail ) && count( $detail ) ) ? '<span class="not-ok">' . __( "Not OK", wp_defender()->domain ) . '</span>' : '<span class="ok">' . __( "OK", wp_defender()->domain ) . '</span>' ) );
 
 			$model->current_index += 1;
@@ -119,7 +121,7 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 		update_post_meta( $model->id, 'md5_tree', $model->md5_tree );
 		update_post_meta( $model->id, 'result_core_integrity', $model->result_core_integrity );
 		update_post_meta( $model->id, 'ignore_files', $model->ignore_files );
-		delete_transient( self::CACHE_MD5 );
+		delete_site_transient( self::CACHE_MD5 );
 
 		//will need to check if this already done
 		if ( $this->internal_index == count( $this->files_need_scan ) ) {
@@ -140,7 +142,7 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 	 */
 	private function scan_a_file( $file, $checksum = false ) {
 		//we need to download md5 from wp
-		if ( ( $md5_files = get_transient( self::CACHE_MD5 ) ) == false ) {
+		if ( ( $md5_files = get_site_transient( self::CACHE_MD5 ) ) == false ) {
 			$md5_files = WD_Scan_Api::download_md5_files();
 			if ( is_wp_error( $md5_files ) ) {
 				return $md5_files;
@@ -150,7 +152,7 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 				//this mean no signatures return,we will skip
 				return - 1;
 			}
-			set_transient( self::CACHE_MD5, $md5_files );
+			set_site_transient( self::CACHE_MD5, $md5_files );
 		}
 
 		$relative_path = str_replace( ABSPATH, '', $file );
@@ -250,10 +252,10 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 
 		if ( empty( $md5_files ) ) {
 			//this mean no signatures return,we will skip
-			set_transient( WD_Scan_Api::ALERT_NO_MD5, __( "There are no available checksums for your WordPress version, the scan will skip the core integrity check.", wp_defender()->domain ) );
+			set_site_transient( WD_Scan_Api::ALERT_NO_MD5, __( "There are no available checksums for your WordPress version, the scan will skip the core integrity check.", wp_defender()->domain ) );
 			$model->current_index = count( $this->files_need_scan );
 			$progress             = round( $model->current_index * 100 / $model->total_files, 2 );
-			set_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
+			set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
 			update_post_meta( $model->id, 'current_index', $model->current_index );
 			if ( ! empty( $next_step ) ) {
 				$model->current_action = $next_step;
@@ -307,9 +309,9 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 			//$progress = round( $this->internal_index * $this->max_percent / ( count( $this->files_need_scan ) - 1 ), 2 );
 			$progress = round( $model->current_index * 100 / $model->total_files, 2 );
 			$this->internal_index += 1;
-			set_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
+			set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
 			$this->log( $progress, self::ERROR_LEVEL_DEBUG, 'percent' );
-			set_transient( self::CACHE_INDEX, $this->internal_index );
+			set_site_transient( self::CACHE_INDEX, $this->internal_index );
 			WD_Scan_Api::log_scanned_file( $file . ' - ' . ( ( isset( $detail ) && is_array( $detail ) && count( $detail ) ) ? '<span class="not-ok">' . __( "Not OK", wp_defender()->domain ) . '</span>' : '<span class="ok">' . __( "OK", wp_defender()->domain ) . '</span>' ) );
 
 			$model->current_index += 1;

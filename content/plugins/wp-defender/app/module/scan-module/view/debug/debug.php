@@ -21,14 +21,14 @@
 		<div class="vertical-tabs">
 			<section class="tab">
 				<input type="radio" name="tab_group1" id="tab_1" checked/>
-				<label for="tab_1">Scan Data</label>
+				<label for="tab_1"><?php _e( "Scan Data", wp_defender()->domain ) ?></label>
 
 				<div class="content">
 					<div class="group">
 						<div class="col span_6_of_12">
 							<p>
 								<strong><?php _e( "Progress: " ) ?></strong>
-								<?php echo get_transient( WD_Scan_APi::CACHE_SCAN_PERCENT ) ?>%
+								<?php echo get_site_transient( WD_Scan_APi::CACHE_SCAN_PERCENT ) ?>%
 							</p>
 
 							<p>
@@ -48,12 +48,16 @@
 
 							<p>
 								<strong><?php _e( "Start time: " ) ?></strong>
-								<?php echo date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $model->execute_time['start'] ); ?>
+								<?php echo date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $model->execute_time['start'] ); ?>
+							</p>
+							<p>
+								<strong><?php _e( "Last modified time: " ) ?></strong>
+								<?php echo date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime($model->get_raw_post()->post_modified) ); ?>
 							</p>
 							<?php if ( $model->status == WD_Scan_Result_Model::STATUS_COMPLETE ): ?>
 								<p>
 									<strong><?php _e( "Complete: " ) ?></strong>
-									<?php echo date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $model->execute_time['end'] ); ?>
+									<?php echo date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $model->execute_time['end'] ); ?>
 								</p>
 							<?php endif; ?>
 							<hr/>
@@ -64,7 +68,7 @@
 
 							<p>
 								<strong><?php _e( "Current core file index: " ) ?></strong>
-								<?php echo get_transient( WD_Core_Integrity_Scan::CACHE_INDEX ) ?>
+								<?php echo get_site_transient( WD_Core_Integrity_Scan::CACHE_INDEX ) ?>
 							</p>
 
 							<p>
@@ -74,7 +78,7 @@
 
 							<p>
 								<strong><?php _e( "Current content file index: " ) ?></strong>
-								<?php echo get_transient( WD_Suspicious_Scan::CACHE_INDEX ) ?>
+								<?php echo get_site_transient( WD_Suspicious_Scan::CACHE_INDEX ) ?>
 							</p>
 						</div>
 						<div class="col span_6_of_12">

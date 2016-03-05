@@ -126,7 +126,7 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 	}
 
 	public function process() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -260,7 +260,7 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 	}
 
 	public function revert() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 

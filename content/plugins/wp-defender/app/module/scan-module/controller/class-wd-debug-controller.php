@@ -26,7 +26,7 @@ class WD_Debug_Controller extends WD_Controller {
 	}
 
 	public function clear_log() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! WD_Utils::check_permission()  ) {
 			return;
 		}
 
@@ -44,8 +44,8 @@ class WD_Debug_Controller extends WD_Controller {
 	private function is_in_page() {
 		$screen = get_current_screen();
 		if ( is_object( $screen ) && in_array( $screen->id, array(
-				'wp-defender_page_wdf-debug',
-				'wp-defender_page_wdf-debug-network'
+				'defender_page_wdf-debug',
+				'defender_page_wdf-debug-network'
 			) )
 		) {
 			return true;

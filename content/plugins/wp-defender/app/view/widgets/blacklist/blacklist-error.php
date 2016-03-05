@@ -19,7 +19,7 @@
 
 			</div>
 			<p>
-				<?php _e( "Defender can check Google’s blacklist to see if your site is checking out OK. All you have to do is turn this on and we’ll scan your site every 6 hours automagically.", wp_defender()->domain ) ?>
+				<?php _e( "Defender can check Google’s blacklist to see if your site is malware free. All you have to do is turn this on and we’ll scan your site every 6 hours automagically.", wp_defender()->domain ) ?>
 			</p>
 
 			<div class="wd-error">

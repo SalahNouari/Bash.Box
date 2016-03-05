@@ -354,15 +354,16 @@ class WD_Component {
 			$stream                  = wp_defender()->global['memory_stream'];
 			fwrite( $stream, $log . $weird_delimiter . $log_name . $weird_newline_delimiter );
 		} else {
-			$log       = $log . PHP_EOL;
+			$log         = $log . PHP_EOL;
+			$upload_dirs = wp_upload_dir();
+			$log_dir     = $upload_dirs['basedir'] . DIRECTORY_SEPARATOR . 'wp-defender/';
+			if ( ! is_dir( $log_dir ) ) {
+				wp_mkdir_p( $log_dir );
+				//we need to create an htaccess to protect
+				file_put_contents( $log_dir . '.htaccess', 'Deny from all' );
+				file_put_contents( $log_dir . 'index.php', '' );
+			}
 			if ( $is_apache ) {
-				$upload_dirs = wp_upload_dir();
-				$log_dir     = $upload_dirs['basedir'] . DIRECTORY_SEPARATOR . 'wp-defender/';
-				if ( ! is_dir( $log_dir ) ) {
-					wp_mkdir_p( $log_dir );
-					//we need to create an htaccess to protect
-					file_put_contents( $log_dir . '.htaccess', 'Deny from all' );
-				}
 				$log_path = $log_dir . $log_name;
 				if ( ! file_exists( $log_path ) ) {
 					$handle = fopen( $log_path, 'w' );
@@ -472,6 +473,18 @@ class WD_Component {
 			}
 		}
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_ajax() {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return true;
+		}
+
+		return false;
+	}
+
 
 	/**
 	 * @param $path string absolute path or key

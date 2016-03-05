@@ -43,8 +43,8 @@ class WD_Logging_Controller extends WD_Controller {
 	private function is_in_page() {
 		$screen = get_current_screen();
 		if ( is_object( $screen ) && in_array( $screen->id, array(
-				'wp-defender_page_wdf-logging',
-				'wp-defender_page_wdf-logging-network'
+				'defender_page_wdf-logging',
+				'defender_page_wdf-logging-network'
 			) )
 		) {
 			return true;
