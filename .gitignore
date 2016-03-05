@@ -6,6 +6,7 @@ php.ini
 .htaccess
 wp-config.php
 
+/content/themes/children/_archive
 /shared
 /config
 staging-config.php
