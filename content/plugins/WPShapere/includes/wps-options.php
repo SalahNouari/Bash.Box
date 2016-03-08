@@ -12,10 +12,12 @@ else {
 }
 
 //get all admin users
-$user_query = new WP_User_Query( array( 'role' => 'Administrator' ) );
-if ( ! empty( $user_query->results ) ) {
-        foreach ( $user_query->results as $user ) {
-                $admin_users[$user->ID] = $user->display_name;
+global $wpdb;
+$user_query = $wpdb->get_results( "Select m.user_id, display_name From wp_users u, wp_usermeta m Where u.id = m.user_id And m.meta_key = 'wp_user_level' And m.meta_value = '10'" );
+
+if ( ! empty( $user_query ) ) {
+        foreach ( $user_query as $user_details ) {
+                $admin_users[$user_details->user_id] = $user_details->display_name;
         }
 }
 
@@ -25,6 +27,7 @@ $panel_tabs = array(
     'dash' => __( 'Dashboard Options', 'aof' ),
     'adminbar' => __( 'Adminbar Options', 'aof' ),
     'adminop' => __( 'Admin Page Options', 'aof' ),
+    'adminmenu' => __( 'Admin menu Options', 'aof' ),
     'footer' => __( 'Footer Options', 'aof' ),
     'email' => __( 'Email Options', 'aof' ),
     );
@@ -654,7 +657,7 @@ $panel_fields[] = array(
 );
 
 $panel_fields[] = array(
-    'name' => __( 'Admin Menu Color options', 'wps' ),
+    'name' => __( 'Page background color', 'wps' ),
     'type' => 'title',
     );
 
@@ -663,62 +666,6 @@ $panel_fields[] = array(
     'id' => 'bg_color',
     'type' => 'wpcolor',
     'default' => '#e3e7ea',
-    );
-
-$panel_fields[] = array(
-    'name' => __( 'Left menu wrap color', 'wps' ),
-    'id' => 'nav_wrap_color',
-    'type' => 'wpcolor',
-    'default' => '#1b2831',
-    );
-
-$panel_fields[] = array(
-    'name' => __( 'Submenu wrap color', 'wps' ),
-    'id' => 'sub_nav_wrap_color',
-    'type' => 'wpcolor',
-    'default' => '#22303a',
-    );	
-
-$panel_fields[] = array(
-    'name' => __( 'Menu hover color', 'wps' ),
-    'id' => 'hover_menu_color',
-    'type' => 'wpcolor',
-    'default' => '#3f4457',
-    );	
-
-$panel_fields[] = array(
-    'name' => __( 'Current active Menu color', 'wps' ),
-    'id' => 'active_menu_color',
-    'type' => 'wpcolor',
-    'default' => '#6da87a',
-    );	
-
-$panel_fields[] = array(
-    'name' => __( 'Menu text color', 'wps' ),
-    'id' => 'nav_text_color',
-    'type' => 'wpcolor',
-    'default' => '#90a1a8',
-    );	
-
-$panel_fields[] = array(
-    'name' => __( 'Menu hover text color', 'wps' ),
-    'id' => 'menu_hover_text_color',
-    'type' => 'wpcolor',
-    'default' => '#ffffff',
-    );
-
-$panel_fields[] = array(
-    'name' => __( 'Updates Count notification background', 'wps' ),
-    'id' => 'menu_updates_count_bg',
-    'type' => 'wpcolor',
-    'default' => '#212121',
-    );
-
-$panel_fields[] = array(
-    'name' => __( 'Updates Count text color', 'wps' ),
-    'id' => 'menu_updates_count_text',
-    'type' => 'wpcolor',
-    'default' => '#ffffff',
     );
 
 $panel_fields[] = array(
@@ -973,6 +920,82 @@ $panel_fields[] = array(
     'name' => __( 'Custom CSS for Admin pages', 'wps' ),
     'id' => 'admin_page_custom_css',
     'type' => 'textarea',
+    );
+
+//Admin menu Options
+$panel_fields[] = array(
+    'name' => __( 'Admin menu Options', 'aof' ),
+    'type' => 'openTab'
+    );
+
+$panel_fields[] = array(
+    'name' => __( 'Admin menu width', 'wps' ),
+    'id' => 'admin_menu_width',
+    'type' => 'number',
+    'default' => '230',
+    'min' => '180',
+    'max' => '400',
+    );
+
+$panel_fields[] = array(
+    'name' => __( 'Admin Menu Color options', 'wps' ),
+    'type' => 'title',
+    );
+
+$panel_fields[] = array(
+    'name' => __( 'Left menu wrap color', 'wps' ),
+    'id' => 'nav_wrap_color',
+    'type' => 'wpcolor',
+    'default' => '#1b2831',
+    );
+
+$panel_fields[] = array(
+    'name' => __( 'Submenu wrap color', 'wps' ),
+    'id' => 'sub_nav_wrap_color',
+    'type' => 'wpcolor',
+    'default' => '#22303a',
+    );	
+
+$panel_fields[] = array(
+    'name' => __( 'Menu hover color', 'wps' ),
+    'id' => 'hover_menu_color',
+    'type' => 'wpcolor',
+    'default' => '#3f4457',
+    );	
+
+$panel_fields[] = array(
+    'name' => __( 'Current active Menu color', 'wps' ),
+    'id' => 'active_menu_color',
+    'type' => 'wpcolor',
+    'default' => '#6da87a',
+    );	
+
+$panel_fields[] = array(
+    'name' => __( 'Menu text color', 'wps' ),
+    'id' => 'nav_text_color',
+    'type' => 'wpcolor',
+    'default' => '#90a1a8',
+    );	
+
+$panel_fields[] = array(
+    'name' => __( 'Menu hover text color', 'wps' ),
+    'id' => 'menu_hover_text_color',
+    'type' => 'wpcolor',
+    'default' => '#ffffff',
+    );
+
+$panel_fields[] = array(
+    'name' => __( 'Updates Count notification background', 'wps' ),
+    'id' => 'menu_updates_count_bg',
+    'type' => 'wpcolor',
+    'default' => '#212121',
+    );
+
+$panel_fields[] = array(
+    'name' => __( 'Updates Count text color', 'wps' ),
+    'id' => 'menu_updates_count_text',
+    'type' => 'wpcolor',
+    'default' => '#ffffff',
     );
 
 

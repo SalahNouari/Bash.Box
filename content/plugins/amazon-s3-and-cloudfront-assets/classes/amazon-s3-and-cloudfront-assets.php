@@ -29,6 +29,7 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 	protected $location_versions;
 
 	const SETTINGS_KEY = 'as3cf_assets';
+	const SETTINGS_CONSTANT = 'WPOS3_ASSETS_SETTINGS';
 	const FILES_SETTINGS_KEY = 'as3cf_assets_files';
 	const TO_PROCESS_SETTINGS_KEY = 'as3cf_assets_files_to_process';
 	const ENQUEUED_SETTINGS_KEY = 'as3cf_assets_enqueued_scripts';
@@ -58,7 +59,7 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 
 		// Cron to scan files for S3 upload
 		$this->scanning_cron_interval_in_minutes = apply_filters( 'as3cf_assets_cron_files_s3_interval', 5 );
-		add_filter( 'as3cf_assets_setting_enable-cron', array( $this, 'turn_on_cron_job' ) );
+		add_filter( 'as3cf_assets_setting_enable-cron', array( $this, 'cron_healthchecks' ) );
 		add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
 		add_action( $this->scanning_cron_hook, array( $this, 'scan_files_for_s3' ) );
 		add_action( $this->processing_cron_hook, array( $this, 'process_s3_files' ) );
@@ -103,8 +104,8 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 	 * Load the addon
 	 */
 	function load_addon() {
-		$version = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? time() : $this->plugin_version;
-		$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$version = $this->get_asset_version();
+		$suffix  = $this->get_asset_suffix();
 
 		$src = plugins_url( 'assets/css/styles.css', $this->plugin_file_path );
 		wp_enqueue_style( 'as3cf-assets-styles', $src, array( 'as3cf-styles' ), $version );
@@ -206,12 +207,17 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 	function render_view( $view, $args = array() ) {
 		extract( $args );
 		$view_file = $this->plugin_dir_path . '/view/' . $view . '.php';
-		if ( file_exists( $view_file ) ) {
-			include $view_file;
-		} else {
-			global $as3cf;
-			include $as3cf->plugin_dir_path . '/view/' . $view . '.php';
+
+		if ( ! file_exists( $view_file ) ) {
+			global $as3cfpro;
+			$view_file = $as3cfpro->plugin_dir_path . '/view/pro/' . $view . '.php';
 		}
+
+		if ( ! file_exists( $view_file ) ) {
+			$view_file = $as3cfpro->plugin_dir_path . '/view/' . $view . '.php';
+		}
+
+		include $view_file;
 	}
 
 	/**
@@ -226,6 +232,11 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 		global $as3cf;
 
 		$settings = $this->get_settings();
+
+		// Region
+		if ( false !== ( $region = $this->get_setting_region( $settings, $key, $default ) ) ) {
+			return $region;
+		}
 
 		if ( 'ssl' === $key ) {
 			return 'http';
@@ -252,10 +263,6 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			return '1';
 		}
 
-		if ( 'bucket' === $key && defined( 'AS3CF_ASSETS_BUCKET' ) ) {
-			return AS3CF_ASSETS_BUCKET;
-		}
-
 		// Default enable object prefix - enabled unless path is empty
 		if ( 'enable-script-object-prefix' === $key ) {
 			if ( isset( $settings['enable-script-object-prefix'] ) && '0' === $settings['enable-script-object-prefix'] ) {
@@ -263,7 +270,9 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			}
 
 			if ( isset( $settings['object-prefix'] ) && '' === trim( $settings['object-prefix'] ) ) {
-				return 0;
+				if ( false === $this->get_defined_setting( 'object-prefix', false ) ) {
+					return 0;
+				}
 			}
 		}
 
@@ -276,9 +285,116 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			return ( 'cloudfront' !== $this->get_setting( 'domain' ) ) ? '1' : '0';
 		}
 
+		// 1.1 Update 'Bucket as Domain' to new CloudFront/Domain UI
+		if ( 'domain' === $key && 'virtual-host' === $settings[ $key ] ) {
+			return $this->upgrade_virtual_host();
+		}
+
 		$value = AWS_Plugin_Base::get_setting( $key, $default );
 
+		// Bucket
+		if ( false !== ( $bucket = $this->get_setting_bucket( $key, $value, 'AS3CF_ASSETS_BUCKET' ) ) ) {
+			return $bucket;
+		}
+
 		return apply_filters( 'as3cf_assets_setting_' . $key, $value );
+	}
+
+	/**
+	 * Filter in defined settings with sensible defaults.
+	 *
+	 * @param array $settings
+	 *
+	 * @return array $settings
+	 */
+	function filter_settings( $settings ) {
+		$defined_settings = $this->get_defined_settings();
+
+		// Bail early if there are no defined settings
+		if ( empty( $defined_settings ) ) {
+			return $settings;
+		}
+
+		foreach ( $defined_settings as $key => $value ) {
+			$allowed_values = array();
+
+			if ( 'domain' === $key ) {
+				$allowed_values = array(
+					'subdomain',
+					'path',
+					'virtual-host',
+					'cloudfront',
+				);
+			}
+
+			$checkboxes = array(
+				'enable-addon',
+				'enable-cron',
+				'enable-gzip',
+				'enable-minify',
+				'enable-script-object-prefix',
+				'enable-custom-endpoint',
+				'object-versioning',
+			);
+
+			if ( in_array( $key, $checkboxes ) ) {
+				$allowed_values = array( '0', '1' );
+			}
+
+			// Unexpected value, remove from defined_settings array.
+			if ( ! empty( $allowed_values ) && ! in_array( $value, $allowed_values ) ) {
+				$this->remove_defined_setting( $key );
+				continue;
+			}
+
+			// Value defined successfully
+			$settings[ $key ] = $value;
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Disables the save button if all settings have been defined.
+	 *
+	 * @param string $defined_settings
+	 *
+	 * @return string
+	 */
+	function maybe_disable_save_button( $defined_settings = array() ) {
+		$attr                 = 'disabled="disabled"';
+		$defined_settings     = ! empty( $defined_settings ) ? $defined_settings : $this->get_defined_settings();
+		$whitelisted_settings = $this->get_settings_whitelist();
+		$settings_to_skip     = array(
+			'bucket',
+			'region',
+			'custom-endpoint-key',
+		);
+
+		foreach ( $whitelisted_settings as $setting ) {
+			if ( in_array( $setting, $settings_to_skip ) ) {
+				continue;
+			}
+
+			if ( 'object-prefix' === $setting ) {
+				if ( isset( $defined_settings['enable-script-object-prefix'] ) && '0' === $defined_settings['enable-script-object-prefix'] ) {
+					continue;
+				}
+			}
+
+			if ( 'cloudfront' === $setting ) {
+				if ( isset( $defined_settings['domain'] ) && 'cloudfront' !== $defined_settings['domain'] ) {
+					continue;
+				}
+			}
+
+			if ( ! isset( $defined_settings[ $setting ] ) ) {
+				// If we're here, there's a setting that hasn't been defined.
+				return '';
+			}
+		}
+
+		return $attr;
 	}
 
 	/**
@@ -495,9 +611,8 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			foreach ( $blog_ids as $blog_id ) {
 				$this->switch_to_blog( $blog_id );
 				$themes = $this->add_active_theme( $themes );
+				$this->restore_current_blog();
 			}
-
-			$this->restore_current_blog( $blog_id );
 		}
 
 		return array_values( $themes );
@@ -664,15 +779,21 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 	}
 
 	/**
-	 * Ensure the cron job is scheduled when the setting is turned on
+	 * Cron processing healthchecks
 	 *
-	 * @param $value
+	 * @param mixed $value
 	 *
 	 * @return mixed
 	 */
-	function turn_on_cron_job( $value ) {
+	public function cron_healthchecks( $value ) {
 		if ( $value ) {
 			$this->schedule_event( $this->scanning_cron_hook );
+		}
+
+		$processing = get_site_option( self::TO_PROCESS_SETTINGS_KEY );
+
+		if ( ! empty( $processing ) ) {
+			$this->schedule_event( $this->processing_cron_hook );
 		}
 
 		return $value;
@@ -935,10 +1056,10 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 		if ( ! empty( $files_to_process ) ) {
 			// Save the files to be processed to S3 to the db
 			update_site_option( self::TO_PROCESS_SETTINGS_KEY, $files_to_process );
-			// Kick off the first processing batch
-			$this->process_s3_files( $files_to_process, $files_to_save );
 			// Start the cron to batch process files to S3
 			$this->schedule_event( $this->processing_cron_hook );
+			// Kick off the first processing batch
+			$this->process_s3_files( $files_to_process, $files_to_save );
 		} else {
 			// Unlock scanning
 			delete_site_transient( $this->scanning_lock_key );
@@ -1187,7 +1308,7 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 	function copy_file_to_s3( $s3client, $bucket, $file, $details, $key = null ) {
 		if ( ! file_exists( $file ) ) {
 			$error_msg = sprintf( __( 'File does not exist - %s', 'as3cf-assets' ), $file );
-			error_log( $error_msg );
+			AS3CF_Error::log( $error_msg, 'ASSETS' );
 
 			return new WP_Error( 'exception', $error_msg );
 		}
@@ -1199,7 +1320,7 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			$s3client->putObject( $args );
 		} catch ( Exception $e ) {
 			$error_msg = sprintf( __( 'Error uploading %s to S3: %s', 'as3cf-assets' ), $file, $e->getMessage() );
-			error_log( $error_msg );
+			AS3CF_Error::log( $error_msg, 'ASSETS' );
 
 			return new WP_Error( 'exception', $error_msg );
 		}
@@ -1233,7 +1354,7 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			$s3client->putObject( $args );
 		} catch ( Exception $e ) {
 			$error_msg = sprintf( __( 'Error uploading body to S3: %s', 'as3cf-assets' ), $e->getMessage() );
-			error_log( $error_msg );
+			AS3CF_Error::log( $error_msg );
 
 			return new WP_Error( 'exception', $error_msg );
 		}
@@ -1261,8 +1382,8 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 			'Bucket'       => $bucket,
 			'Key'          => $key,
 			'ACL'          => self::DEFAULT_ACL,
-			'CacheControl' => 'max-age=315360000',
-			'Expires'      => date( 'D, d M Y H:i:s O', time() + 315360000 ),
+			'CacheControl' => 'max-age=31536000',
+			'Expires'      => date( 'D, d M Y H:i:s O', time() + 31536000 ),
 		);
 
 		return apply_filters( 'as3cf_assets_object_meta', $args, $details );
@@ -2087,6 +2208,38 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 	}
 
 	/**
+	 * Get minified assets
+	 *
+	 * @param bool|array $enqueued
+	 * @param bool       $absolute_path
+	 *
+	 * @return array
+	 */
+	protected function get_minified_assets( $enqueued = false, $absolute_path = true ) {
+		if ( false === $enqueued || ! is_array( $enqueued ) ) {
+			$enqueued = $this->get_enqueued_files();
+		}
+
+		$minified = array();
+
+		foreach ( $enqueued as $type ) {
+			foreach( $type as $file => $details ) {
+				if ( isset( $details['minified'] ) && $details['minified'] ) {
+					$minified[] = $file;
+				}
+			}
+		}
+
+		if ( ! $absolute_path ) {
+			foreach( $minified as $key => $value ) {
+				$minified[ $key ] = str_replace( ABSPATH, '', $value );
+			}
+		}
+
+		return $minified;
+	}
+
+	/**
 	 * Addon specific diagnostic info
 	 */
 	function diagnostic_info() {
@@ -2097,12 +2250,23 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 		echo "\r\n";
 		echo 'Cron: ';
 		echo $this->on_off( 'enable-cron' );
+		if ( $this->get_setting( 'enable-cron' ) ) {
+			echo "\r\n";
+			echo 'Scanning Cron: ';
+			echo ( wp_next_scheduled( $this->scanning_cron_hook ) ) ? 'On' : 'Off';
+		}
+		echo "\r\n";
+		echo 'Processing Cron: ';
+		echo ( wp_next_scheduled( $this->processing_cron_hook ) ) ? 'On' : 'Off';
 		echo "\r\n";
 		echo 'Bucket: ';
 		echo $this->get_setting( 'bucket' );
 		echo "\r\n";
 		echo 'Region: ';
-		echo $this->get_setting( 'region' );
+		$region = $this->get_setting( 'region' );
+		if ( ! is_wp_error( $region ) ) {
+			echo $region;
+		}
 		echo "\r\n";
 		echo 'Domain: ';
 		$domain = $this->get_setting( 'domain' );
@@ -2121,6 +2285,12 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 		echo "\r\n";
 		echo 'File Extensions: ';
 		echo $this->get_setting( 'file-extensions' );
+		echo "\r\n";
+		echo 'Minify: ';
+		echo $this->on_off( 'enable-minify' );
+		echo "\r\n";
+		echo 'Gzip: ';
+		echo $this->on_off( 'enable-gzip' );
 		echo "\r\n";
 		echo 'Custom Endpoint: ';
 		$custom_endpoint = $this->on_off( 'enable-custom-endpoint' );
@@ -2153,6 +2323,29 @@ class Amazon_S3_And_CloudFront_Assets extends Amazon_S3_And_CloudFront_Pro {
 				echo 'Enqueued JS: ' . count( $enqueued['js'] );
 				echo "\r\n";
 			}
+
+			$minified_assets = $this->get_minified_assets( $enqueued, false );
+			if ( ! empty( $minified_assets ) ) {
+				echo "\r\n";
+				echo 'Minified Assets: ';
+				echo "\r\n";
+				echo implode( "\r\n", $minified_assets );
+				echo "\r\n\r\n";
+			}
+		}
+
+		if ( $minify_failures = $this->get_failures( 'minify', false ) ) {
+			echo 'Minify Failures: ';
+			echo "\r\n";
+			echo print_r( $minify_failures, true );
+			echo "\r\n";
+		}
+
+		if ( $gzip_failures = $this->get_failures( 'gzip', false ) ) {
+			echo 'Gzip Failures: ';
+			echo "\r\n";
+			echo print_r( $gzip_failures, true );
+			echo "\r\n";
 		}
 	}
 }

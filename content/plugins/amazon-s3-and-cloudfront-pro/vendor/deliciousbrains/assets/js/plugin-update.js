@@ -13,7 +13,6 @@
 	var prefix;
 
 	$( document ).ready( function() {
-
 		$( 'body' ).on( 'click', '.dbrains-check-my-licence-again', function( e ) {
 			e.preventDefault();
 			$( this ).blur();
@@ -23,8 +22,7 @@
 			}
 
 			doing_check_licence = true;
-
-			var plugin = $( this ).closest( 'tr' ).prev().attr( 'id' );
+			var plugin = $( this ).closest( 'tr' ).prev().attr( 'data-slug' );
 			prefix     = dbrains.plugins[ plugin ].prefix;
 
 			spinner.insertAfter( this );
@@ -47,16 +45,16 @@
 				},
 				success: function( data ) {
 					doing_check_licence = false;
+					var msg = '';
+
 					if ( 'undefined' !== typeof data.errors  ) {
-						var msg = '';
 						for ( var key in data.errors ) {
 							msg += data.errors[key];
 						}
 						display_notice( plugin, msg + check_again_link, true );
-					}
-					else {
-						// success
-						// fade out, empty custom error content, swap back in the original wordpress upgrade message, fade in
+					} else {
+						// Success
+						// Fade out, empty custom error content, swap back in the original wordpress upgrade message, fade in
 						msg = $( '.' + prefix + '-original-update-row.' + plugin ).html();
 						display_notice( plugin, msg );
 						display_addon_notices();

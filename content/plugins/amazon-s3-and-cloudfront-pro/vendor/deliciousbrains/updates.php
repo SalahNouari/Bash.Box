@@ -112,8 +112,7 @@ class Delicious_Brains_API_Updates {
 	 * @return array
 	 */
 	function register_plugin_for_updates( $plugins ) {
-		$slug             = sanitize_title( $this->licences->plugin->name );
-		$plugins[ $slug ] = $this->licences->plugin;
+		$plugins[ $this->licences->plugin->slug ] = $this->licences->plugin;
 
 		return $plugins;
 	}
@@ -127,6 +126,14 @@ class Delicious_Brains_API_Updates {
 	 */
 	function site_transient_update_plugins( $trans ) {
 		$plugin_upgrade_data = $this->get_upgrade_data();
+
+		$plugin_basename = $this->licences->plugin->get_plugin_basename( $this->licences->plugin->slug );
+		if ( isset( $trans->no_update[ $plugin_basename ] ) ) {
+			// Ensure the pro plugin always has the correct info and WP API doesn't confuse with free version
+			$trans->no_update[ $plugin_basename ]->slug        = $this->licences->plugin->slug;
+			$trans->no_update[ $plugin_basename ]->url         = $this->licences->api_base;
+			$trans->no_update[ $plugin_basename ]->new_version = $this->licences->plugin->version;
+		}
 
 		if ( false === $plugin_upgrade_data || ! isset( $plugin_upgrade_data[ $this->licences->plugin->slug ] ) ) {
 			return $trans;
@@ -192,8 +199,8 @@ class Delicious_Brains_API_Updates {
 					'check_licence' => wp_create_nonce( 'check-licence' ),
 				),
 				'strings' => array(
-					'check_license_again'   => __( 'Check my license again', 'as3cf-pro' ),
-					'license_check_problem' => __( 'A problem occurred when trying to check the license, please try again.', 'as3cf-pro' ),
+					'check_license_again'   => __( 'Check my license again', 'amazon-s3-and-cloudfront' ),
+					'license_check_problem' => __( 'A problem occurred when trying to check the license, please try again.', 'amazon-s3-and-cloudfront' ),
 				),
 				'plugins' => apply_filters( 'delicious_brains_plugins', array() )
 			)
@@ -280,7 +287,7 @@ class Delicious_Brains_API_Updates {
 			return;
 		}
 
-		$error_msg = '<p>' . __( 'Could not retrieve version details. Please try again.', 'as3cf-pro' ) . '</p>';
+		$error_msg = '<p>' . __( 'Could not retrieve version details. Please try again.', 'amazon-s3-and-cloudfront' ) . '</p>';
 
 		$filename       = $slug;
 		$latest_version = $this->get_latest_version( $slug );
@@ -341,12 +348,12 @@ class Delicious_Brains_API_Updates {
 			if ( $licence_problem && $is_addon ) {
 				// Make it clear for addons that the update is available only
 				// when the license for the parent plugin is valid
-				$message_suffix = ' ' . sprintf( __( 'with a valid license for %s.', 'as3cf-pro' ), $this->licences->plugin->name );
+				$message_suffix = ' ' . sprintf( __( 'with a valid license for %s.', 'amazon-s3-and-cloudfront' ), $this->licences->plugin->name );
 			}
 
-			$new_version = sprintf( __( 'There is a new version of %s available%s', 'as3cf-pro' ), $plugin_data['Name'], $message_suffix );
+			$new_version = sprintf( __( 'There is a new version of %s available%s', 'amazon-s3-and-cloudfront' ), $plugin_data['Name'], $message_suffix );
 			$new_version .= ' <a class="thickbox" title="' . $plugin_data['Name'] . '" href="plugin-install.php?tab=plugin-information&plugin=' . rawurlencode( $plugin_slug ) . '&TB_iframe=true&width=640&height=808">';
-			$new_version .= sprintf( __( 'View version %s details', 'as3cf-pro' ), $latest_version ) . '</a>.';
+			$new_version .= sprintf( __( 'View version %s details', 'amazon-s3-and-cloudfront' ), $latest_version ) . '</a>.';
 		}
 
 		if ( ! $new_version && ( ! $no_licence || $is_addon ) ) {
@@ -355,14 +362,14 @@ class Delicious_Brains_API_Updates {
 
 		if ( $no_licence && ! $is_addon ) {
 			$settings_url  = $this->licences->admin_url( $this->licences->plugin->settings_url_path ) . $this->licences->plugin->settings_url_hash;
-			$settings_link = sprintf( '<a href="%s">%s</a>', $settings_url, __( 'enter your license key', 'as3cf-pro' ) );
-			$message       = sprintf( __( 'To finish activating %1$s, %2$s. If you don\'t have a license key, you may <a href="%3$s">purchase one</a>.', 'as3cf-pro' ), $this->licences->plugin->name, $settings_link, $this->licences->plugin->purchase_url );
+			$settings_link = sprintf( '<a href="%s">%s</a>', $settings_url, __( 'enter your license key', 'amazon-s3-and-cloudfront' ) );
+			$message       = sprintf( __( 'To finish activating %1$s, %2$s. If you don\'t have a license key, you may <a href="%3$s">purchase one</a>.', 'amazon-s3-and-cloudfront' ), $this->licences->plugin->name, $settings_link, $this->licences->plugin->purchase_url );
 
 			if ( $new_version ) {
-				$message = sprintf( __( 'To update, %1$s. If you don\'t have a license key, you may <a href="%2$s">purchase one</a>.', 'as3cf-pro' ), $settings_link, $this->licences->plugin->purchase_url );
+				$message = sprintf( __( 'To update, %1$s. If you don\'t have a license key, you may <a href="%2$s">purchase one</a>.', 'amazon-s3-and-cloudfront' ), $settings_link, $this->licences->plugin->purchase_url );
 			}
 		} elseif ( $licence_problem && ! $is_addon ) {
-			$message = array_shift( $licence_response['errors'] ) . ' <a href="#" class="dbrains-check-my-licence-again">' . __( 'Check my license again', 'as3cf-pro' ) . '</a>';
+			$message = array_shift( $licence_response['errors'] ) . ' <a href="#" class="dbrains-check-my-licence-again">' . __( 'Check my license again', 'amazon-s3-and-cloudfront' ) . '</a>';
 		} elseif ( $licence_problem && $is_addon ) {
 			$message = '';
 		} else {
@@ -381,26 +388,24 @@ class Delicious_Brains_API_Updates {
 		</tr>
 
 		<?php if ( $new_version ) {
-			$plugin_row_slug = ( $is_addon ) ? $this->licences->addons[ $plugin_file ]['name'] : $this->licences->plugin->name;
-			$plugin_row_slug = sanitize_title( $plugin_row_slug );
-
+			$plugin_row_slug = ( $is_addon ) ? $this->licences->addons[ $plugin_file ]['slug'] : $this->licences->plugin->slug;
 			// removes the built-in plugin update message
 			?>
 			<script type="text/javascript">
 				(
 					function( $ ) {
-						var <?php echo $this->licences->plugin->prefix; ?>_row = $( '#<?php echo $plugin_row_slug; ?>' ),
-							next_row = <?php echo $this->licences->plugin->prefix; ?>_row.next();
+						var <?php echo $this->licences->plugin->prefix; ?>_row = $( 'tr[data-slug="<?php echo $plugin_row_slug; ?>"]' ).first();
+						var update_row = <?php echo $this->licences->plugin->prefix; ?>_row.next();
 
 						// If there's a plugin update row - need to keep the original update row available so we can switch it out
 						// if the user has a successful response from the 'check my license again' link
-						if ( next_row.hasClass( 'plugin-update-tr' ) && ! next_row.hasClass( '<?php echo $this->licences->plugin->prefix; ?>-custom' ) ) {
-							var original = next_row.clone();
-							next_row.html( next_row.next().html() );
-							next_row.addClass( '<?php echo $this->licences->plugin->prefix; ?>-custom-visible' );
-							next_row.addClass( '<?php echo $plugin_row_slug; ?>' );
-							next_row.next().remove();
-							next_row.after( original );
+						if ( update_row.hasClass( 'plugin-update-tr' ) && ! update_row.hasClass( '<?php echo $this->licences->plugin->prefix; ?>-custom' ) ) {
+							var original = update_row.clone();
+							update_row.html( update_row.next().html() );
+							update_row.addClass( '<?php echo $this->licences->plugin->prefix; ?>-custom-visible' );
+							update_row.addClass( '<?php echo $plugin_row_slug; ?>' );
+							update_row.next().remove();
+							update_row.after( original );
 							original.addClass( '<?php echo $this->licences->plugin->prefix; ?>-original-update-row' );
 							original.addClass( '<?php echo $plugin_row_slug; ?>' );
 							<?php if ( $is_addon ) : ?>
@@ -430,7 +435,7 @@ class Delicious_Brains_API_Updates {
 
 		$download_url = $this->get_plugin_update_download_url( $this->licences->plugin->slug );
 
-		if ( 0 === strpos( $url, $download_url ) || 402 != $response['response']['code'] ) {
+		if ( false === strpos( $url, $download_url ) || 402 != $response['response']['code'] ) {
 			return $response;
 		}
 
@@ -438,7 +443,7 @@ class Delicious_Brains_API_Updates {
 		$data = @file_get_contents( $response['filename'] );
 
 		if ( ! $data ) {
-			return new WP_Error( $this->licences->plugin->prefix . '_download_error_empty', sprintf( __( 'Error retrieving download from deliciousbrain.com. Please try again or download manually from <a href="%1$s">%2$s</a>.', 'as3cf-pro' ), $this->licences->plugin->account_url, _x( 'My Account', 'Delicious Brains account', 'as3cf-pro' ) ) );
+			return new WP_Error( $this->licences->plugin->prefix . '_download_error_empty', sprintf( __( 'Error retrieving download from deliciousbrain.com. Please try again or download manually from <a href="%1$s">%2$s</a>.', 'amazon-s3-and-cloudfront' ), $this->licences->plugin->account_url, _x( 'My Account', 'Delicious Brains account', 'amazon-s3-and-cloudfront' ) ) );
 		}
 
 		$decoded_data = json_decode( $data, true );
@@ -567,7 +572,7 @@ class Delicious_Brains_API_Updates {
 
 		if ( isset( $data['errors'] ) ) {
 			set_site_transient( $this->licences->plugin->prefix . '_upgrade_data', $default_upgrade_data, $this->licences->transient_retry_timeout );
-			$this->licences->log_error( __( 'Error trying to get upgrade data.', 'as3cf-pro' ), $data['errors'] );
+			$this->licences->log_error( __( 'Error trying to get upgrade data.', 'amazon-s3-and-cloudfront' ), $data['errors'] );
 
 			return false;
 		}
@@ -635,11 +640,11 @@ class Delicious_Brains_API_Updates {
 
 		if ( version_compare( $installed_version, $latest_version, '<' ) ) { ?>
 			<div style="display: block;" class="updated warning inline-message">
-				<strong><?php _ex( 'Update Available', 'A new version of the plugin is available', 'as3cf-pro' ); ?></strong> &mdash;
+				<strong><?php _ex( 'Update Available', 'A new version of the plugin is available', 'amazon-s3-and-cloudfront' ); ?></strong> &mdash;
 				<?php
-				$message = sprintf( __( '%1$s %2$s is now available. You currently have %3$s installed.', 'as3cf-pro' ), $plugin_name, $latest_version, $installed_version );
+				$message = sprintf( __( '%1$s %2$s is now available. You currently have %3$s installed.', 'amazon-s3-and-cloudfront' ), $plugin_name, $latest_version, $installed_version );
 				if ( ! empty( $licence ) && ! $licence_problem ) {
-					$message .= ' ' . sprintf( '<a href="%1$s">%2$s</a>', $update_url, _x( 'Update Now', 'Download and install a new version of the plugin', 'as3cf-pro' ) );
+					$message .= ' ' . sprintf( '<a href="%1$s">%2$s</a>', $update_url, _x( 'Update Now', 'Download and install a new version of the plugin', 'amazon-s3-and-cloudfront' ) );
 				}
 				echo $message;
 				?>

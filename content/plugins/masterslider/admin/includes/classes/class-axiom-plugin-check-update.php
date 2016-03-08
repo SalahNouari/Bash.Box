@@ -104,12 +104,6 @@ class Axiom_Plugin_Check_Update
         // Get the remote version
         $remote_version = $this->get_remote_version();
 
-        // echo '<pre>';
-        // $isl = version_compare( $this->current_version, $remote_version, '<' );
-        // echo 'current is less than remote? : ' . $this->current_version .' < '. $remote_version;
-        // var_dump( $isl );
-        // echo '</pre>';
-
         // If a newer version is available, add the update info to update transient
         if ( version_compare( $this->current_version, $remote_version, '<' ) ) {
             $obj = new stdClass();

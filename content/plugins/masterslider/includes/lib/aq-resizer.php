@@ -22,18 +22,18 @@
  * @return str|array
  */
 
-if( ! class_exists('Aq_Resize') ) {
+if( ! class_exists('MS_Aq_Resize') ) {
 
-    class Aq_Exception extends Exception {}
+    class Ms_Aq_Exception extends Exception {}
 
-    class Aq_Resize {
+    class MS_Aq_Resize {
         /**
          * The singleton instance
          */
         static private $instance = null;
 
         /**
-         * Should an Aq_Exception be thrown on error?
+         * Should an Ms_Aq_Exception be thrown on error?
          * If false (default), then the error will just be logged.
          */
         public $throwOnError = false;
@@ -49,7 +49,7 @@ if( ! class_exists('Aq_Resize') ) {
         private function __clone() {}
 
         /**
-         * For your custom default usage you may want to initialize an Aq_Resize object by yourself and then have own defaults
+         * For your custom default usage you may want to initialize an MS_Aq_Resize object by yourself and then have own defaults
          */
         static public function getInstance() {
             if(self::$instance == null) {
@@ -66,11 +66,11 @@ if( ! class_exists('Aq_Resize') ) {
             try {
                 // Validate inputs.
                 if (!$url)
-                    throw new Aq_Exception('$url parameter is required');
+                    throw new Ms_Aq_Exception('$url parameter is required');
                 if (!$width)
-                    throw new Aq_Exception('$width parameter is required');
+                    $width = null;
                 if (!$height)
-                    throw new Aq_Exception('$height parameter is required');
+                    $height = null;
 
                 // Caipt'n, ready to hook.
                 if ( true === $upscale ) add_filter( 'image_resize_dimensions', array($this, 'aq_upscale'), 10, 6 );
@@ -99,7 +99,7 @@ if( ! class_exists('Aq_Resize') ) {
 
                 // Check if $img_url is local.
                 if ( false === strpos( $url, $upload_url ) )
-                    throw new Aq_Exception('Image must be local: ' . $url);
+                    throw new Ms_Aq_Exception('Image must be local: ' . $url);
 
                 // Define path of image.
                 $rel_path = str_replace( $upload_url, '', $url );
@@ -107,7 +107,7 @@ if( ! class_exists('Aq_Resize') ) {
 
                 // Check if img path exists, and is an image indeed.
                 if ( ! file_exists( $img_path ) or ! getimagesize( $img_path ) )
-                    throw new Aq_Exception('Image file does not exist (or is not an image): ' . $img_path);
+                    throw new Ms_Aq_Exception('Image file does not exist (or is not an image): ' . $img_path);
 
                 // Get image info.
                 $info = pathinfo( $img_path );
@@ -118,6 +118,15 @@ if( ! class_exists('Aq_Resize') ) {
                 $dims = image_resize_dimensions( $orig_w, $orig_h, $width, $height, $crop );
                 $dst_w = $dims[4];
                 $dst_h = $dims[5];
+
+                if( null === $height ){
+                    $dst_h  = $orig_h;
+                    $height = $orig_h;
+                }
+                if( null === $width ){
+                    $dst_w = $orig_w;
+                    $width = $orig_w;
+                }
 
                 // Return the original image only if it exactly fits the needed measures.
                 if ( ! $dims && ( ( ( null === $height && $orig_w == $width ) xor ( null === $width && $orig_h == $height ) ) xor ( $height == $orig_h && $width == $orig_w ) ) ) {
@@ -132,19 +141,19 @@ if( ! class_exists('Aq_Resize') ) {
 
                     if ( ! $dims || ( true == $crop && false == $upscale && ( $dst_w < $width || $dst_h < $height ) ) ) {
                         // Can't resize, so return false saying that the action to do could not be processed as planned.
-                        throw new Aq_Exception('Unable to resize image because image_resize_dimensions() failed');
+                        throw new Ms_Aq_Exception('Unable to resize image because image_resize_dimensions() failed');
                     }
+
                     // Else check if cache exists.
                     elseif ( file_exists( $destfilename ) && getimagesize( $destfilename ) ) {
                         $img_url = "{$upload_url}{$dst_rel_path}-{$suffix}.{$ext}";
                     }
                     // Else, we resize the image and return the new resized image url.
                     else {
-
                         $editor = wp_get_image_editor( $img_path );
 
                         if ( is_wp_error( $editor ) || is_wp_error( $editor->resize( $width, $height, $crop ) ) ) {
-                            throw new Aq_Exception('Unable to get WP_Image_Editor: ' .
+                            throw new Ms_Aq_Exception('Unable to get WP_Image_Editor: ' .
                                                    $editor->get_error_message() . ' (is GD or ImageMagick installed?)');
                         }
 
@@ -155,7 +164,7 @@ if( ! class_exists('Aq_Resize') ) {
                             $resized_rel_path = str_replace( $upload_dir, '', $resized_file['path'] );
                             $img_url = $upload_url . $resized_rel_path;
                         } else {
-                            throw new Aq_Exception('Unable to save resized image file: ' . $editor->get_error_message());
+                            throw new Ms_Aq_Exception('Unable to save resized image file: ' . $editor->get_error_message());
                         }
 
                     }
@@ -179,8 +188,8 @@ if( ! class_exists('Aq_Resize') ) {
 
                 return $image;
             }
-            catch (Aq_Exception $ex) {
-                error_log('Aq_Resize.process() error: ' . $ex->getMessage());
+            catch (Ms_Aq_Exception $ex) {
+                error_log('MS_Aq_Resize.process() error: ' . $ex->getMessage());
 
                 if ($this->throwOnError) {
                     // Bubble up exception.
@@ -234,7 +243,7 @@ if( ! class_exists('Aq_Resize') ) {
  * need to change any code in your own WP themes. Usage is still the same :)
  */
 function msp_aq_resize( $url, $width = null, $height = null, $crop = null, $quality = 100, $single = true, $upscale = false ) {
-    $aq_resize = Aq_Resize::getInstance();
+    $aq_resize = MS_Aq_Resize::getInstance();
     return $aq_resize->process( $url, $width, $height, $crop, $quality, $single, $upscale );
 }
 

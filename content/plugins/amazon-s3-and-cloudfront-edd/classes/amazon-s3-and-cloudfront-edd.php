@@ -91,14 +91,12 @@ class Amazon_S3_And_CloudFront_EDD {
 					continue;
 				}
 
-				if ( isset( $s3object['acl'] ) && $as3cf::PRIVATE_ACL == $s3object['acl'] ) {
-					// already set to private
-					continue;
-				}
-
 				global $as3cfpro;
 				if ( $as3cfpro->is_plugin_setup() ) {
-					$as3cf->set_attachment_acl_on_s3( $file['attachment_id'], $s3object, $as3cf::PRIVATE_ACL );
+					$s3object = $as3cf->set_attachment_acl_on_s3( $file['attachment_id'], $s3object, $as3cf::PRIVATE_ACL );
+					if ( $s3object && ! is_wp_error( $s3object ) ) {
+						$as3cf->make_acl_admin_notice( $s3object );
+					}
 				}
 			}
 		}
@@ -142,7 +140,10 @@ class Amazon_S3_And_CloudFront_EDD {
 			}
 
 			// set acl to public
-			$as3cf->set_attachment_acl_on_s3( $id, $s3object, $as3cf::DEFAULT_ACL );
+			$s3object = $as3cf->set_attachment_acl_on_s3( $id, $s3object, $as3cf::DEFAULT_ACL );
+			if ( $s3object && ! is_wp_error( $s3object ) ) {
+				$as3cf->make_acl_admin_notice( $s3object );
+			}
 		}
 	}
 }

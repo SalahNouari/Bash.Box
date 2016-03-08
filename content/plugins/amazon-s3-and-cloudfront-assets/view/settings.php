@@ -2,7 +2,7 @@
 $selected_bucket        = $this->get_setting( 'bucket' );
 $selected_bucket_prefix = $this->get_object_prefix( 'enable-script-object-prefix' );
 
-$prefix = $this->get_plugin_prefix_slug()
+$prefix = $this->get_plugin_prefix_slug();
 ?>
 <div id="tab-assets" data-prefix="<?php echo $prefix; ?>" class="aws-content as3cf-tab<?php echo ( $selected_bucket ) ? ' as3cf-has-bucket' : ''; // xss ok ?>">
 	<?php
@@ -33,13 +33,13 @@ $prefix = $this->get_plugin_prefix_slug()
 				<tr class="as3cf-setting-title">
 					<td colspan="2"><h3><?php _e( 'Enable/Disable the addon', 'as3cf-assets' ); ?></h3></td>
 				</tr>
-				<tr class="as3cf-border-bottom">
+				<?php $args = $this->get_setting_args( 'enable-addon' ); ?>
+				<tr class="as3cf-border-bottom <?php echo $args['tr_class']; ?>">
 					<td>
-						<?php $this->render_view( 'checkbox', array(
-							'key' => 'enable-addon',
-						) ); ?>
+						<?php $this->render_view( 'checkbox', $args ); ?>
 					</td>
 					<td>
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'Copy & Serve', 'as3cf-assets' ) ?></h4>
 
 						<p class="enable-addon-desc">
@@ -51,13 +51,13 @@ $prefix = $this->get_plugin_prefix_slug()
 				<tr class="as3cf-setting-title">
 					<td colspan="2"><h3><?php _e( 'Scanning', 'as3cf-assets' ); ?></h3></td>
 				</tr>
+				<?php $args = $this->get_setting_args( 'enable-cron' ); ?>
 				<tr>
 					<td>
-						<?php $this->render_view( 'checkbox', array(
-							'key'   => 'enable-cron',
-						) ); ?>
+						<?php $this->render_view( 'checkbox', $args ); ?>
 					</td>
-					<td>
+					<td class="<?php echo $args['tr_class']; ?>">
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'Automatic Scanning', 'as3cf-assets' ) ?></h4>
 
 						<p class="object-prefix-desc">
@@ -75,16 +75,18 @@ $prefix = $this->get_plugin_prefix_slug()
 						</p>
 					</td>
 				</tr>
-				<tr class="as3cf-border-bottom">
+				<?php $args = $this->get_setting_args( 'file-extensions' ); ?>
+				<tr class="as3cf-border-bottom <?php echo $args['tr_class']; ?>">
 					<td></td>
 					<td>
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'File Extensions', 'as3cf-assets' ) ?></h4>
 						<p>
 							<?php _e( 'Comma separated list of file extensions to scan for and upload to S3.', 'as3cf-assets' ); ?>
 							<?php echo $this->assets_more_info_link( 'file-extensions' ); ?>
 						</p>
 						<p class="as3cf-setting">
-							<input type="text" class="file-extensions" name="file-extensions" value="<?php echo esc_attr( $this->get_setting( 'file-extensions' ) ); ?>" />
+							<input type="text" class="file-extensions" name="file-extensions" value="<?php echo esc_attr( $this->get_setting( 'file-extensions' ) ); ?>" <?php echo $args['disabled_attr']; ?>/>
 						</p>
 					</td>
 				</tr>
@@ -92,36 +94,38 @@ $prefix = $this->get_plugin_prefix_slug()
 					<td colspan="2"><h3><?php _e( 'File URLs', 'as3cf-assets' ); ?></h3></td>
 				</tr>
 				<?php $this->render_view( 'domain-setting' ); ?>
-				<tr class="as3cf-border-bottom">
+				<?php
+				$args = $this->get_setting_args( 'enable-script-object-prefix' );
+				$args['class'] = 'sub-toggle';
+				?>
+				<tr class="as3cf-border-bottom <?php echo $args['tr_class']; ?>">
 					<td>
-						<?php $this->render_view( 'checkbox', array(
-							'key'   => 'enable-script-object-prefix',
-							'class' => 'sub-toggle',
-						) ); ?>
+						<?php $this->render_view( 'checkbox', $args ); ?>
 					</td>
 					<td>
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'Path', 'as3cf-assets' ) ?></h4>
 
 						<p class="object-prefix-desc">
 							<?php _e( "Useful if you're using a bucket for other things.", 'as3cf-assets' ); ?>
 							<?php echo $this->assets_more_info_link( 'path' ); ?>
 						</p>
-
+						<?php $args = $this->get_setting_args( 'object-prefix' ); ?>
 						<p class="as3cf-setting enable-script-object-prefix <?php echo ( $this->get_setting( 'enable-script-object-prefix' ) ) ? '' : 'hide'; // xss ok ?>">
-							<input type="text" name="object-prefix" value="<?php echo esc_attr( $this->get_setting( 'object-prefix' ) ); ?>" size="30" />
+							<input type="text" name="object-prefix" value="<?php echo esc_attr( $this->get_setting( 'object-prefix' ) ); ?>" size="30" <?php echo $args['disabled_attr']; ?>/>
 						</p>
 					</td>
 				</tr>
 				<tr class="as3cf-setting-title">
 					<td colspan="2"><h3><?php _e( 'Advanced Options', 'as3cf-assets' ); ?></h3></td>
 				</tr>
-				<tr>
+				<?php $args = $this->get_setting_args( 'enable-minify' ); ?>
+				<tr class="<?php echo $args['tr_class']; ?>">
 					<td>
-						<?php $this->render_view( 'checkbox', array(
-								'key' => 'enable-minify',
-						) ); ?>
+						<?php $this->render_view( 'checkbox', $args ); ?>
 					</td>
 					<td>
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'Minify', 'as3cf-assets' ) ?></h4>
 
 						<p class="enable-minify-desc">
@@ -130,13 +134,13 @@ $prefix = $this->get_plugin_prefix_slug()
 						</p>
 					</td>
 				</tr>
-				<tr class="as3cf-border-bottom">
+				<?php $args = $this->get_setting_args( 'enable-gzip' ); ?>
+				<tr class="as3cf-border-bottom <?php echo $args['tr_class']; ?>">
 					<td>
-						<?php $this->render_view( 'checkbox', array(
-							'key' => 'enable-gzip',
-						) ); ?>
+						<?php $this->render_view( 'checkbox', $args ); ?>
 					</td>
 					<td>
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'Gzip', 'as3cf-assets' ) ?></h4>
 
 						<p class="enable-gzip-desc">
@@ -186,14 +190,16 @@ $prefix = $this->get_plugin_prefix_slug()
 						</p>
 					</td>
 				</tr>
-				<tr class="as3cf-border-bottom">
+				<?php
+				$args = $this->get_setting_args( 'enable-custom-endpoint' );
+				$args['class'] = 'sub-toggle';
+				?>
+				<tr class="as3cf-border-bottom <?php echo $args['tr_class']; ?>">
 					<td>
-						<?php $this->render_view( 'checkbox', array(
-							'key'   => 'enable-custom-endpoint',
-							'class' => 'sub-toggle',
-						) ); ?>
+						<?php $this->render_view( 'checkbox', $args ); ?>
 					</td>
 					<td>
+						<?php echo $args['setting_msg']; ?>
 						<h4><?php _e( 'Webhook', 'as3cf-assets' ) ?></h4>
 						<?php
 						$key = esc_html( $this->get_setting( 'custom-endpoint-key' ) ); ?>
@@ -222,7 +228,7 @@ $prefix = $this->get_plugin_prefix_slug()
 				</tr>
 			</table>
 			<p>
-				<button type="submit" class="button button-primary"><?php _e( 'Save Changes', 'as3cf-assets' ); ?></button>
+				<button type="submit" class="button button-primary" <?php echo $this->maybe_disable_save_button(); ?>><?php _e( 'Save Changes', 'as3cf-assets' ); ?></button>
 			</p>
 		</form>
 	</div>

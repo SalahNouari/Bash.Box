@@ -43,7 +43,7 @@ class Amazon_S3_And_CloudFront_WooCommerce {
 			$src     = plugins_url( 'assets/js/script' . $suffix . '.js', $this->plugin_file_path );
 
 			wp_enqueue_media();
-			wp_enqueue_script( 'as3cf-woo-script', $src, array( 'jquery' ), $version, true );
+			wp_enqueue_script( 'as3cf-woo-script', $src, array( 'jquery', 'wp-util' ), $version, true );
 
 			wp_localize_script( 'as3cf-woo-script', 'as3cf_woo', array(
 				'strings' => array(
@@ -105,15 +105,13 @@ class Amazon_S3_And_CloudFront_WooCommerce {
 				continue;
 			}
 
-			if ( isset( $s3object['acl'] ) && $as3cf::PRIVATE_ACL == $s3object['acl'] ) {
-				// Already set to private
-				continue;
-			}
-
 			global $as3cfpro;
 			if ( $as3cfpro->is_plugin_setup() ) {
 				// Only set new files as private if the Pro plugin is setup
-				$as3cf->set_attachment_acl_on_s3( $attachment_id, $s3object, $as3cf::PRIVATE_ACL );
+				$s3object = $as3cf->set_attachment_acl_on_s3( $attachment_id, $s3object, $as3cf::PRIVATE_ACL );
+				if ( $s3object && ! is_wp_error( $s3object ) ) {
+					$as3cf->make_acl_admin_notice( $s3object );
+				}
 			}
 		}
 
@@ -241,7 +239,10 @@ class Amazon_S3_And_CloudFront_WooCommerce {
 			}
 
 			// Set ACL to public
-			$as3cf->set_attachment_acl_on_s3( $attachment_id, $s3object, $as3cf::DEFAULT_ACL );
+			$s3object = $as3cf->set_attachment_acl_on_s3( $attachment_id, $s3object, $as3cf::DEFAULT_ACL );
+			if ( $s3object && ! is_wp_error( $s3object ) ) {
+				$as3cf->make_acl_admin_notice( $s3object );
+			}
 		}
 	}
 

@@ -15,6 +15,7 @@ if (!class_exists('WPSHAPERE')) {
 	private $wp_df_submenu;
 	private $wps_options = 'wpshapere_options';
 	private $wps_menuorder_options = 'wpshapere_menuorder';
+                    private $wps_purchase_data = 'wps_purchase_data';
                     public $aof_options;
 
 	function __construct()
@@ -67,7 +68,9 @@ if (!class_exists('WPSHAPERE')) {
                    function wps_welcome_msg() {
                        if(isset($_GET['status']) && $_GET['status'] == "wps-activated") {
                            echo '<h1 style="line-height: 1.2em;font-size: 2.8em;font-weight: 400;">' . __('Welcome to WPShapere ', 'wps') . WPSHAPERE_VERSION . '</h1>';
-                           echo '<div class="wps_kb_link"><a target="_blank" href="http://kb.acmeedesign.com/kbase_categories/wpshapere/">Visit Knowledgebase</a></div>';
+                           echo '<div class="wps_kb_link"><a target="_blank" href="http://kb.acmeedesign.com/kbase_categories/wpshapere/">';
+                           echo __('Visit Knowledgebase', 'wps');
+                           echo '</a></div>';
                        }
                    }
         
@@ -78,6 +81,9 @@ if (!class_exists('WPSHAPERE')) {
 	
 	public function initialize_defaults(){
 	    global $menu, $submenu;
+                        //fix to repeated background and header menu items
+                        //$this->removeSubmenuitem('custom-background');
+                        //$this->removeSubmenuitem('custom-header');
 	    $this->wp_df_menu = $menu;
 	    $this->wp_df_submenu = $submenu;
 	}
@@ -140,12 +146,13 @@ if (!class_exists('WPSHAPERE')) {
                             include_once(WPSHAPERE_PATH.'assets/css/wpshapere.login.css.php');
                         }
 	}
+        
 	public function wpshapeOptionscss() 
 	{
 	  include_once(WPSHAPERE_PATH.'assets/css/wpshapere.css.php');
 	}
 
-	public function generateOptions()
+                    public function generateOptions()
 	{                          
 	    include 'wps-options.php';
 	}//generate options fn
@@ -183,7 +190,7 @@ if (!class_exists('WPSHAPERE')) {
 		}
 	    }
 	?>	
-<script type="text/javascript">
+<!--<script type="text/javascript">
 	jQuery(function() {
 		jQuery("input[name='wpshapere_email_settings']").change(function(){
 			if (jQuery(this).val() === '2') {
@@ -202,7 +209,7 @@ if (!class_exists('WPSHAPERE')) {
 			}
 		});
 	});
-</script>
+</script>-->
 
 		<?php
 	}
@@ -237,10 +244,10 @@ if (!class_exists('WPSHAPERE')) {
 
 	public function wpsmenuOrder() 
 	{
-	    global $menu, $submenu;
+	    global $menu, $submenu,$aof_options;
 	    $wps_sorteddmenu = $this->get_wps_option_data($this->wps_menuorder_options);
 	    $submenu_sort_exists = $wps_sorteddmenu['index.php_sbchild'];
-		
+                        $aof_options->licenseValidate();
 	    echo '<div class="wrap titan-framework-panel-wrap"><h2>';
                         echo __('Customize Admin Menus', 'wps');
                         echo '</h2><div id="message" class="updated below-h2"><p>';
@@ -289,25 +296,29 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	
 	//Populating sub menu
 	$subItems = (isset($this->wp_df_submenu[$menuItem[2]])) ? $this->wp_df_submenu[$menuItem[2]] : ""; //print_r($subItems);
+                    
 	if(isset($subItems) && !empty($subItems)) {
 	    echo '<ol id="child_' . $menu_num . '">';
-	    foreach($subItems as $subItem_key => $subItem){
-		$menu_num++;
-		$submenu_name = explode("<span", $subItem[0]);
-			$submenu_name = trim($submenu_name[0]);
-			$wps_clean_subname = $this->wps_clean_name($submenu_name);
-			$sbmenu_custom_label = (isset($wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem[2]][1])) ? $wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem[2]][1] : ""; //print_r($subItem);
-			$sbmenu_hide = (isset($wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem[2]][3])) ? $wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem[2]][3] : "";
-			$arr_num = $subItem_key;
-			
-		$sbmenu_chk_val = (isset($sbmenu_hide) && $sbmenu_hide == 'hide') ? "checked='checked'" : "";
-		echo '<li id="'. $wps_clean_subname .'_'.$menu_num.'"><div class="menu_handle">'. $submenu_name . '<a href="" id="' . $menu_num . '" class="admin_menu_edit"></a></div>';
-		echo '<div style="display:none;" class="menu_edit_content" id="menu_edit_'.$menu_num.'">';
-		//custom label
-		echo '<div class="menu_edit_wrap"><label>Rename Label</label><input type="text" class="widefat edit-menu-item-title" name="' . $wps_clean_name . '_child_label['.$arr_num.']" value="'. $sbmenu_custom_label .'" /></div>';
-		echo '<div class="menu_edit_wrap"><input type="checkbox" '. $sbmenu_chk_val . ' class="widefat edit-menu-item-title" name="' . $wps_clean_name . '_child_hide['.$arr_num.']" value="hide" /> <label>Hide Link</label></div>';
-		echo '<input type="hidden" name="'. $wps_clean_name .'_child['. $subItem_key .']" value="' . $submenu_name . "^" . $subItem[2] . '^' . $subItem_key . '" />';
-		echo '</div></li>';
+	    foreach($subItems as $subItem_key => $subItem){ 
+                            $menu_num++;
+                            $submenu_name = explode("<span", $subItem[0]);
+                            $submenu_name = trim($submenu_name[0]);
+                            $subItem_url = $this->customizephpFix($subItem[2]); //fix for customize.php encoded urls
+                            $wps_clean_subname = $this->wps_clean_name($submenu_name);
+                            $sbmenu_custom_label = (isset($wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem_url][1])) ? $wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem_url][1] : ""; //print_r($subItem);
+                            
+                            $sbmenu_hide = (isset($wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem_url][3])) ? $wps_sorteddmenu[$menuItem[2] .'_sbchild'][$subItem_url][3] : "";
+                            
+                            $arr_num = $subItem_key;
+
+                            $sbmenu_chk_val = (isset($sbmenu_hide) && $sbmenu_hide == 'hide') ? "checked='checked'" : "";
+                            echo '<li id="'. $wps_clean_subname .'_'.$menu_num.'"><div class="menu_handle">'. $submenu_name . '<a href="" id="' . $menu_num . '" class="admin_menu_edit"></a></div>';
+                            echo '<div style="display:none;" class="menu_edit_content" id="menu_edit_'.$menu_num.'">';
+                            //custom label
+                            echo '<div class="menu_edit_wrap"><label>Rename Label</label><input type="text" class="widefat edit-menu-item-title" name="' . $wps_clean_name . '_child_label['.$arr_num.']" value="'. $sbmenu_custom_label .'" /></div>';
+                            echo '<div class="menu_edit_wrap"><input type="checkbox" '. $sbmenu_chk_val . ' class="widefat edit-menu-item-title" name="' . $wps_clean_name . '_child_hide['.$arr_num.']" value="hide" /> <label>Hide Link</label></div>';
+                            echo '<input type="hidden" name="'. $wps_clean_name .'_child['. $subItem_key .']" value="' . $submenu_name . "^" . $subItem_url . '^' . $subItem_key . '" />';
+                            echo '</div></li>';
 	    }
 	    echo '</ol>';
 	}
@@ -328,9 +339,6 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	
 	public function customize_admin_menu(){
 	    global $menu, $submenu;
-//            if ( !is_super_admin() ) {
-//                 remove_submenu_page('profile.php');
-//            }
 	    $wps_sorteddmenu = $this->get_wps_option_data($this->wps_menuorder_options);
                         $privilege_data = (!empty($this->aof_options['privilege_users'])) ? $this->aof_options['privilege_users'] : "";
 	    $privilege_users = (is_serialized( $privilege_data )) ? unserialize( $privilege_data ) : $privilege_data;
@@ -346,9 +354,9 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                                 $menu_value[5] = ""; //removing list ID in order to override icons set by other plugins
                                 if($menu_value[4] != 'wp-menu-separator' && !preg_match("/separator/i",$menu_value[4])){
                                         if(is_super_admin()) {
-                                                                                            $menu_access_data = $this->aof_options['show_all_menu_to_admin'];
-                                                                                            if(!empty($menu_access_data) && $menu_access_data == 2 && !in_array($user_id, $privilege_users) && $getMenudata[3] == "hide")
-                                                                                                unset($menu[$menu_key]);
+                                            $menu_access_data = $this->aof_options['show_all_menu_to_admin'];
+                                            if(!empty($menu_access_data) && $menu_access_data == 2 && !in_array($user_id, $privilege_users) && $getMenudata[3] == "hide")
+                                                unset($menu[$menu_key]);
                                         }
                                         elseif(!is_super_admin() && $getMenudata[3] == "hide")
                                                 unset($menu[$menu_key]);
@@ -365,9 +373,10 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 
                                         //customize sub menu items
                                         if(isset($submenu[$menu_value[2]]) && !empty($submenu_sort_exists)){
-                                                foreach ($submenu[$menu_value[2]] as $submenu_key => &$submenu_val){
-                                                        $sbmenu_label = (isset($wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][1])) ? $wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][1] : "";
-                                                        $sbmenu_hide = (isset($wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][3])) ? $wps_sorteddmenu[$menu_value[2] .'_sbchild'][$submenu_val[2]][3] : "";
+                                                foreach ($submenu[$menu_value[2]] as $submenu_key => &$submenu_val){ //print_r($submenu_val);
+                                                        $sbmenu_url = $this->customizephpFix($submenu_val[2]); //fix for customize.php encoded urls
+                                                        $sbmenu_label = (isset($wps_sorteddmenu[$menu_value[2] .'_sbchild'][$sbmenu_url][1])) ? $wps_sorteddmenu[$menu_value[2] .'_sbchild'][$sbmenu_url][1] : "";
+                                                        $sbmenu_hide = (isset($wps_sorteddmenu[$menu_value[2] .'_sbchild'][$sbmenu_url][3])) ? $wps_sorteddmenu[$menu_value[2] .'_sbchild'][$sbmenu_url][3] : "";
                                                         if(is_super_admin()) {
                                                                 if($this->aof_options['show_all_menu_to_admin'] == 2 && !in_array($user_id, $privilege_users) && $sbmenu_hide == "hide")
                                                                 unset($submenu[$menu_value[2]][$submenu_key]);
@@ -400,9 +409,27 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 		    'index.php', 'separator1',
 	    );
 	}
+        
+                    function removeSubmenuitem($item ='' ) 
+                    {
+                        global $submenu;
+                        if(!empty($subitems)) {
+                            foreach ($submenu as $key => &$value) {
+                                if (is_array($value)) {
+                                    foreach ($value as $subkey => $subvalue) {                       
+                                        if ($subvalue[2] == $item) {
+                                            unset($submenu[$key][$subkey]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
 	public function wpsexportSettings()
 	{
+                            global $aof_options;
+                            $aof_options->licenseValidate();
                             echo '<div class="wrap titan-framework-panel-wrap"><h2>';
                             echo __('Export Settings <span>Save the below contents to a text file.</span>', 'wps');
                             echo '</h2><div style="padding:15px">';
@@ -500,10 +527,13 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                                                 $wpssubmenuOrder = array();
                                                 if(isset($_POST[$childname])){
                                                         foreach($_POST[$childname] as $childMenu){
-                                                                $sb_key = explode("^", $childMenu);
+                                                                $sb_key = explode("^", $childMenu);                                                              
+             
+                                                                $sb_child_key = $this->customizephpFix($sb_key[1]);
+                                                                
                                                                 $subcustom_label = (isset($_POST[$childlabel][$sb_key[2]])) ? trim($_POST[$childlabel][$sb_key[2]]) : "";
                                                                 $submenu_hide = (isset($_POST[$childhide][$sb_key[2]])) ? trim($_POST[$childhide][$sb_key[2]]) : "";
-                                                                $wpssubmenuOrder[$sb_key[1]] = array($sb_key[0], $subcustom_label, $sb_key[2], $submenu_hide);
+                                                                $wpssubmenuOrder[$sb_child_key] = array($sb_key[0], $subcustom_label, $sb_key[2], $submenu_hide);
                                                         }
                                                 }
                                                 $subMenu_slug = trim($split_parent[1]);
@@ -524,6 +554,14 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                                 }
                         }
 	}
+        
+                    function customizephpFix($url) {
+                        if(preg_match('/customize.php?/', $url) && preg_match('/autofocus/', $url)) {
+                            $url_decode = explode('autofocus[control]=', rawurldecode($url));
+                            return $url_decode[1];
+                        }
+                        else return $url;
+                    }
 	
 	public function wps_settings() {
                         if($this->is_wps_single()) {     //if blog wide options                      
@@ -545,7 +583,9 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	{
 	        $login_footer_content = $this->aof_options['login_footer_content'];
                             echo '<div class="login_footer_content">';
-                            if(!empty($login_footer_content)) echo $this->aof_options['login_footer_content'];
+                            if(!empty($login_footer_content)) {
+                                echo do_shortcode ($this->aof_options['login_footer_content']);
+                            }
                             echo '</div>';
 	}
 

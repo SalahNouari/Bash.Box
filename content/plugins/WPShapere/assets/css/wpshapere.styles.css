@@ -29,10 +29,10 @@ li#wp-admin-bar-my-account a {
         margin:10px 21px 20px;
 }
 ul#wp-admin-bar-root-default, ul.ab-top-menu {}
-#wpadminbar .quicklinks>ul>li>a { padding: 9px }
-#adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+#wpadminbar .quicklinks>ul>li>a, div.ab-empty-item { padding: 9px !important }
+/*#adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
         width: 230px;
-}
+}*/
 .folded #adminmenu, .folded #adminmenu li.menu-top, .folded #adminmenuback, .folded #adminmenuwrap {
         width: 58px;
 }

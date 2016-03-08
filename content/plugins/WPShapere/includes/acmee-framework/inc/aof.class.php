@@ -13,6 +13,7 @@ if (!class_exists('AcmeeFramework')) {
     class AcmeeFramework {
         protected $config;
         protected $options_slug;
+        private $wps_purchase_data = 'wps_purchase_data';
         public $page_title;
         public $fields_array;
         public $do_not_save;
@@ -31,11 +32,14 @@ if (!class_exists('AcmeeFramework')) {
             add_action( 'after_setup_theme', array($this, 'aofLoaddefault' ));
             add_action( 'admin_enqueue_scripts', array($this, 'aofAssets'), 99 );
             add_action('plugins_loaded',array($this, 'SaveSettings'));
+            add_action('aof_the_form',array($this, 'fieldLoop'), 10);
             add_action('aof_tab_start', array($this, 'formwrapStart'));
             add_action('aof_tab_start', array($this, 'saveBtn'));
             add_action('aof_tab_close', array($this, 'formwrapEnd'));
             add_action('aof_tab_close', array($this, 'saveBtn'));
+            add_action('aof_the_form',array($this, 'licenseValidate'), 9);
             add_action('aof_after_heading', array($this, 'adminNotices'));
+            add_action('aof_before_heading', array($this, 'licenseUpdated'));
         }
         
         function aofAssets($page) {
@@ -76,11 +80,23 @@ if (!class_exists('AcmeeFramework')) {
         * Function to generate form fields
         */  
         function generateFields($fields_array) {
-            $getoption = $this->aofgetOptions( $this->option_name );
+            //build form
             echo '<div class="wrap clearfix">'; 
             do_action('aof_before_heading');
             echo '<h2>' . $this->config['page_title'] . '</h2>';
             do_action('aof_after_heading');
+            
+            do_action('aof_before_form');
+            do_action('aof_the_form');          
+            do_action('aof_after_form');      
+            
+            echo '</div>'; //close div wrap
+        }
+        
+        function fieldLoop($fields_array) {
+            //get options data
+            $getoption = $this->aofgetOptions( $this->option_name );
+
             echo '<div class="loading_form_text">' . __('Loading ...', 'aof') . '</div>';
            
             do_action('aof_tab_start');
@@ -162,76 +178,153 @@ if (!class_exists('AcmeeFramework')) {
             echo '</div>
         </div>'; //close div aof_options_tab
             
-            do_action('aof_tab_close');           
+            do_action('aof_tab_close');     
             
-            echo '</div>'; //close div wrap
+        }
+        
+        function licenseValidate() {
+            //verify purchase code
+            $valid_license = $this->validatePurchase();
+            if(!empty($valid_license) && count($valid_license[3]) == 5 && $valid_license[1] == 8183353)
+                return;
+            else {
+                $this->enterPurchaseCode();
+                exit();
+            }
+        }
+
+        function validatePurchase() {
+            $purchase_data = get_option($this->wps_purchase_data);
+            return $purchase_data;
+        }
+        
+        function getLicense() {
+            $code = $this->validatePurchase();
+            if(!empty($code)) {
+                return $code[3][0];
+            }
+            else 
+                return null;
+        }
+
+        function enterPurchaseCode() {
+            ?>
+<div id="enter_license">
+    <?php
+    if(isset($_GET['status']) && $_GET['status'] == 'license_fail') {
+                echo '<div class="notice error">';
+                echo __('Invalid Purchase code! Or the envato server may be down. Please try again later.', 'wps');
+                echo '</div>';
+            }
+     ?>
+        <h2><?php echo __('Enter Purchase Code', 'wps'); ?></h2>
+        <form name="enter_license" method="post" action="<?php echo admin_url( 'admin.php?page=' . $this->menu_slug ); ?>">
+            <input type="text" class="purchase_code" name="purchase_code" value="" size="50" /><br /><br />
+            <input type="hidden" name="action" value="license_data" />
+            <input type="submit" name="submit" value="Submit" class="button button-primary button-large" />
+        </form>
+        <br />
+        <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-" target="_blank">How to find your purchase code?</a>
+        <?php
+        
+        ?>
+</div>
+    <?php
+        }
+        
+        function licenseUpdated() {
+            if(isset($_GET['status']) && $_GET['status'] == 'license_success') {
+                echo '<div class="license-updated">';
+                echo __('Your Purchase code accepted. Happy customizing WordPress!', 'wps');
+                echo ' <a class="wps-kb" target="_blank" href="http://kb.acmeedesign.com/kbase_categories/wpshapere/">';
+                echo __('Need help?', 'wps');
+                echo '</a>';
+                echo '</div>';
+            }
         }
         
         function SaveSettings() {
-             if(isset($_POST) && isset($_POST['aof_options_save'])) {
-                if ( isset($_POST['aof_options_nonce']) && !wp_verify_nonce($_POST['aof_options_nonce'], 'aof_options_form') )
-	return;
-                if( isset($_POST['aof_import_settings']) && !empty($_POST['aof_import_settings']) ) {
-                    $settings = $_POST['aof_import_settings'];
-                    if(!empty($settings) && is_serialized($settings)) {
-                        $settings = unserialize($settings);
-                        update_option( $this->option_name, $settings );
-                        wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=success' ) ); 
-                        exit();		
-                    }
+            if(isset($_POST['action']) && $_POST['action'] == 'license_data') {
+                $purchase_code = trim($_POST['purchase_code']);
+                $validate = EnvatoApi2::verifyPurchase( $purchase_code );
+                if ( is_object($validate) ) {
+                    $buyer = $validate->buyer;
+                    $item_id = $validate->item_id;
+                    $license_type = $validate->licence;
+                    $code = explode('-', $purchase_code);
+                    $purchase_data = array($buyer, $item_id, $license_type, $code);
+                    update_option( $this->wps_purchase_data, $purchase_data );
+                    wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=license_success' ) ); 
+                    exit();
                 }
                 else {
-                    $save_data = array();
-                    if( is_array($this->fields_array) && !empty($this->fields_array) ) {
-                        //loop through the fields array and initialize $save_data variable
-                        foreach($this->fields_array as $field) {
-                            if(isset($field['id']) && !in_array($field['type'], $this->do_not_save)) {
-                                $post_name = $field['id'];
-                                if($field['type'] == "multicheck") {
-                                    $multicheck = array();
-                                    $chkbox_values = $_POST[$post_name];
-                                    if(is_array($chkbox_values)) {
-                                        foreach($chkbox_values as $options) {
-                                            $multicheck[] = $options;
+                    wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=license_fail' ) ); 
+                    exit();
+                }
+
+            }
+             if(isset($_POST) && isset($_POST['aof_options_save'])) {
+                 
+                if ( isset($_POST['aof_options_nonce']) && !wp_verify_nonce($_POST['aof_options_nonce'], 'aof_options_form') )
+	return;
+                if($this->getLicense() !== null && strlen($this->getLicense()) == 8) {
+                    if( isset($_POST['aof_import_settings']) && !empty($_POST['aof_import_settings']) ) {
+                        $settings = $_POST['aof_import_settings'];
+                        if(!empty($settings) && is_serialized($settings)) {
+                            $settings = unserialize($settings);
+                            update_option( $this->option_name, $settings );
+                            wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=success' ) ); 
+                            exit();		
+                        }
+                    }
+                    else {
+                        $save_data = array();
+                        if( is_array($this->fields_array) && !empty($this->fields_array) ) {
+                            //loop through the fields array and initialize $save_data variable
+                            foreach($this->fields_array as $field) {
+                                if(isset($field['id']) && !in_array($field['type'], $this->do_not_save)) {
+                                    $post_name = $field['id'];
+                                    if($field['type'] == "multicheck") {
+                                        $multicheck = array();
+                                        $chkbox_values = $_POST[$post_name];
+                                        if(is_array($chkbox_values)) {
+                                            foreach($chkbox_values as $options) {
+                                                $multicheck[] = $options;
+                                            }
+                                            $save_data[$field['id']] = $multicheck;
                                         }
-                                        $save_data[$field['id']] = $multicheck;
                                     }
-                                }
-                                elseif($field['type'] == "typography") {
-                                    $typography = array();
-                                    $typo_values = $_POST[$post_name];
-                                    if(is_array($typo_values)) {
-                                        foreach($typo_values as $typo_name => $typo_value) {
-                                            $typography[$typo_name] = $typo_value;
+                                    elseif($field['type'] == "typography") {
+                                        $typography = array();
+                                        $typo_values = $_POST[$post_name];
+                                        if(is_array($typo_values)) {
+                                            foreach($typo_values as $typo_name => $typo_value) {
+                                                $typography[$typo_name] = $typo_value;
+                                            }
+                                            $save_data[$field['id']] = $typography;
                                         }
-                                        $save_data[$field['id']] = $typography;
                                     }
-                                }
-                                else {
-                                    $save_data[$field['id']] = (isset($_POST[$post_name])) ? $this->validateInputs($_POST[$post_name]) : "";
+                                    else {
+                                        $save_data[$field['id']] = (isset($_POST[$post_name])) ? $this->validateInputs($_POST[$post_name]) : "";
+                                    }
                                 }
                             }
                         }
+
+                        $saved = $this->aofsaveOptions($save_data);
+                        if($saved) {
+                            wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=updated' ) ); 
+                            exit();
+                        }
+                        else {
+                            wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=error' ) ); 
+                            exit();
+                        }
+
                     }
-                    
-                    //echo '<pre>';
-//                print_r($save_data);
-//                echo '</pre>';
-//                        exit();
-                    
-                    $saved = $this->aofsaveOptions($save_data);
-                    if($saved) {
-                        wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=updated' ) ); 
-                        exit();
-                    }
-                    else {
-                        wp_safe_redirect( admin_url( 'admin.php?page=' . $this->menu_slug . '&status=error' ) ); 
-                        exit();
-                    }
-                
                 }
                 	
-            }
+            }//aof options save
         }
         
         function aofgetOptions($option_id) {
@@ -365,7 +458,15 @@ if (!class_exists('AcmeeFramework')) {
                 'max' => '50',
                 'step' => '1',
                 );
-            $meta = (isset($fields['meta'])) ? $fields['meta'] : "";
+            if(isset($fields['meta']) && !empty($fields['meta'])) {
+                $meta = $fields['meta'];
+            }
+            else if($fields['default']) {
+                $meta = $fields['default'];
+            }
+            else {
+                $meta = "";
+            }
             $fields = array_merge($default, $fields);
             $form_field = '<input id="' . $fields['id'] . '" class="small-text ' . $fields['id'] . '" name="' . $fields['id'] . '" type="number" value="' . $meta . '" min="' . $fields['min'] . '" max="' . $fields['max'] . '" step="' . $fields['step'] . '">';
             $output = $this->fieldWrap($fields, $form_field);

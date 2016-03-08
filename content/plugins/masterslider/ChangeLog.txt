@@ -1,3 +1,6 @@
+Version 2.28.3 / (07.03.2016)
+============================
+- An issue with resizing images in post slider fixed
 
 Version 2.28.1 / (02.03.2016)
 ============================

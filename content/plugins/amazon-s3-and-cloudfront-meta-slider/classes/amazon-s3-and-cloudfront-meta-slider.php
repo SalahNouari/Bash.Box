@@ -118,23 +118,19 @@ class Amazon_S3_And_CloudFront_Meta_Slider {
 			}
 
 			$args = array(
-				'Bucket'     => $s3object['bucket'],
-				'Key'        => $prefix . $file['file'],
-				'ACL'        => $acl,
-				'SourceFile' => $file['path'],
+				'Bucket'       => $s3object['bucket'],
+				'Key'          => $prefix . $file['file'],
+				'ACL'          => $acl,
+				'SourceFile'   => $file['path'],
+				'CacheControl' => 'max-age=31536000',
+				'Expires'      => date( 'D, d M Y H:i:s O', time() + 31536000 ),
 			);
-
-			// If far future expiration checked (10 years)
-			if ( $as3cf->get_setting( 'expires' ) ) {
-				$args['CacheControl'] = 'max-age=315360000';
-				$args['Expires']      = date( 'D, d M Y H:i:s O', time() + 315360000 );
-			}
 			$args = apply_filters( 'as3cf_object_meta', $args, $object_id );
 
 			try {
 				$s3client->putObject( $args );
 			} catch ( Exception $e ) {
-				error_log( 'Error uploading ' . $args['SourceFile'] . ' to S3: ' . $e->getMessage() );
+				AS3CF_Error::log( 'Error uploading ' . $args['SourceFile'] . ' to S3: ' . $e->getMessage(), 'META_SLIDER' );
 			}
 		}
 	}

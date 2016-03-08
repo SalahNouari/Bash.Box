@@ -37,7 +37,7 @@
 		 * Show the custom URL after generating a new security key
 		 */
 		function toggleCustomUrl( show ) {
-			$( '.custom-endpoint-url-generating' ).toggle( !show );
+			$( '.custom-endpoint-url-generating' ).toggle( ! show );
 			$( '.custom-endpoint-url' ).toggle( show );
 			$( '.refresh-url-wrap' ).toggle( show );
 		}
@@ -94,11 +94,11 @@
 		 */
 		function showNextScan() {
 			var showTimestamp = false;
-			if ( $( '#enable-cron' ).is( ':checked' ) && $( '#enable-addon' ).is( ':checked' ) && '' !== $( '.next-scan' ).html() ) {
+			if ( $( '#enable-cron' ).is( ':checked' ) && $( '#enable-addon' ).is( ':checked' ) && $( '.next-scan' ).html() ) {
 				showTimestamp = true;
 			}
 
-			$( '.as3cf-setting.enable-cron' ).toggleClass( 'hide', !showTimestamp );
+			$( '.as3cf-setting.enable-cron' ).toggleClass( 'hide', ! showTimestamp );
 		}
 
 	} );

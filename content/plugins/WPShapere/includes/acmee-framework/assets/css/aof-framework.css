@@ -288,3 +288,40 @@ select.aof_font_family {
     clear: both;
     padding: 20px 0;
 }
+
+div#enter_license {
+    padding-top: 20px;
+}
+
+.purchase_code {
+    padding: 7px 15px;
+}
+
+div#enter_license .notice.error {
+    margin: 15px 0 0 0;
+}
+
+div.license-updated {
+    padding: 20px;
+    background: #DABC29;
+    color: #fff;
+    font-size: 16px;
+}
+
+a.wps-kb {
+    margin-left: 10px;
+    padding: 5px 7px;
+    background: #fff;
+    color: #323232;
+    font-size: 14px;
+    text-decoration: none;
+    transition:All 0.3s ease;
+-webkit-transition:All 0.3s ease;
+-moz-transition:All 0.3s ease;
+-o-transition:All 0.3s ease;
+}
+
+a.wps-kb:hover {
+    background: #B79A0A;
+    color: #fff;
+}

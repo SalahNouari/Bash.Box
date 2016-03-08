@@ -1,9 +1,6 @@
 <style type="text/css">
 html, #wp-content-editor-tools { background: <?php echo $this->aof_options['bg_color']; ?>; }
 ul#adminmenu a.wp-has-current-submenu:after, ul#adminmenu>li.current>a.current:after { <?php if(is_rtl()) echo 'border-left-color: '; else echo 'border-right-color: '; echo $this->aof_options['bg_color']; ?>; }
-#wpcontent, #wpfooter {
-<?php if(is_rtl()) echo 'margin-right: '; else echo 'margin-left: '; ?>250px;
-}
 /* Headings */
 h1 { color: <?php echo $this->aof_options['h1_color']; ?>; }
 h2 { color: <?php echo $this->aof_options['h2_color']; ?>; }
@@ -23,7 +20,7 @@ h5 { color: <?php echo $this->aof_options['h5_color']; ?>; }
 #wpadminbar .ab-submenu .ab-item, #wpadminbar .quicklinks .menupop ul.ab-submenu li a, #wpadminbar .quicklinks .menupop ul.ab-submenu li a.ab-item { color: <?php echo $this->aof_options['admin_bar_sbmenu_link_color']; ?>;}
 #wpadminbar .ab-submenu .ab-item:hover, #wpadminbar .quicklinks .menupop ul.ab-submenu li a:hover, #wpadminbar .quicklinks .menupop ul.ab-submenu li a.ab-item:hover { color: <?php echo $this->aof_options['admin_bar_sbmenu_link_hover_color']; ?>;}
 
-.quicklinks li.wpshape_site_title { width: 230px !important; <?php if($this->aof_options['logo_top_margin'] != 0) echo 'margin-top:-' . $this->aof_options['logo_top_margin'] . 'px !important;'; if($this->aof_options['logo_bottom_margin'] != 0) echo 'margin-top:' . $this->aof_options['logo_bottom_margin'] . 'px !important;'; ?>}
+.quicklinks li.wpshape_site_title { <?php if($this->aof_options['logo_top_margin'] != 0) echo 'margin-top:-' . $this->aof_options['logo_top_margin'] . 'px !important;'; if($this->aof_options['logo_bottom_margin'] != 0) echo 'margin-top:' . $this->aof_options['logo_bottom_margin'] . 'px !important;'; ?>}
 .quicklinks li.wpshape_site_title a{ margin-left:20px !important; outline:none; border:none; }
 <?php 
 $admin_logo = $this->aof_options['admin_logo'];
@@ -48,12 +45,43 @@ if(!empty($admin_logo_url)){ ?>
 <?php } ?>
 
 /* Left Menu */
+    <?php
+    $admin_menu_width = $this->aof_options['admin_menu_width'];
+    $wp_content_margin = $admin_menu_width + 20;
+    if(!empty($admin_menu_width)) { ?>
+        #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+            width: <?php echo $admin_menu_width . 'px'; ?>;
+        }
+        #wpcontent, #wpfooter {
+            <?php if(is_rtl()) { ?>
+                margin-right: <?php echo $wp_content_margin . 'px'; ?>;
+            <?php } else { ?>
+            margin-left: <?php echo $wp_content_margin . 'px'; ?>;
+            <?php } ?>
+        }
+        #adminmenu .wp-submenu { 
+            <?php if(is_rtl()) echo 'right: ' . $admin_menu_width . 'px'; else echo 'left: ' . $admin_menu_width . 'px'; ?>; 
+        }
+        .quicklinks li.wpshape_site_title {
+            width: <?php echo $admin_menu_width . 'px'; ?> !important;
+        }
+  <?php  } else { ?>
+        #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
+            width: 230px;
+        }
+        #wpcontent, #wpfooter {
+        <?php if(is_rtl()) echo 'margin-right: '; else echo 'margin-left: '; ?>250px;
+        }
+        #adminmenu .wp-submenu { <?php if(is_rtl()) echo 'right: 230px'; else echo 'left:230px'; ?>; }
+        .quicklinks li.wpshape_site_title {
+            width: 230px !important;
+        }
+  <?php } ?>
 #adminmenuback, #adminmenuwrap, #adminmenu { background: <?php echo $this->aof_options['nav_wrap_color']; ?>;}
 #adminmenu div.wp-menu-image:before, #adminmenu a, #adminmenu .wp-submenu a, #collapse-menu, #collapse-button div:after, #wpadminbar #wp-admin-bar-user-info .display-name, #wpadminbar>#wp-toolbar>#wp-admin-bar-root-default li:hover span.ab-label { color: <?php echo $this->aof_options['nav_text_color']; ?>; }
 #adminmenu li:hover div.wp-menu-image:before { color: <?php echo $this->aof_options['menu_hover_text_color']; ?>; }
 #adminmenu li.menu-top:hover, #adminmenu li.menu-top a:hover, #adminmenu li.opensub>a.menu-top, #adminmenu li>a.menu-top:focus { background: <?php echo $this->aof_options['hover_menu_color']; ?>; color: <?php echo $this->aof_options['menu_hover_text_color']; ?>; }
 
-#adminmenu .wp-submenu { <?php if(is_rtl()) echo 'right: 230px'; else echo 'left:230px'; ?>; }
 #adminmenu .wp-submenu-head, #adminmenu a.menu-top { <?php if(is_rtl()) echo 'padding: 5px 10px 5px 0'; else echo'padding: 5px 0 5px 10px'; ?> }
 .folded #wpcontent, .folded #wpfooter {<?php if(is_rtl()) echo 'margin-right: '; else echo 'margin-left: '; ?>78px; }
 .folded #adminmenu .opensub .wp-submenu, .folded #adminmenu .wp-has-current-submenu .wp-submenu.sub-open, .folded #adminmenu .wp-has-current-submenu a.menu-top:focus+.wp-submenu, .folded #adminmenu .wp-has-current-submenu.opensub .wp-submenu, .folded #adminmenu .wp-submenu.sub-open, .folded #adminmenu a.menu-top:focus+.wp-submenu, .no-js.folded #adminmenu .wp-has-submenu:hover .wp-submenu { <?php if(is_rtl()) echo 'right: 58px'; else echo 'left: 58px'; ?>; }

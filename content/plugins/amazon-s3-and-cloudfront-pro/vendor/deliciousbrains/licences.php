@@ -189,8 +189,8 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 		$licence = $this->get_licence_key();
 
 		if ( empty( $licence ) ) {
-			$settings_link = sprintf( '<a href="%s" class="js-action-link enter-licence">%s</a>', $this->admin_url( $this->plugin->settings_url_path ) . $this->plugin->settings_url_hash, __( 'enter your license key', 'as3cf-pro' ) );
-			$message       = sprintf( __( 'To finish activating %1$s, %2$s. If you don\'t have a license key, you may <a href="%3$s">purchase one</a>.', 'as3cf-pro' ), $this->plugin->name, $settings_link, $this->plugin->purchase_url );
+			$settings_link = sprintf( '<a href="%s" class="js-action-link enter-licence">%s</a>', $this->admin_url( $this->plugin->settings_url_path ) . $this->plugin->settings_url_hash, __( 'enter your license key', 'amazon-s3-and-cloudfront' ) );
+			$message       = sprintf( __( 'To finish activating %1$s, %2$s. If you don\'t have a license key, you may <a href="%3$s">purchase one</a>.', 'amazon-s3-and-cloudfront' ), $this->plugin->name, $settings_link, $this->plugin->purchase_url );
 
 			return array( 'errors' => array( 'no_licence' => $message ) );
 		}
@@ -277,7 +277,7 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 		$api_response_provided = true;
 
 		if ( empty( $licence ) && ! $trans ) {
-			$message = sprintf( __( '<strong>Activate Your License</strong> &mdash; Please <a href="#" class="%s">enter your license key</a>.', 'as3cf-pro' ), 'js-action-link enter-licence' );
+			$message = sprintf( __( '<strong>Activate Your License</strong> &mdash; Please <a href="#" class="%s">enter your license key</a>.', 'amazon-s3-and-cloudfront' ), 'js-action-link enter-licence' );
 
 			return $message;
 		}
@@ -295,7 +295,7 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 		}
 
 		if ( isset( $trans['dbrains_api_down'] ) ) {
-			return __( "<strong>We've temporarily activated your license and will complete the activation once the Delicious Brains API is available again.</strong>", 'as3cf-pro' );
+			return __( "<strong>We've temporarily activated your license and will complete the activation once the Delicious Brains API is available again.</strong>", 'amazon-s3-and-cloudfront' );
 		}
 
 		$errors = $trans['errors'];
@@ -305,32 +305,32 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 		if ( isset( $errors['connection_failed'] ) ) {
 			$message = $errors['connection_failed'];
 		} elseif ( isset( $errors['subscription_cancelled'] ) ) {
-			$message = sprintf( __( '<strong>Your License Was Cancelled</strong> &mdash; Please visit <a href="%s" target="_blank">My Account</a> to renew or upgrade your license.', 'as3cf-pro' ), $this->plugin->account_url );
-			$message .= sprintf( '<br /><a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'as3cf-pro' ) );
+			$message = sprintf( __( '<strong>Your License Was Cancelled</strong> &mdash; Please visit <a href="%s" target="_blank">My Account</a> to renew or upgrade your license.', 'amazon-s3-and-cloudfront' ), $this->plugin->account_url );
+			$message .= sprintf( '<br /><a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'amazon-s3-and-cloudfront' ) );
 		} elseif ( isset( $errors['subscription_expired'] ) ) {
-			$message = sprintf( __( '<strong>Your License Has Expired</strong> &mdash; Your expired license has been added to this install. Please visit <a href="%s" target="_blank">My Account</a> to renew your license and continue receiving plugin updates and access to email support.', 'as3cf-pro' ), $this->plugin->account_url );
-			$message .= sprintf( '<br /><a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'as3cf-pro' ) );
+			$message = sprintf( __( '<strong>Your License Has Expired</strong> &mdash; Your expired license has been added to this install. Please visit <a href="%s" target="_blank">My Account</a> to renew your license and continue receiving plugin updates and access to email support.', 'amazon-s3-and-cloudfront' ), $this->plugin->account_url );
+			$message .= sprintf( '<br /><a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'amazon-s3-and-cloudfront' ) );
 		} elseif ( isset( $errors['no_activations_left'] ) ) {
-			$message = sprintf( __( '<strong>No Activations Left</strong> &mdash; Please visit <a href="%s" target="_blank">My Account</a> to upgrade your license or deactivate a previous activation.', 'as3cf-pro' ), $this->plugin->account_url );
-			$message .= sprintf( ' <a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'as3cf-pro' ) );
+			$message = sprintf( __( '<strong>No Activations Left</strong> &mdash; Please visit <a href="%s" target="_blank">My Account</a> to upgrade your license or deactivate a previous activation.', 'amazon-s3-and-cloudfront' ), $this->plugin->account_url );
+			$message .= sprintf( ' <a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'amazon-s3-and-cloudfront' ) );
 		} elseif ( isset( $errors['licence_not_found'] ) ) {
 			if ( ! $api_response_provided ) {
-				$message = sprintf( __( '<strong>Your License Was Not Found</strong> &mdash; Make sure you have copied your licence key exactly as it appears in your email or from <a href="%s" target="_blank">My Account</a>.', 'as3cf-pro' ), $this->plugin->account_url );
+				$message = sprintf( __( '<strong>Your License Was Not Found</strong> &mdash; Make sure you have copied your licence key exactly as it appears in your email or from <a href="%s" target="_blank">My Account</a>.', 'amazon-s3-and-cloudfront' ), $this->plugin->account_url );
 				if ( $this->is_licence_constant() ) {
-					$message = sprintf( __( '<strong>Your License Was Not Found</strong> &mdash; Perhaps you made a typo when defining your %s constant in your wp-config.php? Please visit <a href="%s" target="_blank">My Account</a> to double check your license key.', 'as3cf-pro' ), $this->get_licence_constant_name(), $this->plugin->account_url );
+					$message = sprintf( __( '<strong>Your License Was Not Found</strong> &mdash; Perhaps you made a typo when defining your %s constant in your wp-config.php? Please visit <a href="%s" target="_blank">My Account</a> to double check your license key.', 'amazon-s3-and-cloudfront' ), $this->get_licence_constant_name(), $this->plugin->account_url );
 				}
-				$message .= sprintf( ' <a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'as3cf-pro' ) );
+				$message .= sprintf( ' <a href="%s">%s</a>', $check_licence_again_url, __( 'Check my license again', 'amazon-s3-and-cloudfront' ) );
 			} else {
 				$error   = reset( $errors );
-				$message = __( '<strong>Your License Was Not Found</strong> &mdash; ', 'as3cf-pro' );
+				$message = __( '<strong>Your License Was Not Found</strong> &mdash; ', 'amazon-s3-and-cloudfront' );
 				$message .= $error;
 			}
 		} elseif ( isset( $errors['activation_deactivated'] ) ) {
-			$message = sprintf( '<strong>%s</strong> &mdash; ', __( 'Your License Is Inactive', 'as3cf-pro' ) );
-			$message .= sprintf( '%s <a href="#" class="js-action-link reactivate-licence">%s</a>', __( 'Your license has been deactivated for this install.', 'as3cf-pro' ), __( 'Reactivate License', 'as3cf-pro' ) );
+			$message = sprintf( '<strong>%s</strong> &mdash; ', __( 'Your License Is Inactive', 'amazon-s3-and-cloudfront' ) );
+			$message .= sprintf( '%s <a href="#" class="js-action-link reactivate-licence">%s</a>', __( 'Your license has been deactivated for this install.', 'amazon-s3-and-cloudfront' ), __( 'Reactivate License', 'amazon-s3-and-cloudfront' ) );
 		} else {
 			$error   = reset( $errors );
-			$message = sprintf( __( '<strong>An Unexpected Error Occurred</strong> &mdash; Please contact us at <a href="%1$s">%2$s</a> and quote the following:', 'as3cf-pro' ), 'mailto:nom@deliciousbrains.com', 'nom@deliciousbrains.com' );
+			$message = sprintf( __( '<strong>An Unexpected Error Occurred</strong> &mdash; Please contact us at <a href="%1$s">%2$s</a> and quote the following:', 'amazon-s3-and-cloudfront' ), 'mailto:nom@deliciousbrains.com', 'nom@deliciousbrains.com' );
 			$message .= sprintf( '<p>%s</p>', $error );
 		}
 
@@ -373,7 +373,7 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 			'<p class="masked-licence">%s <a href="%s">%s</a></p>',
 			$this->mask_licence( $this->get_plugin_licence_key() ),
 			$this->admin_url( $this->plugin->settings_url_path . '&nonce=' . wp_create_nonce( $this->plugin->prefix . '-remove-licence' ) . '&' . $this->plugin->prefix . '-remove-licence=1' . $this->plugin->settings_url_hash ),
-			_x( 'Remove', 'Delete license', 'as3cf-pro' )
+			_x( 'Remove', 'Delete license', 'amazon-s3-and-cloudfront' )
 		);
 	}
 
@@ -501,9 +501,9 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 			if ( ! $help_message ) {
 				ob_start();
 				?>
-				<p><?php _e( 'If you have an <strong>active license</strong>, you may send an email to the following address.', 'as3cf-pro' ); ?></p>
+				<p><?php _e( 'If you have an <strong>active license</strong>, you may send an email to the following address.', 'amazon-s3-and-cloudfront' ); ?></p>
 				<p>
-					<strong><?php _e( 'Please copy the Diagnostic Info &amp; Error Log info below into a text file and attach it to your email.', 'as3cf-pro' ); ?></strong>
+					<strong><?php _e( 'Please copy the Diagnostic Info &amp; Error Log info below into a text file and attach it to your email.', 'amazon-s3-and-cloudfront' ); ?></strong>
 				</p>
 				<p class="email">
 					<a class="button" href="mailto:<?php echo $this->plugin->get_email_address_name(); ?>@deliciousbrains.com">
@@ -594,7 +594,7 @@ abstract class Delicious_Brains_API_Licences extends Delicious_Brains_API_Base {
 		if ( false === $result ) {
 			$return = array(
 				$this->plugin->prefix . '_error' => 1,
-				'body'                           => sprintf( __( 'Invalid nonce for: %s', 'as3cf-pro' ), $action )
+				'body'                           => sprintf( __( 'Invalid nonce for: %s', 'amazon-s3-and-cloudfront' ), $action )
 			);
 			$this->end_ajax( json_encode( $return ) );
 		}

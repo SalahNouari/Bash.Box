@@ -14,9 +14,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-require dirname( __FILE__ ) . '/classes/as3cf-pro-utils.php';
-require dirname( __FILE__ ) . '/classes/wp-aws-uninstall.php';
-// We cannot require the Pro class, as it will cause a fatal error if WPOS3 is not installed.
+// Run the uninstall for the lite plugin
+require dirname( __FILE__ ) . '/uninstall-lite.php';
+require dirname( __FILE__ ) . '/classes/pro/as3cf-pro-utils.php';
 
 $options = array(
 	'as3cfpro_licence_issue_type',
@@ -28,6 +28,9 @@ $postmeta = array(
 );
 
 $keys = AS3CF_Pro_Utils::get_batch_job_keys();
+// Tool errors
+$keys[] = 'wpos3_tool_errors_%';
+
 // Delete wildcard options
 AS3CF_Pro_Utils::delete_wildcard_options( $keys );
 
@@ -54,6 +57,9 @@ $transients = array(
 	'wpos3_legacy_upload',
 	'as3cfpro_plugins_to_install_installer',
 	'as3cfpro_plugins_to_install_addons',
+	'wpos3_post_count',
 );
 
-$as3cf_uninstall = new WP_AWS_Uninstall( $options, $postmeta, $crons, $transients );
+$usermeta = array( 'as3cfpro-dismiss-licence-notice' );
+
+$as3cf_uninstall = new WP_AWS_Uninstall( $options, $postmeta, $crons, $transients, $usermeta );

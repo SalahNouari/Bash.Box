@@ -35,7 +35,7 @@
 				new wp.media.controller.Library( {
 					title: as3cf_woo.strings.media_modal_title,
 					filterable: 'all',
-					multiple: false,
+					multiple: false
 				} )
 			]
 		} );
