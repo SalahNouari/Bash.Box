@@ -31,6 +31,12 @@ function centric_load_scripts() {
 	
 }
 
+// Offload S3 Time Limits
+function wpos3_default_time_limit( $return ) {
+    return 180; // 3 minutes, should be smaller than max_execution_time 
+}
+add_filter( 'as3cf_default_time_limit', 'wpos3_default_time_limit' );
+
 //* Add new image sizes
 add_image_size( 'featured-page', 960, 700, TRUE );
 add_image_size( 'featured-post', 400, 300, TRUE );
