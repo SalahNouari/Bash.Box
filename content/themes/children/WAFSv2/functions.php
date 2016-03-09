@@ -75,11 +75,9 @@ remove_action( 'genesis_site_description', 'genesis_seo_site_description' );
 
 //* Add support for additional color style options
 add_theme_support( 'genesis-style-selector', array(
-	'lifestyle-pro-blue'    => __( 'Lifestyle Pro Blue', 'lifestyle' ),
-	'lifestyle-pro-green'   => __( 'Lifestyle Pro Green', 'lifestyle' ),
-	'lifestyle-pro-mustard' => __( 'Lifestyle Pro Mustard', 'lifestyle' ),
-	'lifestyle-pro-purple'  => __( 'Lifestyle Pro Purple', 'lifestyle' ),
-	'lifestyle-pro-red'     => __( 'Lifestyle Pro Red', 'lifestyle' ),
+	'lifestyle-pro-brown'    => __( 'Brown', 'lifestyle' ),
+	'lifestyle-pro-mustard'   => __( 'Brown 2', 'lifestyle' ),
+	'lifestyle-pro-green'   => __( 'Green', 'lifestyle' ),
 ) );
 
 //* Reposition the primary navigation

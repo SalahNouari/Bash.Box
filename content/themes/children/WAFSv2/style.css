@@ -1025,7 +1025,7 @@ Site Navigation
 .genesis-nav-menu a:hover,
 .genesis-nav-menu .current-menu-item > a {
 	background-color: #fff;
-	color: #6b6b6b;
+	// color: #6b6b6b;
 }
 
 .genesis-nav-menu .sub-menu {
@@ -1469,7 +1469,7 @@ Site Footer
 ---------------------------------------------------------------------------------------------------- */
 
 .site-footer {
-	background-color: #76d2c5;
+	background-color: #A16727;
 	color: #fff;
 	font-size: 12px;
 	padding: 36px;
@@ -1489,61 +1489,61 @@ Site Footer
 Theme Colors
 ---------------------------------------------------------------------------------------------------- */
 
-/* Lifestyle Pro Blue
+/* Lifestyle Pro Brown
 --------------------------------------------- */
 
-.lifestyle-pro-blue .archive-pagination li a:hover,
-.lifestyle-pro-blue .archive-pagination li.active a,
-.lifestyle-pro-blue .entry-title a:hover,
-.lifestyle-pro-blue a  {
-	color: #4cc4e0;
+.lifestyle-pro-brown .archive-pagination li a:hover,
+.lifestyle-pro-brown .archive-pagination li.active a,
+.lifestyle-pro-brown .entry-title a:hover,
+.lifestyle-pro-brown a  {
+	color: #65350F;
 }
 
-.lifestyle-pro-blue .button,
-.lifestyle-pro-blue .genesis-nav-menu a,
-.lifestyle-pro-blue .site-footer a,
-.lifestyle-pro-blue .site-title a,
-.lifestyle-pro-blue .site-title a:hover {
-	color: #fff;
+.lifestyle-pro-brown .button,
+.lifestyle-pro-brown .genesis-nav-menu a,
+.lifestyle-pro-brown .site-footer a,
+.lifestyle-pro-brown .site-title a,
+.lifestyle-pro-brown .site-title a:hover {
+	color: #333333;
 }
 
-.lifestyle-pro-blue .entry-title a,
-.lifestyle-pro-blue .sidebar .widget-title a,
-.lifestyle-pro-blue .site-footer a:hover,
-.lifestyle-pro-blue a:hover {
-	color: #222;
+.lifestyle-pro-brown .entry-title a,
+.lifestyle-pro-brown .sidebar .widget-title a,
+.lifestyle-pro-brown .site-footer a:hover,
+.lifestyle-pro-brown a:hover {
+	color: #666666;
 }
 
-.lifestyle-pro-blue .archive-pagination li a,
-.lifestyle-pro-blue .genesis-nav-menu .current-menu-item > a,
-.lifestyle-pro-blue .genesis-nav-menu .sub-menu a,
-.lifestyle-pro-blue .nav-primary a {
-	color: #a5a5a3;
+.lifestyle-pro-brown .archive-pagination li a,
+.lifestyle-pro-brown .genesis-nav-menu .current-menu-item > a,
+.lifestyle-pro-brown .genesis-nav-menu .sub-menu a,
+.lifestyle-pro-brown .nav-primary a {
+	color: #65350F;
 }
 
-.lifestyle-pro-blue .button,
-.lifestyle-pro-blue .entry-content .button,
-.lifestyle-pro-blue .site-footer,
-.lifestyle-pro-blue .site-header,
-.lifestyle-pro-blue button,
-.lifestyle-pro-blue input[type="button"],
-.lifestyle-pro-blue input[type="reset"],
-.lifestyle-pro-blue input[type="submit"],
-.lifestyle-pro-blue.lifestyle-pro-home .content .widget-title {
-	background-color: #4cc4e0;
+.lifestyle-pro-brown .button,
+.lifestyle-pro-brown .entry-content .button,
+.lifestyle-pro-brown .site-footer,
+// .lifestyle-pro-brown .site-header,
+.lifestyle-pro-brown button,
+.lifestyle-pro-brown input[type="button"],
+.lifestyle-pro-brown input[type="reset"],
+.lifestyle-pro-brown input[type="submit"],
+.lifestyle-pro-brown.lifestyle-pro-home .content .widget-title {
+	background-color: #65350F;
 }
 
-.lifestyle-pro-blue .button:hover,
-.lifestyle-pro-blue .entry-content .button:hover,
-.lifestyle-pro-blue button:hover,
-.lifestyle-pro-blue input:hover[type="button"],
-.lifestyle-pro-blue input:hover[type="reset"],
-.lifestyle-pro-blue input:hover[type="submit"] {
-	background-color: #eeeee8;
+.lifestyle-pro-brown .button:hover,
+.lifestyle-pro-brown .entry-content .button:hover,
+.lifestyle-pro-brown button:hover,
+.lifestyle-pro-brown input:hover[type="button"],
+.lifestyle-pro-brown input:hover[type="reset"],
+.lifestyle-pro-brown input:hover[type="submit"] {
+	background-color: #65350F;
 }
 
-.lifestyle-pro-blue .nav-secondary {
-	background-color: #80d2e5;
+.lifestyle-pro-brown .nav-secondary {
+	background-color: #fff;
 }
 
 /* Lifestyle Pro Green
@@ -1665,120 +1665,6 @@ Theme Colors
 	background-color: #f5d85a;
 }
 */
-
-/* Lifestyle Pro Purple
---------------------------------------------- */
-
-.lifestyle-pro-purple .archive-pagination li a:hover,
-.lifestyle-pro-purple .archive-pagination li.active a,
-.lifestyle-pro-purple .entry-title a:hover,
-.lifestyle-pro-purple a  {
-	color: #816689;
-}
-
-.lifestyle-pro-purple .button,
-.lifestyle-pro-purple .genesis-nav-menu a,
-.lifestyle-pro-purple .site-footer a,
-.lifestyle-pro-purple .site-title a,
-.lifestyle-pro-purple .site-title a:hover {
-	color: #fff;
-}
-
-.lifestyle-pro-purple .entry-title a,
-.lifestyle-pro-purple .sidebar .widget-title a,
-.lifestyle-pro-purple .site-footer a:hover,
-.lifestyle-pro-purple a:hover {
-	color: #222;
-}
-
-.lifestyle-pro-purple .archive-pagination li a,
-.lifestyle-pro-purple .genesis-nav-menu .current-menu-item > a,
-.lifestyle-pro-purple .genesis-nav-menu .sub-menu a,
-.lifestyle-pro-purple .nav-primary a {
-	color: #a5a5a3;
-}
-
-.lifestyle-pro-purple .button,
-.lifestyle-pro-purple .entry-content .button,
-.lifestyle-pro-purple .site-footer,
-.lifestyle-pro-purple .site-header,
-.lifestyle-pro-purple button,
-.lifestyle-pro-purple input[type="button"],
-.lifestyle-pro-purple input[type="reset"],
-.lifestyle-pro-purple input[type="submit"],
-.lifestyle-pro-purple.lifestyle-pro-home .content .widget-title {
-	background-color: #816689;
-}
-
-.lifestyle-pro-purple .button:hover,
-.lifestyle-pro-purple .entry-content .button:hover,
-.lifestyle-pro-purple button:hover,
-.lifestyle-pro-purple input:hover[type="button"],
-.lifestyle-pro-purple input:hover[type="reset"],
-.lifestyle-pro-purple input:hover[type="submit"] {
-	background-color: #eeeee8;
-}
-
-.lifestyle-pro-purple .nav-secondary {
-	background-color: #8e7197;
-}
-
-/* Lifestyle Pro Red
---------------------------------------------- */
-
-.lifestyle-pro-red .archive-pagination li a:hover,
-.lifestyle-pro-red .archive-pagination li.active a,
-.lifestyle-pro-red .entry-title a:hover,
-.lifestyle-pro-red a  {
-	color: #e65e52;
-}
-
-.lifestyle-pro-red .button,
-.lifestyle-pro-red .genesis-nav-menu a,
-.lifestyle-pro-red .site-footer a,
-.lifestyle-pro-red .site-title a,
-.lifestyle-pro-red .site-title a:hover {
-	color: #fff;
-}
-
-.lifestyle-pro-red .entry-title a,
-.lifestyle-pro-red .sidebar .widget-title a,
-.lifestyle-pro-red .site-footer a:hover,
-.lifestyle-pro-red a:hover {
-	color: #222;
-}
-
-.lifestyle-pro-red .archive-pagination li a,
-.lifestyle-pro-red .genesis-nav-menu .current-menu-item > a,
-.lifestyle-pro-red .genesis-nav-menu .sub-menu a,
-.lifestyle-pro-red .nav-primary a {
-	color: #a5a5a3;
-}
-
-.lifestyle-pro-red .button,
-.lifestyle-pro-red .entry-content .button,
-.lifestyle-pro-red .site-footer,
-.lifestyle-pro-red .site-header,
-.lifestyle-pro-red button,
-.lifestyle-pro-red input[type="button"],
-.lifestyle-pro-red input[type="reset"],
-.lifestyle-pro-red input[type="submit"],
-.lifestyle-pro-red.lifestyle-pro-home .content .widget-title {
-	background-color: #e65e52;
-}
-
-.lifestyle-pro-red .button:hover,
-.lifestyle-pro-red .entry-content .button:hover,
-.lifestyle-pro-red button:hover,
-.lifestyle-pro-red input:hover[type="button"],
-.lifestyle-pro-red input:hover[type="reset"],
-.lifestyle-pro-red input:hover[type="submit"] {
-	background-color: #eeeee8;
-}
-
-.lifestyle-pro-red .nav-secondary {
-	background-color: #f2685c;
-}
 
 
 /*
