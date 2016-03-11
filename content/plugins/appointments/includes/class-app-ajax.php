@@ -83,14 +83,6 @@ class Appointments_AJAX {
 		if ( $app ) {
 			// Update
 			$update_result = appointments_update_appointment( $app_id, $data );
-			if ( $update_result ) {
-				if ( ( 'pending' == $data['status'] || 'removed' == $data['status'] || 'completed' == $data['status'] ) && is_object( $appointments->gcal_api ) ) {
-					$appointments->gcal_api->delete( $app_id );
-				} else if (is_object($appointments->gcal_api) && $appointments->gcal_api->is_syncable_status($data['status'])) {
-					$appointments->gcal_api->update( $app_id ); // This also checks for event insert
-				}
-			}
-
 			if ( $resend && 'removed' != $data['status'] ) {
 				appointments_send_confirmation( $app_id );
 			}
@@ -115,10 +107,6 @@ class Appointments_AJAX {
 			$update_result = false;
 		}
 
-		// Move mail sending here so the fields can expand
-		if ( $insert_result && is_object($appointments->gcal_api) && $appointments->gcal_api->is_syncable_status($data['status'])) {
-			$appointments->gcal_api->insert( $app->ID );
-		}
 
 		if ( $update_result ) {
 			// Log change of status
@@ -541,10 +529,14 @@ class Appointments_AJAX {
 		$name_check = apply_filters( "app_name_check", true, $name );
 		if (!$name_check) $appointments->json_die( 'name' );
 
-		$email = !empty($_POST['app_email']) && is_email($_POST['app_email'])
-			? $_POST['app_email']
-			: $user_email
-		;
+		$email = $user_email;
+		if ( ! empty( $_POST['app_email'] ) ) {
+			$_email = sanitize_email( $_POST['app_email'] );
+			if ( is_email( $_email ) ) {
+				$email = $_email;
+			}
+		}
+
 		if ($appointments->options["ask_email"] && !is_email($email)) $appointments->json_die( 'email' );
 
 		$phone = !empty($_POST['app_phone'])
@@ -602,40 +594,36 @@ class Appointments_AJAX {
 
 		$status = apply_filters('app_post_confirmation_status', $status, $price, $service, $worker, $user_id);
 
-		$result = $wpdb->insert(
-			$appointments->app_table,
-			array(
-				'created'	=>	date ("Y-m-d H:i:s", $appointments->local_time ),
-				'user'		=>	$user_id,
-				'name'		=>	$name,
-				'email'		=>	$email,
-				'phone'		=>	$phone,
-				'address'	=>	$address,
-				'city'		=>	$city,
-				'location'	=>	$location,
-				'service'	=>	$service,
-				'worker'	=> 	$worker,
-				'price'		=>	$price,
-				'status'	=>	$status,
-				'start'		=>	date ("Y-m-d H:i:s", $start),
-				'end'		=>	date ("Y-m-d H:i:s", $start + ($duration * 60 ) ),
-				'note'		=>	$note
-			)
+		$args = array(
+			'user'     => $user_id,
+			'name'     => $name,
+			'email'    => $email,
+			'phone'    => $phone,
+			'address'  => $address,
+			'city'     => $city,
+			'location' => $location,
+			'service'  => $service,
+			'worker'   => $worker,
+			'price'    => $price,
+			'status'   => $status,
+			'date'    => $start,
+			'note'     => $note,
+			'duration' => $duration
 		);
+
+		$insert_id = appointments_insert_appointment( $args );
 
 		appointments_clear_appointment_cache();
 
-		if (!$result) {
+		if (!$insert_id) {
 			die(json_encode(array(
 				"error" => __( 'Appointment could not be saved. Please contact website admin.', 'appointments'),
 			)));
 		}
 
 		// A new appointment is accepted, so clear cache
-		$insert_id = $wpdb->insert_id; // Save insert ID
 		$appointments->flush_cache();
 		$appointments->save_cookie( $insert_id, $name, $email, $phone, $address, $city, $gcal );
-		do_action( 'app_new_appointment', $insert_id );
 
 		// Send confirmation for pending, payment not required cases, if selected so
 		if (
@@ -650,11 +638,6 @@ class Appointments_AJAX {
 		// Send confirmation if we forced it
 		if ('confirmed' == $status && isset($appointments->options["send_confirmation"]) && 'yes' == $appointments->options["send_confirmation"]) {
 			$appointments->send_confirmation( $insert_id );
-		}
-
-		// Add to GCal API
-		if (is_object($appointments->gcal_api) && $appointments->gcal_api->is_syncable_status($status)) {
-			$appointments->gcal_api->insert( $insert_id );
 		}
 
 		// GCal button

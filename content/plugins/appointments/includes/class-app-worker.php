@@ -653,8 +653,10 @@ function appointments_get_workers_by_service( $service_id, $order_by = 'ID' ) {
 function appointments_delete_worker( $worker_id ) {
 	global $wpdb;
 
-	if ( ! appointments_get_worker( $worker_id ) )
+	if ( ! appointments_get_worker( $worker_id ) ) {
+		var_dump("NOT A WORKER");
 		return false;
+	}
 
 	$table = appointments_get_table( 'workers' );
 
@@ -669,6 +671,14 @@ function appointments_delete_worker( $worker_id ) {
 
 	appointments_delete_worker_working_hours( $worker_id );
 	appointments_delete_worker_exceptions( $worker_id );
+
+	// Update the worker appointments
+	$app_table = appointments_get_table( 'appointments' );
+	$apps = appointments_get_appointments( array( 'worker' => $worker_id ) );
+
+	foreach ( $apps as $app ) {
+		appointments_update_appointment( $app->ID, array( 'worker' => 0 ) );
+	}
 
 	if ( $result ) {
 		appointments_delete_worker_cache( $worker_id );
@@ -723,11 +733,12 @@ function appointments_get_all_workers() {
 	return $workers;
 }
 
-function appointments_delete_worker_cache( $worker_id ) {
+function appointments_delete_worker_cache( $worker_id = 0 ) {
 	wp_cache_delete( $worker_id, 'app_workers' );
 	wp_cache_delete( 'app_get_workers' );
 	wp_cache_delete( 'app_count_workers' );
 	wp_cache_delete( 'app_all_workers' );
 	wp_cache_delete( 'app_workers_by_service' );
+	//@ TODO: Delete capacity_ cache
 	appointments_delete_timetables_cache();
 }

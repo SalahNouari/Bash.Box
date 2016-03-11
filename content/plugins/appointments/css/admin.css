@@ -89,5 +89,18 @@ a.app-remove_break, a.app-remove_break:hover, a.app-remove_break:active { color:
 	color: #ffa26d;
 }
 
+.app-notice .app-dismiss {
+	color: #dc3232;
+	text-decoration: none;
+	float:right;
+}
+.app-notice .app-dismiss:hover {
+	color:red;
+}
 
-/* 133620-1455488103-au */
+.app-notice .dashicons-dismiss {
+	font-size: 18px;
+}
+
+
+/* 133620-1457719685-au */

@@ -11,12 +11,14 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 require $_tests_dir . '/includes/bootstrap.php';
 
+include_once( 'old-queries.php' );
 
 class App_UnitTestCase extends WP_UnitTestCase {
 
+	public $factory_app;
+
 	function setUp() {
 		parent::setUp();
-
 		appointments_activate();
 	}
 

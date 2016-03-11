@@ -2,7 +2,7 @@
 /*
  * Copyright 2010 Google Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");		   		 	  		  	 	 	
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-if (!class_exists('App_Google_Client')) {
+if (!class_exists('Google_Client')) {
   require_once dirname(__FILE__) . '/../autoload.php';
 }
 
@@ -27,20 +27,20 @@ if (!class_exists('App_Google_Client')) {
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-class App_Google_Cache_Apc extends App_Google_Cache_Abstract
+class Google_Cache_Apc extends Google_Cache_Abstract
 {
   /**
    * @var Google_Client the current client
    */
   private $client;
 
-  public function __construct(App_Google_Client $client)
+  public function __construct(Google_Client $client)
   {
     if (! function_exists('apc_add') ) {
       $error = "Apc functions not available";
 
       $client->getLogger()->error($error);
-      throw new App_Google_Cache_Exception($error);
+      throw new Google_Cache_Exception($error);
     }
 
     $this->client = $client;
@@ -89,7 +89,7 @@ class App_Google_Cache_Apc extends App_Google_Cache_Abstract
           'APC cache set failed',
           array('key' => $key, 'var' => $var)
       );
-      throw new App_Google_Cache_Exception("Couldn't store data");
+      throw new Google_Cache_Exception("Couldn't store data");
     }
 
     $this->client->getLogger()->debug(

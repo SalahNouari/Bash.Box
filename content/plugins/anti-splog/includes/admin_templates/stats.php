@@ -147,7 +147,7 @@ foreach ( $history as $stat ) {
 		foreach ($blog_stats_hourly_spam as $time => $count) {
 			$spam_data[] = "[$time, $count]";
 		}
-		echo 'var blog_stats_hourly = [{ label: "Spam", color: 2, data: ['.implode(',', $spam_data).'] }, { label: "Ham", color: 3, data: ['.implode(',', $ham_data).'] }];'."\n";
+		echo 'var blog_stats_hourly = [{ label: "Spam", color: 2, data: ['.implode(',', $spam_data).'] }, { label: "Ham", color: 3, data: ['.implode(',', $ham_data).'] }];'."\n";	     	 	  		 		  
 		?>
 
 		var graph_options_hour = {

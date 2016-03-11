@@ -198,9 +198,6 @@ if ( ! class_exists( 'WpSmushNextGenAdmin' ) ) {
 			global $wpsmushit_admin;
 			?>
 			<div class="wrap"><?php
-			//Promotional Text
-			$wpsmushit_admin->smush_pro_features();
-
 			//Bulk Smush UI, calls progress UI, Super Smush UI
 			$this->bulk_smush_ui(); ?>
 			</div><?php
@@ -462,7 +459,7 @@ if ( ! class_exists( 'WpSmushNextGenAdmin' ) ) {
 				<p>
 				<?php
 				// let the user know that there's an alternative
-				printf( __( 'You can also smush images individually from your <a href="%s">Media Library</a>.', 'wp-smushit' ), admin_url( 'upload.php' ) );								 	 	   		   
+				printf( __( 'You can also smush images individually from your <a href="%s">Media Library</a>.', 'wp-smushit' ), admin_url( 'upload.php' ) );
 				?>
 				</p><?php
 			}

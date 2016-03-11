@@ -15,12 +15,89 @@ class Appointments_Admin {
 		add_action( 'personal_options_update', array( $this, 'save_profile') );
 		add_action( 'edit_user_profile_update', array( $this, 'save_profile') );
 
+		add_action( 'admin_notices', array( $this, 'admin_notices_new' ) );
+
+		add_action( 'wp_ajax_appointments_dismiss_notice', array( $this, 'dismiss_notice' ) );
+
 		new Appointments_Admin_Dashboard_Widget();
-		//include( APP_PLUGIN_DIR . '/admin/admin-helpers.php' );
+		include( APP_PLUGIN_DIR . '/admin/admin-helpers.php' );
 	}
 
 	private function includes() {
 		include_once( appointments_plugin_dir() . 'admin/widgets/class-app-dashboard-widget.php' );
+	}
+
+	public function admin_notices_new() {
+		$notices = _appointments_get_admin_notices();
+		$noticed = false;
+		foreach ( $notices as $notice_slug => $notice ) {
+			if ( ! current_user_can( $notice['cap'] ) ) {
+				continue;
+			}
+
+			$user_dismissed_notices = _appointments_get_user_dismissed_notices( get_current_user_id() );
+
+			if ( $notice_text = _appointments_get_admin_notice( $notice_slug ) ) {
+				if ( in_array( $notice_slug, $user_dismissed_notices ) ) {
+					continue;
+				}
+
+				$noticed = true;
+				?>
+				<div class="error app-notice">
+					<p>
+						<strong>Appointments +:</strong> <?php echo $notice_text; ?>
+						<a class="app-dismiss" data-dismiss="<?php echo $notice_slug; ?>" href="#" title="<?php esc_attr_e( 'Dismiss notice', 'appointments' ); ?>"> <?php esc_html_e( 'Dismiss', 'appointments' ); ?><span class="dashicons dashicons-dismiss"></span></a>
+					</p>
+				</div>
+				<?php
+			}
+		}
+		if ( $noticed ) {
+			?>
+			<script>
+				jQuery( document).ready( function( $ ) {
+					function app_dismiss_notice( slug ) {
+						$.ajax({
+							url: ajaxurl,
+							data: {
+								notice: slug,
+								_wpnonce: '<?php echo wp_create_nonce( 'app-dismiss-notice' ); ?>',
+								action: 'appointments_dismiss_notice'
+							}
+						})
+							.always( function( data ) {
+								console.log(data);
+							});
+
+					}
+
+					$('.app-dismiss').click( function( e ) {
+						e.preventDefault();
+						$(this).parent().parent().hide();
+						app_dismiss_notice( $(this).data( 'dismiss' ) );
+					});
+				}( jQuery ) );
+			</script>
+			<?php
+		}
+	}
+
+	public function dismiss_notice() {
+		check_ajax_referer( 'app-dismiss-notice' );
+
+		$user_id = get_current_user_id();
+		if ( $user_id ) {
+			$dismissed_notices = _appointments_get_user_dismissed_notices( $user_id );
+
+			$notice_slug = $_REQUEST['notice'];
+			if ( _appointments_get_admin_notice( $notice_slug ) && ! in_array( $notice_slug, $dismissed_notices ) ) {
+				$dismissed_notices[] = $notice_slug;
+				update_user_meta( $user_id, 'app_dismissed_notices', $dismissed_notices );
+			}
+
+		}
+		die();
 	}
 
 	/**
@@ -28,14 +105,6 @@ class Appointments_Admin {
 	 */
 	function save_profile( $profileuser_id ) {
 		global $current_user, $wpdb, $appointments;
-
-		// Copy key file to uploads folder
-		if ( is_object( $appointments->gcal_api ) ) {
-			$kff = $appointments->gcal_api->key_file_folder( ); // Key file folder
-			$kfn = $appointments->gcal_api->get_key_file( $profileuser_id ). '.p12'; // Key file name
-			if ( $kfn && is_dir( $kff ) && !file_exists( $kff . $kfn ) && file_exists( $appointments->plugin_dir . '/includes/gcal/key/' . $kfn ) )
-				copy( $appointments->plugin_dir . '/includes/gcal/key/' . $kfn, $kff . $kfn );
-		}
 
 		// Only user himself can save his data
 		if ( $current_user->ID != $profileuser_id )
@@ -53,43 +122,14 @@ class Appointments_Admin {
 		if ( isset( $_POST['app_city'] ) )
 			update_user_meta( $profileuser_id, 'app_city', $_POST['app_city'] );
 
-		// Save Google API settings
-		if ( isset( $_POST['gcal_api_mode'] ) )
-			update_user_meta( $profileuser_id, 'app_api_mode', $_POST['gcal_api_mode'] );
-		if ( isset( $_POST['gcal_service_account'] ) )
-			update_user_meta( $profileuser_id, 'app_service_account', trim( $_POST['gcal_service_account'] ) );
-		if ( isset( $_POST['gcal_key_file'] ) )
-			update_user_meta( $profileuser_id, 'app_key_file', trim( str_replace( '.p12', '', $_POST['gcal_key_file'] ) ) );
-		if ( isset( $_POST['gcal_selected_calendar'] ) )
-			update_user_meta( $profileuser_id, 'app_selected_calendar', trim( $_POST['gcal_selected_calendar'] ) );
-		if ( isset( $_POST['gcal_summary'] ) ) {
-			if ( !trim( $_POST['gcal_summary'] ) )
-				$summary = __('SERVICE Appointment','appointments');
-			else
-				$summary = $_POST['gcal_summary'];
-			update_user_meta( $profileuser_id, 'app_gcal_summary', $summary );
-		}
-		if ( isset( $_POST['gcal_description'] ) ) {
-			if ( !trim( $_POST['gcal_description'] ) ) {
-				$gcal_description = __("Client Name: CLIENT\nService Name: SERVICE\nService Provider Name: SERVICE_PROVIDER\n", "appointments");
-			} else {
-				$gcal_description = $_POST['gcal_description'];
-			}
-			update_user_meta( $profileuser_id, 'app_gcal_description', $gcal_description );
-		}
 
 		// Cancel appointment
 		if ( isset( $appointments->options['allow_cancel'] ) && 'yes' == $appointments->options['allow_cancel'] &&
 		     isset( $_POST['app_cancel'] ) && is_array( $_POST['app_cancel'] ) && !empty( $_POST['app_cancel'] ) ) {
 			foreach ( $_POST['app_cancel'] as $app_id=>$value ) {
-				if ( $appointments->change_status( 'removed', $app_id ) ) {
+				if ( appointments_update_appointment_status( $app_id, 'removed' ) ) {
 					$appointments->log( sprintf( __('Client %s cancelled appointment with ID: %s','appointments'), $appointments->get_client_name( $app_id ), $app_id ) );
 					$appointments->send_notification( $app_id, true );
-
-					if (!empty($appointments->gcal_api) && is_object($appointments->gcal_api)) $appointments->gcal_api->delete($app_id); // Drop the cancelled appointment
-					else if (!defined('APP_GCAL_DISABLE')) $appointments->log("Unable to issue a remote call to delete the remote appointment.");
-
-					// Do we also do_action app-appointments-appointment_cancelled?
 				}
 			}
 		}
@@ -101,7 +141,7 @@ class Appointments_Admin {
 		// Confirm an appointment using profile page
 		if ( isset( $_POST['app_confirm'] ) && is_array( $_POST['app_confirm'] ) && !empty( $_POST['app_confirm'] ) ) {
 			foreach ( $_POST['app_confirm'] as $app_id=>$value ) {
-				if ( $appointments->change_status( 'confirmed', $app_id ) ) {
+				if ( appointments_update_appointment_status( $app_id, 'confirmed' ) ) {
 					$appointments->log( sprintf( __('Service Provider %s manually confirmed appointment with ID: %s','appointments'), appointments_get_worker_name( $current_user->ID ), $app_id ) );
 					$appointments->send_confirmation( $app_id );
 				}
@@ -334,23 +374,6 @@ class Appointments_Admin {
 				</script>
 			<?php } ?>
 			<?php } ?>
-			<?php if ( isset($appointments->options["gcal_api_allow_worker"]) && 'yes' == $appointments->options["gcal_api_allow_worker"] && appointments_is_worker( $profileuser->ID ) ) { ?>
-				<tr>
-					<th><label><?php _e("Appointments+ Google Calendar API", 'appointments'); ?></label></th>
-					<td>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<?php
-						if ( is_object( $appointments->gcal_api ) )
-							$appointments->gcal_api->display_nag( $profileuser->ID ); ?>
-					</td>
-				</tr>
-				<?php
-				if ( is_object( $appointments->gcal_api ) )
-					$appointments->gcal_api->display_settings( $profileuser->ID );
-			} ?>
 		</table>
 		<?php
 	}
@@ -933,31 +956,22 @@ class Appointments_Admin {
 			}
 
 			if ( $result ) {
+
+				if ( 'removed' == $new_status ) {
+					foreach ( $_POST["app"] as $app_id ) {
+						$appointments->send_removal_notification( $app_id );
+					}
+				}
+				elseif ( ! empty( $appointments->options["send_confirmation"] ) && 'yes' == $appointments->options["send_confirmation"] ) {
+					appointments_send_confirmation( $app_id );
+				}
+
 				$userdata = get_userdata( get_current_user_id() );
 				add_action( 'admin_notices', array ( &$appointments, 'updated' ) );
 				do_action( 'app_bulk_status_change',  $_POST["app"] );
 
 				$appointments->log( sprintf( __('Status of Appointment(s) with id(s):%s changed to %s by user:%s', 'appointments' ),  implode( ', ', $_POST["app"] ), $new_status, $userdata->user_login ) );
 
-				if ( is_object( $appointments->gcal_api ) ) {
-					// If deleted, remove these from GCal too
-					if ( 'removed' == $new_status ) {
-						foreach ( $_POST["app"] as $app_id ) {
-							$appointments->gcal_api->delete( $app_id );
-							$appointments->send_removal_notification($app_id);
-						}
-					}
-					// If confirmed or paid, add these to GCal
-					else if (is_object($appointments->gcal_api) && $appointments->gcal_api->is_syncable_status($new_status)) {
-						foreach ( $_POST["app"] as $app_id ) {
-							$appointments->gcal_api->update( $app_id );
-							// Also send out an email
-							if (!empty($appointments->options["send_confirmation"]) && 'yes' == $appointments->options["send_confirmation"]) {
-								appointments_send_confirmation( $app_id );
-							}
-						}
-					}
-				}
 			}
 		}
 

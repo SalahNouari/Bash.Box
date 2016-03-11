@@ -60,7 +60,7 @@ class AppointmentsGcal {
 		else
 			$this->uploads_dir 	= WP_CONTENT_DIR . "/uploads/";
 
-		add_action( 'wpmudev_appointments_update_appointment_status', array( $this, 'update_appointment_status' ), 10, 2 );
+		//add_action( 'wpmudev_appointments_update_appointment_status', array( $this, 'update_appointment_status' ), 10, 2 );
 	}
 
 	/**
@@ -160,6 +160,8 @@ class AppointmentsGcal {
 	 * Outputs Google Calendar tab on admin settings page
 	 */
 	function render_tab( $worker_id=0 ) {
+
+		$this->create_key_file_folder();
 
 		// Set correct worker_id for test connection and import&update now
 		if ( !$worker_id && isset( $_GET['gcal_api_worker_id'] ) )
@@ -415,7 +417,14 @@ class AppointmentsGcal {
 			<td>
 			<input value="<?php echo $gcal_service_account; ?>" size="90" name="gcal_service_account" type="text"  <?php echo $is_readonly ?> />
 			<br />
-			<span class="description"><?php _e('Enter Service account email address here, e.g. 1234567890@developer.gserviceaccount.com', 'appointments') ?></span>
+			<p><?php _e( 'Obtain your service account email address:', 'appointments' ); ?></p>
+			<ol>
+				<li><?php printf( __( 'Go to <a href="%s" target="_blank">Service Accunts section</a>', 'appointments' ), 'https://console.developers.google.com/projectselector/permissions/serviceaccounts' ); ?></li>
+				<li><?php _e( 'Select your project', 'appointments' ); ?></li>
+				<li><?php _e( 'Click on Service Accounts tab', 'appointments' ); ?></li>
+				<li><?php _e( 'Copy your account email address', 'appointments' ); ?></li>
+			</ol>
+			<span class="description"><?php _e('Enter Service account email address here', 'appointments') ?></span>
 			</td>
 		</tr>
 
@@ -423,8 +432,13 @@ class AppointmentsGcal {
 			<th scope="row"><?php _e('Calendar to be used', 'appointments') ?></th>
 			<td>
 			<input value="<?php echo $gcal_selected_calendar; ?>" size="90" name="gcal_selected_calendar" type="text"  <?php echo $is_readonly ?> />
-			<br />
-			<span class="description"><?php _e('Enter the ID of the Google calendar in which your appointments will be saved, e.g. abcdefg1234567890@group.calendar.google.com.','appointments') ?></span>
+			<p><?php _e( 'Get your calendar ID:', 'appointments' ); ?></p>
+			<ol>
+				<li><?php printf( __( 'Go to <a href="%s" target="_blank">your calendar page</a>' , 'appointments' ), 'https://calendar.google.com/calendar' ); ?></li>
+				<li><?php _e( 'Create a new calendar or select an existing one. try not to use your main calendar.' ); ?></li>
+				<li><?php _e( 'Click on the down arrow at the right of the created Calendar and click on Calendar Settings.' ); ?></li>
+				<li><?php _e( 'Find "Calendar ID" (it\'s not so obvious but is there) and copy the value.' ); ?></li>
+			</ol>
 			</td>
 		</tr>
 
@@ -479,28 +493,15 @@ class AppointmentsGcal {
 				<?php printf( __('Tip: There is a video tutorial showing these steps %s.', 'appointments'), '<a href="http://youtu.be/hul60oJ1Eiw" target="_blank">' . __('here', 'appointments'). '</a>') ?>
 				<ul style="list-style-type:decimal;">
 					<li><?php printf( __('Google Calendar API requires php V5.3+ and some php extensions. Click this link to check if your server installation meets those requirements: %s', 'appointments'), "<a href='".esc_url(add_query_arg(array( 'gcal_api_test'=>1, 'gcal_api_test_result'=>false, 'gcal_api_pre_test'=>1)))."'>" . __('Check Requirements', 'appointments' ) . "</a>") ?></li>
-					<li><?php printf( __('Go to Google apis console by clicking %s. Login to your Google account if you are not already logged in.', 'appointments'), '<a href="https://code.google.com/apis/console/" target="_blank">https://code.google.com/apis/console/</a>') ?></li>
-					<li><?php _e('Create a new project using the left side pane. Name the project &quot;Appointments&quot; (or use your chosen name instead)', 'appointments') ?></li>
-					<li><?php _e('Click "Services" from left side pane and set "Calendar API" as ON.', 'appointments') ?></li>
-					<li><?php _e('Click "API Access" from left side pane.', 'appointments') ?></li>
-					<li><?php _e('Click "Create an OAuth 2.0 Client ID" button.', 'appointments') ?></li>
-					<li><?php _e('Enter a Product Name, e.g. A+, inside the opening pop-up. Click Next.', 'appointments') ?></li>
-					<li><?php _e('Select "Service account" under Client ID Settings in the new pop-up.', 'appointments') ?></li>
-					<li><?php _e('Click "create Client ID". Getting the result may take a few seconds.', 'appointments') ?></li>
-					<li><?php _e('Click "Download private key" button in the opening pop-up.', 'appointments') ?></li>
-					<li><?php printf( __('Using your FTP client program, copy this key file to folder: %s . This file is required as you will grant access to your Google Calendar account even if you are not online. So this file serves as a proof of your consent to access to your Google calendar account. Note: This file cannot be uploaded in any other way. If you do not have FTP access, ask the website admin to do it for you.', 'appointments'), $this->plugin_dir .'/includes/gcal/key/' ) ?></li>
-					<li><?php  _e('Enter the name of the key file to "Key file name" setting of Appointments+. Exclude the extention .p12.', 'appointments') ?></li>
-					<li><?php  _e('Copy "Email address" setting of Google apis console and paste it to "Service account email address" setting of Appointments+.', 'appointments') ?></li>
-					<li><?php  printf(__('Open your Google Calendar by clicking this link: %s', 'appointments'), '<a href="https://www.google.com/calendar/render" target="_blank">https://www.google.com/calendar/render</a>') ?></li>
-					<li><?php  printf( __('Create a new Calendar by selecting "my Calendars > Create new calendar" on left side pane. <b>Try NOT to use your primary calendar. If you have to, please see this post: </b> %s', 'appointments'), '<a href="http://premium.wpmudev.org/forums/topic/appointments-error-1#post-376708" target="_blank">'. __( 'Forum', 'appointments'). '</a>') ?></li>
-					<li><?php  _e('Give a name to the new calendar, e.g. Appointments test calendar. <b>Check that Calendar Time Zone setting matches with time zone setting of your WordPress website.</b> Otherwise there will be a time shift.', 'appointments') ?></li>
-					<li><?php  _e('Paste already copied "Email address" setting of Google apis console to "Person" field under "Share with specific person".', 'appointments') ?></li>
-					<li><?php  _e('Set "Permission Settings" of this person as "make changes to events".', 'appointments') ?></li>
-					<li><?php  _e('Click "Add Person".', 'appointments') ?></li>
-					<li><?php  _e('Click "Create Calendar".', 'appointments') ?></li>
-					<li><?php  _e('Select the created calendar and click "Calendar settings".', 'appointments') ?></li>
-					<li><?php  _e('Copy "Calendar ID" value on Calendar Address row.', 'appointments') ?></li>
-					<li><?php  _e('Paste this value to "Calendar to be used" field of Appointments+ settings.', 'appointments') ?></li>
+					<li><?php printf( __('Open the <a href="%s" target="_blank">Credentials page</a>. Login to your Google account if you are not already logged in.', 'appointments'), 'https://console.developers.google.com/project/_/apiui/credential' ); ?></li>
+					<li><?php _e('Create a new project. Name the project &quot;Appointments&quot; (or use your chosen name instead)', 'appointments') ?></li>
+					<li><?php _e('Click on Create credentials > Service.', 'appointments') ?></li>
+					<li><?php _e('Choose to download the service account\'s public/private key as a standard P12 file', 'appointments') ?></li>
+					<li><?php _e('Your new public/private key pair is generated and downloaded to your machine', 'appointments') ?></li>
+					<li><?php _e('Save the file and the private key password that appears on screen.', 'appointments') ?></li>
+					<li><?php printf( __('Now go to <a href="%s" target="_blank">APIs library</a> and make sure that Google Calendar API is active.', 'appointments'), 'https://console.developers.google.com/apis/library' ); ?></li>
+					<li><?php printf( __('Using your FTP client program, copy this key file to folder: %s . This file is required as you will grant access to your Google Calendar account even if you are not online. So this file serves as a proof of your consent to access to your Google calendar account. Note: This file cannot be uploaded in any other way. If you do not have FTP access, ask the website admin to do it for you.', 'appointments'), '<strong>' . $this->key_file_folder() . '</strong>' ) ?></li>
+					<li><?php _e( 'Fill the form below.', 'appointments' ); ?></li>
 					<li><?php  _e('Select the desired Integration mode: A+->GCal or A+<->GCal.', 'appointments') ?></li>
 					<li><?php  _e('Click "Save Settings" on Appointments+ settings.', 'appointments') ?></li>
 					<li><?php  _e('After these stages, you have set up Google Calendar API. To test the connection, click the "Test Connection" link which should be visible after you clicked save settings button.', 'appointments') ?></li>
@@ -526,6 +527,12 @@ class AppointmentsGcal {
 				sprintf( __('<b>[Appointments+]</b> %s', 'appointments'), $message ) .
 			'</p></div>';
 	}
+
+	function get_key_file_folder_path() {
+		$upload_dir = wp_upload_dir();
+		return $upload_dir['basedir'] . '/appointments/';
+	}
+
 
 	/**
 	 * Save admin settings
@@ -868,21 +875,22 @@ class AppointmentsGcal {
 
 		// Just in case
 		require_once $this->plugin_dir . '/includes/external/google/Client.php';
+		//require_once $this->plugin_dir . '/includes/external/google/AppointmentsGoogleConfig.php';
 
-		$config = new App_Google_AppointmentsGoogleConfig(apply_filters('app-gcal-client_parameters', array(
-			//'cache_class' => 'App_Google_Cache_Null', // For an example
-		)));
-		$this->client = new App_Google_Client($config);
+//		$config = new App_Google_AppointmentsGoogleConfig(apply_filters('app-gcal-client_parameters', array(
+//			//'cache_class' => 'App_Google_Cache_Null', // For an example
+//		)));
+		$this->client = new Google_Client();
 		$this->client->setApplicationName("Appointments+");
 		//$this->client->setUseObjects(true);
 		$key = $this->_file_get_contents( $worker_id );
-		$this->client->setAssertionCredentials(new App_Google_Auth_AssertionCredentials(
+		$this->client->setAssertionCredentials(new Google_Auth_AssertionCredentials(
 			$this->get_service_account( $worker_id),
 			array('https://www.googleapis.com/auth/calendar'),
 			$key)
 		);
 
-		$this->service = new App_Google_Service_Calendar($this->client);
+		$this->service = new Google_Service_Calendar($this->client);
 
 		return true;
 	}
@@ -907,10 +915,10 @@ class AppointmentsGcal {
 		if (!current_time('timestamp')) $tdif = 0;
 		else $tdif = current_time('timestamp') - time();
 
-		$start = new App_Google_Service_Calendar_EventDateTime();
+		$start = new Google_Service_Calendar_EventDateTime();
 		$start->setDateTime(date("Y-m-d\TH:i:s\Z", strtotime($app->start) - $tdif));
 
-		$end = new App_Google_Service_Calendar_EventDateTime();
+		$end = new Google_Service_Calendar_EventDateTime();
 		$end->setDateTime(date("Y-m-d\TH:i:s\Z", strtotime($app->end) - $tdif));
 
 		// An email is always required
@@ -919,11 +927,11 @@ class AppointmentsGcal {
 
 		if (!$email) $email = $a->get_admin_email( );
 
-		$attendee1 = new App_Google_Service_Calendar_EventAttendee();
+		$attendee1 = new Google_Service_Calendar_EventAttendee();
 		$attendee1->setEmail( $email );
 		$attendees = array($attendee1);
 
-		$this->event = new App_Google_Service_Calendar_Event();
+		$this->event = new Google_Service_Calendar_Event();
 		$this->event->setSummary( $summary );
 		$this->event->setLocation( $location );
 		$this->event->setStart( $start );
@@ -1021,7 +1029,7 @@ class AppointmentsGcal {
 		// Insert event
 		try {
 			$createdEvent = $this->service->events->insert( $this->get_selected_calendar( $worker_id ), $this->event );
-			if ($createdEvent && !is_object($createdEvent) && class_exists('App_Google_Service_Calendar_CalendarListEntry')) $createdEvent = new App_Google_Service_Calendar_CalendarListEntry($createdEvent);
+			if ($createdEvent && !is_object($createdEvent) && class_exists('Google_Service_Calendar_CalendarListEntry')) $createdEvent = new Google_Service_Calendar_CalendarListEntry($createdEvent);
 
 			// Write Event ID to database
 			$gcal_ID = $createdEvent->getId();
@@ -1080,12 +1088,14 @@ class AppointmentsGcal {
 			// Update event
 			try {
 				$updatedEvent = $this->service->events->update( $this->get_selected_calendar( $worker_id ), $app->gcal_ID, $this->event );
-				if ($updatedEvent && !is_object($updatedEvent) && class_exists('App_Google_Service_Calendar_CalendarListEntry')) $updatedEvent = new App_Google_Service_Calendar_CalendarListEntry($updatedEvent);
+				if ($updatedEvent && !is_object($updatedEvent) && class_exists('Google_Service_Calendar_CalendarListEntry')) $updatedEvent = new Google_Service_Calendar_CalendarListEntry($updatedEvent);
 
 				// Update Time of database
 				$gcal_ID = $updatedEvent->getId();
-				if ( $gcal_ID && $gcal_ID == $app->gcal_ID )
-					$wpdb->update( $this->app_table, array( 'gcal_updated' => date ("Y-m-d H:i:s", $this->local_time ) ), array( 'ID'=>$app_id ) );
+				if ( $gcal_ID && $gcal_ID == $app->gcal_ID ) {
+					appointments_update_appointment( $app_id, array( 'gcal_updated' => date ("Y-m-d H:i:s", $this->local_time ) ) );
+				}
+
 			} catch (Exception $e) {
 				$appointments->log("Update went wrong: " . $e->getMessage());
 			}
@@ -1111,6 +1121,7 @@ class AppointmentsGcal {
 	 * @param app_id: Appointment ID that has been deleted
 	 */
 	function delete_event( $app_id, $worker_id=0 ) {
+		global $appointments;
 		if ( !$this->connect( $worker_id ) )
 			return false;
 
@@ -1188,8 +1199,8 @@ class AppointmentsGcal {
 		}
 //$appointments->log(sprintf("got back some events: %d", ($events ? 1 : 0)));
 
-		if ($events && class_exists('App_Google_Service_Calendar_Events') && !($events instanceof App_Google_Service_Calendar_Events)) {
-			$events = new App_Google_Service_Calendar_Events;
+		if ($events && class_exists('Google_Service_Calendar_Events') && !($events instanceof Google_Service_Calendar_Events)) {
+			$events = new Google_Service_Calendar_Events;
 			$events->setItems($events);
 		}
 		$message = '';
@@ -1207,7 +1218,7 @@ class AppointmentsGcal {
 		}
 
 		if ( $events && is_array( $events->getItems()) ) {
-			/** @var App_Google_Service_Calendar_Event $event */
+			/** @var Google_Service_Calendar_Event $event */
 			// Service ID is not important as we will use this record for blocking our time slots only
 			$service_id = appointments_get_services_min_id();
 

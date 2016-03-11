@@ -27,7 +27,7 @@ class AsirraValidator
 
 		$AsirraServiceUrl = "http://challenge.asirra.com/cgi/Asirra";
 
-		$url = $AsirraServiceUrl."?action=ValidateTicket&ticket=".$ticket;	     	 	  		 		  
+		$url = $AsirraServiceUrl."?action=ValidateTicket&ticket=".$ticket;
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);

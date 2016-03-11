@@ -3,7 +3,7 @@
 Plugin Name: Appointments+
 Description: Lets you accept appointments from front end and manage or create them from admin side
 Plugin URI: http://premium.wpmudev.org/project/appointments-plus/
-Version: 1.6
+Version: 1.7
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org/
 Textdomain: appointments
@@ -32,7 +32,7 @@ if ( !class_exists( 'Appointments' ) ) {
 
 class Appointments {
 
-	public $version = "1.6";
+	public $version = "1.7";
 	public $db_version;
 
 	public $timetables = array();
@@ -43,7 +43,9 @@ class Appointments {
 	public $app_table;
 	public $workers_table;
 	/** @var AppointmentsGcal|bool */
-	public $gcal_api;
+	public $gcal_api = false;
+	/** @var bool|Appointments_Google_Calendar  */
+	public $gcal_api_new = false;
 	public $locale_error;
 	public $time_format;
 	public $datetime_format;
@@ -61,6 +63,7 @@ class Appointments {
 	function __construct() {
 
 		include_once( 'includes/helpers.php' );
+		include_once( 'includes/helpers-settings.php' );
 		include_once( 'includes/deprecated-hooks.php' );
 
 		$this->timetables = get_transient( 'app_timetables' );
@@ -86,8 +89,8 @@ class Appointments {
 
 		$this->datetime_format = $this->date_format . " " . $this->time_format;
 
-		add_action( 'delete_user', array( &$this, 'delete_user' ) );		// Modify database in case a user is deleted
-		add_action( 'wpmu_delete_user', array( &$this, 'delete_user' ) );	// Same as above
+		add_action( 'delete_user', 'appointments_delete_worker' );		// Modify database in case a user is deleted
+		add_action( 'wpmu_delete_user', 'appointments_delete_worker' );	// Same as above
 		add_action( 'remove_user_from_blog', array( &$this, 'remove_user_from_blog' ), 10, 2 );	// Remove his records only for that blog
 
 		add_action( 'plugins_loaded', array(&$this, 'localization') );		// Localize the plugin
@@ -152,7 +155,6 @@ class Appointments {
 		$this->mp_posts = array();
 		add_action( 'plugins_loaded', array( &$this, 'check_marketpress_plugin') );
 
-		$this->gcal_api = false;
 		add_action('init', array($this, 'setup_gcal_sync'), 10);
 
 		// Database variables
@@ -205,25 +207,38 @@ class Appointments {
 			$this->flush_cache();
 		}
 
-		if ( $this->db_version == $this->version ) {
+		$db_version = get_option( 'app_db_version' );
+
+		if ( $db_version == $this->version ) {
 			return;
 		}
 
-		if ( $this->db_version != $this->version ) {
-			appointments_clear_cache();
-		}
+		appointments_clear_cache();
+
+		include_once( 'includes/class-app-upgrader.php' );
+		$upgrader = new Appointments_Upgrader( $this->version );
+		$upgrader->upgrade( $this->version );
 
 		update_option( 'app_db_version', $this->version );
 	}
 
 	function setup_gcal_sync () {
 		// GCal Integration
-		$this->gcal_api = false;
 		// Allow forced disabling in case of emergency
 		if ( !defined( 'APP_GCAL_DISABLE' ) ) {
 			require_once $this->plugin_dir . '/includes/class.gcal.php';
 			$this->gcal_api = new AppointmentsGcal();
 		}
+
+		$this->get_gcal_api();
+	}
+
+	function get_gcal_api() {
+		if ( false === $this->gcal_api_new && ! defined( 'APP_GCAL_DISABLE' ) ) {
+			require_once $this->plugin_dir . '/includes/class-app-gcal.php';
+			$this->gcal_api_new = new Appointments_Google_Calendar();
+		}
+		return $this->gcal_api_new;
 	}
 
 
@@ -470,7 +485,7 @@ class Appointments {
 	 * Weekly gives much better results in RAM usage compared to monthly, with a tolerable, slight increase in number of queries
 	 * @return array of objects
 	 *
-	 * @deprecated since 1.5.6.1
+	 * @deprecated since 1.6
 	 */
 	function get_reserve_apps( $l, $s, $w, $week=0 ) {
 		_deprecated_function( __FUNCTION__, '1.6', 'appointments_get_appointments()' );
@@ -480,7 +495,7 @@ class Appointments {
 			'week' => $week,
 			'worker' => $w
 		);
-		return appointments_get_appointments( $args );
+		return appointments_get_appointments_filtered_by_services( $args );
 	}
 
 	/**
@@ -501,7 +516,7 @@ class Appointments {
 						'worker' => $w,
 						'week' => $week
 					);
-					$apps_worker = appointments_get_appointments( $args );
+					$apps_worker = appointments_get_appointments_filtered_by_services( $args );
 					if ( $apps_worker )
 						$apps = array_merge( $apps, $apps_worker );
 				}
@@ -527,7 +542,7 @@ class Appointments {
 			'service' => $s,
 			'week' => $week
 		);
-		return appointments_get_appointments( $args );
+		return appointments_get_appointments_filtered_by_services( $args );
 	}
 
 
@@ -811,31 +826,14 @@ class Appointments {
 	 * Get the capacity of the current service
 	 * @return integer
 	 */
-	function get_capacity() {
-		$capacity = wp_cache_get( 'capacity_'. $this->service );
-		if ( false === $capacity ) {
-			// If no worker is defined, capacity is always 1
-			$count = count( appointments_get_all_workers() );
-			if ( !$count ) {
-				$capacity = 1;
-			}
-			else {
-				// Else, find number of workers giving that service and capacity of the service
-				$worker_count = count( appointments_get_workers_by_service( $this->service ) );
-				$service = appointments_get_service( $this->service );
-				if ( $service != null ) {
-					if ( !$service->capacity ) {
-						$capacity = $worker_count; // No service capacity limit
-					}
-					else
-						$capacity = min( $service->capacity, $worker_count ); // Return whichever smaller
-				}
-				else
-					$capacity = 1; // No service ?? - Not possible but let's be safe
-			}
-			wp_cache_set( 'capacity_'. $this->service, $capacity );
+	function get_capacity( $service_id = false ) {
+		if ( $service_id && $service = appointments_get_service( $service_id ) ) {
+			$service_id = $service->ID;
 		}
-		return apply_filters( 'app_get_capacity', $capacity, $this->service, $this->worker );
+		else {
+			$service_id = $this->service;
+		}
+		return appointments_get_service_capacity( $service_id );
 	}
 
 /**
@@ -1207,12 +1205,9 @@ class Appointments {
 				// Also the clicked link may belong to a formerly created and deleted appointment.
 				// Another irrelevant app may have been created after cancel link has been sent. So we will check creation date
 				if ( $in_allowed_stat && $_GET['app_nonce'] == md5( $_GET['app_id']. $appointments->salt . strtotime( $app->created ) ) ) {
-					if ( $appointments->change_status( 'removed', $app_id ) ) {
+					if ( appointments_update_appointment_status( $app_id, 'removed' ) ) {
 						$appointments->log( sprintf( __('Client %s cancelled appointment with ID: %s','appointments'), $appointments->get_client_name( $app_id ), $app_id ) );
 						$appointments->send_notification( $app_id, true );
-
-						if (!empty($appointments->gcal_api) && is_object($appointments->gcal_api)) $appointments->gcal_api->delete($app_id); // Drop the cancelled appointment
-						else if (!defined('APP_GCAL_DISABLE')) $appointments->log("Unable to issue a remote call to delete the remote appointment.");
 
 						do_action('app-appointments-appointment_cancelled', $app_id);
 						// If there is a header warning other plugins can do whatever they need
@@ -1259,12 +1254,9 @@ class Appointments {
 					die( json_encode( array('error'=>esc_js(__('There is an issue with this appointment. Please refresh the page and try again. If problem persists, please contact website admin.','appointments') ) ) ) );
 
 				// Now we can safely continue for cancel
-				if ( $appointments->change_status( 'removed', $app_id ) ) {
+				if ( appointments_update_appointment_status( $app_id, 'removed' ) ) {
 					$appointments->log( sprintf( __('Client %s cancelled appointment with ID: %s','appointments'), $appointments->get_client_name( $app_id ), $app_id ) );
 					$appointments->send_notification( $app_id, true );
-
-					if (!empty($appointments->gcal_api) && is_object($appointments->gcal_api)) $appointments->gcal_api->delete($app_id); // Drop the cancelled appointment
-					else if (!defined('APP_GCAL_DISABLE')) $appointments->log("Unable to issue a remote call to delete the remote appointment.");
 
 					do_action('app-appointments-appointment_cancelled', $app_id);
 					die( json_encode( array('success'=>1)));
@@ -1447,32 +1439,37 @@ class Appointments {
 	 * @return bool
 	 */
 	function check_spam() {
-		global $wpdb;
-		if ( !isset( $this->options["spam_time"] ) || !$this->options["spam_time"] ||
-			!isset( $_COOKIE["wpmudev_appointments"] ) )
+		if ( ! isset( $this->options["spam_time"] ) || ! $this->options["spam_time"] ||
+		     ! isset( $_COOKIE["wpmudev_appointments"] )
+		) {
 			return true;
+		}
 
 		$apps = unserialize( stripslashes( $_COOKIE["wpmudev_appointments"] ) );
 
-		if ( !is_array( $apps ) || empty( $apps ) )
+		if ( ! is_array( $apps ) || empty( $apps ) ) {
 			return true;
-
-		// Get details of the appointments
-		$q = '';
-		foreach ( $apps as $app_id ) {
-			// Allow only numeric values
-			if ( is_numeric( $app_id ) )
-				$q .= " ID=".$app_id." OR ";
 		}
-		$q = rtrim( $q, "OR " );
 
 		$checkdate = date( 'Y-m-d H:i:s', $this->local_time - $this->options["spam_time"] );
 
-		$results = $wpdb->get_results( "SELECT * FROM " . $this->app_table .
-					" WHERE created>'".$checkdate."' AND status='pending' AND (".$q.")  " );
+		$results = appointments_get_appointments( array(
+			'app_id'     => maybe_unserialize( $_COOKIE["wpmudev_appointments"] ),
+			'status'     => 'pending',
+			'date_query' => array(
+				array(
+					'field'   => 'created',
+					'compare' => '>',
+					'value'   => $checkdate
+				)
+			)
+		) );
+
 		// A recent app is found
-		if ( $results )
+
+		if ( $results ) {
 			return false;
+		}
 
 		return true;
 	}
@@ -1497,9 +1494,6 @@ class Appointments {
 	 * Helper function to create a monthly schedule
 	 */
 	function get_monthly_calendar( $timestamp=false, $class='', $long, $widget ) {
-		global $wpdb;
-
-
 		$this->get_lsw();
 
 		$price = $this->get_price( );
@@ -2458,7 +2452,7 @@ class Appointments {
 									'service' => $service_ID,
 									'week' => $week
 								);
-								$apps_service_0 = appointments_get_appointments( $args );
+								$apps_service_0 = appointments_get_appointments_filtered_by_services( $args );
 								if ( $apps_service_0 && is_array( $apps_service_0 ) )
 									$apps = array_merge( $apps, $apps_service_0 );
 							}
@@ -2899,12 +2893,14 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 		wp_enqueue_script( 'app-js-check', $this->plugin_url . '/js/js-check.js', array('jquery'), $this->version);
 
 		$thank_page_id = ! empty( $this->options['thank_page'] ) ? absint( $this->options['thank_page'] ) : 0;
+		$cancel_page_id = ! empty( $this->options['cancel_page'] ) ? absint( $this->options['cancel_page'] ) : 0;
 		wp_localize_script( 'app-js-check', '_appointments_data',
 			array(
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'root_url' => plugins_url('appointments/images/'),
-				'thank_page_url' => get_permalink( $thank_page_id )
-				)
+				'thank_page_url' => get_permalink( $thank_page_id ),
+				'cancel_url' => get_permalink( $cancel_page_id )
+			)
 		);
 
 		if ( !current_theme_supports( 'appointments_style' ) ) {
@@ -3111,9 +3107,6 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 		$this->remove_appointments();
 		$this->send_reminder();
 		$this->send_reminder_worker();
-		// Update Google API imports
-		if ( is_object( $this->gcal_api ) )
-			$this->gcal_api->import_and_update();
 
 	}
 
@@ -3380,11 +3373,7 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 
 		$messages = array();
 		foreach ( $hours as $hour ) {
-			$rlike = (string) absint($hour);
-			$results = $wpdb->get_results( "SELECT * FROM " . $this->app_table . "
-				WHERE (status='paid' OR status='confirmed')
-				AND (sent NOT LIKE '%:{$rlike}:%' OR sent IS NULL)
-				AND DATE_ADD('".date( 'Y-m-d H:i:s', $this->local_time )."', INTERVAL ".(int)$hour." HOUR) > start " );
+			$results = appointments_get_unsent_appointments( $hour, 'user' );
 
 			if ( $results ) {
 				foreach ( $results as $r ) {
@@ -3460,12 +3449,7 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 
 		$messages = array();
 		foreach ( $hours as $hour ) {
-			$rlike = esc_sql(like_escape(trim($hour)));
-			$results = $wpdb->get_results( "SELECT * FROM " . $this->app_table . "
-				WHERE (status='paid' OR status='confirmed')
-				AND worker <> 0
-				AND (sent_worker NOT LIKE '%:{$rlike}:%' OR sent_worker IS NULL)
-				AND DATE_ADD('".date( 'Y-m-d H:i:s', $this->local_time )."', INTERVAL ".(int)$hour." HOUR) > start " );
+			$results = appointments_get_unsent_appointments( $hour, 'user' );
 
 			$provider_add_text  = __('You are receiving this reminder message for your appointment as a provider. The below is a copy of what may have been sent to your client:', 'appointments');
 			$provider_add_text .= "\n\n\n";
@@ -3545,7 +3529,7 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 
 	/**
 	 * Determine if a page is A+ Product page from the shortcodes used
-	 * @param $product custom post object
+	 * @param WP_Post $product custom post object
 	 * @return bool
 	 * @Since 1.0.1
 	 */
@@ -3918,18 +3902,6 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 
 		global $wpdb;
 		$r1 = appointments_delete_worker( $ID );
-
-		// Also modify app table
-		$r2 = $wpdb->update(
-			$this->app_table,
-			array( 'worker'	=>	0 ),
-			array( 'worker'	=> $ID )
-		);
-
-		if ( $r1 || $r2 ) {
-			appointments_clear_appointment_cache();
-			$this->flush_cache();
-		}
 	}
 
 	/**
@@ -3939,31 +3911,9 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 	 * @since 1.2.3
 	 */
 	function remove_user_from_blog( $ID, $blog_id ) {
-		if ( !$ID || !$blog_id )
-			return;
-
-		global $wpdb;
-
-		// Let's be safe
-		if ( !method_exists( $wpdb, 'get_blog_prefix' ) )
-			return;
-
-		$prefix = $wpdb->get_blog_prefix( $blog_id );
-
-		if ( !$prefix )
-			return;
-
-		$r1 = appointments_delete_worker( $ID );
-
-		// Also modify app table
-		$r2 = $wpdb->update(
-			$prefix . "app_appointments",
-			array( 'worker'	=>	0 ),
-			array( 'worker'	=> $ID )
-		);
-
-		if ( $r1 || $r2 )
-			$this->flush_cache();
+		switch_to_blog( $blog_id );
+		appointments_delete_worker( $ID );
+		restore_current_blog();
 	}
 
 	/**
@@ -4296,60 +4246,6 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 		return $form;
 	}
 
-	/**
-	 *	Return results for appointments
-	 */
-	function get_admin_apps($type, $startat, $num) {
-
-		if( isset( $_GET['s'] ) && trim( $_GET['s'] ) != '' ) {
-			$s = esc_sql(like_escape($_GET['s']));
-			$add = " AND ( name LIKE '%{$s}%' OR email LIKE '%{$s}%' OR ID IN ( SELECT ID FROM {$this->db->users} WHERE user_login LIKE '%{$s}%' ) ) ";
-		}
-		else
-			$add = "";
-
-		if(isset($_GET['app_service_id']) && $_GET['app_service_id'] )
-			$add .= $this->db->prepare(" AND service=%d", $_GET['app_service_id']);
-
-		if(isset($_GET['app_provider_id']) && $_GET['app_provider_id'] )
-			$add .= $this->db->prepare(" AND worker=%d", $_GET['app_provider_id']);
-
-		if ( isset( $_GET['app_order_by']) && $_GET['app_order_by'] )
-			$order_by = esc_sql(str_replace( '_', ' ', $_GET['app_order_by'] ));
-		else
-			$order_by = "ID DESC";
-
-		switch($type) {
-
-			case 'active':
-						$sql = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM {$this->app_table} WHERE status IN ('confirmed', 'paid') APP_ADD ORDER BY {$order_by} LIMIT %d, %d", $startat, $num);
-						break;
-			case 'pending':
-						$sql = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM {$this->app_table} WHERE status IN ('pending') APP_ADD ORDER BY {$order_by} LIMIT %d, %d", $startat, $num);
-						break;
-			case 'completed':
-						$sql = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM {$this->app_table} WHERE status IN ('completed') APP_ADD ORDER BY {$order_by} LIMIT %d, %d", $startat, $num);
-						break;
-			case 'removed':
-						$sql = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM {$this->app_table} WHERE status IN ('removed') APP_ADD ORDER BY {$order_by} LIMIT %d, %d", $startat, $num);
-						break;
-			case 'reserved':
-						$sql = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM {$this->app_table} WHERE status IN ('reserved') APP_ADD ORDER BY {$order_by} LIMIT %d, %d", $startat, $num);
-						break;
-			default:
-						$sql = $this->db->prepare("SELECT SQL_CALC_FOUND_ROWS * FROM {$this->app_table} WHERE status IN ('confirmed', 'paid') APP_ADD ORDER BY {$order_by} LIMIT %d, %d", $startat, $num);
-						break;
-		}
-		$sql = preg_replace('/\bAPP_ADD\b/', $add, $sql);
-
-		return $this->db->get_results( $sql );
-
-	}
-
-	function get_apps_total() {
-		return $this->db->get_var( "SELECT FOUND_ROWS();" );
-	}
-
 
 	/**
 	 * Helper function for displaying appointments
@@ -4450,7 +4346,6 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 
 		if ( strpos( $date_format, 'M' ) !== false ) {
 			// Check if M (short month name) is set
-			$month_abb = array( );
 			foreach ( $months as $month_name => $month_no ) {
 				$month_name_local = $wp_locale->get_month($month_no);
 				$month_name_abb_local = $wp_locale->get_month_abbrev($month_name_local);
@@ -4551,9 +4446,9 @@ if ($this->worker && $this->service && ($app->service != $this->service)) {
 }
 }
 
-define('APP_PLUGIN_DIR', dirname(__FILE__), true);
-define('APP_ADMIN_PLUGIN_DIR', trailingslashit( dirname(__FILE__) ) . 'admin', true);
-define('APP_PLUGIN_FILE', __FILE__, true);
+define('APP_PLUGIN_DIR', dirname(__FILE__));
+define('APP_ADMIN_PLUGIN_DIR', trailingslashit( dirname(__FILE__) ) . 'admin');
+define('APP_PLUGIN_FILE', __FILE__);
 
 require_once APP_PLUGIN_DIR . '/includes/default_filters.php';
 require_once APP_PLUGIN_DIR . '/includes/class_app_install.php';
@@ -4616,8 +4511,7 @@ function appointments_activate() {
 }
 
 function appointments_uninstall() {
-	$installer = new App_Installer();
-	$installer::uninstall();
+	App_Installer::uninstall();
 }
 
 function appointments_plugin_url() {
@@ -4628,4 +4522,9 @@ function appointments_plugin_url() {
 function appointments_plugin_dir() {
 	global $appointments;
 	return trailingslashit( plugin_dir_path( __FILE__ ) );
+}
+
+function appointments() {
+	global $appointments;
+	return $appointments;
 }

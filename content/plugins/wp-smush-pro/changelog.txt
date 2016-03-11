@@ -5,6 +5,11 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+= 2.1.5 =
+* Fixed: WP Media Folder Plugin compatibility
+* Fixed: Warning on Plugins Page
+* Updated: Settings Page styling
+
 = 2.1.4 =
 * Fixed: Preserve file permission after smushing ( Fix for Images disappearing in Media library on some hosts )
 * Fixed: Styles plugin compatibility
@@ -134,4 +139,4 @@ Change Log:
 - First release
 
 
-133620-1456499733-au
+133620-1457719713-au
