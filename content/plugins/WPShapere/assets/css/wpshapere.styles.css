@@ -81,7 +81,6 @@ ol.sortUls li {
         padding: 9px 7px 0px;
         margin-bottom: 5px;
         display: block;
-        /*background: #C5D8D0; */
         cursor: move;
         /*border-radius: 3px;
         -moz-border-radius: 3px;
@@ -213,6 +212,12 @@ div.wps_kb_link a {
         }
         #wpadminbar .quicklinks>ul>li>a {
             padding: 0;
+        }
+        #wpadminbar .quicklinks>ul>li>a, div.ab-empty-item {
+            padding: 0 !important;
+        }
+        #wpadminbar .quicklinks .ab-empty-item, #wpadminbar .quicklinks a, #wpadminbar .shortlink-input {
+                height: 46px;
         }
 }
 

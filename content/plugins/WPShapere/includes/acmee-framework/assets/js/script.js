@@ -75,4 +75,28 @@
             //var selected = $(this.options[this.selectedIndex]).closest('optgroup').attr('class');
             $(this).next('input.aof-font-type').val(font_type);
           });
+          
+          $('.aof-number').each(function() {
+              if ( !$(this).prev().is('.aof-number-slider') ) {
+                       return;
+                }
+            $(this).prev().slider({
+                    range: "min",
+                    min: Number( $(this).attr('min') ),
+                    max: Number( $(this).attr('max') ),
+                    value: Number( $(this).val() ),
+                    animate: "fast",
+                    slide: function (event, ui) {
+                        $(ui.handle).parent().next().val(ui.value).trigger('change');
+                    },
+                    change: function (event, ui) {
+                        $(ui.handle).parent().next().val(ui.value).trigger('change');
+                    },
+               });
+          });
+          $(".aof-number").bind('input propertychange', function() {
+                $(this).prev().slider('option', 'value', $(this).val());
+            });
+          
+          
 })( jQuery );

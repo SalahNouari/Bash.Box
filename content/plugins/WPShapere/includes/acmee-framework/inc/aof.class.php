@@ -48,7 +48,10 @@ if (!class_exists('AcmeeFramework')) {
             if( $page != $aof_page )
                 return;
             wp_enqueue_script( 'jquery' );
+            wp_enqueue_script( 'aof-jquery-ui', 'https://code.jquery.com/ui/1.10.4/jquery-ui.min.js', array( 'jquery'), false, true );
+            wp_enqueue_script( 'jquery-ui-slider' );
             wp_enqueue_style('aofOptions-css', AOF_DIR_URI . 'assets/css/aof-framework.css');
+            wp_enqueue_style('aof-ui-css', AOF_DIR_URI . 'assets/css/jquery-ui.css');
             wp_enqueue_script( 'responsivetabsjs', AOF_DIR_URI . 'assets/js/easyResponsiveTabs.js', array( 'jquery' ), '', true );
             // Add the color picker css file       
             wp_enqueue_style( 'wp-color-picker' ); 
@@ -468,7 +471,8 @@ if (!class_exists('AcmeeFramework')) {
                 $meta = "";
             }
             $fields = array_merge($default, $fields);
-            $form_field = '<input id="' . $fields['id'] . '" class="small-text ' . $fields['id'] . '" name="' . $fields['id'] . '" type="number" value="' . $meta . '" min="' . $fields['min'] . '" max="' . $fields['max'] . '" step="' . $fields['step'] . '">';
+            $form_field = '<div class="aof-number-slider"></div>';
+            $form_field .= '<input id="' . $fields['id'] . '" class="aof-number small-text ' . $fields['id'] . '" name="' . $fields['id'] . '" type="number" value="' . $meta . '" min="' . $fields['min'] . '" max="' . $fields['max'] . '" step="' . $fields['step'] . '">';
             $output = $this->fieldWrap($fields, $form_field);
             echo $output;
         }

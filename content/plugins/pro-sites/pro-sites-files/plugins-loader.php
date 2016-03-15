@@ -26,7 +26,7 @@ class ProSites_PluginLoader {
 
   function __construct() {
 
-    //load modules
+	  //load modules
 		add_action( 'plugins_loaded', array(&$this, 'load_modules'), 11 );
 
 		//load gateways
@@ -54,6 +54,18 @@ class ProSites_PluginLoader {
 
 		ksort( $modules );
 
+		//Save the settings
+		if ( isset( $_POST['submit_module_settings'] ) ) {
+			//check nonce
+			check_admin_referer( 'psts_modules' );
+
+			$psts->update_setting( 'modules_enabled', @$_POST['allowed_modules'] );
+
+			do_action( 'psts_modules_save' );
+
+			update_option( 'psts_module_settings_updated', 1 );
+
+		}
 		//include them suppressing errors
 		foreach ( $modules as $file ) {
 			require_once( $dir . $file . '.php');
@@ -61,6 +73,8 @@ class ProSites_PluginLoader {
 
 		//allow plugins from an external location to register themselves
 		do_action('psts_load_modules');
+
+		$modules_enabled = (array) $psts->get_setting( 'modules_enabled' );
 
 		//load chosen plugin classes
 		foreach ( array_keys( $modules ) as $class ) {
@@ -76,7 +90,7 @@ class ProSites_PluginLoader {
 				psts_register_module( $class, $name, $description );
 			}
 
-			if ( class_exists( $class ) && in_array( $class, (array) $psts->get_setting( 'modules_enabled' ) ) ) {
+			if ( class_exists( $class ) && in_array( $class, $modules_enabled ) ) {
 				global $$class;
 				$$class = new $class;
 			}
@@ -85,39 +99,44 @@ class ProSites_PluginLoader {
 
   }
 
-  function load_gateways() {
-    global $psts;
+	function load_gateways() {
+		global $psts;
 
-    //get gateways dir
-    $dir = $psts->plugin_dir . 'gateways/';
+		//get gateways dir
+		$dir = $psts->plugin_dir . 'gateways/';
 
-    //search the dir for files
-    $gateways = array();
-  	if ( !is_dir( $dir ) )
-  		return;
-  	if ( ! $dh = opendir( $dir ) )
-  		return;
-  	while ( ( $gateway = readdir( $dh ) ) !== false ) {
-  		if ( substr( $gateway, -4 ) == '.php' )
-  			$gateways[] = $dir . $gateway;
-  	}
-  	closedir( $dh );
-  	sort( $gateways );
+		//search the dir for files
+		$gateways = array();
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+		if ( ! $dh = opendir( $dir ) ) {
+			return;
+		}
+		while ( ( $gateway = readdir( $dh ) ) !== false ) {
+			if ( substr( $gateway, - 4 ) == '.php' ) {
+				$gateways[] = $dir . $gateway;
+			}
+		}
+		closedir( $dh );
+		sort( $gateways );
 
-  	//include them suppressing errors
-  	foreach ($gateways as $file)
-      include_once( $file );
+		//include them suppressing errors
+		foreach ( $gateways as $file ) {
+			include_once( $file );
+		}
 
 		//allow plugins from an external location to register themselves
-		do_action('psts_load_gateways');
+		do_action( 'psts_load_gateways' );
 
-    //load chosen plugin class
-    global $psts_gateways, $psts_active_gateways;
-    foreach ((array)$psts_gateways as $class => $gateway) {
-      if ( class_exists($class) && in_array($class, (array)$psts->get_setting('gateways_enabled')) )
-        $psts_active_gateways[] = new $class;
-    }
-  }
+		//load chosen plugin class
+		global $psts_gateways, $psts_active_gateways;
+		foreach ( (array) $psts_gateways as $class => $gateway ) {
+			if ( class_exists( $class ) && in_array( $class, (array) $psts->get_setting( 'gateways_enabled' ) ) ) {
+				$psts_active_gateways[] = new $class;
+			}
+		}
+	}
 
 }
 
@@ -131,15 +150,15 @@ $psts_plugin_loader = new ProSites_PluginLoader();
  * @param string $name - the nice name for your plugin
  * @param string $description - Short description of your gateway, for the admin side.
  */
-function psts_register_gateway($class_name, $name, $description, $demo = false) {
-  global $psts_gateways;
+function psts_register_gateway( $class_name, $name, $description, $demo = false ) {
+	global $psts_gateways;
 
-  if (!is_array($psts_gateways)) {
+	if ( ! is_array( $psts_gateways ) ) {
 		$psts_gateways = array();
 	}
 
-	if (class_exists($class_name)) {
-		$psts_gateways[$class_name] = array($name, $description, $demo);
+	if ( class_exists( $class_name ) ) {
+		$psts_gateways[ $class_name ] = array( $name, $description, $demo );
 	} else {
 		return false;
 	}

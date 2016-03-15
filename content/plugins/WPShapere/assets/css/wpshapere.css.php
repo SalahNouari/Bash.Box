@@ -46,11 +46,13 @@ if(!empty($admin_logo_url)){ ?>
 
 /* Left Menu */
     <?php
-    $admin_menu_width = $this->aof_options['admin_menu_width'];
-    $wp_content_margin = $admin_menu_width + 20;
-    if(!empty($admin_menu_width)) { ?>
+    
+    if(isset($this->aof_options['admin_menu_width']) && !empty($this->aof_options['admin_menu_width'])) {
+        $admin_menu_width = $this->aof_options['admin_menu_width'];
+        $wp_content_margin = $admin_menu_width + 20;
+        ?>
         #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
-            width: <?php echo $admin_menu_width . 'px'; ?>;
+            width: <?php echo $admin_menu_width . 'px'; ?> !important;
         }
         #wpcontent, #wpfooter {
             <?php if(is_rtl()) { ?>
@@ -67,7 +69,7 @@ if(!empty($admin_logo_url)){ ?>
         }
   <?php  } else { ?>
         #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
-            width: 230px;
+            width: 230px !important;
         }
         #wpcontent, #wpfooter {
         <?php if(is_rtl()) echo 'margin-right: '; else echo 'margin-left: '; ?>250px;
@@ -91,7 +93,7 @@ if(!empty($admin_logo_url)){ ?>
 #adminmenu .wp-submenu li.current a:focus, #adminmenu .wp-submenu li.current a:hover, #adminmenu a.wp-has-current-submenu:focus+.wp-submenu li.current a { color: <?php echo $this->aof_options['menu_hover_text_color']; ?>; }
 
 #adminmenu .wp-has-current-submenu .wp-submenu, .no-js li.wp-has-current-submenu:hover .wp-submenu, #adminmenu a.wp-has-current-submenu:focus+.wp-submenu, #adminmenu .wp-has-current-submenu .wp-submenu.sub-open, #adminmenu .wp-has-current-submenu.opensub .wp-submenu, #adminmenu .wp-not-current-submenu .wp-submenu, .folded #adminmenu .wp-has-current-submenu .wp-submenu{ background: <?php echo $this->aof_options['sub_nav_wrap_color']; ?>; }
-#adminmenu .wp-not-current-submenu .wp-submenu, .folded #adminmenu .wp-has-current-submenu .wp-submenu { width: 200px; }
+
 #adminmenu li.wp-has-submenu.wp-not-current-submenu.opensub:hover:after { <?php if(is_rtl()) echo 'border-left-color: '; else echo 'border-right-color: '; echo $this->aof_options['sub_nav_wrap_color']; ?> }
 #adminmenu .awaiting-mod, #adminmenu .update-plugins, #sidemenu li a span.update-plugins, #adminmenu li a.wp-has-current-submenu .update-plugins { background-color: <?php echo $this->aof_options['menu_updates_count_bg']; ?>; color: <?php echo $this->aof_options['menu_updates_count_text']; ?>; }
 

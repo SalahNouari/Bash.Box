@@ -175,7 +175,7 @@ class ProSites_Module_PremiumThemes {
 				$upgrade_notice = str_replace( 'LEVEL', $psts->get_level_setting( $allowed_themes[ $slug ], 'name' ), $psts->get_setting( 'pt_text' ) );
 				//This is SUPER hacky due to no hooks. We utilize the lack of esc_attr() in themes.php to insert create 2 hidden <a> tags with our custom one in the middle!
 				$prepared_themes[ $slug ]['actions']['activate'] = '#" style="display:none;">';
-				$prepared_themes[ $slug ]['actions']['activate'] .= '<a href="' . $psts->checkout_url( $blog_id ) . '" class="button button-secondary activate nonpsts" style="color:red;" data-level="' . $allowed_themes[ $slug ] . '" title="' . esc_attr( $upgrade_notice ) . '">' . $rebrand . '</a>';
+				$prepared_themes[ $slug ]['actions']['activate'] .= '<a href="' . $psts->checkout_url( $blog_id ) . '" class="button button-secondary activate nonpsts" style="color:red;" data-level="' . $allowed_themes[ $slug ] . '" title="' . esc_attr( $upgrade_notice ) . '">' . $rebrand . '</a>';	     	 	   	  	 	
 				$prepared_themes[ $slug ]['actions']['activate'] .= '<a style="display:none;';
 			}
 
@@ -317,7 +317,7 @@ class ProSites_Module_PremiumThemes {
 		?>
 		<div class="wrap">
 			<div class="icon32" id="icon-themes"></div>
-			<h2><?php _e( 'Premium Themes', 'psts' ); ?></h2>
+			<h1><?php _e( 'Premium Themes', 'psts' ); ?></h1>
 
 			<p><?php _e( 'Select the minimum Pro Site level for premium themes that you want to enable for sites of that level or above. Only <a href="themes.php?theme_status=disabled">disabled network themes</a> are shown in this list. ', 'psts' ); ?></p>
 
@@ -421,9 +421,9 @@ class ProSites_Module_PremiumThemes {
 		global $psts;
 
 		$allowed_themes = $psts->get_setting( 'pt_allowed_themes', array() );
-		$access = false;
+		$access         = false;
 
-		if( ! empty( $allowed_themes ) ) {
+		if ( ! empty( $allowed_themes ) && sizeof( $allowed_themes ) > 0 ) {
 			foreach ( $allowed_themes as $theme => $level ) {
 				if ( $level_id == $level ) {
 					$access = true;

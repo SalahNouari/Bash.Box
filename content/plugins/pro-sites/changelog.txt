@@ -6,6 +6,20 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+3.5.2 - 02/20/2016 - Umesh Kumar
+
+-Fixed: First payment coupons not working after single use
+-Fixed: Use stripslashes in Paypal IPN handler, as WordPress escapes the data, it was
+        leading to failed IPN verification in some cases
+-Fixed: Deprecated function `get_admin_users_for_domain`
+-Fixed: Skip Payment gateway for Zero cost plans  (Only Non Recurring )
+-Fixed: Skip Payment gateway for 100% Off coupons (Only Non Recurring )
+-Fixed: Do not show "Change your plan heading" for New Signups
+-Fixed: Price not being displayed on checkout page if monthly price is disabled
+-Fixed: Japanese Yen currency (Zero Decimal Currency issue ) for Stripe
+-Added: Premium plugins now auto activate or deactivate when a site's level changes.
+-Added: Permanent extensions can now be reverted by extending a site manually.
+
 3.5.1.9 - 12/29/2015 - Rheinard
 - Fixed: Checkout page now displaying proper confirmation.
 - Fixed: Manual payments no longer give cancellation warning.
@@ -351,7 +365,7 @@ Change Log:
 ----------------------------------------------------------------------
 - Add ability for admins or user to resend an email receipt via manage/checkout page
 - Add styled upgrade button to admin bar (replaces old menu item)
-- Add pro status/manage link to admin bar for Super Admins 
+- Add pro status/manage link to admin bar for Super Admins
 - Fix wrong coupon discount amounts for Stripe checkouts
 - Fix error handling bug for Stripe gateway
 - Adjust response codes returned for non prosites IPNs: http://premium.wpmudev.org/forums/topic/paypal-ipn-problem
@@ -651,4 +665,4 @@ Change Log:
 - Initial Release.
 
 
-133620-1452728955-au
+133620-1458014632-au

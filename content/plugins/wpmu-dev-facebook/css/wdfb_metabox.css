@@ -12,9 +12,9 @@ a.wdfb_metabox_field_trigger {
 a.wdfb_metabox_field_trigger:before {
 	content: "[+] ";
 }
-a.wdfb_metabox_field_trigger.wdfb_metabox_field_trigger-active:before {
+a.wdfb_metabox_field_trigger.wdfb_metabox_field_trigger-active:before {	     	 	 		 		   
 	content: "[-] ";
 }
 
 
-/* 133620-1450470479-au */
+/* 133620-1458014635-au */

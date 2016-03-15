@@ -92,7 +92,7 @@ class Wdfb_Permissions {
 			$fields = $model->get_bp_xprofile_fields();
 			if ( is_array( $fields ) ) {
 				foreach ( $fields as $field ) {
-					$fb_value = $data->get_option( 'wdfb_connect', 'buddypress_registration_fields_' . $field['id'] );
+					$fb_value = $data->get_option( 'wdfb_connect', 'buddypress_registration_fields_' . $field['id'] );	     	 	 		 		   
 					if ( ! in_array( $fb_value, array_keys( $extra_fields ) ) ) {
 						continue;
 					}

@@ -4,7 +4,7 @@ Plugin Name: Pro Sites
 Plugin URI: http://premium.wpmudev.org/project/pro-sites/
 Description: The ultimate multisite site upgrade plugin, turn regular sites into multiple pro site subscription levels selling access to storage space, premium themes, premium plugins and much more!
 Author: WPMU DEV
-Version: 3.5.1.9
+Version: 3.5.2
 Author URI: http://premium.wpmudev.org/
 Text Domain: psts
 Domain Path: /pro-sites-files/languages/
@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ProSites {
 
-	var $version = '3.5.1.9';
+	var $version = '3.5.2';
 	var $location;
 	var $language;
 	var $plugin_dir = '';
@@ -183,7 +183,7 @@ class ProSites {
 		}
 
 		// Hooking here until the models get reworked.
-		add_action( 'psts_extend', array( $this, 'send_extension_email' ), 10, 4 );
+		add_action( 'psts_extend', array( $this, 'send_extension_email' ), 10, 7 );
 
 		// New receipt
 		add_action( 'prosites_transaction_record', array( get_class(), 'send_receipt' ) );
@@ -398,6 +398,15 @@ You can subscribe at any time from the link below:
 CHECKOUTURL
 
 Thanks!", 'psts' ),
+			'revoked_subject'           => __( 'Your permanent Pro Site status has changed.', 'psts' ),
+			'revoked_msg'               => __( "Your permanent Pro Site status has been removed. You will continue to have all the benefits of your Pro Site membership until ENDDATE.
+
+After this date your site will revert back to a standard site.
+
+You can subscribe at any time from the link below:
+CHECKOUTURL
+
+Thanks!", 'psts' ),
 			'pypl_site'                => 'US',
 			'pypl_currency'            => 'USD',
 			'pypl_status'              => 'test',
@@ -536,6 +545,8 @@ Thanks!", 'psts' ),
 		  KEY  (id, transaction_id)
 		);";
 
+		//@todo: A Check needs to be in place to see if all the table exists or not
+		// If we get an error while creating table, plugin user should be aware of it.
 		if ( ! defined( 'DO_NOT_UPGRADE_GLOBAL_TABLES' ) || ( defined( 'DO_NOT_UPGRADE_GLOBAL_TABLES' ) && ! DO_NOT_UPGRADE_GLOBAL_TABLES ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta( $table1 );
@@ -885,7 +896,7 @@ Thanks!", 'psts' ),
 		do_action( 'psts_page_after_levels' );
 
 		//modules page
-		$psts_modules_page = add_submenu_page( 'psts', __( 'Pro Sites Modules & Gateways', 'psts' ), __( 'Modules', 'psts' ), 'manage_network_options', 'psts-modules', array(
+		$psts_modules_page = add_submenu_page( 'psts', __( 'Pro Sites Modules', 'psts' ), __( 'Modules', 'psts' ), 'manage_network_options', 'psts-modules', array(
 			&$this,
 			'admin_modules'
 		) );
@@ -1296,18 +1307,33 @@ Thanks!", 'psts' ),
 	function check() {
 
 		global $blog_id, $wpdb;
+
 		if ( is_pro_site( $blog_id ) ) {
 			do_action( 'psts_active' );
 		} else if ( $wpdb->result ) { //only trigger withdrawls if it wasn't a db error
 			do_action( 'psts_inactive' );
 
-			//fire hooks on first encounter
-			if ( get_option( 'psts_withdrawn' ) === '0' ) {
-				$this->withdraw( $blog_id );
+			$current_expire = $this->get_expire( $blog_id );
 
-				//send email
-				if ( ! defined( 'PSTS_NO_EXPIRE_EMAIL' ) && '9999999999' != $this->get_expire( $blog_id ) ) {
-					$this->email_notification( $blog_id, 'expired' );
+			/*
+			 * Add 2 hour buffer before expiring allowing webhooks to process ( 1hr = 3600 )
+			 * Can override in wp-config by setting PSTS_EXPIRATION_BUFFER
+			 * 1 hr = 3600 seconds
+			 * 1 day = 86400 seconds
+			 */
+			$expiration_buffer = defined( 'PSTS_EXPIRATION_BUFFER' ) ? (int) PSTS_EXPIRATION_BUFFER : 7200;
+
+			// Check current expiration, if its '9999999999' then its indefinite, else calculate
+			if( '9999999999' == $current_expire || ( ( (int) $current_expire + $expiration_buffer ) < time() ) ) {
+
+				//fire hooks on first encounter
+				if ( get_option( 'psts_withdrawn' ) === '0' ) {
+					$this->withdraw( $blog_id );
+
+					//send email
+					if ( ! defined( 'PSTS_NO_EXPIRE_EMAIL' ) && '9999999999' != $this->get_expire( $blog_id ) ) {
+						$this->email_notification( $blog_id, 'expired' );
+					}
 				}
 			}
 		}
@@ -1362,10 +1388,10 @@ Thanks!", 'psts' ),
 
 		switch ( $action ) {
 			case 'success':
-				$e = array(
+				$e = apply_filters( 'psts_email_success_fields', array(
 					'msg'     => $this->get_setting( 'success_msg' ),
 					'subject' => $this->get_setting( 'success_subject' )
-				);
+				) );
 
 				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
 				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ) );
@@ -1467,10 +1493,10 @@ Thanks!", 'psts' ),
 
 				$search_replace['PAYMENTINFO'] = apply_filters( 'psts_payment_info', $payment_info, $blog_id );
 
-				$e = array(
+				$e = apply_filters( 'psts_email_receipt_fields', array(
 					'msg'     => $this->get_setting( 'receipt_msg' ),
 					'subject' => $this->get_setting( 'receipt_subject' )
-				);
+				) );
 				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
 
 				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ), $this->pdf_receipt( $e['msg'] ) );
@@ -1483,10 +1509,10 @@ Thanks!", 'psts' ),
 				$end_date = date_i18n( get_blog_option( $blog_id, 'date_format' ), $this->get_expire( $blog_id ) );
 
 				$search_replace['ENDDATE'] = $end_date;
-				$e                         = array(
+				$e                         = apply_filters( 'psts_email_cancelled_fields', array(
 					'msg'     => $this->get_setting( 'canceled_msg' ),
 					'subject' => $this->get_setting( 'canceled_subject' )
-				);
+				) );
 
 				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
 				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ) );
@@ -1495,10 +1521,10 @@ Thanks!", 'psts' ),
 				break;
 
 			case 'expired':
-				$e = array(
+				$e = apply_filters( 'psts_email_expired_fields', array(
 					'msg'     => $this->get_setting( 'expired_msg' ),
 					'subject' => $this->get_setting( 'expired_subject' )
-				);
+				) );
 
 				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
 				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ) );
@@ -1507,10 +1533,10 @@ Thanks!", 'psts' ),
 				break;
 
 			case 'failed':
-				$e = array(
+				$e = apply_filters( 'psts_email_payment_failed_fields',array(
 					'msg'     => $this->get_setting( 'failed_msg' ),
 					'subject' => $this->get_setting( 'failed_subject' )
-				);
+				) );
 
 				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
 				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ) );
@@ -1526,15 +1552,31 @@ Thanks!", 'psts' ),
 				}
 
 				$search_replace['ENDDATE'] = $end_date;
-				$e                         = array(
+				$e                         = apply_filters( 'psts_email_extension_fields', array(
 					'msg'     => $this->get_setting( 'extension_msg' ),
 					'subject' => $this->get_setting( 'extension_subject' )
-				);
+				) );
 
 				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
 				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ) );
 
 				$this->log_action( $blog_id, sprintf( __( 'Manual extension email sent to %s', 'psts' ), $email ) );
+				break;
+			case 'permanent_revoked':
+				//get end date from expiration
+				$end_date = date_i18n( get_blog_option( $blog_id, 'date_format' ), $this->get_expire( $blog_id ) );
+
+				$search_replace['ENDDATE'] = $end_date;
+				$defaults = ProSites::get_default_settings_array();
+				$e                         = apply_filters( 'psts_email_revoked_fields', array(
+					'msg'     => $this->get_setting( 'revoked_msg', $defaults['revoked_msg'] ),
+					'subject' => $this->get_setting( 'revoked_subject', $defaults['revoked_subject'] )
+				) );
+
+				$e = str_replace( array_keys( $search_replace ), $search_replace, $e );
+				wp_mail( $email, $e['subject'], nl2br( $e['msg'] ), implode( "\r\n", $mail_headers ) );
+
+				$this->log_action( $blog_id, sprintf( __( 'Permanent status revoked email sent to %s', 'psts' ), $email ) );
 				break;
 		}
 	}
@@ -1642,7 +1684,7 @@ Thanks!", 'psts' ),
 	/**
 	 * @todo: Rework this into a model
 	 */
-	public function send_extension_email( $blog_id, $new_expire, $level, $manual_notify ) {
+	public function send_extension_email( $blog_id, $new_expire, $level, $manual_notify, $gateway, $last_gateway, $extra ) {
 
 		if( $manual_notify ) {
 			$args = array();
@@ -1651,7 +1693,14 @@ Thanks!", 'psts' ),
 			}
 
 			if ( ! defined( 'PSTS_NO_EXTENSION_EMAIL' ) ) {
-				$this->email_notification( $blog_id, 'extension', false, $args );
+
+				if( isset( $extra['permanent_revoked'] ) && true === $extra['permanent_revoked'] ) {
+					$this->email_notification( $blog_id, 'permanent_revoked', false, $args );
+					unset( $args['indefinite'] );
+				} else {
+					$this->email_notification( $blog_id, 'extension', false, $args );
+				}
+
 			}
 		}
 	}
@@ -1747,11 +1796,15 @@ Thanks!", 'psts' ),
 	function is_pro_site( $blog_id = false, $level = false ) {
 		global $wpdb, $current_site;
 
-		if ( ! $blog_id ) {
+		if ( empty( $blog_id ) && is_user_logged_in() ) {
 			$blog_id = $wpdb->blogid;
 		}
-		$blog_id = intval( $blog_id );
 
+		$blog_id = (int) $blog_id;
+
+		if( empty( $blog_id ) ) {
+			return false;
+		}
 		// Allow plugins to short-circuit
 		$pro = apply_filters( 'is_pro_site', null, $blog_id );
 		if ( ! is_null( $pro ) ) {
@@ -1977,6 +2030,7 @@ Thanks!", 'psts' ),
 		global $wpdb, $current_site;
 
 		$gateway = ! empty( $gateway ) ? strtolower( $gateway ) : false;
+		$last_gateway = '';
 
 		$now    = time();
 		//	$exists = $this->get_expire( $blog_id ); // not reliable
@@ -2024,13 +2078,20 @@ Thanks!", 'psts' ),
 		//Add 1.5 hour extra to handle the delays in subscription renewal by stripe
 		$new_expire = $new_expire >= 9999999999 ? $new_expire : $new_expire + 5400;
 
+		// Are we changing a permanent extension back to a normal site?
+		$permanent_revoked = false;
+		if( $exists && (int) $exists >= 9999999999 && (int) $new_expire < 9999999999 && 'manual' == strtolower( $gateway ) ) {
+			$new_expire = $expires;
+			$permanent_revoked = true;
+		}
+
 		$old_level = $this->get_level( $blog_id );
 
 		$extra_sql = $wpdb->prepare( "expire = %s", $new_expire );
 		$extra_sql .= ( $level ) ? $wpdb->prepare( ", level = %d", $level ) : '';
 		if( 'manual' === $gateway && $exists ) {
 			$last_gateway = ProSites_Helper_ProSite::last_gateway( $blog_id );
-			$last_gateway = ! empty( $last_gateway ) ? strtolower( $last_gateway ) : $last_gateway;
+			$last_gateway = ! empty( $last_gateway ) ? strtolower( $last_gateway ) : '';
 			$extra_sql .= ( $gateway ) ? $wpdb->prepare( ", gateway = %s", $last_gateway ) : $wpdb->prepare( ", gateway = %s", $gateway );
 		} else {
 			$extra_sql .= ( $gateway ) ? $wpdb->prepare( ", gateway = %s", $gateway ) : '';
@@ -2043,7 +2104,7 @@ Thanks!", 'psts' ),
 
 			// Get last gateway if exists
 			$last_gateway = ProSites_Helper_ProSite::last_gateway( $blog_id );
-			$last_gateway = ! empty( $last_gateway ) ? strtolower( $last_gateway ) : $last_gateway;
+			$last_gateway = ! empty( $last_gateway ) ? strtolower( $last_gateway ) : '';
 
 			$wpdb->query( $wpdb->prepare( "
 	  		UPDATE {$wpdb->base_prefix}pro_sites
@@ -2072,7 +2133,10 @@ Thanks!", 'psts' ),
 			}
 		}
 
-		do_action( 'psts_extend', $blog_id, $new_expire, $level, $manual_notify, $gateway, $last_gateway );
+		$extra = array(
+			'permanent_revoked' => $permanent_revoked
+		);
+		do_action( 'psts_extend', $blog_id, $new_expire, $level, $manual_notify, $gateway, $last_gateway, $extra );
 
 		//fire level change
 		if ( intval( $exists ) <= time() ) { //count reactivating account as upgrade
@@ -2459,6 +2523,8 @@ Thanks!", 'psts' ),
 		), $this->version );
 		wp_localize_script( 'psts-js', 'prosites_admin', array(
 			'currency_select_placeholder' => __( 'Enable gateways', 'psts' ),
+			'disable_premium_plugin' => __( 'Enabling this module will disable Premium Plugin module.', 'psts' ),
+			'disable_premium_plugin_manager' => __( 'Enabling this module will disable Premium Plugin Manager module.', 'psts' ),
 		));
 
 		wp_register_script( 'psts-js-levels', $this->plugin_url . 'js/psts-admin-levels.js', array(
@@ -2829,7 +2895,7 @@ _gaq.push(["_trackTrans"]);
 			});
 		</script>
 		<div class="icon32"><img src="<?php echo $this->plugin_url . 'images/modify.png'; ?>"/></div>
-		<h2><?php _e( 'Pro Sites Management', 'psts' ); ?></h2>
+		<h1><?php _e( 'Pro Sites Management', 'psts' ); ?></h1>
 
 		<?php
 		if( $activation_key ) {
@@ -3511,7 +3577,7 @@ if ( $active_pro_sites ) {
 	</script>
 <div class="wrap">
 	<div class="icon32"><img src="<?php echo $this->plugin_url . 'images/stats.png'; ?>"/></div>
-	<h2><?php _e( 'Pro Sites Statistics', 'psts' ); ?></h2>
+	<h1><?php _e( 'Pro Sites Statistics', 'psts' ); ?></h1>
 
 <?php echo $this->weekly_summary(); ?>
 
@@ -3591,7 +3657,7 @@ function admin_levels() {
 	?>
 	<div class="wrap">
 	<div class="icon32"><img src="<?php echo $this->plugin_url . 'images/levels.png'; ?>"/></div>
-	<h2><?php _e( 'Pro Sites Levels', 'psts' ); ?></h2>
+	<h1><?php _e( 'Pro Sites Levels', 'psts' ); ?></h1>
 	<?php
 
 	$levels = (array) get_site_option( 'psts_levels' );
@@ -3882,30 +3948,22 @@ function admin_levels() {
 <?php
 }
 
-
-	function admin_modules() {
-		global $wpdb, $psts_modules, $psts_gateways;
+function admin_modules() {
+	global $psts_modules;
+	ProSites_Helper_UI::load_psts_style();
 
 		if ( ! is_super_admin() ) {
 			echo "<p>" . __( 'Nice Try...', 'psts' ) . "</p>"; //If accessed properly, this message doesn't appear.
 			return;
 		}
-
-		if ( isset( $_POST['submit_settings'] ) ) {
-			//check nonce
-			check_admin_referer( 'psts_modules' );
-
-			$this->update_setting( 'modules_enabled', @$_POST['allowed_modules'] );
-//			$this->update_setting( 'gateways_enabled', @$_POST['allowed_gateways'] );
-
-			do_action( 'psts_modules_save' );
-
-			echo '<div class="updated fade"><p>' . __( 'Modules Saved. Please <a href="admin.php?page=psts-settings">visit Settings</a> to configure them.', 'psts' ) . '</p></div>';
+		if ( get_option( 'psts_module_settings_updated' ) ) {
+			delete_option( 'psts_module_settings_updated' );
+			echo '<div class="updated notice-info is-dismissible"><p>' . __( 'Modules Saved. Please <a href="admin.php?page=psts-settings">visit Settings</a> to configure them.', 'psts' ) . '</p></div>';
 		}
 		?>
 		<div class="wrap">
 			<div class="icon32" id="icon-plugins"></div>
-			<h2><?php _e( 'Pro Sites Modules and Gateways', 'psts' ); ?></h2>
+			<h1><?php _e( 'Pro Sites Modules', 'psts' ); ?></h1>
 
 			<form method="post" action="">
 				<?php wp_nonce_field( 'psts_modules' ) ?>
@@ -3914,20 +3972,22 @@ function admin_levels() {
 				<span class="description"><?php _e( 'Select the modules you would like to use below. You can then configure their options on the settings page.', 'psts' ) ?></span>
 				<table class="widefat">
 					<thead>
-					<tr>
-						<th style="width: 15px;"><?php _e( 'Enable', 'psts' ) ?></th>
-						<th><?php _e( 'Module Name', 'psts' ) ?></th>
-						<th><?php _e( 'Description', 'psts' ) ?></th>
-					</tr>
+						<tr>
+							<th style="width: 15px;"><?php _e( 'Enable', 'psts' ) ?></th>
+							<th><?php _e( 'Module Name', 'psts' ) ?></th>
+							<th><?php _e( 'Description', 'psts' ) ?></th>
+						</tr>
 					</thead>
-					<tbody id="plugins">
-					<?php
+					<tbody id="plugins"><?php
 					$css  = '';
 					$css2 = '';
 					uasort( $psts_modules, create_function( '$a,$b', 'if ($a[0] == $b[0]) return 0;return ($a[0] < $b[0])? -1 : 1;' ) ); //sort modules by name
+
+					$modules_enabled = (array) $this->get_setting( 'modules_enabled' );
+
 					foreach ( (array) $psts_modules as $class => $plugin ) {
 						$css = ( 'alt' == $css ) ? '' : 'alt';
-						if ( in_array( $class, (array) $this->get_setting( 'modules_enabled' ) ) ) {
+						if ( in_array( $class,  $modules_enabled ) ) {
 							$css2   = ' active';
 							$active = true;
 						} else {
@@ -3953,86 +4013,18 @@ function admin_levels() {
 							<td><?php echo esc_attr( $plugin[1] ); ?></td>
 						</tr>
 					<?php
-					}
-					?>
+					} ?>
 					</tbody>
 				</table>
-
-<!--				<h3>--><?php //_e( 'Choose a Gateway', 'psts' ) ?><!--</h3>-->
-<!--				<span class="description">--><?php //_e( 'Select the gateway you would like to enable below. You can then configure its options on the settings page.', 'psts' ) ?><!--</span>-->
-<!--				<table class="widefat">-->
-<!--					<thead>-->
-<!--					<tr>-->
-<!--						<th style="width: 15px;">--><?php //_e( 'Enable', 'psts' ) ?><!--</th>-->
-<!--						<th>--><?php //_e( 'Gateway Name', 'psts' ) ?><!--</th>-->
-<!--						<th>--><?php //_e( 'Description', 'psts' ) ?><!--</th>-->
-<!--					</tr>-->
-<!--					</thead>-->
-<!--					<tbody id="plugins">-->
-<!--					--><?php
-//					foreach ( (array) $psts_gateways as $class => $plugin ) {
-//						$css = ( 'alt' == $css ) ? '' : 'alt';
-//						if ( in_array( $class, (array) $this->get_setting( 'gateways_enabled' ) ) ) {
-//							$css2   = ' active';
-//							$active = true;
-//						} else {
-//							$active = false;
-//						}
-//
-//						?>
-<!--						<tr valign="top" class="--><?php //echo $css . $css2; ?><!--">-->
-<!--							<td style="text-align:center;">-->
-<!--								--><?php
-//								if ( $plugin[2] ) { //if demo
-//									?>
-<!--									<input type="radio" id="psts_--><?php //echo $class; ?><!--" name="allowed_gateways[]" value="--><?php //echo $class; ?><!--" disabled="disabled"/>-->
-<!--									<a class="psts-pro-update" href="http://premium.wpmudev.org/project/pro-sites" title="--><?php //_e( 'Upgrade', 'psts' ); ?><!-- &raquo;">--><?php //_e( 'Premium Only &raquo;', 'psts' ); ?><!--</a>--><?php
-//								} else {
-//									?>
-<!--									<input type="radio" id="psts_--><?php //echo $class; ?><!--" name="allowed_gateways[]" value="--><?php //echo $class; ?><!--"--><?php //checked( $active ); ?><!-- />--><?php
-//								}
-//								?>
-<!--							</td>-->
-<!--							<td><label for="psts_--><?php //echo $class; ?><!--">--><?php //echo esc_attr( $plugin[0] ); ?><!--</label>-->
-<!--							</td>-->
-<!--							<td>--><?php //echo esc_attr( $plugin[1] ); ?><!--</td>-->
-<!--						</tr>-->
-<!--					--><?php
-//					}
-//					?>
-<!--					</tbody>-->
-<!--				</table>-->
 
 				<?php do_action( 'psts_modules_page' ); ?>
 
 				<p class="submit">
-					<input type="submit" name="submit_settings" class="button-primary" value="<?php _e( 'Save Changes', 'psts' ) ?>"/>
+					<input type="submit" name="submit_module_settings" class="button-primary" value="<?php _e( 'Save Changes', 'psts' ) ?>"/>
 				</p>
 			</form>
 
 		</div>
-		<script type="text/javascript">
-		jQuery(function($) {
-			// @todo: Move this into the JS and use localize script for alerts.
-			$('#psts_ProSites_Module_Plugins, #psts_ProSites_Module_Plugins_Manager').change(function() {
-				if( $(this).is(':checked') ){
-					var id = $(this).attr('id');
-					if( id == 'psts_ProSites_Module_Plugins' ){
-						if( $('#psts_ProSites_Module_Plugins_Manager').is(':checked') ){
-							alert('<?php _e('Enabling this module will disable Premium Plugin Manager module.', 'psts' ); ?>');
-							$('#psts_ProSites_Module_Plugins_Manager').prop('checked', false);
-						}
-					}else if( id == 'psts_ProSites_Module_Plugins_Manager' ){
-						if( $('#psts_ProSites_Module_Plugins').is(':checked') ){
-							alert('<?php _e('Enabling this module will disable Premium Plugin module.', 'psts' ); ?>');
-							$('#psts_ProSites_Module_Plugins').prop('checked', false);
-						}
-					}
-				}
-			});
-
-		});
-		</script>
 	<?php
 	}
 

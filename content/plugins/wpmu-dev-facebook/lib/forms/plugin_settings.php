@@ -103,7 +103,7 @@ function wdfb_do_settings_sections( $page ) {
 	function check_autopost_prerequisites() {
 		FB.getLoginStatus(function (resp) {
 			if (resp.authResponse && resp.authResponse.userID) return true; // All good
-			$selects = $('#wdfb-section-wdfb_autopost select[name^="wdfb_autopost"], #wdfb-section-wdfb_autopost .wdfb-autopost-shortlink');	     	 	 		 		   
+			$selects = $('#wdfb-section-wdfb_autopost select[name^="wdfb_autopost"], #wdfb-section-wdfb_autopost .wdfb-autopost-shortlink');
 			$selects.attr("disabled", true);
 			$("#wdfb-autopost_map_message")
 				.addClass('error below-h2')

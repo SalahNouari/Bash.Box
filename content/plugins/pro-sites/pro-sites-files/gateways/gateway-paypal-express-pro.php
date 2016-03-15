@@ -2286,6 +2286,12 @@ Simply go to https://payments.amazon.com/, click Your Account at the top of the 
 		return $payment_info;
 	}
 
+	/**
+	 * Fetch the Subscription details for the given blog id
+	 * @param $blog_id
+	 *
+	 * @return bool
+	 */
 	function subscription_info( $blog_id ) {
 		global $psts;
 
@@ -2429,9 +2435,22 @@ Simply go to https://payments.amazon.com/, click Your Account at the top of the 
 
 		} else if ( ProSites_Helper_Gateway::is_only_active( self::get_slug() ) ) {
 			echo '<p>' . __( "This site is using an older gateway so their information is not accessible until the next payment comes through.", 'psts' ) . '</p>';
+		}else{
+			$data = $this->get_transaction_details( $blog_id );
+
+			if ( ! empty( $data['L_NAME0'] ) ) {
+				echo "<p>" . $data['L_NAME0'] . '</p>';
+			}
 		}
 	}
 
+	/**
+	 * Display Customer details
+	 *
+	 * @param $blog_id
+	 *
+	 * @return bool
+	 */
 	function subscriber_info( $blog_id ) {
 		global $psts;
 
@@ -2479,6 +2498,16 @@ Simply go to https://payments.amazon.com/, click Your Account at the top of the 
 
 		} else if ( ProSites_Helper_Gateway::is_only_active( self::get_slug() ) ) {
 			echo '<p>' . __( "This site is using an older gateway so their information is not accessible until the next payment comes through.", 'psts' ) . '</p>';
+		} else {
+			//Fetch the details from last transaction
+			$data = $this->get_transaction_details( $blog_id );
+			if ( ! empty( $data['FIRSTNAME'] ) ) {
+				echo '<strong>' . stripslashes( $data['FIRSTNAME'] ) . ' ' . stripslashes( $data['LASTNAME'] ) . '</strong>';
+			}
+			if ( ! empty( $data['EMAIL'] ) ) {
+				echo '<p>' . stripslashes( $data['EMAIL'] ) . '</p>';
+			}
+
 		}
 	}
 
@@ -2803,10 +2832,8 @@ Simply go to https://payments.amazon.com/, click Your Account at the top of the 
 
 				$req = 'cmd=_notify-validate';
 				foreach ( $_POST as $k => $v ) {
-					if ( get_magic_quotes_gpc() ) {
-						$v = stripslashes( $v );
-					}
-					$req .= '&' . $k . '=' . urlencode( $v );
+					//Stripslashes, as WordPress escapes the post data
+					$req .= '&' . $k . '=' . urlencode( stripslashes( $v ) );
 				}
 
 				$args['user-agent']  = "Pro Sites: http://premium.wpmudev.org/project/pro-sites | PayPal Express/Pro Gateway";
@@ -2917,8 +2944,8 @@ Simply go to https://payments.amazon.com/, click Your Account at the top of the 
 					}
 
 					$site       = ProSites_Helper_ProSite::get_site( $blog_id );
-					$last_level = $site->level;
-					$last_term  = $site->term;
+					$last_level = ! empty( $site->level ) ? $site->level : '';
+					$last_term  = ! empty( $site->term ) ? $site->term : '';
 
 					$force_upgrade = $last_level != $level || $last_term != $period;
 
@@ -3077,6 +3104,27 @@ Simply go to https://payments.amazon.com/, click Your Account at the top of the 
 		// Record the object
 		ProSites_Helper_Transaction::record( $object );
 
+	}
+	/**
+	 * Get the last payment details for the given blog id
+	 *
+	 * @param $blog_id
+	 *
+	 * @return bool|string
+	 */
+	function get_transaction_details( $blog_id ) {
+		$payment_log = get_blog_option( $blog_id, 'psts_payments_log' );
+		if ( ! empty( $payment_log ) && is_array( $payment_log ) ) {
+			//Get the latest payment details
+			$last_payment = array_pop( $payment_log );
+			$txn_id       = ! empty( $last_payment['txn_id'] ) ? $last_payment['txn_id'] : '';
+			if ( ! empty( $txn_id ) ) {
+				//Check if we have transaction data
+				$data = PaypalApiHelper::GetTransactionDetails( $txn_id );
+			}
+		}
+
+		return ! empty( $data ) ? $data : '';
 	}
 }
 

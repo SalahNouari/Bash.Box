@@ -343,7 +343,7 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
                         $privilege_data = (!empty($this->aof_options['privilege_users'])) ? $this->aof_options['privilege_users'] : "";
 	    $privilege_users = (is_serialized( $privilege_data )) ? unserialize( $privilege_data ) : $privilege_data;
 	    $user_id = get_current_user_id();
-	    $submenu_sort_exists = $wps_sorteddmenu['index.php_sbchild'];
+	    $submenu_sort_exists = (isset($wps_sorteddmenu['index.php_sbchild'])) ? $wps_sorteddmenu['index.php_sbchild'] : "";
 	    if(isset($menu) && !empty($menu)){
 	    foreach ($menu as $menu_key => &$menu_value)
                         {
@@ -859,8 +859,8 @@ echo '<div class="menu_edit_wrap"><input type="checkbox"' . $menu_hide . ' class
 	{
 	    //remove admin bar	
 	    if($this->aof_options['hide_admin_bar'] == 1) {
-		add_filter( 'show_admin_bar', '__return_false' );
-		echo '<style type="text/css">html { margin-top: 0 !important; }</style>';
+                            add_filter( 'show_admin_bar', '__return_false' );
+                            echo '<style type="text/css">html { margin-top: 0 !important; }</style>';
 	    }
 	    else {
 ?>

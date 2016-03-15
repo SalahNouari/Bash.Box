@@ -241,6 +241,18 @@ select.aof_font_family {
     margin-top: 15px;
 }
 
+@media screen and (max-width: 782px){
+    .field_wrap div.label {
+        float: none;
+    }
+    .field_content {
+        margin: 10px 0 0 0;
+    }
+    input.regular-text {
+        width: 100%;
+    }
+}
+
 .aof-image-preview {
   position: relative;
   display: block;
@@ -324,4 +336,45 @@ a.wps-kb {
 a.wps-kb:hover {
     background: #B79A0A;
     color: #fff;
+}
+
+.aof-number-slider {
+    position: relative;
+    border-radius: 3px;
+    width: 250px;
+    margin-right: 20px;
+    display: inline-block;
+    vertical-align: bottom;
+    margin-bottom: 6px;
+}
+
+a.ui-slider-handle {
+    border: 1px solid #595367 !important;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    background: #715F9A !important;
+    outline: none;
+    cursor: pointer;
+}
+
+.ui-widget-content {
+    border: 1px solid #e6e6e6 !important;
+}
+
+.ui-slider-horizontal {
+    height: .7em !important;
+}
+
+.ui-slider-horizontal .ui-slider-handle {
+    top: -.35em !important;
+}
+
+.ui-widget-header {
+    background: #67689C !important;
+}
+
+a.ui-slider-handle:hover, a.ui-slider-handle:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
