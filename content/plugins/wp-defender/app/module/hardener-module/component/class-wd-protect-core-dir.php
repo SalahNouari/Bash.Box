@@ -1,23 +1,46 @@
 <?php
-/**
- * Class: WD_Protect_Core_Dir
- */
 
 /**
- * @author: Hoang Ngo
+ * Class: WD_Protect_Core_Dir
  */
 class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 	const BROWSER_LISTING = 'browser_listing', PROTECT_HTACCESS = 'protect_htaccess',
 		PREVENT_PHP_ACCESS = 'prevent_php_access', WPINCLUDE_EXCLUDE = 'exclude_file',
 		PROTECT_ENUM = 'protect_enum';
 
+	protected $check_urls = array();
+
 	public function on_creation() {
 		$this->id         = 'protect_core_dir';
 		$this->title      = __( 'Prevent Information Disclosure', wp_defender()->domain );
 		$this->can_revert = true;
+		$this->init_check_rules();
 
 		$this->add_action( 'admin_footer', 'print_scripts' );
 		$this->add_ajax_action( $this->generate_ajax_action( 'apply_htaccess' ), 'process' );
+	}
+
+	protected function init_check_rules() {
+		$this->check_urls = array(
+			//options index
+			'wp-includes' => array(
+				self::BROWSER_LISTING    => includes_url(),
+				self::PROTECT_HTACCESS   => includes_url( '.htaccess' ),
+				self::PREVENT_PHP_ACCESS => includes_url( 'wp-db.php' ),
+			),
+			'wp-content'  => array(
+				self::BROWSER_LISTING    => content_url(),
+				self::PROTECT_HTACCESS   => content_url( '.htaccess' ),
+				self::PREVENT_PHP_ACCESS => content_url( 'index.php' ),
+				self::PROTECT_ENUM       => wp_defender()->get_plugin_url() . 'vault/sample.bak'
+			),
+			'uploads'     => array(
+				self::BROWSER_LISTING    => content_url(),
+				self::PROTECT_HTACCESS   => content_url( 'uploads/.htaccess' ),
+				self::PREVENT_PHP_ACCESS => content_url( 'uploads/defender-access-test.php' ),
+				self::PROTECT_ENUM       => wp_defender()->get_plugin_url() . 'vault/sample.bak'
+			)
+		);
 	}
 
 	public function check( $force = false ) {
@@ -25,9 +48,63 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 		if ( isset( $this->check_cache ) && ! $force ) {
 			return $this->check_cache;
 		}
-		$this->check_cache = $this->check_content_protected() && $this->check_include_protected();
+
+		if ( is_wp_error( $this->init_test_env() ) ) {
+			$this->check_cache = false;
+
+			return $this->check_cache;
+		}
+
+		if ( ! $this->check_rule_by_request( self::BROWSER_LISTING, 'wp-includes' ) ) {
+			$this->check_cache = false;
+
+			return $this->check_cache;
+		}
+
+		$context = array_rand( $this->check_urls );
+		if ( ! $this->check_rule_by_request( self::PROTECT_HTACCESS, $context ) ) {
+			$this->check_cache = false;
+
+			return $this->check_cache;
+		}
+		if ( ! $this->check_rule_by_request( self::PROTECT_ENUM, 'wp-content' ) ) {
+			$this->check_cache = false;
+
+			return $this->check_cache;
+		}
+
+		$this->check_cache = true;
 
 		return $this->check_cache;
+	}
+
+	protected function init_test_env() {
+		global $is_apache;
+		if ( $is_apache ) {
+			//init htaccess
+			$include_path = ABSPATH . WPINC . '/';
+			if ( ! file_exists( $include_path . '.htaccess' ) ) {
+				if ( ! file_put_contents( $include_path . '.htaccess', '', LOCK_EX ) ) {
+					return new WP_Error( 'cant_write', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $include_path . '.htaccess' ) );
+				}
+			}
+
+			$content_path = WP_CONTENT_DIR . '/';
+			if ( ! file_exists( $content_path . '.htaccess' ) ) {
+				if ( ! file_put_contents( $content_path . '.htaccess', '', LOCK_EX ) ) {
+					return new WP_Error( 'cant_write', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $content_path . '.htaccess' ) );
+				}
+			}
+		}
+
+		$upload_dirs  = wp_upload_dir();
+		$defender_dir = $upload_dirs['basedir'];
+
+		if ( ! file_exists( $defender_dir . '/defender-access-test.php' ) ) {
+			file_put_contents( $defender_dir . '/defender-access-test.php', '', LOCK_EX );
+		}
+
+		return true;
 	}
 
 	public function process() {
@@ -35,149 +112,36 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 			return;
 		}
 
-		global $is_apache, $is_nginx;
-		if ( $is_nginx ) {
+		global $is_apache;
+		if ( ! $is_apache ) {
 			//do nothing, we will display manual way
 		} else {
 			if ( ! $this->verify_nonce( 'apply_htaccess' ) ) {
 				return;
 			}
 
-			$type = WD_Utils::http_post( 'type', null );
-			if ( $type == 'wp_content' ) {
-				$this->protect_content();
-			} elseif ( $type == 'revert_wp_content' ) {
-				$this->revert_wp_content();
-			} elseif ( $type == 'wp_include' ) {
-				$this->protect_include();
-			} elseif ( $type == 'revert_wp_include' ) {
-				$this->revert_wp_include();
+			$type = WD_Utils::http_post( 'type' );
+			if ( $type == 'protect' ) {
+				$this->protect();
+			} elseif ( $type == 'revert' ) {
+				$this->revert();
 			}
+
 		}
 
 		return;
 	}
 
-	/**
-	 * Apply a htacces file inside wp-content folder, to prevent
-	 * 1. Browser listing (usually we got a index.php, however, another layer stll worth)
-	 * 2. Prevent directly access to php file
-	 * 3. Prevent any access to htaccess file
-	 *
-	 * @access public
-	 * @since 1.0
-	 */
-	public function protect_content( $htaccess_path = null ) {
-		if ( is_null( $htaccess_path ) ) {
-			$htaccess_path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . '.htaccess';
-		}
-
-		if ( ! file_exists( $htaccess_path ) ) {
-			file_put_contents( $htaccess_path, '', LOCK_EX );
-		}
-		$content = file( $htaccess_path );
-		if ( ! is_array( $content ) ) {
-			$content = array();
-		}
-
-		$based = content_url();
-		$files = array();
-		if ( ! $this->check_rule_by_request( self::BROWSER_LISTING, $based ) ) {
-			$files[] = $this->create_rule( self::BROWSER_LISTING );
-		}
-		$htaccess_based = wp_defender()->get_plugin_url() . 'vault';
-		if ( ! $this->check_rule_by_request( self::PROTECT_HTACCESS, $htaccess_based ) ) {
-			$files[] = $this->create_rule( self::PROTECT_HTACCESS );
-		}
-
-		if ( ! $this->check_rule_by_request( self::PROTECT_ENUM, $htaccess_based . '/sample.bak', true ) ) {
-			$files[] = $this->create_rule( self::PROTECT_ENUM );
-		}
-
-		if ( count( $files ) ) {
-			$files   = array_merge( array( '## WP Defender - Prevent information disclosure ##' ), $files );
-			$files[] = '## WP Defender - End ##';
-			$content = array_merge( $content, $files );
-		}
-
-		$content = implode( PHP_EOL, $content );
-		//remove duplciate new line
-		$content = preg_replace( "/\n+/", "\n", $content );
-
-		if ( file_put_contents( $htaccess_path, $content ) ) {
-			if ( $this->check() ) {
-				$this->after_processed();
-			}
-			wp_send_json( array(
-				'status'  => 1,
-				'element' => $this->get_protect_wp_content_html(),
-				'done'    => $this->check(),
-			) );
-		} else {
-			$this->output_error( 'write_permission', __( "Can't write to the file %s", wp_defender()->domain ) );
-		}
-	}
-
-	public function protect_include( $htaccess_path = null ) {
-		if ( is_null( $htaccess_path ) ) {
-			$htaccess_path = ABSPATH . WPINC . DIRECTORY_SEPARATOR . '.htaccess';
-		}
-
-		if ( ! file_exists( $htaccess_path ) ) {
-			file_put_contents( $htaccess_path, '', LOCK_EX );
-		}
-		$content = file( $htaccess_path );
-		if ( ! is_array( $content ) ) {
-			$content = array();
-		}
-
-		$based = includes_url();
-		$files = array();
-		if ( ! $this->check_rule_by_request( self::BROWSER_LISTING, $based ) ) {
-			$files[] = $this->create_rule( self::BROWSER_LISTING );
-		}
-
-		if ( ! $this->check_rule_by_request( self::PROTECT_HTACCESS, $based ) ) {
-			$files[] = $this->create_rule( self::PROTECT_HTACCESS );
-		}
-
-		if ( ! $this->check_rule_by_request( self::PROTECT_ENUM, $based . 'ID3' ) ) {
-			$files[] = $this->create_rule( self::PROTECT_ENUM );
-		}
-
-		if ( count( $files ) ) {
-			$files   = array_merge( array( '## WP Defender - Prevent information disclosure ##' ), $files );
-			$files[] = '## WP Defender - End ##';
-			$content = array_merge( $content, $files );
-		}
-
-		$content = implode( PHP_EOL, $content );
-		//remove duplciate new line
-		$content = preg_replace( "/\n+/", "\n", $content );
-
-		if ( file_put_contents( $htaccess_path, $content ) ) {
-			if ( $this->check() ) {
-				$this->after_processed();
-			}
-			wp_send_json( array(
-				'status'  => 1,
-				'element' => $this->get_protect_wp_include_html(),
-				'done'    => $this->check(),
-			) );
-		} else {
-			$this->output_error( 'write_permission', __( "Can't write to the file %s", wp_defender()->domain ) );
-		}
-	}
 
 	/**
-	 * Revert the htaccess inside wp-content folder to original, if only changes from this plugin, we will remove it
+	 * removing all the text added from htaccess file
 	 */
-	public function revert_wp_content() {
-		$htaccess_path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . '.htaccess';
-		//we need to check what rules applied here
+	public function revert( $htaccess_path = null, $silent = false ) {
+		if ( is_null( $htaccess_path ) ) {
+			$htaccess_path = ABSPATH . '.htaccess';
+		}
 		$content = file( $htaccess_path );
 
-		//we will get all the const here
 		$class  = new ReflectionClass( __CLASS__ );
 		$consts = $class->getConstants();
 		foreach ( $consts as $const ) {
@@ -190,7 +154,7 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 				if ( ( $indexer = $this->check_rule( $content, $const ) ) !== false ) {
 					//need to get the rule block, and unset it
 					list( $first, $last ) = $indexer;
-					//var_dump( $indexer );
+
 					if ( $first == $last ) {
 						$content[ $first ] = '';
 					} else {
@@ -201,146 +165,101 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 				}
 			}
 		}
+		//removig the comment
 		$content = array_map( 'trim', $content );
 		$content = array_filter( $content );
+		$content = implode( PHP_EOL, $content );
+		$content = str_replace( array(
+			'## WP Defender - Prevent information disclosure ##',
+			'## WP Defender - End ##'
+		), '', $content );
 
-		$can_revert = false;
-		if ( $this->check() ) {
-			$can_revert = true;
-		}
-		if ( empty( $content ) ) {
-			//nothing here, just remove the file
-			if ( unlink( $htaccess_path ) ) {
+		if ( $this->is_ajax() && $silent == false ) {
+			if ( @file_put_contents( $htaccess_path, $content, LOCK_EX ) ) {
 				wp_send_json( array(
 					'status'  => 1,
-					'revert'  => $can_revert,
-					'element' => $this->get_protect_wp_content_html()
+					'revert'  => 1,
+					'element' => $this->apache_output()
 				) );
+			} else {
+				$this->output_error( 'write_permission', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $htaccess_path ) );
 			}
-		}
-
-		if ( file_put_contents( $htaccess_path, implode( PHP_EOL, $content ) ) ) {
-			wp_send_json( array(
-				'status'  => 1,
-				'revert'  => $can_revert,
-				'element' => $this->get_protect_wp_content_html()
-			) );
 		} else {
-			$this->output_error( 'write_permission', __( "Can't write to the file %s", wp_defender()->domain ) );
+			if ( @file_put_contents( $htaccess_path, $content, LOCK_EX ) ) {
+				return true;
+			} else {
+				return new WP_Error( 'write_permission', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $htaccess_path ) );
+			}
 		}
 	}
 
-	/**
-	 *
-	 */
-	public function revert_wp_include() {
-		$htaccess_path = ABSPATH . WPINC . DIRECTORY_SEPARATOR . '.htaccess';
-		//we need to check what rules applied here
-		$content = file( $htaccess_path );
-
-		//we will get all the const here
-		$class  = new ReflectionClass( __CLASS__ );
-		$consts = $class->getConstants();
-		foreach ( $consts as $const ) {
-			if ( $const == self::PREVENT_PHP_ACCESS ) {
-				continue;
-			}
-
-			$rule = $this->get_rules( $const );
-			if ( ! empty( $rule ) ) {
-				if ( ( $indexer = $this->check_rule( $content, $const ) ) !== false ) {
-					//need to get the rule block, and unset it
-					list( $first, $last ) = $indexer;
-					//var_dump( $indexer );
-					if ( $first == $last ) {
-						$content[ $first ] = '';
-					} else {
-						for ( $i = $first; $i <= $last; $i ++ ) {
-							$content[ $i ] = '';
-						}
-					}
-				}
+	protected function protect() {
+		//we will write to root htaccess
+		$htacces_path = ABSPATH . '.htaccess';
+		if ( ! file_exists( $htacces_path ) ) {
+			if ( ! file_put_contents( $htacces_path, '', LOCK_EX ) ) {
+				$this->output_error( 'cant_write', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $htacces_path ) );
 			}
 		}
-		$content    = array_map( 'trim', $content );
-		$content    = array_filter( $content );
-		$can_revert = false;
-		if ( $this->check() ) {
-			$can_revert = true;
+
+		$will_add = array();
+		//check random, for here, we will check browser indexing, protect enum and protect htaccess if is apache
+		if ( ! $this->check_rule_by_request( self::BROWSER_LISTING, 'wp-includes' ) ) {
+			$will_add[] = $this->create_rule( self::BROWSER_LISTING );
 		}
-		if ( empty( $content ) ) {
-			//nothing here, just remove the file
-			if ( unlink( $htaccess_path ) ) {
+		//random again
+		$context = array_rand( $this->check_urls );
+		if ( ! $this->check_rule_by_request( self::PROTECT_HTACCESS, $context ) ) {
+			$will_add[] = $this->create_rule( self::PROTECT_HTACCESS );
+		}
+		if ( ! $this->check_rule_by_request( self::PROTECT_ENUM, 'wp-content' ) ) {
+			$will_add[] = $this->create_rule( self::PROTECT_ENUM );
+		}
+
+		if ( count( $will_add ) ) {
+			$will_add   = array_merge( array( '## WP Defender - Prevent information disclosure ##' ), $will_add );
+			$will_add[] = '## WP Defender - End ##';
+			$will_add   = implode( PHP_EOL, $will_add );
+			$will_add   = preg_replace( "/\n+/", "\n", $will_add );
+
+			//we already test above, no need again
+			if ( file_put_contents( $htacces_path, PHP_EOL . $will_add, FILE_APPEND | LOCK_EX ) ) {
 				wp_send_json( array(
 					'status'  => 1,
-					'element' => $this->get_protect_wp_include_html(),
-					'revert'  => $can_revert
+					'element' => $this->apache_output(),
+					'done'    => $this->check(),
 				) );
+			} else {
+				$this->output_error( 'write_permission', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $htacces_path ) );
 			}
-		}
-
-		if ( file_put_contents( $htaccess_path, implode( PHP_EOL, $content ) ) ) {
-			wp_send_json( array(
-				'status'  => 1,
-				'element' => $this->get_protect_wp_include_html(),
-				'revert'  => $can_revert
-			) );
 		} else {
-			$this->output_error( 'write_permission', __( "Can't write to the file %s", wp_defender()->domain ) );
+			//cant be here
 		}
-	}
-
-	/**
-	 * This will check the content of htaccess file, and see if we missing any rules
-	 *
-	 * @return bool
-	 */
-	public function check_content_protected() {
-		global $is_nginx;
-		$based = content_url();
-		if ( ! $this->check_rule_by_request( self::BROWSER_LISTING, $based ) ) {
-			return false;
-		}
-		$htaccess_based = wp_defender()->get_plugin_url() . 'vault';
-		if ( ! $is_nginx ) {
-			if ( ! $this->check_rule_by_request( self::PROTECT_HTACCESS, $htaccess_based ) ) {
-				return false;
-			}
-		}
-
-		if ( ! $this->check_rule_by_request( self::PROTECT_ENUM, $htaccess_based . '/sample.bak', true ) ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
 	 * @param $rule
+	 * @param $context
 	 *
 	 * @return bool
 	 */
-	public function check_rule_by_request( $rule, $based, $exact = false ) {
-		$based = rtrim( $based, '/' );
+	public function check_rule_by_request( $rule, $context ) {
+		$check_urls = $this->check_urls;
 
-		$banks = array(
-			self::BROWSER_LISTING    => $based . '/',
-			self::PROTECT_HTACCESS   => $based . '/.htaccess',
-			self::PROTECT_ENUM       => $based . '/readme.txt',
-			self::PREVENT_PHP_ACCESS => $based//this should be exact
-		);
-
-		$url = isset( $banks[ $rule ] ) ? $banks[ $rule ] : false;
-		if ( $exact ) {
-			$url = $based;
+		global $is_apache;
+		if ( ! $is_apache && $rule == self::PROTECT_HTACCESS ) {
+			return true;
 		}
+
+		$urls = isset( $check_urls[ $context ] ) ? $check_urls[ $context ] : array();
+		$url  = isset( $urls[ $rule ] ) ? $urls[ $rule ] : false;
 		if ( $url == false ) {
-			return false;
+			return $url;
 		}
 
 		if ( $rule == self::BROWSER_LISTING ) {
 			//this is a special case, as usually this will return 200, need to make sure content is blank
-			$status = wp_remote_get( $url );
+			$status = @wp_remote_get( $url );
 			if ( 200 == wp_remote_retrieve_response_code( $status ) ) {
 				$body = wp_remote_retrieve_body( $status );
 				if ( strlen( $body ) == 0 ) {
@@ -354,36 +273,7 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 		}
 
 		$status = wp_remote_head( $url, array( 'user-agent' => $_SERVER['HTTP_USER_AGENT'] ) );
-
 		if ( 200 == wp_remote_retrieve_response_code( $status ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public function check_include_protected() {
-		global $is_nginx;
-		if ( $is_nginx ) {
-			//nginx part mostly on prevent php execute module
-			return true;
-		}
-
-		$based         = includes_url();
-		$htaccess_path = ABSPATH . WPINC . DIRECTORY_SEPARATOR . '.htaccess';
-		if ( ! $this->check_rule_by_request( self::BROWSER_LISTING, $based ) ) {
-			return false;
-		}
-
-		if ( ! file_exists( $htaccess_path ) ) {
-			//place an example, todo perm check
-			file_put_contents( $htaccess_path, '' );
-		}
-		if ( ! $this->check_rule_by_request( self::PROTECT_HTACCESS, $based ) ) {
-			return false;
-		}
-
-		if ( ! $this->check_rule_by_request( self::PROTECT_ENUM, $based . 'ID3' ) ) {
 			return false;
 		}
 
@@ -491,10 +381,6 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 					'Order allow,deny',
 					'Deny from all',
 					'</FilesMatch>',
-					//'<DirectoryMatch "^\.|\/\.">',
-					//'Order allow,deny',
-					//'Deny from all',
-					//'</DirectoryMatch>'
 				);
 			case self::PROTECT_ENUM:
 				return array(
@@ -532,18 +418,11 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 		?>
 		<script type="text/javascript">
 			jQuery(function ($) {
-				$('body').on('click', '#protect_core_dir_frm input[type=submit]', function () {
-					$('#protect_core_dir_frm').find('input[type=submit]').removeAttr('clicked');
-					$(this).attr('clicked', true);
-				});
 				$('body').on('submit', '#protect_core_dir_frm', function () {
 					var that = $(this);
 					var parent = $(this).closest('.wd-hardener-rule');
 					var data = that.serialize();
-
-					var clicked = that.find("input[type=submit][clicked=true]");
-					data += '&type=' + clicked.attr('name');
-
+					var clicked = parent.find('input[type="submit"]');
 					$.ajax({
 						type: 'POST',
 						'url': ajaxurl,
@@ -562,13 +441,14 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 							} else {
 								$('#protect_core_dir .wd-error').html('').addClass('wd-hide');
 								if (data.element != undefined) {
-									clicked.closest('.group').replaceWith(data.element);
+									clicked.closest('.wd-well').replaceWith(data.element);
 								}
 								if (data.done == 1) {
 									parent.hide(500, function () {
 										var div = parent.detach();
 										div.prependTo($('.wd-hardener-success'));
 										div.find('.rule-title').removeClass('issue').addClass('fixed').find('button').hide();
+										div.find('i.dashicons-flag').replaceWith($('<i class="wdv-icon wdv-icon-fw wdv-icon-ok"/>'));
 										div.show(500);
 									})
 								}
@@ -577,8 +457,26 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 									parent.hide(500, function () {
 										$('.hardener-error-container').removeClass('wd-hide');
 										var div = parent.detach();
-										div.appendTo($('.wd-hardener-error'));
+										//find the position
+										var titles = $('.hardener-error-container .rule-title');
+										if (titles.size() > 0) {
+											titles = $.makeArray(titles);
+											titles.reverse();
+											var current_title = div.find('.rule-title').text();
+											$.each(titles, function (i, v) {
+												//if the current letter is order up the current, add bellow that
+												var text = $(this).text().toUpperCase();
+												//if the current letter is order up the current, add bellow that
+												if (current_title.toUpperCase().localeCompare(text) == true) {
+													div.insertAfter($(this).closest('.wd-hardener-rule'));
+													return false;
+												}
+											})
+										} else {
+											div.appendTo($('.wd-hardener-error'));
+										}
 										div.find('.rule-title').removeClass('fixed').addClass('issue').find('button').show();
+										div.find('i.wdv-icon-ok').replaceWith($('<i class="dashicons dashicons-flag"/>'));
 										div.show(500, function () {
 											/*$('html, body').animate({
 											 scrollTop: div.find('.rule-title').offset().top
@@ -612,11 +510,22 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 				<div class="wd-error wd-hide">
 
 				</div>
-				<?php if ( WD_Utils::is_nginx() ) {
-					echo $this->nginx_output();
-				} else {
-					$this->apache_output();
-				} ?>
+				<?php
+				//this mostly static content, so we have to check a static
+				$url    = wp_defender()->get_plugin_url() . 'assets/defender-icon.css';
+				$server = WD_Utils::determine_server( $url );
+				switch ( $server ) {
+					case 'nginx':
+						echo $this->nginx_output();
+						break;
+					case 'apache':
+						echo $this->apache_output();
+						break;
+					default:
+						printf( __( "Your website currently run on %s, which has not yet supported. Please contact our <a target='_blank' href=\"%s\">support for more information</a>", wp_defender()->domain ), $server, 'https://premium.wpmudev.org/forums/forum/support#question' );
+						break;
+				}
+				?>
 
 			</div>
 		</div>
@@ -665,7 +574,7 @@ location ~* ^$wp_content/.*\.(txt|md|exe|sh|bak|inc|pot|po|mo|log|sql)$ {
 					<?php _e( "Reload NGINX.", wp_defender()->domain ) ?>
 				</li>
 			</ol>
-			<p><?php printf( __( "Still having trouble? <a target='_blank' href=\"%s\">Open a support ticket</a>.", wp_defender()->domain ), 'https://premium.wpmudev.org/forums/forum/support#question' ) ?></p>
+			<p><?php sprintf( __( "Still having trouble? <a target='_blank' href=\"%s\">Open a support ticket</a>.", wp_defender()->domain ), 'https://premium.wpmudev.org/forums/forum/support#question' ) ?></p>
 			<pre>
 ## WP Defender - Prevent information disclosure ##
 				<?php echo esc_html( $rules ); ?>
@@ -680,6 +589,7 @@ location ~* ^$wp_content/.*\.(txt|md|exe|sh|bak|inc|pot|po|mo|log|sql)$ {
 	 * If the server is apache, we will output a form for append htaccess
 	 */
 	private function apache_output() {
+		ob_start();
 		?>
 		<div class="wd-well">
 			<?php if ( $this->check() ): ?>
@@ -691,69 +601,23 @@ location ~* ^$wp_content/.*\.(txt|md|exe|sh|bak|inc|pot|po|mo|log|sql)$ {
 					<?php _e( "We will place <strong>.htaccess</strong> files into each of these directories to lock down the files and folders inside.", wp_defender()->domain ) ?>
 				</p>
 			<?php endif; ?>
-			<hr/>
 			<form id="protect_core_dir_frm" method="post">
 				<?php $this->generate_nonce_field( 'apply_htaccess' ) ?>
 				<input type="hidden" name="action"
 				       value="<?php echo $this->generate_ajax_action( 'apply_htaccess' ) ?>">
-
-				<?php echo $this->get_protect_wp_content_html() ?>
-				<hr/>
-				<?php echo $this->get_protect_wp_include_html() ?>
+				<?php if ( $this->check() ): ?>
+					<input type="hidden" name="type" value="revert">
+					<input type="submit" class="button button-grey"
+					       name="revert"
+					       value="<?php esc_attr_e( "Revert", wp_defender()->domain ) ?>">
+				<?php else: ?>
+					<input type="hidden" name="type" value="protect">
+					<input type="submit" class="button wd-button" name="process"
+					       value="<?php esc_attr_e( "Add .htaccess file", wp_defender()->domain ) ?>">
+				<?php endif; ?>
 			</form>
 		</div>
 		<?php
-	}
-
-	private function get_protect_wp_content_html() {
-		$wp_content = str_replace( $_SERVER['DOCUMENT_ROOT'], '', WP_CONTENT_DIR );
-		ob_start();
-		?>
-		<div class="group protect-wp-content">
-			<div class="col span_6_of_12">
-				<?php echo $wp_content; ?>
-				<i class="wdv-icon wdv-icon-fw wdv-icon-ok-sign <?php echo $this->check_content_protected() ? '' : 'wd-hide'; ?>"></i>
-			</div>
-			<div class="col span_6_of_12 tr">
-				<?php if ( $this->check_content_protected() ): ?>
-					<input type="submit" class="button button-small button-grey"
-					       name="revert_wp_content"
-					       value="<?php esc_attr_e( "Revert", wp_defender()->domain ) ?>">
-				<?php else: ?>
-					<input type="submit" class="button button-small wd-button" name="wp_content"
-					       value="<?php esc_attr_e( "Add .htaccess file", wp_defender()->domain ) ?>">
-				<?php endif; ?>
-			</div>
-		</div>
-		<?php
 		return ob_get_clean();
-	}
-
-	private function get_protect_wp_include_html() {
-		$wp_includes = str_replace( $_SERVER['DOCUMENT_ROOT'], '', ABSPATH . WPINC );
-		ob_start();
-		?>
-		<div class="group">
-			<div class="col span_6_of_12">
-				<?php echo $wp_includes; ?>
-				<i class="wdv-icon wdv-icon-fw wdv-icon-ok-sign <?php echo $this->check_include_protected() ? '' : 'wd-hide'; ?>"></i>
-			</div>
-			<div class="col span_6_of_12 tr">
-				<?php if ( $this->check_include_protected() ): ?>
-					<input type="submit" class="button button-small button-grey"
-					       name="revert_wp_include"
-					       value="<?php esc_attr_e( "Revert", wp_defender()->domain ) ?>">
-				<?php else: ?>
-					<input type="submit" class="button button-small wd-button" name="wp_include"
-					       value="<?php esc_attr_e( "Add .htaccess file", wp_defender()->domain ) ?>">
-				<?php endif; ?>
-			</div>
-		</div>
-		<?php
-		return ob_get_clean();
-	}
-
-	public function revert() {
-
 	}
 }

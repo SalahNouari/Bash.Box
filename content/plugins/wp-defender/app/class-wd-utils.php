@@ -169,6 +169,9 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 		return $setting;
 	}
 
+	/**
+	 *
+	 */
 	public static function settle_settings() {
 		$default         = self::get_default_settings();
 		$plugin_settings = get_site_option( 'wp_defender' );
@@ -184,6 +187,26 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 				$plugin_settings['recipients'] = array( $admin->ID );
 			}
 		}
+	}
+
+	/**
+	 * @param $theme
+	 *
+	 * @return bool
+	 * @since 1.0.2
+	 */
+	public static function update_theme( $theme ) {
+		if ( ! class_exists( 'Theme_Upgrader' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		}
+		$skin     = new WD_Theme_Upgrade_Skin( compact( 'title', 'nonce', 'url', 'theme' ) );
+		$upgrader = new Theme_Upgrader( $skin );
+		$upgrader->upgrade( $theme );
+		if ( is_wp_error( $skin->result ) ) {
+			return $skin->result;
+		}
+
+		return true;
 	}
 
 	/**
@@ -275,9 +298,26 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 	 * @return bool
 	 */
 	public static function is_nginx() {
+		//fire a request to static content to determine
 		global $is_nginx;
 
 		return $is_nginx;
+	}
+
+	/**
+	 * @param $url
+	 *
+	 * @return string
+	 * @since 1.0.2
+	 */
+	public static function determine_server( $url ) {
+		//wp fail to determine wpengine server, type, we will use request for more accuracy
+
+		$request = wp_remote_head( $url, array( 'user-agent' => $_SERVER['HTTP_USER_AGENT'] ) );
+		$server  = wp_remote_retrieve_header( $request, 'server' );
+		$server  = explode( '/', $server );
+
+		return strtolower( $server[0] );
 	}
 
 	public static function remove_folder( $folder ) {
@@ -349,6 +389,22 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 		}
 
 		return $functions;
+	}
+
+	/**
+	 * Get update info of a plugin
+	 *
+	 * @param $slug
+	 */
+	public static function is_plugin_update_available( $slug ) {
+		wp_update_plugins();
+		$plugins = get_site_transient( 'update_plugins' );
+		foreach ( $plugins->no_update as $plugin ) {
+			if ( $plugin->plugin == $slug ) {
+				return $plugin;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -524,17 +580,22 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 			$scan_result = $model->get_results_raw();
 
 		}
-		$hardener = WD_Utils::get_setting( 'hardener->results' );
-		$issues   = array();
-		foreach ( $hardener['issue'] as $class ) {
-			if ( class_exists( $class ) ) {
-				$issue    = new $class;
+
+		$hardener = WD_Hardener_Module::find_controller( 'hardener' );
+		$modules  = $hardener->get_loaded_modules();
+		if ( ! is_array( $modules ) ) {
+			$modules = array();
+		}
+		$issues = array();
+		foreach ( $modules as $rule ) {
+			if ( $rule->check() === false ) {
 				$issues[] = array(
-					'label' => $issue->title,
-					'url'   => $issue->get_link()
+					'label' => $rule->title,
+					'url'   => $rule->get_link()
 				);
 			}
 		}
+
 		$scan_schedule = WD_Utils::get_automatic_scan_settings();
 		$model         = WD_Scan_Api::get_last_scan();
 		$count         = 0;
@@ -625,6 +686,9 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 		return is_multisite() ? network_admin_url( $path ) : admin_url( $path );
 	}
 
+	/**
+	 * @return array
+	 */
 	public static function allowed_html() {
 		return array(
 			'i'      => array(
@@ -643,6 +707,28 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 				'src'   => wp_defender()->get_plugin_url() . 'assets/img/robot.png'
 			)
 		);
+	}
+
+	/**
+	 * A fork of wp_text_diff
+	 *
+	 * @param $left_string
+	 * @param $right_string
+	 * @param null $args
+	 *
+	 * @return string
+	 */
+	public static function text_diff( $left_string, $right_string, $args = null ) {
+		if ( ! class_exists( 'Text_Diff', false ) || ! class_exists( 'Text_Diff_Renderer_inline', false ) ) {
+			require( ABSPATH . WPINC . '/wp-diff.php' );
+		}
+
+		$left_lines  = explode( "\n", $left_string );
+		$right_lines = explode( "\n", $right_string );
+		$text_diff   = new Text_Diff( $left_lines, $right_lines );
+		$renderer    = new Text_Diff_Renderer_inline();
+
+		return $renderer->render( $text_diff );
 	}
 
 	public static function exclude_extensions() {

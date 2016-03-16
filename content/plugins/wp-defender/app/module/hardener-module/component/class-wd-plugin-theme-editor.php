@@ -97,8 +97,25 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 									parent.hide(500, function () {
 										var div = parent.detach();
 										$('.hardener-error-container').removeClass('wd-hide');
-										div.appendTo($('.wd-hardener-error'));
+										var titles = $('.hardener-error-container .rule-title');
+										if (titles.size() > 0) {
+											titles = $.makeArray(titles);
+											titles.reverse();
+											var current_title = div.find('.rule-title').text();
+											$.each(titles, function (i, v) {
+												//if the current letter is order up the current, add bellow that
+												var text = $(this).text().toUpperCase();
+												//if the current letter is order up the current, add bellow that
+												if (current_title.toUpperCase().localeCompare(text) == true) {
+													div.insertAfter($(this).closest('.wd-hardener-rule'));
+													return false;
+												}
+											})
+										} else {
+											div.appendTo($('.wd-hardener-error'));
+										}
 										div.find('.rule-title').removeClass('fixed').addClass('issue').find('button').show();
+										div.find('i.wdv-icon-ok').replaceWith($('<i class="dashicons dashicons-flag"/>'));
 										div.show(500, function () {
 											$('html, body').animate({
 												scrollTop: div.find('.rule-title').offset().top
@@ -111,7 +128,9 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 									parent.hide(500, function () {
 										var div = parent.detach();
 										div.prependTo($('.wd-hardener-success'));
+										//find the position
 										div.find('.rule-title').removeClass('issue').addClass('fixed').find('button').hide();
+										div.find('i.dashicons-flag').replaceWith($('<i class="wdv-icon wdv-icon-fw wdv-icon-ok"/>'));
 										div.show(500);
 									})
 								}
@@ -126,7 +145,7 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 	}
 
 	public function process() {
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -260,7 +279,7 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 	}
 
 	public function revert() {
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 

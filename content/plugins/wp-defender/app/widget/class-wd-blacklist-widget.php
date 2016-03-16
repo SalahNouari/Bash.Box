@@ -8,10 +8,11 @@
  */
 class WD_Blacklist_Widget extends WD_Controller {
 	const BLACKLIST_CACHE = 'wd_blacklist_lastcheck';
-	const STATUS_OFF = 'off', STATUS_CLEAN = 'clean', STATUS_BLACKLISTED = 'blacklisted';
+	const STATUS_OFF = 'off', STATUS_CLEAN = 'clean', STATUS_BLACKLISTED = 'blacklisted', STATUS_ERROR = 'error';
 	private $end_point = "https://premium.wpmudev.org/api/defender/v1/blacklist-monitoring";
 	private $domain = '';
 	private $status = false;
+	public $error = '';
 
 	public function __construct() {
 		if ( WD_Utils::get_dev_api() != false ) {
@@ -26,44 +27,43 @@ class WD_Blacklist_Widget extends WD_Controller {
 	protected function settle_status() {
 		$endpoint = $this->end_point . '?domain=' . $this->domain;
 		$result   = $this->wpmudev_call( $endpoint, array(), array(
-			'method' => 'GET'
+			'method'  => 'GET',
+			'timeout' => 5
 		), true );
 		if ( is_wp_error( $result ) ) {
 			//this mean error when firing to API
 			$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
+			$this->status = self::STATUS_ERROR;
+			$this->error  = $result->get_error_message();
 
 			return;
 		}
 		$this->log( 'backlist call' . var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
-		$respone_code = wp_remote_retrieve_response_code( $result );
-		if ( $respone_code == 412 ) {
-			$this->log( var_export( $result, true ) );
-			$this->status = self::STATUS_OFF;
-		} else {
-			$body = wp_remote_retrieve_body( $result );
-			$body = json_decode( $body, true );
-			if ( isset( $body['services'] ) && is_array( $body['services'] ) ) {
-				$this->status = self::STATUS_CLEAN;
-				foreach ( $body['services'] as $service ) {
-					if ( $service['blacklisted'] == true ) {
-						$this->status = self::STATUS_BLACKLISTED;
-						break;
-					}
-				}
-			} else {
-				//at this point means st wrong happens, domain status enabled, but non response from server.
-				//flag as black for now
-				$this->status = self::STATUS_BLACKLISTED;
-				$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
-			}
-		}
 
-		if ( $this->status == self::STATUS_BLACKLISTED ) {
-			//we need to check if this is first time activated
-			if ( WD_Utils::get_setting( 'cache->is_blacklist_firsttime', true ) == true ) {
-				$this->status = self::STATUS_CLEAN;
-				WD_Utils::update_setting( 'cache->is_blacklist_firsttime', false );
+		$response_code = wp_remote_retrieve_response_code( $result );
+		$body          = wp_remote_retrieve_body( $result );
+		$body          = json_decode( $body, true );
+		if ( $response_code == 412 ) {
+			//this mean disable
+			$this->status = self::STATUS_OFF;
+		} elseif ( isset( $body['services'] ) && is_array( $body['services'] ) ) {
+			$this->status = self::STATUS_CLEAN;
+			foreach ( $body['services'] as $service ) {
+				if ( $service['blacklisted'] == true && $service['last_checked'] != false ) {
+					$this->status = self::STATUS_BLACKLISTED;
+					break;
+				}
 			}
+		} else {
+			//at this point means st wrong happens, domain status enabled, but non response from server.
+			//flag as black for now
+			$this->status = self::STATUS_ERROR;
+			if ( isset( $body['message'] ) ) {
+				$this->error = $body['message'];
+			} else {
+				$this->error = __( "Something wrong happened, please try again.", wp_defender()->domain );
+			}
+			$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
 		}
 	}
 
@@ -85,6 +85,13 @@ class WD_Blacklist_Widget extends WD_Controller {
 		}
 
 		$this->settle_status();
+
+		if ( $this->status == self::STATUS_ERROR ) {
+			wp_send_json( array(
+				'status' => 0,
+				'error'  => $this->error
+			) );
+		}
 
 		if ( $this->status == self::STATUS_OFF ) {
 			//enable for API
@@ -178,6 +185,8 @@ class WD_Blacklist_Widget extends WD_Controller {
 			$this->render( 'widgets/blacklist/blacklist-subscribe', array(), true );
 		} elseif ( $this->status == self::STATUS_OFF ) {
 			$this->render( 'widgets/blacklist/blacklist-off', array(), true );
+		} elseif ( $this->status == self::STATUS_ERROR ) {
+			$this->render( 'widgets/blacklist/blacklist-error', array(), true );
 		} else {
 			$this->render( 'widgets/blacklist/blacklist', array(
 				'is_ok' => $this->status == self::STATUS_CLEAN ? true : false

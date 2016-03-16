@@ -15,6 +15,7 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 		$this->add_action( 'admin_footer', 'print_scripts' );
 		$this->add_ajax_action( 'wd_get_plugin_changelog', 'get_changelog' );
 		$this->add_ajax_action( 'wd_listen_pt_version', 'listen_pt_version' );
+		$this->add_ajax_action( 'wd_update_theme', 'update_theme' );
 	}
 
 	/**
@@ -102,7 +103,6 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 
 		return $need_update;
 	}
-
 
 	/**
 	 * @param $slug
@@ -224,39 +224,35 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 						}
 					})
 				});
-				$('.wd-theme-version-status').click(function (e) {
+
+				$('.wd-plugins-update').submit(function () {
 					var that = $(this);
-					var data = {
-						'type': that.data('type'),
-						'slug': that.data('slug'),
-						'action': 'wd_listen_pt_version'
-					}
-					listen_up_to_date();
-					that.attr('disabled', 'disabled');
-					function listen_up_to_date() {
-						setTimeout(function () {
-							$.ajax({
-								type: 'POST',
-								data: data,
-								url: ajaxurl,
-								success: function (data) {
-									if (data.status == 1) {
-										setTimeout(function () {
-											//add more 2s, as the ifram usually slower
-											tb_remove();
-											that.closest('.update-nag').fadeOut(500).remove();
-											if ($('#wp_plugin_theme_version .update-nag').size() == 0) {
-												location.reload();
-											}
-										}, 2000)
-									} else {
-										listen_up_to_date();
+					var parent = that.closest('.wd-hardener-rule');
+					$.ajax({
+						type: 'POST',
+						url: ajaxurl,
+						data: that.serialize(),
+						beforeSend: function () {
+							that.find('button').attr('disabled', 'disabled').html(that.find('button').text() + ' <i class="wdv-icon wdv-icon-fw wdv-icon-refresh spin"></i>')
+							parent.find('.wd-error').html('').addClass('wd-hide');
+						},
+						success: function (data) {
+							if (data.success == true) {
+								that.closest('.update-nag').fadeOut(500, function () {
+									that.closest('.update-nag').remove();
+									if (parent.find('.update-nag').size() == 0) {
+										location.reload();
 									}
-								}
-							})
-						}, 3000)
-					}
+								});
+							} else {
+								parent.find('.wd-error').html(data.data.error).removeClass('wd-hide');
+								that.find('button').removeAttr('disabled').html(that.find('button').text().replace(' <i class="wdv-icon wdv-icon-fw wdv-icon-refresh spin"></i>'))
+							}
+						}
+					})
+					return false;
 				})
+
 			})
 		</script>
 		<?php
@@ -287,6 +283,29 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 
 	}
 
+	/**
+	 * Update theme
+	 * @since 1.0.2
+	 */
+	public function update_theme() {
+		if ( ! WD_Utils::check_permission() ) {
+			return;
+		}
+		if ( ! $this->verify_nonce( 'wd_update_theme' ) ) {
+			return;
+		}
+
+		$theme = WD_Utils::http_post( 'theme' );
+
+		$ret = WD_Utils::update_theme( $theme );
+		if ( is_wp_error( $ret ) ) {
+			wp_send_json_error( array(
+				'error' => $ret->get_error_message()
+			) );
+		}
+		wp_send_json_success();
+	}
+
 	public function display() {
 		?>
 		<div class="wd-hardener-rule">
@@ -297,6 +316,10 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 				<h4 class="tl"><?php _e( "Overview", wp_defender()->domain ) ?></h4>
 
 				<p><?php _e( "Updates to plugins and themes often include critical security updates, new features and a happier life for all, so we recommend you stick to the latest versions and update regularly.", wp_defender()->domain ) ?></p>
+
+				<div class="wd-error wd-hide">
+
+				</div>
 				<?php if ( ! $this->check() ): ?>
 					<?php foreach ( $this->get_plugins_outdate() as $item ): ?>
 						<div class="update-nag">
@@ -313,26 +336,25 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 											<span data-type="plugin" data-base="<?php echo esc_attr( $item['base'] ) ?>"
 											      data-slug="<?php echo esc_attr( $item['base'] ) ?>"
 											      class="wd-plugin-changelog">
-										<i class="wdv-icon wdv-icon-fw wdv-icon-refresh dev-spin"></i>
+										<i class="wdv-icon wdv-icon-fw wdv-icon-refresh spin"></i>
 												<?php endif; ?>
 										</span>
 									</div>
 								</div>
 								<div class="col span_4_of_12 tr">
-									<?php
-									$url = network_admin_url( 'update.php' ) . '?' . http_build_query( array(
-											'action'    => 'upgrade-plugin',
-											'_wpnonce'  => wp_create_nonce( 'upgrade-plugin_' . $item['base'] ),
-											'plugin'    => $item['base'],
-											'TB_iframe' => true
-										) );
-									?>
-									<a target="_blank" data-type="plugin"
-									   data-slug="<?php echo esc_attr( $item['base'] ) ?>"
-									   href="<?php echo $url ?>"
-									   class="button thickbox wd-theme-version-status button-small button-secondary wd-button">
-										<?php _e( "Update", wp_defender()->domain ) ?>
-									</a>
+									<form class="wd-plugins-update"
+									      action="<?php echo network_admin_url( 'admin-ajax.php' ) ?>"
+									      method="post">
+										<?php //wp_nonce_field( 'upgrade-plugin_' . $item['base'], '_ajax_nonce' );
+										wp_nonce_field( 'updates', '_ajax_nonce' )
+										?>
+										<input type="hidden" name="action" value="update-plugin">
+										<input type="hidden" name="plugin" value="<?php echo $item['base'] ?>">
+										<input type="hidden" name="slug" value="<?php echo $item['slug'] ?>">
+										<button type="submit" class="button button-small button-secondary wd-button">
+											<?php _e( "Update", wp_defender()->domain ) ?>
+										</button>
+									</form>
 								</div>
 								<div class="wd-clearfix"></div>
 							</div>
@@ -349,21 +371,17 @@ class WD_Plugin_Theme_Version extends WD_Hardener_Abstract {
 									</div>
 								</div>
 								<div class="col span_4_of_12 tr">
-
-									<?php
-									$url = network_admin_url( 'update.php' ) . '?' . http_build_query( array(
-											'action'    => 'upgrade-theme',
-											'_wpnonce'  => wp_create_nonce( 'upgrade-theme_' . $item['base'] ),
-											'theme'     => $item['base'],
-											'TB_iframe' => true
-										) );
-									?>
-									<a target="_blank" data-type="plugin"
-									   data-slug="<?php echo esc_attr( $item['base'] ) ?>"
-									   href="<?php echo $url ?>"
-									   class="button thickbox wd-theme-version-status button-small button-secondary wd-button">
-										<?php _e( "Update", wp_defender()->domain ) ?>
-									</a>
+									<form class="wd-plugins-update"
+									      action="<?php echo network_admin_url( 'admin-ajax.php' ) ?>"
+									      method="post">
+										<?php $this->generate_nonce_field( 'wd_update_theme' )
+										?>
+										<input type="hidden" name="action" value="wd_update_theme">
+										<input type="hidden" name="theme" value="<?php echo $item['base'] ?>">
+										<button type="submit" class="button button-small button-secondary wd-button">
+											<?php _e( "Update", wp_defender()->domain ) ?>
+										</button>
+									</form>
 								</div>
 								<div class="wd-clearfix"></div>
 							</div>

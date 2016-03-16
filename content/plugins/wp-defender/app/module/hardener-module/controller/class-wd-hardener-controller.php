@@ -69,7 +69,6 @@ class WD_Hardener_Controller extends WD_Controller {
 			WDEV_Plugin_Ui::load( wp_defender()->get_plugin_url() . 'shared-ui/', false );
 			wp_enqueue_style( 'wp-defender' );
 			wp_enqueue_script( 'wd-rotate' );
-			add_thickbox();
 		}
 	}
 
@@ -102,16 +101,22 @@ class WD_Hardener_Controller extends WD_Controller {
 				if ( ! class_exists( $class ) ) {
 					include_once $file;
 				}
-
-				$this->_modules[] = new $class;
+				$mod                        = new $class;
+				$this->_modules[ $mod->id ] = $mod;
 			}
 		}
+		//sort modules
+		usort( $this->_modules, array( &$this, 'sort_modules' ) );
 		$last_res = WD_Utils::get_setting( 'hardener->results', false );
 		if ( empty( $last_res ) || ! is_array( $last_res ) ) {
 			$this->update_results();
 			//init submit to API
 			WD_Utils::do_submitting( true );
 		}
+	}
+
+	public function sort_modules( $a, $b ) {
+		return strcmp( $a->title, $b->title );
 	}
 
 	/**

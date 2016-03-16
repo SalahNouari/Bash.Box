@@ -43,7 +43,7 @@ class WD_Admin_Controller extends WD_Controller {
 
 	public function settings_save() {
 
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -71,7 +71,7 @@ class WD_Admin_Controller extends WD_Controller {
 	}
 
 	public function remove_recipient() {
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 		$id   = WD_Utils::http_post( 'id' );
@@ -84,7 +84,7 @@ class WD_Admin_Controller extends WD_Controller {
 	}
 
 	public function add_recipient() {
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -148,7 +148,7 @@ class WD_Admin_Controller extends WD_Controller {
 	 * Ajax to return the username
 	 */
 	public function suggest_user_name() {
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 		$lists   = WD_Utils::get_setting( 'recipients', array() );
@@ -177,7 +177,7 @@ class WD_Admin_Controller extends WD_Controller {
 	 * This only fired at a first time, then we will use anothe view for dashboard
 	 */
 	public function toggle_showed_intro() {
-		if ( ! WD_Utils::check_permission()  ) {
+		if ( ! WD_Utils::check_permission() ) {
 			return;
 		}
 
@@ -199,13 +199,12 @@ class WD_Admin_Controller extends WD_Controller {
 
 		if ( isset( $submenu['wp-defender'] ) ) {
 			$defender_menu       = $submenu['wp-defender'];
+			$defender_menu[7][4] = 'wd-hide';
 			$defender_menu[0][0] = __( "Dashboard", wp_defender()->domain );
-
-			$settings = $defender_menu[1];
+			$settings            = $defender_menu[1];
 			unset( $defender_menu[1] );
 			$defender_menu[] = $settings;
 			$defender_menu   = array_values( $defender_menu );
-
 			$submenu['wp-defender'] = $defender_menu;
 		}
 

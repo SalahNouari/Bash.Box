@@ -226,7 +226,8 @@
   .group {
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
     margin: 0 -15px 0 -15px;
-    height: 100%
+    height: 100%;
+    position: relative;
   }
 
   .col {
@@ -419,6 +420,7 @@
         cursor: pointer;
         font-weight: normal;
         position: relative;
+        width: 100%;
         i.wdv-icon:nth-child(2) {
           position: absolute;
           top: 50%;
@@ -496,7 +498,7 @@
       }
     }
   }
-  .wd-hardener-error .wd-hardener-rule:last-child .wd-rule-content{
+  .wd-hardener-error .wd-hardener-rule:last-child .wd-rule-content {
     border-bottom: solid 1px #ddd;
     padding-bottom: 50px;
   }
@@ -1345,6 +1347,158 @@
       }
     }
   }
+  .wd-issue-detail {
+    pre {
+      span {
+        font-size: 12px;
+      }
+    }
+    ins {
+      background: #e6ffe6;
+      text-decoration: none;
+    }
+    del {
+      background: #FF6D6D;
+      color: white;
+      span {
+        color: white;
+      }
+    }
+
+    hr {
+      margin: 30px 0;
+    }
+    h3 {
+      margin-bottom: 30px;
+    }
+  }
+
+  /*
+Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine (@thingsinjars)
+*/
+
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    color: #000;
+    background: #f8f8ff;
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #408080;
+    font-style: italic;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-subst {
+    color: #954121;
+  }
+
+  .hljs-number {
+    color: #40a070;
+  }
+
+  .hljs-string,
+  .hljs-doctag {
+    color: #219161;
+  }
+
+  .hljs-selector-id,
+  .hljs-selector-class,
+  .hljs-section,
+  .hljs-type {
+    color: #19469d;
+  }
+
+  .hljs-params {
+    color: #00f;
+  }
+
+  .hljs-title {
+    color: #458;
+    font-weight: bold;
+  }
+
+  .hljs-tag,
+  .hljs-name,
+  .hljs-attribute {
+    color: #000080;
+    font-weight: normal;
+  }
+
+  .hljs-variable,
+  .hljs-template-variable {
+    color: #008080;
+  }
+
+  .hljs-regexp,
+  .hljs-link {
+    color: #b68;
+  }
+
+  .hljs-symbol,
+  .hljs-bullet {
+    color: #990073;
+  }
+
+  .hljs-built_in,
+  .hljs-builtin-name {
+    color: #0086b3;
+  }
+
+  .hljs-meta {
+    color: #999;
+    font-weight: bold;
+  }
+
+  .hljs-deletion {
+    background: #fdd;
+  }
+
+  .hljs-addition {
+    background: #dfd;
+  }
+
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
+
+  pre {
+    padding: 0;
+    border: 0;
+  }
+  .core-integrity-detail {
+    .fixed {
+      width: 30%;
+      float: right;
+      position: fixed;
+      right: 0;
+    }
+  }
+  .suspicious-detail {
+    .fixed {
+      position: fixed;
+      right: 1%;
+      width: 14.33%;
+    }
+  }
+  .wd-highlight {
+    background: #A2CBF6;
+    cursor: pointer;
+    border: solid 1px transparent;
+  }
+
+  .wd-highlight:hover {
+    border: solid 1px #718EAC;
+  }
 }
 
 .wd-confirm-dialog {
@@ -1411,4 +1565,12 @@
       border-bottom-right-radius: 5px;
     }
   }
+
+  .wd-no-shadow {
+    box-shadow: none;
+  }
+}
+
+.wd-hide {
+  display: none;
 }

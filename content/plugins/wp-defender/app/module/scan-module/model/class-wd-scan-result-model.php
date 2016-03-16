@@ -346,8 +346,12 @@ class WD_Scan_Result_Model extends WD_Post_Model {
 	 */
 	public function delete_item_from_result( $id ) {
 		$index = $this->find_result_item( $id, true );
+		$item  = $this->find_result_item( $id );
+		unset( $this->md5_tree[ $item->name ] );
 		unset( $this->result[ $index ] );
+		//unset from md5 tree too
 		$this->save();
+		WD_Utils::flag_for_submitting();
 	}
 
 	/**

@@ -364,7 +364,7 @@ class WD_Component {
 				file_put_contents( $log_dir . 'index.php', '' );
 			}
 			if ( $is_apache ) {
-				$log_path = $log_dir . $log_name;
+				$log_path = $log_dir . $log_name . '.log';
 				if ( ! file_exists( $log_path ) ) {
 					$handle = fopen( $log_path, 'w' );
 				} else {
@@ -379,7 +379,7 @@ class WD_Component {
 				//case nginx, iis, log will be store in db
 				global $wpdb;
 				$log_name = 'wd_log_' . $log_name;
-				$indexs   = $this->get_log_index();
+				$indexs   = self::get_log_index();
 				if ( ! in_array( $log_name, $indexs ) ) {
 					//new key
 					update_site_option( $log_name, $log );
@@ -441,13 +441,15 @@ class WD_Component {
 	 * base on env, we will load the log index
 	 * @return array
 	 */
-	public function get_log_index() {
+	public static function get_log_index() {
 		global $is_apache;
 		$result = array();
 		if ( $is_apache ) {
 			$upload_dirs = wp_upload_dir();
 			$log_dir     = $upload_dirs['basedir'] . DIRECTORY_SEPARATOR . 'wp-defender/';
-			$result      = WD_Utils::get_dir_tree( $log_dir, true, false );
+			$result      = WD_Utils::get_dir_tree( $log_dir, true, false, array(), array(
+				'ext' => array( 'log' )
+			) );
 		} else {
 			global $wpdb;
 			$table  = is_multisite() ? $wpdb->sitemeta : $wpdb->options;

@@ -92,6 +92,30 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 		}
 	}
 
+	public function can_automate_resolve() {
+		if ( $this->detail['is_added'] == true ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @return bool|null|WP_Error
+	 */
+	public function automate_resolve() {
+		if ( $this->detail['is_added'] == true ) {
+			return null;
+		}
+
+		$original = $this->get_file_original_source();
+		if ( file_put_contents( $this->name, $original, LOCK_EX ) ) {
+			return true;
+		}
+
+		return new WP_Error( 'cant_write', sprintf( __( "It seems the %s file is currently using by another process or isn't writeable.", wp_defender()->domain ), $this->get_sub() ) );
+	}
+
 	/**
 	 * this will display the instruction
 	 */
@@ -131,36 +155,8 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 			}
 		}
 		if ( $this->detail['is_added'] == false ) {
-			global $wp_version;
-			if ( $this->get_sub() == '/wp-includes/version.php' ) {
-				global $wp_version;
-				$locale          = get_locale();
-				$locale          = explode( '-', $locale );
-				$source_file_url = "https://{$locale[0]}.wordpress.org/$wp_version-{$locale[0]}.zip";
-				$html            = '<div class="group">';
-				$html .= '<div class="col span_12_of_12">';
-				$html .= '<p><strong>' . __( "Here’s what you need to do to manually resolve this issue:", wp_defender()->domain ) . '</strong></p>';
-				$html .= '<ul>';
-				$html .= '<li>' . sprintf( __( "1. Download the source file: <a download target=\"_blank\" href=\"%s\">%s</a>", wp_defender()->domain ), $source_file_url, $source_file_url ) . '</li>';
-				$html .= '<li>' . __( "2. Extract the zip file", wp_defender()->domain ) . '</li>';
-				$html .= '<li>' . sprintf( __( "2. Find the file <strong>%s</strong>, copy it, and replace this file in your WordPress install: <strong>%s</strong>", wp_defender()->domain ), $this->get_sub(), $this->name ) . '</li>';
-				$html .= '</ul>';
-				$html .= '</div>';
-				$html .= '</div>';
-				$output = str_replace( '{{resolve_note}}', $html, $output );
-			} else {
-				$source_file_url = "http://core.svn.wordpress.org/tags/$wp_version/" . ltrim( $this->get_sub(), '/' );
-				$html            = '<div class="group">';
-				$html .= '<div class="col span_12_of_12">';
-				$html .= '<p><strong>' . __( "Here’s what you need to do to manually resolve this issue:", wp_defender()->domain ) . '</strong></p>';
-				$html .= '<ul>';
-				$html .= '<li>' . sprintf( __( "1. Download the source file: <a download target=\"_blank\" href=\"%s\">%s</a>", wp_defender()->domain ), $source_file_url, $source_file_url ) . '</li>';
-				$html .= '<li>' . sprintf( __( "2. Find the downloaded file, copy it, and replace this file in your WordPress install: <strong>%s</strong>", wp_defender()->domain ), $this->name ) . '</li>';
-				$html .= '</ul>';
-				$html .= '</div>';
-				$html .= '</div>';
-				$output = str_replace( '{{resolve_note}}', $html, $output );
-			}
+			$resolve_note = $this->_get_instruction();
+			$output       = str_replace( '{{resolve_note}}', $resolve_note, $output );
 		} elseif ( empty( $error_msg ) ) {
 			$output = str_replace( '{{resolve_note}}', '<p>' . __( "We found this file floating around in your WordPress file list but it's not required by your current WP Version. As far as we can tell it's harmless (probably from an older WP install) so you can either delete it or ignore it, up to you! (please be sure to make a backup before you do start deleting files).", wp_defender()->domain ) . '</p>', $output );
 		} else {
@@ -171,7 +167,96 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 		return $output;
 	}
 
+	private function _get_instruction() {
+		ob_start();
+		?>
+		<p><?php _e( "Don't you know Defender can automate resolving this for you, just in one click. Please note that this will
+			update your file content permanently.", wp_defender()->domain ) ?></p>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Retrive original content of a file
+	 *
+	 * @return mixed|string
+	 * @since 1.0.2
+	 */
+	public function get_file_original_source( $force = false ) {
+		if ( $this->detail['is_added'] == true ) {
+			return null;
+		}
+
+		global $wp_version, $wp_local_package;
+		if ( isset( $wp_local_package ) ) {
+			$locale = $wp_local_package;
+		} else {
+			$locale = null;
+		}
+		if ( $this->get_sub() == '/wp-includes/version.php' && ! empty( $locale ) ) {
+			$upload_dirs = wp_upload_dir();
+			$path        = $upload_dirs['basedir'] . '/wp-defender/';
+			if ( file_exists( $path . $wp_version . '.zip' ) ) {
+				//get last time
+
+			}
+			if ( ! file_exists( $path . $wp_version . '.zip' ) ) {
+				$source_file_url = "https://{$locale}.wordpress.org/wordpress-$wp_version-{$locale}.zip";
+				$tmp             = download_url( $source_file_url );
+				if ( is_wp_error( $tmp ) ) {
+					return $tmp;
+				}
+				//move into vault folder
+				$upload_dirs = wp_upload_dir();
+				$path        = $upload_dirs['basedir'] . '/wp-defender/';
+				if ( ! copy( $tmp, $path . $wp_version . '.zip' ) ) {
+					return new WP_Error( 'cant_copy', sprintf( __( "Please make sure the folder %s writeable", wp_defender()->domain ), $path ) );
+				}
+				@unlink( $tmp );
+			}
+
+			WP_Filesystem();
+			//unzip
+			if ( is_wp_error( ( $res = unzip_file( $path . $wp_version . '.zip', $path ) ) ) ) {
+				return $res;
+			}
+
+			//looking
+			$file_path = $path . 'wordpress/wp-includes/version.php';
+
+			if ( file_exists( $file_path ) ) {
+				$content = file_get_contents( $file_path );
+				global $wp_filesystem;
+				$wp_filesystem->rmdir( $path . 'wordpress', true );
+				return $content;
+			}
+
+			return new WP_Error( 'generic', __( "An unexpected error happened. Please try again", wp_defender()->domain ) );
+		} else {
+			//no global locale, means this is enUS
+			$source_file_url = "http://core.svn.wordpress.org/tags/$wp_version/" . ltrim( $this->get_sub(), ' / ' );
+			if ( ! function_exists( 'download_url' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+			$tmp = download_url( $source_file_url );
+			if ( is_wp_error( $tmp ) ) {
+				return $tmp;
+			}
+			$content = file_get_contents( $tmp );
+			@unlink( $tmp );
+
+			return $content;
+		}
+	}
+
 	public function check() {
+		$model = WD_Scan_Api::get_last_scan();
+		if ( ! file_exists( $this->name ) ) {
+			$model->delete_item_from_result( $this->id );
+
+			return true;
+		}
+
 		//we will need to lookpup the md5 each request to check this file content
 		$md5 = get_site_transient( 'wd_md5_checksum' );
 		if ( $md5 == false ) {
@@ -183,12 +268,10 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 			set_site_transient( 'wd_md5_checksum', $md5, 3600 );
 		}
 
-		if ( isset( $md5[ ltrim( $this->get_sub(), '/' ) ] ) ) {
-			$hash = $md5[ ltrim( $this->get_sub(), '/' ) ];
+		if ( isset( $md5[ ltrim( $this->get_sub(), ' / ' ) ] ) ) {
+			$hash = $md5[ ltrim( $this->get_sub(), ' / ' ) ];
 			if ( $hash == md5_file( $this->name ) ) {
-				$model = WD_Scan_Api::get_last_scan();
 				$model->delete_item_from_result( $this->id );
-				WD_Utils::flag_for_submitting();
 
 				return true;
 			}
@@ -198,6 +281,7 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 	}
 
 	private function _get_resolve_html_template() {
+		$id = $this->id;
 		ob_start();
 		?>
 		<div class="wp-defender">
@@ -230,12 +314,20 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 				<div>
 					{{resolve_note}}
 				</div>
-				<div class="wd-ignore-cancel">
+				<div class="wd-ignore-cancel wd-inline">
 					<form method="post" class="wd-resolve-frm">
 						<input type="hidden" name="action" value="wd_resolve_result">
 						<?php wp_nonce_field( 'wd_resolve', 'wd_resolve_nonce' ) ?>
 						<input type="hidden" value="<?php echo esc_attr( get_class( $this ) ) ?>" name="class">
-						<input type="hidden" name="id" value="<?php echo esc_attr( $this->id ) ?>"/>
+						<input type="hidden" name="id" value="<?php echo esc_attr( $id ) ?>"/>
+						<?php if ( $this->can_automate_resolve() ): ?>
+							<button data-type="resolve_ci" class="button wd-button button-small"
+							        type="submit"><?php _e( "Restore File", wp_defender()->domain ) ?></button>
+							<a href="<?php echo network_admin_url( 'admin.php?page=wdf-issue-detail&id=' . $id ) ?>"
+							   class="button wd-button button-secondary button-small">
+								<?php _e( "Review changes", wp_defender()->domain ) ?>
+							</a>
+						<?php endif; ?>
 						<?php if ( $this->can_ignore() ): ?>
 							<button type="submit" data-confirm="<?php echo 'ignore_confirm_msg' ?>"
 							        data-confirm-button="<?php echo 'ignore_confirm_btn' ?>" data-type="ignore"

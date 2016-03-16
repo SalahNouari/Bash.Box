@@ -1,7 +1,4 @@
 <?php
-/**
- * Class: WD_Error_Log_Scan
- */
 
 /**
  * @author: Hoang Ngo

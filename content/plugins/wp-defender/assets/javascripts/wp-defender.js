@@ -30,7 +30,7 @@ jQuery(function ($) {
                 hidden.val(0);
             }
         })
-    })
+    });
 })
 jQuery.fn.wd_according = function (options) {
     var $ = jQuery;
@@ -56,7 +56,7 @@ jQuery.fn.wd_according = function (options) {
                 open_according($(this), target);
             }
         })
-    })
+    });
 
     function determine_background_color(element) {
         if (element.hasClass('fixed')) {
@@ -301,6 +301,38 @@ WDefender.settings = function () {
 
 WDefender.resolve = function () {
     var jq = jQuery;
+    var prev_trigger = null;
+
+    function ajax_inline_update() {
+        jq('body').on('submit', '.wd-resolve-plugins-update', function () {
+            var that = jq(this);
+            var parent = jq(this).closest('.wd-scan-resolve-dialog');
+            jq.ajax({
+                type: 'POST',
+                url: ajaxurl,
+                data: that.serialize(),
+                beforeSend: function () {
+                    that.find('button').attr('disabled', 'disabled').html(that.find('button').text() + ' <i class="wdv-icon wdv-icon-fw wdv-icon-refresh spin"></i>')
+                    parent.find('.wd-error').html('').addClass('wd-hide');
+                },
+                success: function (data) {
+                    if (data.success == true) {
+                        WDP.closeOverlay();
+                        if (prev_trigger != null) {
+                            var tr = prev_trigger.closest('tr');
+                            tr.fadeOut(500, function () {
+                                tr.remove();
+                            })
+                        }
+                    } else {
+                        parent.find('.wd-error').html(data.data.error).removeClass('wd-hide');
+                        that.find('button').removeAttr('disabled').html(that.find('button').text().replace(' <i class="wdv-icon wdv-icon-fw wdv-icon-refresh spin"></i>'))
+                    }
+                }
+            })
+            return false;
+        })
+    }
 
     function resolve_action_submit() {
         jq('body').on('click', '.wd-resolve-frm button', function () {
@@ -308,7 +340,6 @@ WDefender.resolve = function () {
             jq(this).attr('clicked', true);
         });
 
-        var prev_trigger = null;
         var ignore_showed = 0;
         jq('body').on('submit', '.wd-resolve-frm', function () {
             var that = jq(this);
@@ -370,6 +401,12 @@ WDefender.resolve = function () {
                                     jq('#wd-resolve-dialog').html(data.result);
                                     jq('#wd-resolve-trigger').click();
                                     break;
+                                case 'resolve_ci':
+                                    if (is_modal) {
+                                        WDP.closeOverlay();
+                                    }
+                                    location.reload();
+                                    break;
                                 case 'ignore':
                                     if (is_modal) {
                                         WDP.closeOverlay();
@@ -430,6 +467,7 @@ WDefender.resolve = function () {
     }
 
     resolve_action_submit();
+    ajax_inline_update()
 }
 
 WDefender.scanning = function () {

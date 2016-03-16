@@ -37,7 +37,7 @@ if ( $res['count'] > 0 ) {
 			<td width="40%" class="tc wd-count">
 				<?php
 				if ( $res['vulndb'] > 0 ) {
-					printf( _n( "%s issue", "%s issues", $res['vulndb'], wp_defender()->domain ), number_format_i18n( $res['vulndb'] ), $suffix );
+					printf( _n( "%s issue", "%s issues", $res['vulndb'], wp_defender()->domain ), number_format_i18n( $res['vulndb'] ) );
 				}
 				?>
 			</td>
@@ -58,7 +58,7 @@ if ( $res['count'] > 0 ) {
 			<td width="40%" class="tc wd-count">
 				<?php
 				if ( $res['file_suspicious'] > 0 ) {
-					printf( _n( "%s issue", "%s issues", $res['file_suspicious'], wp_defender()->domain ), number_format_i18n( $res['file_suspicious'] ), $suffix );
+					printf( _n( "%s issue", "%s issues", $res['file_suspicious'], wp_defender()->domain ), number_format_i18n( $res['file_suspicious'] ) );
 				}
 				?>
 			</td>

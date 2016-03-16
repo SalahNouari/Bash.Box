@@ -137,19 +137,17 @@ class WD_Scan_Api extends WD_Component {
 	 */
 	public static function download_md5_files() {
 		set_time_limit( 0 );
-		global $wp_version;
-		$locale = get_locale();
-		$url    = "https://api.wordpress.org/core/checksums/1.0/?version={$wp_version}&locale={$locale}";
-		@self::log( $url, self::ERROR_LEVEL_DEBUG, 'md5_url' );
+		global $wp_version, $wp_local_package;
+		if ( isset( $wp_local_package ) ) {
+			$locale = $wp_local_package;
+		} else {
+			$locale = get_locale();
+		}
+		$url      = "https://api.wordpress.org/core/checksums/1.0/?version={$wp_version}&locale={$locale}";
 		$response = wp_remote_get( $url, apply_filters( 'wd_vulndb_api_request_arguments',
 			array(
 				'timeout' => 20
 			) ) );
-		if ( is_wp_error( $response ) ) {
-			self::log( var_export( $response, true ) );
-
-			return $response;
-		}
 
 		if (
 			'OK' !== wp_remote_retrieve_response_message( $response )
@@ -164,6 +162,34 @@ class WD_Scan_Api extends WD_Component {
 		$body = json_decode( $body, true );
 
 		return $body['checksums'];
+	}
+
+	/**
+	 * This will break all files need to scan into chunks, by disk size, not quantities
+	 *
+	 * @param $files
+	 *
+	 * @return array
+	 * @since 1.0.2
+	 */
+	public static function calculate_chunks( $files ) {
+		//load maximum 2MB
+		$chunk_size   = 2097152;
+		$current_size = 0;
+		$chunks       = array();
+		foreach ( $files as $file ) {
+			$filesize = @filesize( $file );
+			if ( $filesize ) {
+				$current_size += $filesize;
+			}
+			$chunks[] = $file;
+			if ( $current_size > $chunk_size ) {
+				return $chunks;
+			}
+		}
+
+		//if this were here, means all the files very light
+		return $chunks;
 	}
 
 	/**
@@ -359,7 +385,7 @@ class WD_Scan_Api extends WD_Component {
 	/**
 	 * Get last scan from DB
 	 *
-	 * @return mixed|null
+	 * @return WD_Scan_Result_Model|null
 	 * @access public
 	 * @since 1.0
 	 */
@@ -456,18 +482,22 @@ class WD_Scan_Api extends WD_Component {
 			foreach ( $sconcat_res as $code ) {
 				$score += 24;
 				$details[] = array(
-					'file' => $code['file'],
-					'line' => $code['line'],
-					'type' => $code['type']
+					'file'   => $code['file'],
+					'line'   => $code['line'],
+					'offset' => $code['offset'],
+					'type'   => $code['type'],
+					'code'   => $code['code']
 				);
 			}
 			//same as the variable concat, usually it will be array element concat like $a[dsad].$b[dasd]
 			foreach ( $vconcat_res as $code ) {
 				$score += 24;
 				$details[] = array(
-					'file' => $code['file'],
-					'line' => $code['line'],
-					'type' => $code['type']
+					'file'   => $code['file'],
+					'line'   => $code['line'],
+					'type'   => $code['type'],
+					'offset' => $code['offset'],
+					'code'   => $code['code']
 				);
 			}
 		}
@@ -476,9 +506,11 @@ class WD_Scan_Api extends WD_Component {
 			foreach ( $vfunction_res as $code ) {
 				$score += 15;
 				$details[] = array(
-					'file' => $code['file'],
-					'line' => $code['line'],
-					'type' => $code['type']
+					'file'   => $code['file'],
+					'line'   => $code['line'],
+					'type'   => $code['type'],
+					'offset' => $code['offset'],
+					'code'   => $code['code']
 				);
 			}
 		} else {
@@ -491,9 +523,11 @@ class WD_Scan_Api extends WD_Component {
 			foreach ( $b64_res as $code ) {
 				$score += 22;
 				$details[] = array(
-					'file' => $code['file'],
-					'line' => $code['line'],
-					'type' => $code['type']
+					'file'   => $code['file'],
+					'line'   => $code['line'],
+					'type'   => $code['type'],
+					'offset' => $code['offset'],
+					'code'   => $code['code']
 				);
 			}
 		}

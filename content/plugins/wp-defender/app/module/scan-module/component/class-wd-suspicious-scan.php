@@ -9,6 +9,8 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 	public $name = '';
 	public $chunk_size = 50;
 
+	protected $tokens;
+
 	public function __construct() {
 		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_SUSPICIOUS_FILE . '_scan', false ) != 1 ) {
 			$this->is_enabled = false;
@@ -115,9 +117,14 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			$files = array_slice( $files, $this->internal_index, count( $this->files_need_scan ) );
 		}
 		//because this can too much, so just break it into parts
-		$chunks = array_chunk( $files, apply_filters( 'wd_suspicious_chunk_size', $this->chunk_size, $this->files_need_scan ) );
-		$files  = array_shift( $chunks );
-		$files  = array_filter( $files );
+		if ( defined( 'WD_CHUNK_FILESIZE' ) && constant( 'WD_CHUNK_FILESIZE' ) == true ) {
+			$files = WD_Scan_Api::calculate_chunks( $files );
+			$this->log( count( $files ), self::ERROR_LEVEL_DEBUG, 'sus_size' );
+		} else {
+			$chunks = array_chunk( $files, apply_filters( 'wd_suspicious_chunk_size', $this->chunk_size, $this->files_need_scan ) );
+			$files  = array_shift( $chunks );
+		}
+		$files = array_filter( $files );
 		if ( ! is_array( $files ) ) {
 			return;
 		}
@@ -138,20 +145,17 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			if ( is_object( $last_scan ) && isset( $last_checksum[ $file ] ) ) {
 				if ( strcmp( $checksum, $last_checksum[ $file ] ) === 0 ) {
 					$is_ignored = $last_scan->is_file_ignored( $file, 'WD_Scan_Result_File_Item_Model' );
-					//this file doesnt get changed
-					$need_scan = false;
-					//if this an issue from last scan, it still be
-					$is_issue = $last_scan->find_result_item_by_file( $file, 'WD_Scan_Result_File_Item_Model' );
-					if ( is_object( $is_issue ) ) {
-						//move this file to new result array
-						$model->result[] = $is_issue;
+					$is_issue   = $last_scan->find_result_item_by_file( $file, 'WD_Scan_Result_File_Item_Model' );
+					if ( ! is_object( $is_issue ) ) {
+						//this file doesnt get changed
+						$need_scan = false;
+						if ( $is_ignored ) {
+							//this file got ignored, and currently still fine, so move it there
+							//in this case, the is issue must be have value
+							$model->ignore_files[] = $is_issue->id;
+						}
+						$this->log( 'hit', self::ERROR_LEVEL_DEBUG, 'hit' );
 					}
-					if ( $is_ignored ) {
-						//this file got ignored, and currently still fine, so move it there
-						//in this case, the is issue must be have value
-						$model->ignore_files[] = $is_issue->id;
-					}
-					$this->log( 'hit', self::ERROR_LEVEL_DEBUG, 'hit' );
 				}
 			}
 
@@ -196,15 +200,22 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		$this->flush_cache();
 	}
 
-	private function _scan_a_file( $file ) {
+	/**
+	 * @param $file
+	 *
+	 * @return bool|WD_Scan_Result_File_Item_Model
+	 */
+	public function _scan_a_file( $file ) {
 		$this->log( 'scanned file ' . $file, self::ERROR_LEVEL_INFO, 'scan' );
-		$content = $this->read_file_content( $file );
-		$item    = true;
+		$content      = $this->read_file_content( $file );
+		$item         = true;
+		$this->tokens = null;
 		if ( $content === false || strlen( $content ) == 0 ) {
 			//quickly skip this, but we still need to record the index & info
 		} else {
 			//break in new line for easier trace
 			$content = str_replace( ';', ';' . PHP_EOL, $content );
+			$content = preg_replace( "/\n+/", "\n", $content );
 			/**
 			 * need to gather information about
 			 * 1. base 64 encode
@@ -228,7 +239,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 				//unlock
 				$log = $e->getMessage() . PHP_EOL;
 				$log .= $e->getTraceAsString();
-				$this->log( $log, self::ERROR_LEVEL_ERROR, 'scan' );
+				$this->log( $log, self::ERROR_LEVEL_ERROR, 'error' );
 				delete_option( 'wd_scan_lock' );
 
 				return;
@@ -303,25 +314,30 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		$file = pathinfo( $file, PATHINFO_FILENAME );
 		$res  = array();
 		//$this->log( var_export( $content, true ), self::ERROR_LEVEL_DEBUG, $file );
-		$tokens = @token_get_all( $content );
 		if ( preg_match_all( $this->get_variable_function_pattern(), $content, $matches, PREG_OFFSET_CAPTURE ) ) {
+			if ( is_null( $this->tokens ) ) {
+				$tokens = @token_get_all( $content );
+			} else {
+				$tokens = $this->tokens;
+			}
 			foreach ( $matches[1] as $match ) {
 				$line = $this->find_line_number( $content, $match[1] );
 				foreach ( $tokens as $token ) {
 					if ( is_array( $token ) && $token[2] == $line && $token[1] == $match[0] ) {
 						//this mean this file having some variable functions
 						$res[] = array(
-							'line' => $line,
-							'code' => $match[0],
-							'file' => $file,
-							'type' => 'variable_function'
+							'line'   => $line,
+							'code'   => $match[0],
+							'offset' => array( $match[1], $match[1] + strlen( $match[0] ) ),
+							'file'   => $file,
+							'type'   => 'variable_function'
 						);
 					}
 				}
 			}
+			$tokens = null;
+			unset( $tokens );
 		}
-		$tokens = null;
-		unset( $tokens );
 
 		return $res;
 	}
@@ -356,10 +372,11 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 				$match = array_filter( $match );
 				if ( count( $match ) > 3 ) {
 					$res[] = array(
-						'line' => $this->find_line_number( $content, $found[1] ),
+						'line'   => $this->find_line_number( $content, $found[1] ),
 						'code' => $match,
-						'file' => $file,
-						'type' => 'variable_concat'
+						'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
+						'file'   => $file,
+						'type'   => 'variable_concat'
 					);
 				}
 			}
@@ -393,21 +410,23 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 					if ( $this->maybe_danger_decoded_code( $decoded ) ) {
 						//if gone here that must be something
 						$res[] = array(
-							'line'    => $this->find_line_number( $content, $found[1] ),
+							'line'   => $this->find_line_number( $content, $found[1] ),
+							'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
 							'code'    => $match,
-							'decoded' => $decoded,
-							'file'    => $file,
-							'type'    => 'string_concat'
+							//'decoded' => $decoded,
+							'file'   => $file,
+							'type'   => 'string_concat'
 						);
 					}
 				} else {
 					//can't decode, might be some deeper encrypt, and likely unfriendly
 					$res[] = array(
-						'line'    => $this->find_line_number( $content, $found[1] ),
+						'line'   => $this->find_line_number( $content, $found[1] ),
 						'code'    => $match,
-						'decoded' => false,
-						'file'    => $file,
-						'type'    => 'string_concat'
+						//'decoded' => false,
+						'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
+						'file'   => $file,
+						'type'   => 'string_concat'
 					);
 				}
 			}
@@ -435,21 +454,23 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 					if ( $this->maybe_danger_decoded_code( $decoded ) ) {
 						//if gone here that must be something
 						$res[] = array(
-							'line'    => $this->find_line_number( $content, $found[1] ),
+							'line'   => $this->find_line_number( $content, $found[1] ),
 							'code'    => $match,
-							'decoded' => $decoded,
-							'file'    => $file,
-							'type'    => 'base64'
+							//'decoded' => $decoded,
+							'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
+							'file'   => $file,
+							'type'   => 'base64'
 						);
 					}
 				} else {
 					//can't decode, might be some deeper encrypt, and likely unfriendly
 					$res[] = array(
-						'line'    => $this->find_line_number( $content, $found[1] ),
+						'line'   => $this->find_line_number( $content, $found[1] ),
 						'code'    => $match,
-						'decoded' => false,
-						'file'    => $file,
-						'type'    => 'base64'
+						//'decoded' => false,
+						'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
+						'file'   => $file,
+						'type'   => 'base64'
 					);
 				}
 			}
@@ -521,36 +542,42 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		$parts   = array_map( array( &$this, 'avoid_short_tag' ), $parts );
 		$content = implode( PHP_EOL, $parts );
 		//tokenize the code
-		$tokens = @token_get_all( $content );
-
-		foreach ( $tokens as $token ) {
-			if ( ! is_array( $token ) ) {
-				continue;
-			}
-			//only catch if function
-			//var_dump( $this->debug_token( $token ) );
-			if ( in_array( $token[0], array(
-				T_STRING,
-				T_EVAL,
-			) ) ) {
-				//put the preg match here to reduce the times it run in loop, also not pregmatch big data
-				if ( preg_match( $this->get_function_scan_pattern(), $token[1] ) ) {
-					$catches[] = array(
-						'function' => $token[1],
-						'line'     => $token[2],
-					);
-				}
-			}
-		}
-		unset( $tokens );
 		$analysis = array();
-		if ( ! empty( $catches ) ) {
-			foreach ( $catches as $catch ) {
-				if ( ! isset( $analysis[ $catch['line'] ] ) ) {
-					$analysis[ $catch['line'] ] = array();
-				}
+		if ( preg_match( $this->get_function_scan_pattern(), $content ) ) {
+			if ( is_null( $this->tokens ) ) {
+				$tokens = @token_get_all( $content );
+			} else {
+				$tokens = $this->tokens;
+			}
 
-				$analysis[ $catch['line'] ][] = $catch['function'];
+			foreach ( $tokens as $token ) {
+				if ( ! is_array( $token ) ) {
+					continue;
+				}
+				//only catch if function
+				//var_dump( $this->debug_token( $token ) );
+				if ( in_array( $token[0], array(
+					T_STRING,
+					T_EVAL,
+				) ) ) {
+					//put the preg match here to reduce the times it run in loop, also not pregmatch big data
+					if ( preg_match( $this->get_function_scan_pattern(), $token[1] ) ) {
+						$catches[] = array(
+							'function' => $token[1],
+							'line'     => $token[2],
+						);
+					}
+				}
+			}
+			unset( $tokens );
+			if ( ! empty( $catches ) ) {
+				foreach ( $catches as $catch ) {
+					if ( ! isset( $analysis[ $catch['line'] ] ) ) {
+						$analysis[ $catch['line'] ] = array();
+					}
+
+					$analysis[ $catch['line'] ][] = $catch['function'];
+				}
 			}
 		}
 

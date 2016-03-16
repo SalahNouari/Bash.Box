@@ -52,11 +52,17 @@ class WD_Notification_Controller extends WD_Controller {
 			//change nl to br
 			$email_content = wpautop( stripslashes( $email_content ) );
 			$email_content = apply_filters( 'wd_notification_email_content_after', $email_content, $model );
-			$headers       = array(
-				'From: WP Defender <' . get_option( 'admin_email' ) . '>',
+
+			$email_template = $this->render( 'email_template', array(
+				'subject' => $subject,
+				'message' => $email_content
+			) );
+			$no_reply_email = "noreply@" . parse_url( get_site_url(), PHP_URL_HOST );
+			$headers = array(
+				'From: WP Defender <' . $no_reply_email . '>',
 				'Content-Type: text/html; charset=UTF-8'
 			);
-			wp_mail( $email, $subject, $email_content, $headers );
+			wp_mail( $email, $subject, $email_template, $headers );
 		}
 	}
 

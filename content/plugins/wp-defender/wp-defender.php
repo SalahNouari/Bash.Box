@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Defender
  * Plugin URI: https://premium.wpmudev.org/project/wp-defender/
- * Version:     1.0.1
+ * Version:     1.0.2
  * Description: Get regular security scans, vulnerability reports, safety recommendations and customized hardening for your site in just a few clicks. Defender is the analyst and enforcer who never sleeps.
  * Author:      WPMU DEV
  * Author URI:  http://premium.wpmudev.org/
@@ -68,6 +68,11 @@ class WP_Defender {
 	/**
 	 * @var string
 	 */
+	public $db_version = '1.0.2';
+
+	/**
+	 * @var string
+	 */
 	public $slug = 'wp-defender/wp-defender.php';
 
 	/**
@@ -101,6 +106,8 @@ class WP_Defender {
 		add_action( 'init', array( &$this, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 		add_action( 'plugins_loaded', array( &$this, 'register_language_hook' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'add_settings_link' ) );
+		add_action( 'wp_loaded', array( &$this, 'maybe_upgrade' ), 9999 );
 	}
 
 	/**
@@ -118,6 +125,50 @@ class WP_Defender {
 		wp_register_script( 'wd-confirm', $this->plugin_url . 'assets/javascripts/wd-confirm.js', array( 'wp-defender' ), $this->version );
 		wp_register_script( 'wd-tag', $this->plugin_url . 'assets/jquery.textext/js/textext.core.js', array( 'wp-defender' ), $this->version );
 		wp_register_script( 'wd-tag-plugin', $this->plugin_url . 'assets/jquery.textext/js/textext.plugin.tags.js', array( 'wp-defender' ), $this->version );
+		wp_register_script( 'wd-highlight', $this->plugin_url . 'assets/javascripts/highlight.pack.js' );
+	}
+
+	public function maybe_upgrade() {
+		$db_version = get_site_option( 'wd_db_version' );
+		if ( $db_version == false || version_compare( $db_version, $this->db_version, '<' ) ) {
+			//from version 1.0.2, we clean up the htaccess
+			//need to check if has httacces in wp-include
+			$hardeners = WD_Hardener_Module::find_controller( 'hardener' );
+			$rules     = $hardeners->get_loaded_modules();
+			foreach ( $rules as $rule ) {
+				if ( $rule->id == 'protect_core_dir' ) {
+					$done_all = true;
+					$path     = ABSPATH . WPINC . '/.htaccess';
+					if ( file_exists( $path ) ) {
+						if ( $rule->revert( $path, true ) !== true ) {
+							$done_all = false;
+
+							return;
+						}
+					}
+					$path = WP_CONTENT_DIR . '/.htaccess';
+					if ( file_exists( $path ) ) {
+						if ( $rule->revert( $path, true ) !== true ) {
+							$done_all = false;
+
+							return;
+						}
+					}
+
+					if ( $done_all == true ) {
+						update_site_option( 'wd_db_version', $this->db_version );
+					}
+				}
+			}
+		}
+	}
+
+	public function add_settings_link( $links ) {
+		$mylinks = array(
+			'<a href="' . admin_url( 'admin.php?page=wdf-settings' ) . '">' . __( "Settings", wp_defender()->domain ) . '</a>',
+		);
+
+		return array_merge( $mylinks, $links );
 	}
 
 	public function register_language_hook() {
@@ -168,7 +219,7 @@ class WP_Defender {
 		 * includes necessary controllers
 		 */
 		$module_manager = new WD_Module_Manager();
-		$module_manager->attach( new WD_Hardener_Module() );
+		$module_manager->attach( WD_Hardener_Module::get_instance() );
 		$module_manager->attach( new WD_Scan_Module() );
 		//listen to membership status
 		$this->global['module_manager'] = $module_manager;

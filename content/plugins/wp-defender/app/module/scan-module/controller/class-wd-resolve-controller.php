@@ -7,6 +7,121 @@ class WD_Resolve_Controller extends WD_Controller {
 
 	public function __construct() {
 		$this->add_ajax_action( 'wd_resolve_result', 'resolve_result' );
+		$this->add_ajax_action( 'wd_resolve_update_theme', 'update_theme' );
+		if ( ! $this->is_ajax() ) {
+			$this->template = 'layouts/detail';
+			if ( is_multisite() ) {
+				$this->add_action( 'network_admin_menu', 'admin_menu', 13 );
+			} else {
+				$this->add_action( 'admin_menu', 'admin_menu', 13 );
+			}
+			$this->add_action( 'admin_enqueue_scripts', 'load_scripts' );
+			$this->add_action( 'wp_loaded', 'resolve_core_integrity' );
+		}
+	}
+
+	public function resolve_core_integrity() {
+		if ( ! WD_Utils::check_permission() ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( WD_Utils::http_post( 'wd_resolve_nonce' ), 'wd_resolve_core_integrity' ) ) {
+			return;
+		}
+
+		$model = WD_Scan_Api::get_last_scan();
+		$id    = WD_Utils::http_post( 'id' );
+		$item  = $model->find_result_item( $id );
+		if ( is_object( $item ) ) {
+			$ret = $item->automate_resolve();
+			if ( ! is_wp_error( $ret ) ) {
+				$this->flash( 'success', sprintf( __( "The file <strong>%s</strong> was reverted back to original state.", wp_defender()->domain ), $item->get_name() ) );
+				wp_redirect( network_admin_url( 'admin.php?page=wdf-scan' ) );
+				exit;
+			} else {
+				wp_defender()->global['error'] = $ret;
+			}
+		}
+	}
+
+	public function admin_menu() {
+		$cap = is_multisite() ? 'manage_network_options' : 'manage_options';
+		add_submenu_page( 'wp-defender', __( "Detail Information", wp_defender()->domain ), __( "Detail Information", wp_defender()->domain ), $cap, 'wdf-issue-detail', array(
+			$this,
+			'display_main'
+		) );
+	}
+
+	public function display_main() {
+		$id        = WD_Utils::http_get( 'id' );
+		$last_scan = WD_Scan_Api::get_last_scan();
+		$model     = $last_scan->find_result_item( $id );
+		if ( is_object( $model ) ) {
+			if ( $model instanceof WD_Scan_Result_Core_Item_Model ) {
+				$error = null;
+				if ( isset( wp_defender()->global['error'] ) ) {
+					$error = wp_defender()->global['error'];
+				}
+				$this->render( 'detail/core_integrity', array(
+					'model' => $model,
+					'error' => is_wp_error( $error ) ? $error->get_error_message() : null
+				), true );
+			} elseif ( $model instanceof WD_Scan_Result_File_Item_Model ) {
+				$this->render( 'detail/file_item', array(
+					'model' => $model
+				), true );
+			}
+		} else {
+			$this->render( 'detail/not_found', array(), true );
+		}
+	}
+
+	/**
+	 * check if this page is page of the plugin
+	 * @return bool
+	 */
+	private function is_in_page() {
+		$screen = get_current_screen();
+		if ( is_object( $screen ) && in_array( $screen->id, array(
+				'defender_page_wdf-issue-detail',
+				'defender_page_wdf-issue-detail-network'
+			) )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if in right page, then load assets
+	 */
+	public function load_scripts() {
+		if ( $this->is_in_page() ) {
+			WDEV_Plugin_Ui::load( wp_defender()->get_plugin_url() . 'shared-ui/', false );
+			wp_enqueue_style( 'wp-defender' );
+			wp_enqueue_script( 'wp-defender' );
+			wp_enqueue_script( 'wd-highlight' );
+			wp_enqueue_script( 'wd-confirm' );
+		}
+	}
+
+	public function update_theme() {
+		if ( ! WD_Utils::check_permission() ) {
+			return;
+		}
+		if ( ! wp_verify_nonce( WD_Utils::http_post( 'wd_resolve_nonce' ), 'wd_update_theme' ) ) {
+			return;
+		}
+
+		$theme = WD_Utils::http_post( 'theme' );
+
+		$ret = WD_Utils::update_theme( $theme );
+		if ( is_wp_error( $ret ) ) {
+			wp_send_json_error( array(
+				'error' => $ret->get_error_message()
+			) );
+		}
+		wp_send_json_success();
 	}
 
 	public function resolve_result() {
@@ -21,6 +136,7 @@ class WD_Resolve_Controller extends WD_Controller {
 		$model = WD_Scan_Api::get_last_scan();
 		$id    = WD_Utils::http_post( 'id' );
 		$item  = $model->find_result_item( $id );
+
 		if ( ! is_object( $item ) ) {
 			wp_send_json( array(
 				'status' => 0,
@@ -57,6 +173,19 @@ class WD_Resolve_Controller extends WD_Controller {
 				wp_send_json( array(
 					'status'  => 1,
 					'element' => $element
+				) );
+				break;
+			case 'resolve_ci':
+				$res = $item->automate_resolve();
+				if ( is_wp_error( $res ) ) {
+					wp_send_json( array(
+						'status' => 0,
+						'error'  => $res->get_error_message()
+					) );
+				}
+				$this->flash( 'success', sprintf( __( "The file <strong>%s</strong> was reverted back to original state.", wp_defender()->domain ), $item->get_name() ) );
+				wp_send_json( array(
+					'status' => 1
 				) );
 				break;
 			case 'undo':

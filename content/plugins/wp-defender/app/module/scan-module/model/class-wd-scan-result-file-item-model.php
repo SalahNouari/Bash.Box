@@ -24,6 +24,10 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 		}
 	}
 
+	public function can_automate_resolve() {
+		return false;
+	}
+
 	public function get_name() {
 		return pathinfo( $this->name, PATHINFO_BASENAME );
 	}
@@ -277,6 +281,13 @@ class WD_Scan_Result_File_Item_Model extends WD_Scan_Result_Item_Model {
 	}
 
 	public function check() {
+		$model = WD_Scan_Api::get_last_scan();
+		if ( ! file_exists( $this->name ) ) {
+			$model->delete_item_from_result( $this->id );
+
+			return true;
+		}
+
 		return false;
 	}
 

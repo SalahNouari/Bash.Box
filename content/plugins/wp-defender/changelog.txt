@@ -14,5 +14,14 @@ Change Log:
 - Improve condition checking for Prevent Information Disclosure module
 - Improve condition checking for Prevent PHP execution module
 
+1.0.2 - 2016-15-03
+----------------------------------------------------------------------
+- Applied ajax inline updates for plugins/themes
+- One click Prevent PHP execution
+- One click Prevent Information Disclosure
+- Add detail page for core integrity issue, and automate resolution
 
-133620-1457147030-au
+- Fix scan stability with limited memory
+
+
+133620-1458147060-au

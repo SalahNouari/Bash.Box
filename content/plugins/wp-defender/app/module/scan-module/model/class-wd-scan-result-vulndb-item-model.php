@@ -20,6 +20,10 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 		}
 	}
 
+	public function can_automate_resolve() {
+		return false;
+	}
+
 	public function get_name() {
 		switch ( $this->type ) {
 			case 'wordpress':
@@ -212,18 +216,21 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 
 			foreach ( $plugins->response as $key => $plugin ) {
 				if ( $plugin->plugin == $this->object['slug'] ) {
-					$plugin_update_form .= '<form class="wd-inline float-l" action="' . admin_url( 'update.php' ) . '" target="_blank" method="get">';
-					$plugin_update_form .= wp_nonce_field( 'upgrade-plugin_' . $key, '_wpnonce', true, false );
-					$plugin_update_form .= '<input type="hidden" name="action" value="upgrade-plugin">';
+					$plugin_update_form .= '<form class="wd-resolve-plugins-update">';
+					$plugin_update_form .= wp_nonce_field( 'updates', '_ajax_nonce', true, false );
+					$plugin_update_form .= '<input type="hidden" name="action" value="update-plugin">';
 					$plugin_update_form .= '<input type="hidden" name="plugin" value="' . $key . '">';
-					$plugin_update_form .= '<button type="submit" class="button button-small">' . __( "Update Now", wp_defender()->domain ) . '</button>';
-					$plugin_update_form .= '</form>';
+					$plugin_update_form .= '<input type="hidden" name="slug" value="' . $plugin->slug . '">';
+					$plugin_update_form .= '<button type="submit" class="button button-small wd-button">';
+					$plugin_update_form .= __( "Update", wp_defender()->domain );
+					$plugin_update_form .= '</button></form>';
 					break;
 				}
 			}
 
 			if ( empty( $plugin_update_form ) ) {
-				$plugin_update_form .= '<a target="_blank" href="' . $this->object['PluginURI'] . '" class="button button-small">' . __( "Update Now", wp_defender()->domain ) . '</a>';
+				$resolve_note .= '<p>' . __( "It seems your plugin is a premium plugin, please visit the plugin page for more information.", wp_defender()->domain ) . '</p>';
+				$plugin_update_form .= '<a target="_blank" href="' . $this->object['PluginURI'] . '" class="button wd-button button-small">' . __( "Visit plugin page", wp_defender()->domain ) . '</a>';
 			}
 			$output = str_replace( '{{delete_button_text}}', __( "Delete plugin", wp_defender()->domain ), $output );
 
@@ -235,12 +242,13 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 			$theme_update_form = '';
 			foreach ( $themes->response as $key => $theme ) {
 				if ( $theme['theme'] == $this->name ) {
-					$theme_update_form .= '<form class="wd-inline float-l" action="' . admin_url( 'update.php' ) . '" target="_blank" method="get">';
-					$theme_update_form .= wp_nonce_field( 'upgrade-theme_' . $key, '_wpnonce', true, false );
-					$theme_update_form .= '<input type="hidden" name="action" value="upgrade-theme">';
+					$theme_update_form .= '<form class="wd-resolve-plugins-update">';
+					$theme_update_form .= wp_nonce_field( 'wd_update_theme', 'wd_resolve_nonce', true, false );
+					$theme_update_form .= '<input type="hidden" name="action" value="wd_resolve_update_theme">';
 					$theme_update_form .= '<input type="hidden" name="theme" value="' . $key . '">';
-					$theme_update_form .= '<button type="submit" class="button button-small">' . __( "Update Now", wp_defender()->domain ) . '</button>';
-					$theme_update_form .= '</form>';
+					$theme_update_form .= '<button type="submit" class="button button-small wd-button">';
+					$theme_update_form .= __( "Update", wp_defender()->domain );
+					$theme_update_form .= '</button></form>';
 					break;
 				}
 			}
@@ -248,9 +256,10 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 			if ( empty( $theme_update_form ) ) {
 				//this mean premium
 				//todo check if this is wpmudev
+				$resolve_note .= '<p>' . __( "It seems your theme is a premium theme, please visit the theme page for more information.", wp_defender()->domain ) . '</p>';
 				$theme = wp_get_theme( $this->name );
 				$uri   = $theme->get( 'ThemeURI' );
-				$theme_update_form .= '<a target="_blank" href="' . $uri . '" class="button button-small">' . __( "Update Now", wp_defender()->domain ) . '</a>';
+				$theme_update_form .= '<a target="_blank" href="' . $uri . '" class="button wd-button button-small">' . __( "Visit theme page", wp_defender()->domain ) . '</a>';
 			}
 			$output = str_replace( '{{delete_button_text}}', __( "Delete theme", wp_defender()->domain ), $output );
 
@@ -300,6 +309,18 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 			return true;
 		}
 
+		/**
+		 * we got a case, when in repo, we got the latest, but vulndb said it old, this case we just need to remove
+		 *
+		 */
+		if ( $this->type == 'plugin' ) {
+			$plugin = WD_Utils::is_plugin_update_available( $this->object['slug'] );
+			if ( is_object( $plugin ) ) {
+				//no update available, which mean is latest, nothing to do here, so hide this error
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -311,6 +332,9 @@ class WD_Scan_Result_VulnDB_Item_Model extends WD_Scan_Result_Item_Model {
 		?>
 		<div class="wp-defender">
 			<div class="wd-scan-resolve-dialog">
+				<div class="wd-error wd-hide">
+
+				</div>
 				<?php if ( $this->type != 'wordpress' ): ?>
 					<div class="group">
 						<div class="col span_3_of_12">

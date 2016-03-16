@@ -16,8 +16,8 @@
 					<section class="wd-hardener-rules wd-hardener-error">
 						<?php
 						foreach ( array_slice( $modules, 0, 3 ) as $module ) {
-							$class = new $module;;
-							echo $class->display_link_only();
+							//$class = new $module;;
+							echo $module->display_link_only();
 						} ?>
 					</section>
 				</div>

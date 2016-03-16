@@ -131,6 +131,7 @@ class WD_Disable_Error_Display extends WD_Hardener_Abstract {
 									var div = parent.detach();
 									div.prependTo($('.wd-hardener-success'));
 									div.find('.rule-title').removeClass('issue').addClass('fixed').find('button').hide();
+									div.find('i.dashicons-flag').replaceWith($('<i class="wdv-icon wdv-icon-fw wdv-icon-ok"/>'));
 									div.show(500);
 								})
 							}
