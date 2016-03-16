@@ -65,6 +65,7 @@ class WP_Migrate_DB_Pro_Tweaks {
 		'as3cf_assets_files';
 		'as3cf_assets_enqueued_scripts';
 		'as3cf_assets';
+		'tantan_wordpress_s3';
 		return $options;
 	}
 
