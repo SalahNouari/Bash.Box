@@ -28,3 +28,10 @@ BingSiteAuth.xml
 pinterest-d636b.html
 stats/
 .bash_profile
+
+content/cache
+content/w3tc-config
+content/plugins/w3tc-wp-loader.php
+content/object-cache.php
+content/db.php
+content/advanced-cache.php
