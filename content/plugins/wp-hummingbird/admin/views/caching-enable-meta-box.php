@@ -14,11 +14,15 @@
 
 			<p><?php esc_html_e( 'For Apache servers:', 'wphb'); ?></p>
 
+			<p><?php _e( 'Copy the generated code into your <strong>.htaccess</strong> file', 'wphb'); ?></p>
+
+			<p><?php _e( 'If .htaccess does not work, and you have access to <strong>vhosts.conf</strong> or <strong>httpd.conf</strong> try this:', 'wphb' ); ?></p>
 			<ol class="wphb-listing wphb-listing-ordered">
-				<li><?php _e( 'Copy the generated code into your <strong>vhosts.conf</strong> or <strong>httpd.conf</strong> file.', 'wphb' ); ?></li>
 				<li><?php esc_html_e( 'Look for your site in the file and find the line that starts with <Directory> - add the code above into that section and save the file.', 'wphb' ); ?></li>
 				<li><?php _e( 'Reload Apache.', 'wphb' ); ?></li>
 			</ol>
+
+			<p><?php _e( 'If you don\'t know where those files are, or you aren\'t able to reload Apache, you would need to <strong>consult with your hosting provider or a system administrator who has access</strong> to change the configuration of your server', 'wphb' ); ?></p>
 
 			<p><?php _e( 'Still having trouble? ', 'wphb' ); ?><a target="_blank" href="<?php echo wphb_support_link(); ?>"><?php _e( 'Open a support ticket.', 'wphb' ); ?></a></p>
 

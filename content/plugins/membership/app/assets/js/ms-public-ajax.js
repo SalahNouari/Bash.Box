@@ -1,4 +1,4 @@
-/*! Membership 2 Pro - v1.0.27
+/*! Membership 2 Pro - v1.0.29
  * https://premium.wpmudev.org/project/membership/
  * Copyright (c) 2016; * Licensed GPLv2+ */
 /*global window:false */
@@ -92,7 +92,7 @@ jQuery( function() {
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
-			url: ms_ajax.ajaxurl,
+			url: ms_ajax.ajaxurl + '?ms_ajax=1',
 			data: data,
 			success: function( data ) {
 				enable_form( frm_current );

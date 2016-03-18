@@ -1,8 +1,26 @@
-Plugin Name: WP Smush Pro
+Plugin Name: WP Hummingbird
 Author: Ignacio Cruz, Ricardo Freitas
-Tested up to: 4.2.2
+Tested up to: 4.4.2
 
 Change Log:
+
+1.1.1 - 2016-03-17
+----------------------------------------------------------------------
+- Fixed: Uptime not displaying chart
+- Fixed: Warning in Uptime page
+
+1.1 - 2016-03-16
+----------------------------------------------------------------------
+- New: New filetype in Caching results
+- New: wphb_add_meta_box filter
+- New: wphb_code_snippet filter
+- Enhance: Get Uptime results when the plugin is activated
+- Enhance: Start a performance test when the plugin is activated
+- Enhance: Better errors handling in Plugin API Classes
+- Enhance: Better cache clean on deactivation
+- Fixed: Minification cached resources not being loaded via https
+- Fixed: Permissions errors in multisites
+- UX Improvements
 
 1.0.1 - 2016-03-03
 ----------------------------------------------------------------------
@@ -19,4 +37,4 @@ Change Log:
 - First release
 
 
-133620-1457029059-au
+133620-1458267397-au

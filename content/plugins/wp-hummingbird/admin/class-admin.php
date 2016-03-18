@@ -87,6 +87,13 @@ class WP_Hummingbird_Admin {
 			) {
 				$this->pages['wphb-minification'] = new WP_Hummingbird_Minification_Page( 'wphb-minification', __( 'Minification', 'wphb' ), __( 'Hummingbird', 'wphb' ), false );
 			}
+			elseif ( isset( $_GET['page'] ) && 'wphb-minification' === $_GET['page'] ) {
+				// Minification is off, and is a network, let's redirect to network admin
+				$url = network_admin_url( 'admin.php?page=wphb#wphb-box-dashboard-minification-network-module' );
+				$url = add_query_arg( 'minify-instructions', 'true', $url );
+				wp_redirect( $url );
+				exit;
+			}
 
 		}
 

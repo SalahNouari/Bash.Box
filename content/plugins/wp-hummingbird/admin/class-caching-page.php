@@ -102,6 +102,7 @@ class WP_Hummingbird_Caching_Page extends WP_Hummingbird_Admin_Page {
 		//$this->add_meta_box( 'caching-status', __( 'Caching status', 'wphb' ), array( $this, 'caching_status_metabox' ), null, null, 'box-caching-left' );
 		//$this->add_meta_box( 'caching-how-to', __( 'How to enable', 'wphb' ), array( $this, 'caching_how_to_metabox' ), null, null, 'box-caching-left' );
 		//$this->add_meta_box( 'caching-code-snippet', __( 'Code snippet', 'wphb' ), array( $this, 'caching_code_snippet_metabox' ), array( $this, 'caching_code_snippet_metabox_header'), null, 'box-caching-right' );
+
 		$this->add_meta_box( 'caching-summary', __( 'Summary', 'wphb' ), array( $this, 'caching_summary_metabox' ), array( $this, 'caching_summary_metabox_header' ), null, 'box-caching-left', array( 'box_content_class' => 'box-content no-side-padding' ) );
 		$this->add_meta_box( 'caching-enable', __( 'Enable Caching', 'wphb' ), array( $this, 'caching_enable_metabox' ), array( $this, 'caching_enable_metabox_header'), array( $this, 'caching_enable_metabox_footer'), 'box-caching-right', array( 'box_footer_class' => 'box-footer buttons buttons-on-left') );
 	}
@@ -113,10 +114,12 @@ class WP_Hummingbird_Caching_Page extends WP_Hummingbird_Admin_Page {
 		$this->view( $this->slug . '-page', array( 'server_type' => $server_type, 'server_name' => $server_name ) );
 	}
 
+
 	public function caching_summary_metabox() {
 		$options = wphb_get_settings();
 		$expires = array(
-			'css/javascript' => $options['caching_expiry_css/javascript'],
+			'css' => $options['caching_expiry_css'],
+			'javascript' => $options['caching_expiry_javascript'],
 			'media' => $options['caching_expiry_media'],
 			'images' => $options['caching_expiry_images'],
 		);

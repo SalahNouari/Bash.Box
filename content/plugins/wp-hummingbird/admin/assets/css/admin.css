@@ -1624,6 +1624,11 @@
 	text-transform: uppercase;
 }
 
+.wrap-wphb-performance #dash-performance-resume-view-test,
+.wrap-wphb-performance #dash-performance-resume-run-new-test {
+	display:none;
+}
+
 /* ****************************************************************************
  * 6. MINIFICATION
  */
@@ -2131,4 +2136,4 @@
 }
 
 
-/* 133620-1457029059-au */
+/* 133620-1458267397-au */

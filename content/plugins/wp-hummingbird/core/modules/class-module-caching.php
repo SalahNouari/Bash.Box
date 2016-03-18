@@ -7,7 +7,8 @@ class WP_Hummingbird_Module_Caching extends WP_Hummingbird_Module_Server {
 	public function analize_data() {
 
 		$files = array(
-			'css/javascript' => wphb_plugin_url() . 'core/modules/dummy/dummy-js.js',
+			'javascript' => wphb_plugin_url() . 'core/modules/dummy/dummy-js.js',
+			'css' => wphb_plugin_url() . 'core/modules/dummy/dummy-style.css',
 			'media' => wphb_plugin_url() . 'core/modules/dummy/dummy-media.mp3',
 			'images' => wphb_plugin_url() . 'core/modules/dummy/dummy-image.png',
 		);
@@ -16,10 +17,11 @@ class WP_Hummingbird_Module_Caching extends WP_Hummingbird_Module_Server {
 		foreach ( $files as $type  => $file ) {
 
 			$result = wp_remote_head( $file );
-			if ( is_wp_error( $result ) )
+			if ( is_wp_error( $result ) ) {
 				$headers = array();
-			else
+			} else {
 				$headers = $result['headers'];
+			}
 
 			$results[ $type ] = false;
 			if ( isset( $headers['cache-control'] )
@@ -53,15 +55,21 @@ class WP_Hummingbird_Module_Caching extends WP_Hummingbird_Module_Server {
 	public function get_nginx_code() {
 		$options = wphb_get_settings();
 
-		$assets_expiration = explode( '/', $options['caching_expiry_css/javascript'] );
+		$assets_expiration = explode( '/', $options['caching_expiry_javascript'] );
 		$assets_expiration = $assets_expiration[0];
+		$css_expiration = explode( '/', $options['caching_expiry_css'] );
+		$css_expiration = $css_expiration[0];
 		$media_expiration = explode( '/', $options['caching_expiry_media'] );
 		$media_expiration  = $media_expiration [0];
 		$images_expiration = explode( '/', $options['caching_expiry_images'] );
 		$images_expiration = $images_expiration[0];
 
 		$code = '
-location ~* \.(txt|xml|js|css)$ {
+location ~* \.(txt|xml|js)$ {
+    expires %%ASSETS%%;
+}
+
+location ~* \.(css)$ {
     expires %%ASSETS%%;
 }
 
@@ -76,6 +84,7 @@ location ~* \.(jpg|jpeg|png|gif|swf|webp)$ {
 		$code = str_replace( '%%MEDIA%%', $media_expiration, $code );
 		$code = str_replace( '%%IMAGES%%', $images_expiration, $code );
 		$code = str_replace( '%%ASSETS%%', $assets_expiration, $code );
+		$code = str_replace( '%%CSS%%', $css_expiration, $code );
 
 		return $code;
 	}
@@ -84,8 +93,10 @@ location ~* \.(jpg|jpeg|png|gif|swf|webp)$ {
 
 		$options = wphb_get_settings();
 
-		$assets_expiration = explode( '/', $options['caching_expiry_css/javascript'] );
+		$assets_expiration = explode( '/', $options['caching_expiry_javascript'] );
 		$assets_expiration = $assets_expiration[1];
+		$css_expiration = explode( '/', $options['caching_expiry_css'] );
+		$css_expiration = $css_expiration[1];
 		$media_expiration = explode( '/', $options['caching_expiry_media'] );
 		$media_expiration  = $media_expiration [1];
 		$images_expiration = explode( '/', $options['caching_expiry_images'] );
@@ -96,8 +107,12 @@ location ~* \.(jpg|jpeg|png|gif|swf|webp)$ {
 ExpiresActive On
 ExpiresDefault A0
 
-<FilesMatch "\.(txt|xml|js|css)$">
+<FilesMatch "\.(txt|xml|js)$">
 ExpiresDefault %%ASSETS%%
+</FilesMatch>
+
+<FilesMatch "\.(css)$">
+ExpiresDefault %%CSS%%
 </FilesMatch>
 
 <FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|mp4|m4v|ogg|webm|aac)$">
@@ -112,8 +127,12 @@ ExpiresDefault %%IMAGES%%
 <IfModule !mod_expires.c>
  <IfModule mod_headers.c>
 
-  <FilesMatch "\.(txt|xml|js|css)$">
+  <FilesMatch "\.(txt|xml|js)$">
    Header set Cache-Control "max-age=%%ASSETS_HEAD%%"
+  </FilesMatch>
+
+  <FilesMatch "\.(css)$">
+   Header set Cache-Control "max-age=%%CSS_HEAD%%"
   </FilesMatch>
 
   <FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|mp4|m4v|ogg|webm|aac)$">
@@ -129,10 +148,12 @@ ExpiresDefault %%IMAGES%%
 		$code = str_replace( '%%MEDIA%%', $media_expiration, $code );
 		$code = str_replace( '%%IMAGES%%', $images_expiration, $code );
 		$code = str_replace( '%%ASSETS%%', $assets_expiration, $code );
+		$code = str_replace( '%%CSS%%', $css_expiration, $code );
 
 		$code = str_replace( '%%MEDIA_HEAD%%', ltrim( $media_expiration, 'A' ), $code );
 		$code = str_replace( '%%IMAGES_HEAD%%', ltrim( $images_expiration, 'A' ), $code );
 		$code = str_replace( '%%ASSETS_HEAD%%', ltrim( $assets_expiration, 'A' ), $code );
+		$code = str_replace( '%%CSS_HEAD%%', ltrim( $css_expiration, 'A' ), $code );
 
 		return $code;
 	}

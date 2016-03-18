@@ -138,7 +138,7 @@ function wphb_uptime_enable() {
  * @return array|mixed|object|WP_Error
  */
 function wphb_uptime_disable() {
-	return WP_Hummingbird_Module_Uptime::disable();
+	WP_Hummingbird_Module_Uptime::disable();
 }
 
 /**

@@ -54,6 +54,17 @@ $form->open(array("attributes" => array("class" => "form-horizontal"))); ?>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">
+            <?php _e( "Hide expired jobs from archive?", je()->domain ); ?>
+        </label>
+
+        <div class="col-md-9">
+            <?php $form->hidden('hide_expired_from_archive', array('value' => 0)) ?>
+            <?php $form->checkBox( 'hide_expired_from_archive', array( 'attributes' => array( 'value' => 1 ) ) ) ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">
             <?php printf(esc_html__('Newly Created %s Status Options', je()->domain), $job_labels->singular_name); ?>
         </label>
 
@@ -115,7 +126,7 @@ $form->open(array("attributes" => array("class" => "form-horizontal"))); ?>
         <div class="col-md-9">
             <label class="text-muted" style="font-weight: normal">
                 <?php $form->hidden('job_contact_form', array('value' => 0)) ?>
-                <?php $form->hidden('job_contact_form', array('attributes' => array('value' => 1))) ?>
+                <?php $form->checkbox('job_contact_form', array('attributes' => array('value' => 1))) ?>
                 <?php _e('disable contact form', je()->domain); ?>
             </label>
         </div>

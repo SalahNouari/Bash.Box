@@ -57,8 +57,12 @@ class WP_Hummingbird_Performance_Report_Page extends WP_Hummingbird_Admin_Page {
 
 		if ( ( !$is_member) || ( !$last_test && $is_member ) ) {
 			$this->add_meta_box( 'performance-summary', __( 'Summary', 'wphb' ), array( $this, 'performance_summary_metabox' ), array( $this, 'performance_summary_metabox_header' ), null, 'main', array( 'box_class' => 'dev-box content-box-one-col-center' ) );
-		} else {
-			//$this->add_meta_box( 'dashboard-performance-module-resume', __( 'Performance Report', 'wphb' ), array( $this, 'performance_module_resume_metabox' ), array( $this, 'performance_module_resume_metabox_header' ), null, 'main', array( 'box_content_class' => 'box-content no-vertical-padding' ) );
+		}
+		elseif ( is_wp_error( $last_test ) ) {
+			$this->add_meta_box( 'performance-summary', __( 'Summary', 'wphb' ), array( $this, 'performance_summary_metabox' ), array( $this, 'performance_summary_metabox_header' ), null, 'main', array( 'box_class' => 'dev-box content-box-one-col-center', 'box_content_class' => 'box-content no-side-padding' ) );
+		}
+		else {
+			$this->add_meta_box( 'dashboard-performance-module-resume', __( 'Performance Report', 'wphb' ), array( $this, 'performance_module_resume_metabox' ), array( $this, 'dashboard_performance_module_resume_metabox_header' ), null, 'main', array( 'box_content_class' => 'box-content no-vertical-padding' ) );
 			$this->add_meta_box( 'performance-summary', __( 'Summary', 'wphb' ), array( $this, 'performance_summary_metabox' ), array( $this, 'performance_summary_metabox_header' ), null, 'main', array( 'box_class' => 'dev-box content-box-one-col-center', 'box_content_class' => 'box-content no-side-padding' ) );
 		}
 
@@ -72,7 +76,6 @@ class WP_Hummingbird_Performance_Report_Page extends WP_Hummingbird_Admin_Page {
 		$doing_report = wphb_performance_is_doing_report();
 
 		$is_member = wphb_is_member();
-
 
 		if ( ! $is_member ) {
 			$this->view( 'performance-summary-membership-meta-box' );

@@ -11,6 +11,12 @@
 				<p><?php _e( 'Minification settings updated', 'wphb' ); ?></p>
 			</div>
 
+			<?php if ( isset( $_GET['minify-instructions'] ) ): ?>
+				<div class="wphb-notice wphb-notice-warning">
+					<p><?php _e( 'Please, activate minification first. A new menu will appear in every site on your Network.', 'wphb' ); ?></p>
+				</div>
+			<?php endif; ?>
+
 			<label for="wphb-activate-minification"></label>
 			<select name="wphb-activate-minification" id="wphb-activate-minification">
 				<option value="false" <?php selected( wphb_get_setting( 'minify' ), false ); ?>><?php _e( 'Deactivate completely', 'wphb' ); ?></option>

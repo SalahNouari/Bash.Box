@@ -17,7 +17,7 @@ class WP_Hummingbird_Module_Performance extends WP_Hummingbird_Module {
 		// Start the test
 		self::set_doing_report( true );
 		$api = wphb_get_api();
-		$api->performance_check();
+		$api->performance->ping();
 	}
 
 	/**
@@ -94,9 +94,9 @@ class WP_Hummingbird_Module_Performance extends WP_Hummingbird_Module {
 	public static function refresh_report() {
 		self::set_doing_report( false );
 		$api = wphb_get_api();
-		$results = $api->performance_results();
+		$results = $api->performance->results();
 
-		if ( null === $results->data->response_code ) {
+		if ( is_wp_error( $results ) ) {
 			// It's an error
 			$results = new WP_Error( 'performance-error', __( "The performance scan didn't return any results. This probably means you're on a local website (which we can't scan) or something went wrong trying to access WPMU DEV. Try again and if this error continues to appear please open a ticket with our support heroes", 'wphb' ) );
 		}
@@ -114,11 +114,11 @@ class WP_Hummingbird_Module_Performance extends WP_Hummingbird_Module {
 		$current_gmt_time = current_time( 'timestamp', true );
 		if ( $last_report && ! is_wp_error( $last_report ) ) {
 			$data_time = $last_report->data->time;
-			if ( ( $data_time + 300 ) < $current_gmt_time ) {
+			if ( ( $data_time + 1800 ) < $current_gmt_time ) {
 				return true;
 			}
 			else {
-				$remaining = ceil( ( ( $data_time + 300 ) - $current_gmt_time ) / 60 );
+				$remaining = ceil( ( ( $data_time + 1800 ) - $current_gmt_time ) / 60 );
 				return absint( $remaining );
 			}
 		}

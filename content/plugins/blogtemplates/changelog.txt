@@ -1,11 +1,15 @@
 Plugin Name: New Blog Templates
 Author: WPMU DEV
 Requires at least: 3.8
-Tested up to: 4.3
+Tested up to: 4.4.2
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.8.1 - 2016-03-17
+----------------------------------------------------------------------
+- Updated Gravity Forms and User registration integration for latest versions
 
 2.8 - 2015-10-23
 ----------------------------------------------------------------------
@@ -376,4 +380,4 @@ templates in Blogs Directory list
 - Bug fix: blog template admin email exported to new blogs
 
 
-133620-1445780674-au
+133620-1458267396-au

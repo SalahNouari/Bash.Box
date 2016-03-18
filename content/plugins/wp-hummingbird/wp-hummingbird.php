@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: WP Hummingbird
- * Version: 1.0.1
- * Plugin URI:  https://premium.wpmudev.org/project/1081721/
- * Description: Hummingbird zips through your site finding new ways to make it load faster, from file compression and minification to browser caching – because when it comes to pagespeed, every millisecond counts.
- * Author: WPMU DEV
- * Author URI: http://premium.wpmudev.org
- * Network: true
- * Text Domain: wphb
- * Domain Path: /languages/
- * WDP ID: 1081721
- */
+Plugin Name: WP Hummingbird
+Version: 1.1.1
+Plugin URI:  https://premium.wpmudev.org/project/1081721/
+Description: Hummingbird zips through your site finding new ways to make it load faster, from file compression and minification to browser caching – because when it comes to pagespeed, every millisecond counts.
+Author: WPMU DEV
+Author URI: http://premium.wpmudev.org
+Network: true
+Text Domain: wphb
+Domain Path: /languages/
+WDP ID: 1081721
+*/
 
 /*
 Copyright 2007-2016 Incsub (http://incsub.com)
@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 
-define( 'WPHB_VERSION', '1.0.1' );
+define( 'WPHB_VERSION', '1.1.1' );
 /**
  * Class WP_Hummingbird
  *
@@ -168,6 +168,10 @@ class WP_Hummingbird {
 			return;
 		}
 
+		if ( defined( 'WPHB_UPGRADING' ) && WPHB_UPGRADING ) {
+			return;
+		}
+
 		$version = get_site_option( 'wphb_version' );
 
 		if ( false === $version ) {
@@ -186,8 +190,29 @@ class WP_Hummingbird {
 
 		if ( $version != WPHB_VERSION ) {
 
+			define( 'WPHB_UPGRADING', true );
+
 			if ( version_compare( $version, '1.0-RC-7', '<' ) ) {
 				delete_site_option( 'wphb-server-type' );
+			}
+
+			if ( version_compare( $version, '1.1', '<' ) ) {
+				$options = wphb_get_settings();
+				$defaults = wphb_get_default_settings();
+
+				if ( isset ( $options['caching_expiry_css/javascript'] ) ) {
+					$options['caching_expiry_css'] = $options['caching_expiry_css/javascript'];
+					$options['caching_expiry_javascript'] = $options['caching_expiry_css/javascript'];
+					unset( $options['caching_expiry_css/javascript'] );
+				}
+				else {
+					$options['caching_expiry_css'] = $defaults['caching_expiry_css'];
+					$options['caching_expiry_javascript'] = $defaults['caching_expiry_javascript'];
+				}
+
+				wphb_update_settings( $options );
+				$module = new WP_Hummingbird_Module_Caching( 'caching', 'caching' );
+				$module->get_analysis_data( true );
 			}
 
 			update_site_option( 'wphb_version', WPHB_VERSION );
@@ -292,6 +317,12 @@ function wphb_activate( $redirect = true ) {
 		WP_Hummingbird_Module_Uptime::disable_locally();
 	}
 
+	if ( wphb_is_member() ) {
+		// Try to get a performance report
+		wphb_performance_init_scan();
+		wphb_performance_set_doing_report( true );
+	}
+
 	update_site_option( 'wphb_version', WPHB_VERSION );
 
 }
@@ -332,7 +363,9 @@ function wphb_deactivate() {
 	delete_site_option( 'wphb_version' );
 	delete_option( 'wphb_cache_folder_error' );
 	delete_option( 'wphb-minification-check-files' );
+	delete_site_option( 'wphb-last-report' );
 	delete_site_option( 'wphb-last-report-score' );
 	delete_site_option( 'wphb-server-type' );
+	delete_site_transient( 'wphb-uptime-last-report' );
 }
 register_deactivation_hook( __FILE__, 'wphb_deactivate' );

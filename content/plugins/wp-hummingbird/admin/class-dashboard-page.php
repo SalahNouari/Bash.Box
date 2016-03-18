@@ -10,11 +10,9 @@ class WP_Hummingbird_Dashboard_Page extends WP_Hummingbird_Admin_Page {
 	}
 
 	public function on_load() {
-
 		if ( is_multisite() && ! is_network_admin() ) {
 			wphb_minification_maybe_stop_checking_files();
 		}
-
 	}
 
 	public function render_header() {
@@ -56,17 +54,15 @@ class WP_Hummingbird_Dashboard_Page extends WP_Hummingbird_Admin_Page {
 			wp_redirect( remove_query_arg( array( 'run', '_wpnonce' ) ) );
 			exit;
 		}
-	}
 
-	public function get_current_uptime_report() {
-		if ( ! is_null( self::$current_uptime_report ) ) {
-			return self::$current_uptime_report;
+		if ( 'uptime' === $type ) {
+			// Minification scan
+			wphb_uptime_get_last_report( 'week', true );
+			wp_redirect( remove_query_arg( array( 'run', '_wpnonce' ) ) );
+			exit;
 		}
-
-		self::$current_uptime_report = wphb_uptime_get_last_report( 'week' );
-
-		return self::$current_uptime_report;
 	}
+
 
 	public function register_meta_boxes() {
 
@@ -143,14 +139,20 @@ class WP_Hummingbird_Dashboard_Page extends WP_Hummingbird_Admin_Page {
 
 		/* Uptime */
 		$uptime_module = wphb_get_module( 'uptime' );
-		$report = $this->get_current_uptime_report();
+		$is_active = $uptime_module->is_active();
+		$report = wphb_uptime_get_last_report( 'week' );
+
 		if ( ! wphb_is_member() ) {
 			$this->add_meta_box( 'dashboard-uptime-no-membership', __( 'Uptime Monitoring', 'wphb' ), array( $this, 'dashboard_uptime_no_membership_metabox' ), null, null, 'box-dashboard-left', array( 'box_class' => 'dev-box content-box content-box-one-col-center') );
-		} elseif ( ! $uptime_module->is_active() || is_wp_error( $report ) || ! $report ) {
-			$this->add_meta_box( 'dashboard-uptime-disabled', __( 'Uptime Monitoring', 'wphb' ), array( $this, 'dashboard_uptime_disabled_metabox' ), null, null, 'box-dashboard-left', array( 'box_class' => 'dev-box content-box content-box-one-col-center') );
+		}
+		elseif ( is_wp_error( $report ) && $is_active ) {
+			$this->add_meta_box( 'uptime-error', __( 'Uptime', 'wphb' ), array( $this, 'dashboard_uptime_error_metabox' ), null, null, 'box-dashboard-left', null );
+		}
+		elseif ( ! $is_active ) {
+			$this->add_meta_box( 'uptime-disabled', __( 'Uptime', 'wphb' ), array( $this, 'dashboard_uptime_disabled_metabox' ), null, null, 'box-dashboard-left', array( 'box_class' => 'dev-box content-box content-box-one-col-center') );
 		}
 		else {
-			$this->add_meta_box( 'dashboard-uptime-module', __( 'Uptime Monitoring', 'wphb' ), array( $this, 'dashboard_uptime_module_metabox' ), array( $this, 'dashboard_uptime_module_metabox_header' ), array( $this, 'dashboard_uptime_module_metabox_footer' ), 'box-dashboard-left' );
+			$this->add_meta_box( 'uptime', __( 'Uptime', 'wphb' ), array( $this, 'dashboard_uptime_metabox' ), array( $this, 'uptime_metabox_header' ), null, 'box-dashboard-left', null );
 		}
 
 		/* Smush */
@@ -198,8 +200,8 @@ class WP_Hummingbird_Dashboard_Page extends WP_Hummingbird_Admin_Page {
 	public function dashboard_uptime_module_metabox_header() {
 		$this->view( 'dashboard-uptime-module-meta-box-header', array( 'title' => __( 'Uptime Monitoring', 'wphb' ) ) );
 	}
-	public function dashboard_uptime_module_metabox() {
-		$uptime_stats = $this->get_current_uptime_report();
+	public function dashboard_uptime_metabox() {
+		$uptime_stats = wphb_uptime_get_last_report( 'week' );
 		$this->view( 'dashboard-uptime-module-meta-box', array( 'uptime_stats' => $uptime_stats ) );
 	}
 	public function dashboard_uptime_module_metabox_footer() {
@@ -211,6 +213,21 @@ class WP_Hummingbird_Dashboard_Page extends WP_Hummingbird_Admin_Page {
 		$enable_url = add_query_arg( 'action', 'enable', wphb_get_admin_menu_url( 'uptime' ) );
 		$enable_url = wp_nonce_url( $enable_url, 'wphb-toggle-uptime' );
 		$this->view( 'dashboard-uptime-disabled-meta-box', array( 'enable_url' => $enable_url, 'current_user' => $user ) );
+	}
+	public function dashboard_uptime_error_metabox() {
+		$report = wphb_uptime_get_last_report();
+		$retry_url = add_query_arg(
+			array(
+				'run' => 'true',
+				'type' => 'uptime'
+			),
+			wphb_get_admin_menu_url( '' )
+		);
+		$retry_url = wp_nonce_url( $retry_url, 'wphb-run-dashboard' ) . '#wphb-box-dashboard-uptime-module';
+		$support_url = wphb_support_link();
+		$error = $report->get_error_message();
+
+		$this->view( 'dashboard-uptime-error-meta-box', array( 'retry_url' => $retry_url, 'support_url' => $support_url, 'error' => $error ) );
 	}
 
 	/*******************

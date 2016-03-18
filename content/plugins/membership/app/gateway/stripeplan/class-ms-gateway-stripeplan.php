@@ -381,7 +381,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 
 					if ( 'active' == $stripe_sub->status || 'trialing' == $stripe_sub->status ) {
 						$success = true;
-						$invoice->pay_it( $this->id, $stripe_sub->id );
+						$invoice->pay_it( self::ID, $stripe_sub->id );
 						$this->cancel_if_done( $subscription, $stripe_sub );
 					}
 				}
@@ -462,7 +462,7 @@ class MS_Gateway_Stripeplan extends MS_Gateway {
 
 						if ( 'active' == $stripe_sub->status || 'trialing' == $stripe_sub->status ) {
 							$was_paid = true;
-							$invoice->pay_it( $this->id, $external_id );
+							$invoice->pay_it( self::ID, $external_id );
 							$this->cancel_if_done( $subscription, $stripe_sub );
 						}
 					}

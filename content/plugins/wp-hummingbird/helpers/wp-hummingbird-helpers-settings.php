@@ -47,7 +47,8 @@ function wphb_get_default_settings() {
 		'dont_minify' => array( 'scripts' => array(), 'styles' => array() ),
 		'dont_combine' => array( 'scripts' => array(), 'styles' => array() ),
 		'position' => array( 'scripts' => array(), 'styles' => array() ),
-		'caching_expiry_css/javascript' => '8d/A691200',
+		'caching_expiry_css' => '8d/A691200',
+		'caching_expiry_javascript' => '8d/A691200',
 		'caching_expiry_media' => '8d/A691200',
 		'caching_expiry_images' => '8d/A691200'
 	);

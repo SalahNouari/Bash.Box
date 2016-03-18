@@ -30,7 +30,7 @@
 				<?php if ( true === $next_test_on ): ?>
 					<a href="<?php echo esc_url( $run_url ); ?>" class="button button-app button-content-cta" id="dash-performance-resume-run-new-test"><?php _e( 'Run New Test', 'wphb' ); ?></a>
 				<?php else: ?>
-					<a href="<?php echo esc_url( wphb_get_admin_menu_url( 'performance' ) ); ?>" class="button button-app button-content-cta"><?php _e( 'View Test', 'wphb' ); ?></a>
+					<a href="<?php echo esc_url( wphb_get_admin_menu_url( 'performance' ) ); ?>" id="dash-performance-resume-view-test" class="button button-app button-content-cta"><?php _e( 'View Test', 'wphb' ); ?></a>
 				<?php endif; ?>
 			</div>
 

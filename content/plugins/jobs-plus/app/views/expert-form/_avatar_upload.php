@@ -14,7 +14,7 @@
         </div>
     </div>
 </div>
-<?php if (je()->can_upload()): ?>
+<?php if (je()->can_upload_avatar()): ?>
     <script type="text/javascript">
         jQuery(function ($) {
             $('.change-avatar').webuiPopover({
@@ -36,7 +36,7 @@
                     iframe: true,
                     cache: false,
                     type: 'POST',
-                    url: '<?php echo esc_url(add_query_arg(array('upload_file_nonce'=>wp_create_nonce('hn_upload_avatar')))) ?>'
+                    url: '<?php echo (add_query_arg(array('upload_file_nonce'=>wp_create_nonce('hn_upload_avatar')))) ?>'
                 };
 
                 var file = $(":file", form);

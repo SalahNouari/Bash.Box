@@ -20,6 +20,6 @@ class Test_Helpers extends WP_Hummingbird_UnitTestCase {
 		$this->assertEquals( '1 month', wphb_human_read_time_diff( 3600 * 24 * 31 ) );
 		$this->assertEquals( '3 months', wphb_human_read_time_diff( 3600 * 24 * 31 * 3 ) );
 		$this->assertEquals( '1 year', wphb_human_read_time_diff( 3600 * 24 * 31 * 12 ) );
-		$this->assertEquals( '2 years', wphb_human_read_time_diff( 3600 * 24 * 31 * 12 * 2 ) );	  	 	   	 		 		 		 	
+		$this->assertEquals( '2 years', wphb_human_read_time_diff( 3600 * 24 * 31 * 12 * 2 ) );
 	}
 }

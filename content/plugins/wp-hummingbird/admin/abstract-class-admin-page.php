@@ -74,7 +74,9 @@ abstract class WP_Hummingbird_Admin_Page {
 
 			ob_start();
 
-			WDEV_Plugin_Ui::output();
+			if ( class_exists( 'WDEV_Plugin_Ui' ) ) {
+				WDEV_Plugin_Ui::output();
+			}
 
 			extract( $args );
 			include( $file );
@@ -98,15 +100,11 @@ abstract class WP_Hummingbird_Admin_Page {
 	 * Common hooks for all screens
 	 */
 	public function add_screen_hooks() {
-		//add_action( 'admin_body_class', array( $this, 'add_body_class' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_notices', array(  $this, 'notices' ) );
 		add_action( 'network_admin_notices', array(  $this, 'notices' ) );
 	}
 
-	/*public function add_body_class( $class ) {
-		return $class . ' wpmud';
-	}*/
 
 	/**
 	 * Function triggered when the page is loaded
@@ -160,7 +158,20 @@ abstract class WP_Hummingbird_Admin_Page {
 		if ( !isset($this->meta_boxes[ $this->slug ][ $context ] ) )
 			$this->meta_boxes[ $this->slug ][ $context ] = array();
 
-		$this->meta_boxes[ $this->slug ][ $context ][ $id ] = array('id' => $id, 'title' => $title, 'callback' => $callback, 'callback_header' => $callback_header, 'callback_footer' => $callback_footer, 'args' => $args );
+		$meta_box = array('id' => $id, 'title' => $title, 'callback' => $callback, 'callback_header' => $callback_header, 'callback_footer' => $callback_footer, 'args' => $args );
+		/**
+		 * Allow to filter a WP Hummingbird Metabox
+		 *
+		 * @param array $meta_box Meta box attributes
+		 * @param string $slug Admin page slug
+		 * @param string $page_id Admin page ID
+		 */
+		$meta_box = apply_filters( 'wphb_add_meta_box', $meta_box, $this->slug, $this->page_id );
+
+		if ( $meta_box ) {
+			$this->meta_boxes[ $this->slug ][ $context ][ $id ] = $meta_box;
+		}
+
 	}
 
 	/**

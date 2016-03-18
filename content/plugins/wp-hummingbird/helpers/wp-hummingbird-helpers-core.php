@@ -306,8 +306,6 @@ function wphb_membership_modal( $text ) {
 }
 
 function wphb_is_member() {
-	global $wpmudev_un;
-
 	if ( function_exists( 'is_wpmudev_member' ) ) {
 		return is_wpmudev_member();
 	}
@@ -580,7 +578,11 @@ function wphb_human_read_time_diff( $seconds ) {
 
 function wphb_get_recommended_caching_values() {
 	return array(
-		'css/javascript' => array(
+		'css' => array(
+			'label' => __( '8 days', 'wphb' ),
+			'value' => 8 * 24 * 3600,
+		),
+		'javascript' => array(
 			'label' => __( '8 days', 'wphb' ),
 			'value' => 8 * 24 * 3600,
 		),
@@ -641,10 +643,6 @@ function wphb_get_code_snippet( $module, $server_type = '' ) {
 	if ( ! $server_type )
 		$server_type = wphb_get_server_type();
 
-	return $module->get_server_code_snippet( $server_type );
+	return apply_filters( 'wphb_code_snippet', $module->get_server_code_snippet( $server_type ), $server_type, $module );
 }
-
-
-
-
 
