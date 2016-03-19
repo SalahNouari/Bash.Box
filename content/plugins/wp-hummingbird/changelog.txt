@@ -4,6 +4,10 @@ Tested up to: 4.4.2
 
 Change Log:
 
+1.1.2 - 2016-03-18
+----------------------------------------------------------------------
+- Fixed: Performance test waiting time set back to 5 minutes
+
 1.1.1 - 2016-03-17
 ----------------------------------------------------------------------
 - Fixed: Uptime not displaying chart
@@ -37,4 +41,4 @@ Change Log:
 - First release
 
 
-133620-1458267397-au
+133620-1458371947-au

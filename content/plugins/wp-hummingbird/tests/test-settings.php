@@ -30,7 +30,7 @@ class Test_Settings extends WP_Hummingbird_Multisite_UnitTestCase {
 		$blog_id_1 = $this->factory->blog->create_object( $this->factory->blog->generate_args() );
 
 		$args = $this->factory->blog->generate_args();
-		$blog_id_2 = $this->factory->blog->create_object( $this->factory->blog->generate_args() );
+		$blog_id_2 = $this->factory->blog->create_object( $this->factory->blog->generate_args() );	  	 	   	 		 		 		 	
 
 		switch_to_blog( $blog_id_1 );
 		wphb_activate();

@@ -114,11 +114,11 @@ class WP_Hummingbird_Module_Performance extends WP_Hummingbird_Module {
 		$current_gmt_time = current_time( 'timestamp', true );
 		if ( $last_report && ! is_wp_error( $last_report ) ) {
 			$data_time = $last_report->data->time;
-			if ( ( $data_time + 1800 ) < $current_gmt_time ) {
+			if ( ( $data_time + 300 ) < $current_gmt_time ) {
 				return true;
 			}
 			else {
-				$remaining = ceil( ( ( $data_time + 1800 ) - $current_gmt_time ) / 60 );
+				$remaining = ceil( ( ( $data_time + 300 ) - $current_gmt_time ) / 60 );
 				return absint( $remaining );
 			}
 		}

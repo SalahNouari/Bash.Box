@@ -31,7 +31,7 @@ class WP_Hummingbird_Module_Smush extends WP_Hummingbird_Module {
 		}
 		else {
 			// Return the free URL
-			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=wp-smushit' ), 'install-plugin_wp-smushit' );	  	 	   	 		 		 		 	
+			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=wp-smushit' ), 'install-plugin_wp-smushit' );
 		}
 
 		return $url;
