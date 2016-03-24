@@ -27,7 +27,7 @@ $admin_logo = $this->aof_options['admin_logo'];
 $admin_logo_url = (is_numeric($admin_logo)) ? $this->get_wps_image_url($admin_logo) : $admin_logo;
 if(!empty($admin_logo_url)){ ?>
 .quicklinks li.wpshape_site_title a, .quicklinks li.wpshape_site_title a:hover, .quicklinks li.wpshape_site_title a:focus {
-    background:url(<?php echo $admin_logo_url;  ?>) left 4px no-repeat !important; text-indent:-9999px !important; width: auto !important; 
+    background:url(<?php echo $admin_logo_url;  ?>) left 4px no-repeat !important; text-indent:-9999px !important; width: auto; 
 }
 <?php } ?>
  
@@ -52,7 +52,7 @@ if(!empty($admin_logo_url)){ ?>
         $wp_content_margin = $admin_menu_width + 20;
         ?>
         #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
-            width: <?php echo $admin_menu_width . 'px'; ?> !important;
+            width: <?php echo $admin_menu_width . 'px'; ?>;
         }
         #wpcontent, #wpfooter {
             <?php if(is_rtl()) { ?>
@@ -69,7 +69,7 @@ if(!empty($admin_logo_url)){ ?>
         }
   <?php  } else { ?>
         #adminmenu, #adminmenu .wp-submenu, #adminmenuback, #adminmenuwrap {
-            width: 230px !important;
+            width: 230px;
         }
         #wpcontent, #wpfooter {
         <?php if(is_rtl()) echo 'margin-right: '; else echo 'margin-left: '; ?>250px;

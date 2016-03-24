@@ -311,13 +311,55 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 	 * @since 1.0.2
 	 */
 	public static function determine_server( $url ) {
-		//wp fail to determine wpengine server, type, we will use request for more accuracy
+		$server_type = get_site_transient( 'wd_util_server' );
+		if ( ! is_array( $server_type ) ) {
+			$server_type = array();
+		}
 
-		$request = wp_remote_head( $url, array( 'user-agent' => $_SERVER['HTTP_USER_AGENT'] ) );
-		$server  = wp_remote_retrieve_header( $request, 'server' );
-		$server  = explode( '/', $server );
+		if ( isset( $server_type[ $url ] ) && ! empty( $server_type[ $url ] ) ) {
+			return strtolower( $server_type[ $url ] );
+		}
 
-		return strtolower( $server[0] );
+		//url should be end with php
+		global $is_apache, $is_nginx, $is_IIS, $is_iis7;
+
+		$server = null;
+
+		if ( $is_nginx ) {
+			$server = 'nginx';
+		} elseif ( $is_apache ) {
+			//case the url is detecting php file
+			if ( pathinfo( $url, PATHINFO_EXTENSION ) == 'php' ) {
+				$server = 'apache';
+			} else {
+				//so the server software is apache, let see what the header return
+				$request = wp_remote_head( $url, array( 'user-agent' => $_SERVER['HTTP_USER_AGENT'] ) );
+				$server  = wp_remote_retrieve_header( $request, 'server' );
+				$server  = explode( '/', $server );
+				if ( strtolower( $server[0] ) == 'nginx' ) {
+					//proxy case
+					$server = 'nginx';
+				} else {
+					$server = 'apache';
+				}
+			}
+		} elseif ( $is_iis7 || $is_IIS ) {
+			$server = 'iis';
+		}
+
+		if ( is_null( $server ) ) {
+			//if fall in here, means there is st unknowed.
+			$request = wp_remote_head( $url, array( 'user-agent' => $_SERVER['HTTP_USER_AGENT'] ) );
+			$server  = wp_remote_retrieve_header( $request, 'server' );
+			$server  = explode( '/', $server );
+			$server  = $server[0];
+		}
+
+		$server_type[ $url ] = $server;
+		//cache for an hour
+		set_site_transient( 'wd_util_server', $server_type, 3600 );
+
+		return $server;
 	}
 
 	public static function remove_folder( $folder ) {
@@ -404,6 +446,7 @@ Official WPMU DEV Superhero', wp_defender()->domain ),
 				return $plugin;
 			}
 		}
+
 		return null;
 	}
 

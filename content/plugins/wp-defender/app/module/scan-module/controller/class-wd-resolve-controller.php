@@ -20,6 +20,10 @@ class WD_Resolve_Controller extends WD_Controller {
 		}
 	}
 
+	/**
+	 * Auto Resolving for core integrity
+	 * @since 1.0.2
+	 */
 	public function resolve_core_integrity() {
 		if ( ! WD_Utils::check_permission() ) {
 			return;

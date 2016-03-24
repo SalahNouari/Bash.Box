@@ -4,135 +4,132 @@
  * @author: Hoang Ngo
  */
 class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
-	const CACHE_INDEX = 'wd_core_scan_index', CACHE_MD5 = 'wd_core_cache_md5';
-	private $internal_index = 0;
+	const CACHE_INDEX = 'wd_core_scan_index', CACHE_MD5 = 'wd_core_cache_md5', FILE_SCANNED = 'wd_core_file_scanned';
 	public $name = '';
 
 	//public $chunk_size = 200;
 
-	public function __construct() {
-		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_CORE_INTEGRITY . '_scan' ) != 1 ) {
-			$this->is_enabled = false;
-
-			return false;
-		}
+	public function init() {
 		$this->name = __( "core integrity scan", wp_defender()->domain );
 
 		$this->percentable        = true;
 		$this->dashboard_required = false;
-		$this->files_need_scan    = WD_Scan_Api::get_core_files();
-		//$this->max_percent        = round( ( count( $this->files_need_scan ) * 100 ) / count( self::get_total_files() ), 2 );
-		$this->internal_index = get_site_transient( self::CACHE_INDEX );
+		$this->total_files        = WD_Scan_Api::get_core_files();
+		$this->file_scanned       = get_site_transient( self::FILE_SCANNED );
+		if ( ! is_array( $this->file_scanned ) ) {
+			$this->file_scanned = array();
+		}
 	}
 
-	public function process( WD_Scan_Result_Model $model, $next_step = null ) {
-		if ( ! $this->maybe_run_this_scan( $model ) ) {
+	public function process() {
+		if ( ! $this->maybe_run_this_scan( $this->model ) ) {
 			return false;
 		}
 
-		if ( $this->internal_index == 0 ) {
-			//this is first rune
-			$model->message = __( "Analyzing WordPress core files…", wp_defender()->domain );
-			$model->save();
+		if ( count( $this->file_scanned ) == 0 ) {
+			$this->model->message = __( "Analyzing WordPress core files…", wp_defender()->domain );
+			$this->model->save();
 		}
 
-		$files = $this->files_need_scan;
-		if ( $this->internal_index > 0 ) {
-			$files = array_slice( $files, $this->internal_index, count( $this->files_need_scan ) );
-		}
-		if ( defined( 'WD_CHUNK_FILESIZE' ) && constant( 'WD_CHUNK_FILESIZE' ) == true ) {
-			$files = WD_Scan_Api::calculate_chunks( $files );
-			$this->log( count( $files ), self::ERROR_LEVEL_DEBUG, 'core_size' );
+		$files_need_scan = array_diff( $this->total_files, $this->file_scanned );
+
+		/**
+		 * check md5 cache from prev scan
+		 */
+		if ( is_object( $this->last_scan ) ) {
+			$last_checksum = $this->last_scan->md5_tree;
 		} else {
-			$chunk = array_chunk( $files, apply_filters( 'wd_core_integrity_chunk_size', 200, $this->files_need_scan ) );
-			$files = array_shift( $chunk );
+			$last_checksum = null;
 		}
 
-		$last_scan = WD_Scan_Api::get_last_scan();
-
-		if ( is_object( $last_scan ) ) {
-			$last_checksum = $last_scan->md5_tree;
-		} else {
-			$last_checksum = array();
+		if ( $this->is_ajax() ) {
+			/**
+			 * ajax case we will break chunk down
+			 */
+			$chunks          = array_chunk( $files_need_scan, 200 );
+			$files_need_scan = array_shift( $chunks );
 		}
+		$cpu_count = 0;
+		foreach ( $files_need_scan as $file ) {
+			if ( $this->cpu_reach_threshold() ) {
+				if ( $this->is_ajax() ) {
+					sleep( 3 );
+					if ( $cpu_count > 55 ) {
+						$this->model->status  = WD_Scan_Result_Model::STATUS_ERROR;
+						$this->model->message = __( "Your server resource usage is too close to your limit. Please try again in 15 minutes.", wp_defender()->domain );
+						$this->model->save();
 
-		foreach ( $files as $file ) {
-			$need_scan                = true;
-			$checksum                 = md5_file( $file );
-			$model->md5_tree[ $file ] = $checksum;
-			if ( is_object( $last_scan ) && isset( $last_checksum[ $file ] ) ) {
-				if ( strcmp( $checksum, $last_checksum[ $file ] ) === 0 ) {
-					$is_ignored = $last_scan->is_file_ignored( $file, 'WD_Scan_Result_Core_Item_Model' );
-					$is_issue   = $last_scan->find_result_item_by_file( $file, 'WD_Scan_Result_Core_Item_Model' );
-					if ( ! is_object( $is_issue ) ) {
-						//this file doesnt get changed, and not an issue, we force rescan any issue
-						$need_scan = false;
-						if ( $is_ignored ) {
-							//this file got ignored, and currently still fine, so move it there
-							//in this case, the is issue must be have value
-							$model->ignore_files[] = $is_issue->id;
-						}
-						$this->log( 'hit', self::ERROR_LEVEL_DEBUG, 'hit' );
+						return;
 					}
+					$cpu_count += 1;
+				} else {
+					//this case is in cronjob, the time for next cron is 3-5min, which is enough
+					break;
+				}
+			}
+			$need_scan                      = true;
+			$checksum                       = md5_file( $file );
+			$this->model->md5_tree[ $file ] = $checksum;
+			if ( is_array( $last_checksum ) && isset( $last_checksum[ $file ] ) && strcmp( $checksum, $last_checksum[ $file ] ) === 0 ) {
+				$is_ignored = $this->last_scan->is_file_ignored( $file, 'WD_Scan_Result_Core_Item_Model' );
+				$is_issue   = $this->last_scan->find_result_item_by_file( $file, 'WD_Scan_Result_Core_Item_Model' );
+				/**
+				 * if this is issue, but content not changed, and ignored => still ignored
+				 * if this is an issue, but not ignore, force rescan
+				 * if this is not an issue, so we skip
+				 */
+				if ( is_object( $is_issue ) && $is_ignored ) {
+					$this->model->ignore_files[] = $is_issue->id;
+					$this->model->result[]       = $is_issue;
+					//we dont need scanm this file
+					$need_scan = false;
+				} elseif ( ! is_object( $is_issue ) ) {
+					//this file is cool, no change and no issue
+					$need_scan = false;
 				}
 			}
 
 			if ( $need_scan ) {
-				$this->log( $file, self::ERROR_LEVEL_DEBUG, 'md5_res' );
 				$result = $this->scan_a_file( $file, $checksum );
 				if ( is_wp_error( $result ) ) {
-					$model->status  = WD_Scan_Result_Model::STATUS_ERROR;
-					$model->message = $result->get_error_message();
-					$model->save();
+					/**
+					 * case error, we halt this scan
+					 */
+					$this->model->status  = WD_Scan_Result_Model::STATUS_ERROR;
+					$this->model->message = $result->get_error_message();
+					$this->model->save();
+
+					return false;
+				} elseif ( $result instanceof WD_Scan_Result_Core_Item_Model ) {
+					/**
+					 * issue found, we saving
+					 */
+					$this->model->result[]                = $result;
+					$this->model->result_core_integrity[] = $file;
 				} elseif ( $result === - 1 ) {
 					//this mean no signatures
 					set_site_transient( WD_Scan_Api::ALERT_NO_MD5, __( "There are no available checksums for your WordPress version, the scan will skip the core integrity check.", wp_defender()->domain ) );
-					$model->current_index = count( $this->files_need_scan );
-					$progress             = round( $model->current_index * 100 / $model->total_files, 2 );
-					set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
-					update_post_meta( $model->id, 'current_index', $model->current_index );
-					if ( ! empty( $next_step ) ) {
-						$model->current_action = $next_step;
-						$model->save();
-					}
+					$this->model->current_index = count( $this->total_files );
+					set_site_transient( self::FILE_SCANNED, $this->total_files );
+					$this->model->save();
 
 					return true;
-				} elseif ( $result instanceof WD_Scan_Result_Core_Item_Model ) {
-					//issue found
-					$model->result[]                = $result;
-					$model->result_core_integrity[] = $file;
 				}
 			}
-
-			$progress = round( $model->current_index * 100 / $model->total_files, 2 );
-			$this->internal_index += 1;
-			set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
-			$this->log( $progress, self::ERROR_LEVEL_DEBUG, 'percent' );
-			set_site_transient( self::CACHE_INDEX, $this->internal_index );
-			WD_Scan_Api::log_scanned_file( $file . ' - ' . ( ( isset( $detail ) && is_array( $detail ) && count( $detail ) ) ? '<span class="not-ok">' . __( "Not OK", wp_defender()->domain ) . '</span>' : '<span class="ok">' . __( "OK", wp_defender()->domain ) . '</span>' ) );
-
-			$model->current_index += 1;
-			$model->message = __( "Analyzing WordPress core files...", wp_defender()->domain );
-			//need to do this by hand, to avoid othre plugins hook into wp_insert_post or wp_update_post
-			update_post_meta( $model->id, 'current_index', $model->current_index );
-			update_post_meta( $model->id, 'message', $model->message );
-			echo $progress . PHP_EOL;
+			//cache scanned file
+			$this->file_scanned[] = $file;
+			//we need this for calculate percent
+			$this->model->current_index += 1;
 		}
-		update_post_meta( $model->id, 'result', $model->result );
-		update_post_meta( $model->id, 'md5_tree', $model->md5_tree );
-		update_post_meta( $model->id, 'result_core_integrity', $model->result_core_integrity );
-		update_post_meta( $model->id, 'ignore_files', $model->ignore_files );
-		delete_site_transient( self::CACHE_MD5 );
-
-		//will need to check if this already done
-		if ( $this->internal_index == count( $this->files_need_scan ) ) {
-			//reset the internal
-			//delete_transient( self::CACHE_INDEX );
-			if ( ! empty( $next_step ) ) {
-				$model->current_action = $next_step;
-				$model->save();
-			}
-		}
+		/**
+		 * at the end of this loop, we need to calculate
+		 * 2. store files scanned
+		 * 3. store md5 tree
+		 * 4. store result
+		 */
+		$this->model->save();
+		$this->file_scanned = array_unique( $this->file_scanned );
+		set_site_transient( self::FILE_SCANNED, $this->file_scanned );
 	}
 
 	/**
@@ -145,6 +142,7 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 		//we need to download md5 from wp
 		if ( ( $md5_files = get_site_transient( self::CACHE_MD5 ) ) == false ) {
 			$md5_files = WD_Scan_Api::download_md5_files();
+			$md5_files = array_filter( $md5_files );
 			if ( is_wp_error( $md5_files ) ) {
 				return $md5_files;
 			}
@@ -157,8 +155,7 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 		}
 
 		$relative_path = str_replace( ABSPATH, '', $file );
-		$this->log( $relative_path, self::ERROR_LEVEL_DEBUG, 'md5_res' );
-		$detail = false;
+		$detail        = false;
 		if ( isset( $md5_files[ $relative_path ] ) ) {
 			$ochecksum = $md5_files[ $relative_path ];
 			if ( $checksum == false ) {
@@ -194,6 +191,32 @@ class WD_Core_Integrity_Scan extends WD_Scan_Abstract {
 			$item->detail = $detail;
 
 			return $item;
+		}
+
+		return true;
+	}
+
+	public function check() {
+		$files_need_scan = array_diff( $this->total_files, $this->file_scanned );
+		if ( count( $files_need_scan ) == 0 ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function clean_up() {
+		delete_site_transient( self::CACHE_MD5 );
+		delete_site_transient( self::FILE_SCANNED );
+	}
+
+	public function is_enabled() {
+		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_CORE_INTEGRITY . '_scan' ) != 1 ) {
+			return false;
+		}
+
+		if ( $this->dashboard_required && WD_Utils::get_dev_api() == false ) {
+			return false;
 		}
 
 		return true;

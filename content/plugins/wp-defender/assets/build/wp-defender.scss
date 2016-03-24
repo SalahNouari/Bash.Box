@@ -1349,8 +1349,20 @@
   }
   .wd-issue-detail {
     pre {
+      padding: 0;
+      border: none;
       span {
         font-size: 12px;
+        -ms-word-break: break-all;
+        word-break: break-all;
+
+        /* Non standard for webkit */
+        word-break: break-word;
+
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
       }
     }
     ins {
@@ -1471,10 +1483,6 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
     font-weight: bold;
   }
 
-  pre {
-    padding: 0;
-    border: 0;
-  }
   .core-integrity-detail {
     .fixed {
       width: 30%;
@@ -1491,13 +1499,15 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
     }
   }
   .wd-highlight {
-    background: #A2CBF6;
+    background: #E8F2FC;
     cursor: pointer;
     border: solid 1px transparent;
+    margin: 5px 0;
   }
 
   .wd-highlight:hover {
-    border: solid 1px #718EAC;
+    //border: solid 1px #718EAC;
+    background: #B3C8E0;
   }
 }
 

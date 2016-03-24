@@ -4,41 +4,34 @@
  * @author: Hoang Ngo
  */
 class WD_Vulndb_Scan extends WD_Scan_Abstract {
+	const IS_DONE = 'wd_vulndb_done';
 	protected $end_point = "https://premium.wpmudev.org/api/defender/v1/vulnerabilities";
 	public $name = '';
 
-	public function __construct() {
-		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_VULN_DB . '_scan' ) != 1 ) {
-			$this->is_enabled = false;
-
-			return false;
-		}
+	public function init() {
 		$this->name               = __( "Vulnerability scan", wp_defender()->domain );
 		$this->percentable        = false;
 		$this->dashboard_required = true;
 	}
 
 	/**
-	 * @param WD_Scan_Result_Model $model
-	 * @param $next_step
-	 *
 	 * @return bool
 	 */
-	public function process( WD_Scan_Result_Model $model, $next_step = null ) {
-		if ( ! $this->maybe_run_this_scan( $model ) ) {
+	public function process() {
+		if ( ! $this->maybe_run_this_scan( $this->model ) ) {
 			return false;
 		}
 
 		set_time_limit( 0 );
 		//init the message first
-		$model->message = __( "Checking for any published vulnerabilities your plugins & themes...", wp_defender()->domain );
-		$model->save();
+		$this->model->message = __( "Checking for any published vulnerabilities your plugins & themes...", wp_defender()->domain );
+		$this->model->save();
 
 		$result = $this->scan();
 		if ( is_wp_error( $result ) ) {
-			$model->status  = WD_Scan_Result_Model::STATUS_ERROR;
-			$model->message = $result->get_error_message();
-			$model->save();
+			$this->model->status  = WD_Scan_Result_Model::STATUS_ERROR;
+			$this->model->message = $result->get_error_message();
+			$this->model->save();
 
 			return false;
 		} else {
@@ -130,11 +123,9 @@ class WD_Vulndb_Scan extends WD_Scan_Abstract {
 					}
 				}
 			}
-			$model->result = array_merge( $model->result, $data );
-			if ( ! empty( $next_step ) ) {
-				$model->current_action = $next_step;
-			}
-			$model->save();
+			$this->model->result = array_merge( $this->model->result, $data );
+			$this->model->save();
+			set_site_transient( self::IS_DONE, 1 );
 
 			return true;
 		}
@@ -177,7 +168,7 @@ class WD_Vulndb_Scan extends WD_Scan_Abstract {
 			'plugins'   => json_encode( $plugins ),
 			'wordpress' => $wp_version
 		), array(
-			'method' => 'POST',
+			'method'  => 'POST',
 			'timeout' => 15
 		), true );
 
@@ -199,5 +190,30 @@ class WD_Vulndb_Scan extends WD_Scan_Abstract {
 
 			return json_decode( $data, true );
 		}
+	}
+
+	public function check() {
+		if ( get_site_transient( self::IS_DONE ) == 1 ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function clean_up() {
+		delete_site_transient( self::IS_DONE );
+	}
+
+	public function is_enabled() {
+		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_VULN_DB . '_scan' ) != 1 ) {
+
+			return false;
+		}
+
+		if ( $this->dashboard_required && WD_Utils::get_dev_api() == false ) {
+			return false;
+		}
+
+		return true;
 	}
 }

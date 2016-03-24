@@ -5,9 +5,9 @@
  */
 Class Hardener_Test extends WP_UnitTestCase {
 	function __construct() {
-		$files = WD_Utils::get_dir_tree( wp_defender()->get_plugin_path() . 'app/module/hardener-module/component/' );
+		$files = WD_Utils::scan_dir( wp_defender()->get_plugin_path() . 'app/component/hardener/' );
 		foreach ( $files as $file ) {
-			//include_once $file;
+			include_once $file;
 		}
 	}
 

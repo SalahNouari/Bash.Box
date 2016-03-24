@@ -102,15 +102,20 @@ class WD_Plugin_Theme_Editor extends WD_Hardener_Abstract {
 											titles = $.makeArray(titles);
 											titles.reverse();
 											var current_title = div.find('.rule-title').text();
+											var found = false;
 											$.each(titles, function (i, v) {
-												//if the current letter is order up the current, add bellow that
 												var text = $(this).text().toUpperCase();
 												//if the current letter is order up the current, add bellow that
 												if (current_title.toUpperCase().localeCompare(text) == true) {
 													div.insertAfter($(this).closest('.wd-hardener-rule'));
+													found = true;
 													return false;
 												}
 											})
+											if (found == false) {
+												//append it
+												div.prependTo($('.wd-hardener-error'));
+											}
 										} else {
 											div.appendTo($('.wd-hardener-error'));
 										}

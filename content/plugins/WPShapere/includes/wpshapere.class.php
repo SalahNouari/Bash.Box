@@ -15,7 +15,6 @@ if (!class_exists('WPSHAPERE')) {
 	private $wp_df_submenu;
 	private $wps_options = 'wpshapere_options';
 	private $wps_menuorder_options = 'wpshapere_menuorder';
-                    private $wps_purchase_data = 'wps_purchase_data';
                     public $aof_options;
 
 	function __construct()

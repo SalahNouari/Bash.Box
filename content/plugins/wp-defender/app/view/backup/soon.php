@@ -35,7 +35,7 @@
 								</button>
 							</form>
 							<?php
-							$url = network_admin_url( 'admin.php?page=wpmudev-plugins#project-257' );	  	 	   	 		 		 				
+							$url = network_admin_url( 'admin.php?page=wpmudev-plugins#project-257' );
 						} else {
 							$url = "https://premium.wpmudev.org/project/snapshot/";
 							?>

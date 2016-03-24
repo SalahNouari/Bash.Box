@@ -1,4 +1,4 @@
-Plugin Name: WP Smush Pro
+Plugin Name: WP Defender
 Author: Hoang Ngo, Aaron Edwards
 Tested up to: 4.2.2
 
@@ -22,6 +22,15 @@ Change Log:
 - Add detail page for core integrity issue, and automate resolution
 
 - Fix scan stability with limited memory
+- Some other minor enhancements/fixes
+
+1.0.3 - 2016-22-03
+----------------------------------------------------------------------
+- Optimize scanning
+- Preventing performance issue with some hosts
+
+- Fix false blacklist detection in local environment
+- Some other minor enhancements/fixes
 
 
-133620-1458147060-au
+133620-1458797650-au

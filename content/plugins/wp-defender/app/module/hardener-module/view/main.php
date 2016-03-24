@@ -7,7 +7,7 @@
 			<h3 class="tc hardener-title"><?php _e( "Action Needed", wp_defender()->domain ) ?></h3>
 
 			<p class="tc wd-no-padding">
-				<?php _e( "Hardening vulnerabilities leave you easy to attack. It’s highly recommend you address these <strong>immediately</strong>.", wp_defender()->domain ) ?>
+				<?php _e( "Vulnerabilities leave you easy to attack. It’s highly recommend you address these <strong>immediately</strong>.", wp_defender()->domain ) ?>
 			</p>
 			<section class="wd-hardener-rules wd-hardener-error">
 				<?php foreach ( $issues as $module ): ?>

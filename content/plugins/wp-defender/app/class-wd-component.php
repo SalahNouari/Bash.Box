@@ -280,61 +280,21 @@ class WD_Component {
 		add_shortcode( $tag, $this->get_callback( $tag, $method ) );
 	}
 
-	public function log1( $message, $level = self::ERROR_LEVEL_INFO, $log_name = 'log' ) {
-		//todo write to db
-		//will need to check time to clean up
-		$log_max_time = apply_filters( 'wd_log_store_time', 3 );
-		//get log data
-		$log_data = '';
-		$log_file = wp_defender()->get_plugin_path() . 'vault/' . $log_name;
-		if ( wp_defender()->log_type == 'file' ) {
-			if ( file_exists( $log_file ) ) {
-				$log_data = file_get_contents( wp_defender()->get_plugin_path() . 'vault/' . $log_name );
-			}
-		} else {
-			$log_data = get_site_option( 'wd_dev_logs' );
-		}
-		//create log file
-		$log = sprintf( "[%s] [%s] %s", date( 'Y-m-d H:i:s' ), $level, $message );
-		$log = $log . PHP_EOL;
-		//join
-		$log_data .= $log;
-		//clean up first
-
-		/*$log_data = explode( PHP_EOL, $log_data );
-		$current  = time();
-		foreach ( $log_data as $key => $row ) {
-			$parts = explode( ' ', $row );
-			//thje time is on 0
-			if ( is_array( $parts ) ) {
-				$time = $parts[0];
-				$time = str_replace( array( '[', ']' ), '', $time );
-				$time = trim( $time );
-				if ( strtotime( '+ ' . $log_max_time . ' days', strtotime( $time ) ) < $current ) {
-					unset( $log_data[ $key ] );
-				}
-			}
-		}
-
-		$log_data = implode( PHP_EOL, $log_data );*/
-		//add new log
-		if ( wp_defender()->log_type == 'file' ) {
-			$handle = fopen( $log_file, 'w' );
-			if ( $handle ) {
-				fwrite( $handle, $log_data );
-				fclose( $handle );
-			}
-		} else {
-			update_site_option( 'wd_dev_logs', $log_data );
-		}
-	}
-
 	/**
 	 * @param $message
 	 * @param string $level
 	 */
 	public function log( $message, $level = self::ERROR_LEVEL_INFO, $log_name = 'log' ) {
-		global $is_apache;
+		if ( WD_DEBUG_LOG != true ) {
+			return;
+		}
+
+		$server = WD_Utils::determine_server( content_url( 'index.php' ) );
+		if ( $server == 'apache' ) {
+			$is_apache = true;
+		} else {
+			$is_apache = false;
+		}
 		//create log string
 		if ( is_null( $level ) ) {
 			$log = $message;
@@ -410,29 +370,31 @@ class WD_Component {
 			$content = stream_get_contents( $stream );
 			fclose( $stream );
 			unset( wp_defender()->global['memory_stream'] );
-			echo 'DUMP' . PHP_EOL;
-			$weird_delimiter         = "-{{_}}-";
-			$weird_newline_delimiter = "-{{eol}}-";
-			$content                 = explode( $weird_newline_delimiter, $content );
-			$result                  = array();
-			$content                 = array_filter( $content );
-			//comebine into one
-			foreach ( $content as $line ) {
-				$tmp = explode( $weird_delimiter, $line );
-				if ( count( $tmp ) > 1 ) {
-					$log  = $tmp[0];
-					$name = $tmp[1];
-					if ( ! isset( $result[ $name ] ) ) {
-						$result[ $name ] = '';
+			if ( ! empty( $content ) ) {
+				//todo case content too long
+				$weird_delimiter         = "-{{_}}-";
+				$weird_newline_delimiter = "-{{eol}}-";
+				$content                 = explode( $weird_newline_delimiter, $content );
+				$result                  = array();
+				$content                 = array_filter( $content );
+				//comebine into one
+				foreach ( $content as $line ) {
+					$tmp = explode( $weird_delimiter, $line );
+					if ( count( $tmp ) > 1 ) {
+						$log  = $tmp[0];
+						$name = $tmp[1];
+						if ( ! isset( $result[ $name ] ) ) {
+							$result[ $name ] = '';
+						}
+						$result[ $name ] .= $log . PHP_EOL;
+					} else {
+						$this->log( $line, self::ERROR_LEVEL_DEBUG, 'weird' );
 					}
-					$result[ $name ] .= $log . PHP_EOL;
-				} else {
-					$this->log( $line, self::ERROR_LEVEL_DEBUG, 'weird' );
 				}
-			}
 
-			foreach ( $result as $key => $val ) {
-				$this->log( $val, null, $key );
+				foreach ( $result as $key => $val ) {
+					$this->log( $val, null, $key );
+				}
 			}
 		}
 	}
@@ -442,7 +404,13 @@ class WD_Component {
 	 * @return array
 	 */
 	public static function get_log_index() {
-		global $is_apache;
+		$server = WD_Utils::determine_server( content_url( 'index.php' ) );
+		if ( $server == 'apache' ) {
+			$is_apache = true;
+		} else {
+			$is_apache = false;
+		}
+
 		$result = array();
 		if ( $is_apache ) {
 			$upload_dirs = wp_upload_dir();
@@ -465,7 +433,12 @@ class WD_Component {
 	 * remove all logs
 	 */
 	public function remove_logs() {
-		global $is_apache;
+		$server = WD_Utils::determine_server( content_url( 'index.php' ) );
+		if ( $server == 'apache' ) {
+			$is_apache = true;
+		} else {
+			$is_apache = false;
+		}
 		$indexes = $this->get_log_index();
 		foreach ( $indexes as $index ) {
 			if ( $is_apache ) {
@@ -494,7 +467,13 @@ class WD_Component {
 	 * @return string
 	 */
 	public function get_log( $path ) {
-		global $is_apache;
+		$server = WD_Utils::determine_server( content_url( 'index.php' ) );
+		if ( $server == 'apache' ) {
+			$is_apache = true;
+		} else {
+			$is_apache = false;
+		}
+
 		if ( $is_apache ) {
 			return file_get_contents( $path );
 		} else {

@@ -4,6 +4,9 @@
  * @author: Hoang Ngo
  */
 class WD_Scan_Api extends WD_Component {
+	protected static $last_scan;
+	protected static $model;
+
 	const CACHE_CORE_FILES = 'wd_core_files', CACHE_CONTENT_FILES = 'wd_content_files', CACHE_SCAN_PERCENT = 'wd_scan_percent',
 		CACHE_SCANNED = 'wd_scanned_file';
 	const ALERT_NESTED_WP = 'wd_nested_wp', ALERT_NO_MD5 = 'wd_no_md5';
@@ -146,7 +149,7 @@ class WD_Scan_Api extends WD_Component {
 		$url      = "https://api.wordpress.org/core/checksums/1.0/?version={$wp_version}&locale={$locale}";
 		$response = wp_remote_get( $url, apply_filters( 'wd_vulndb_api_request_arguments',
 			array(
-				'timeout' => 20
+				'timeout' => 15
 			) ) );
 
 		if (
@@ -390,7 +393,11 @@ class WD_Scan_Api extends WD_Component {
 	 * @since 1.0
 	 */
 	public static function get_last_scan() {
-		$model = WD_Scan_Result_Model::model()->find_by_attributes( array(
+		if ( is_object( self::$last_scan ) ) {
+			return self::$last_scan;
+		}
+
+		$model           = WD_Scan_Result_Model::model()->find_by_attributes( array(
 			'status' => array(
 				WD_Scan_Result_Model::STATUS_COMPLETE,
 				WD_Scan_Result_Model::STATUS_ERROR
@@ -399,19 +406,24 @@ class WD_Scan_Api extends WD_Component {
 			'order'   => 'DESC',
 			'orderby' => 'ID'
 		) );
+		self::$last_scan = $model;
 
 		return $model;
 	}
 
 	/**
 	 * Get if any scan record in process
-	 * @return bool|mixed|null
+	 * @return WD_Scan_Result_Model|null
 	 */
 	public static function get_active_scan( $force = false ) {
+		if ( is_object( self::$model ) ) {
+			return self::$model;
+		}
 		$model = WD_Scan_Result_Model::model()->find_by_attributes( array(
 			'status' => array(
 				WD_Scan_Result_Model::STATUS_PROCESSING,
-				WD_Scan_Result_Model::STATUS_PAUSE
+				WD_Scan_Result_Model::STATUS_PAUSE,
+				WD_Scan_Result_Model::STATUS_INIT
 			)
 		), array(
 			'order'   => 'DESC',
@@ -421,6 +433,8 @@ class WD_Scan_Api extends WD_Component {
 		if ( ! is_object( $model ) ) {
 			return false;
 		}
+
+		self::$model = $model;
 
 		return $model;
 	}
@@ -443,25 +457,99 @@ class WD_Scan_Api extends WD_Component {
 	public static function clear_cache() {
 		delete_site_transient( self::CACHE_CONTENT_FILES );
 		delete_site_transient( self::CACHE_CORE_FILES );
-		delete_site_transient( self::CACHE_SCAN_PERCENT );
-		delete_site_transient( WD_Core_Integrity_Scan::CACHE_INDEX );
-		delete_site_transient( WD_Suspicious_Scan::CACHE_INDEX );
+		delete_site_transient( WD_Core_Integrity_Scan::FILE_SCANNED );
+		delete_site_transient( WD_Core_Integrity_Scan::CACHE_MD5 );
 		delete_site_transient( WD_Suspicious_Scan::CACHE_SIGNATURES );
 		delete_site_transient( self::ALERT_NESTED_WP );
 		delete_site_transient( self::ALERT_NO_MD5 );
-		delete_site_option( self::CACHE_SCANNED );
 		delete_site_option( 'wd_scan_lock' );
 		//sometime user upgrade from single to network, we need to remove the lefrover
-		delete_option( self::CACHE_SCANNED );
 		delete_option( 'wd_scan_lock' );
 		delete_transient( self::CACHE_CONTENT_FILES );
 		delete_transient( self::CACHE_CORE_FILES );
-		delete_transient( self::CACHE_SCAN_PERCENT );
-		delete_transient( WD_Core_Integrity_Scan::CACHE_INDEX );
-		delete_transient( WD_Suspicious_Scan::CACHE_INDEX );
+		delete_transient( WD_Core_Integrity_Scan::FILE_SCANNED );
+		delete_transient( WD_Core_Integrity_Scan::CACHE_MD5 );
 		delete_transient( WD_Suspicious_Scan::CACHE_SIGNATURES );
 		delete_transient( self::ALERT_NESTED_WP );
 		delete_transient( self::ALERT_NO_MD5 );
+	}
+
+	public static function virus_weight( $data = array() ) {
+		$b64_res = isset( $data['b64_res'] ) ? $data['b64_res'] : array();
+		if ( count( $b64_res ) ) {
+			//self::log( var_export( $b64_res, true ), self::ERROR_LEVEL_DEBUG, 'b64' );
+		}
+		$sconcat_res = isset( $data['sconcat_res'] ) ? $data['sconcat_res'] : array();
+		if ( count( $sconcat_res ) ) {
+			//self::log( var_export( $sconcat_res, true ), self::ERROR_LEVEL_DEBUG, 'sconcat' );
+		}
+		$vconcat_res = isset( $data['vconcat_res'] ) ? $data['vconcat_res'] : array();
+		if ( count( $vconcat_res ) ) {
+			//self::log( var_export( $vconcat_res, true ), self::ERROR_LEVEL_DEBUG, 'vconcat' );
+		}
+		$vfunction_res = isset( $data['vfunction_res'] ) ? $data['vfunction_res'] : array();
+		if ( count( $vfunction_res ) ) {
+			//self::log( var_export( $vfunction_res, true ), self::ERROR_LEVEL_DEBUG, 'vfunc' );
+		}
+		$sfunction_res = isset( $data['sfunction_res'] ) ? $data['sfunction_res'] : array();
+		if ( count( $sfunction_res ) ) {
+			//self::log( var_export( $sfunction_res, true ), self::ERROR_LEVEL_DEBUG, 'sfunc' );
+		}
+
+		$weight      = 0;
+		$weight_plus = 0;
+		$details     = array();
+		/**
+		 * if suspicious function found, each function will add 2 weight to other scan type
+		 * if vfunc found, add 1 weight to other scan type
+		 */
+		$weight_plus = count( $sfunction_res ) * 2;
+		if ( count( $vfunction_res ) ) {
+			$weight_plus += 1;
+		}
+
+		/**
+		 * if b64 found, means means higly we got issue. each code found will add 14 weight point
+		 */
+
+		foreach ( $b64_res as $b64_code ) {
+			//we dont stored code, as it heavily the db
+			unset( $b64_code['code'] );
+			$details[] = $b64_code;
+			$weight    = $weight + 14 + $weight_plus;
+		}
+
+		/**
+		 * if found string concat, it should be somethin bad
+		 */
+		foreach ( $sconcat_res as $sconcat ) {
+			//we have to check the code, if that so long, means something bad
+			$length = strlen( $sconcat['code'] );
+			//each 100 lenght, will increase 10
+			$local_weight = ( $length / 100 ) * 10;
+			$local_weight += $weight_plus;
+			$weight += $local_weight;
+
+			unset( $sconcat['code'] );
+			$details[] = $sconcat;
+		}
+
+		//now we have to check vconcat
+
+		foreach ( $vconcat_res as $vconcat ) {
+			// each 7 element will increase 8 weight
+			$length       = count( $vconcat['code'] );
+			$local_weight = ( $length / 7 ) * 8;
+			$local_weight += $weight_plus;
+			$weight += $local_weight;
+
+			$details[] = $vconcat;
+		}
+
+		return array(
+			'score'  => $weight,
+			'detail' => $details
+		);
 	}
 
 	/**
@@ -469,14 +557,14 @@ class WD_Scan_Api extends WD_Component {
 	 */
 	public static function calculate_scores( $data = array() ) {
 		$b64_res       = $data['b64_res'];
-		$sconcat_res   = $data['sconcat_res'];
-		$vconcat_res   = $data['vconcat_res'];
-		$vfunction_res = $data['vfunction_res'];
-		$sfunction_res = $data['sfunction_res'];
+		$sconcat_res   = isset( $data['sconcat_res'] ) ? $data['sconcat_res'] : array();
+		$vconcat_res   = isset( $data['vconcat_res'] ) ? $data['vconcat_res'] : array();
+		$vfunction_res = isset( $data['vfunction_res'] ) ? $data['vfunction_res'] : array();
+		$sfunction_res = isset( $data['sfunction_res'] ) ? $data['sfunction_res'] : array();
 
-		$score = 0;
 		//this will store information use to resolve later
 		$details = array();
+		$score   = 0;
 		if ( count( $sconcat_res ) || count( $vconcat_res ) ) {
 			//usually if having string concat like "abc"."bde"... highly likely a obfuscate code
 			foreach ( $sconcat_res as $code ) {

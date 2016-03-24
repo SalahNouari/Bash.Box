@@ -12,14 +12,13 @@
 				$content = str_replace( ';', ';' . PHP_EOL, $content );
 				$content = preg_replace( "/\n+/", "\n", $content );
 				//we will need to wrap the code offset with a custom tag, so we can display toolip and styling
+				$content = esc_html( $content );
 				if ( isset( $model->detail['log'] ) ) {
 					foreach ( $model->detail['log'] as $issue ) {
-						var_dump($issue);
-						$code    = substr( $content, $issue['offset'][0], $issue['offset'][1] - $issue['offset'][0] );
-						var_dump($code);
-						$content = esc_html( $content );
+						$code = substr( $content, $issue['offset'][0], $issue['offset'][1] - $issue['offset'][0] );
 						//we add a custom tag here
-						$tag = '<span class="wd-highlight" tooltip="abc">' . $code . '</span>';
+						$tooltips = $issue['offset'][0] . '-' . ( $issue['offset'][1] );
+						$tag      = '<span class="wd-highlight" tooltip="' . esc_attr( $tooltips ) . '">' . $code . '</span>';
 						//putback
 						$content = str_replace( $code, $tag, $content );
 					}

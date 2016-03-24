@@ -519,7 +519,7 @@ WDefender.scanning = function () {
                             //merging the files
                             files = files.concat(data.scanned);
                             if (trigger_log == 0) {
-                                queue_up_files();
+                                queue_up_files(data.abs_path);
                                 trigger_log = 1;
                             }
                             if (data.alert != 0 && jq('.wd-nested-wp').size() == 0) {
@@ -542,13 +542,16 @@ WDefender.scanning = function () {
             });
             jq('#secret_key_scanning').submit();
 
-            function queue_up_files() {
+            function queue_up_files(abs_path) {
                 if (files.length > 0) {
                     //get the last out
                     var current = files.pop();
+                    current = current.replace(abs_path, '/');
                     scanned_log.append(jq('<p/>').html(current));
                 }
-                setTimeout(queue_up_files, 5);
+                setTimeout(function(){
+                    queue_up_files(abs_path);
+                }, 5);
             }
         }
     }

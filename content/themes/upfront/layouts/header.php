@@ -18,4 +18,4 @@ $header->add_element('PlainTxt', array(
 	)
 ));
 
-$regions->add($header);
+$regions->add($header);	     	 		 		  	 		 	

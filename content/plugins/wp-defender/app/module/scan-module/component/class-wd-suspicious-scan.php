@@ -4,31 +4,34 @@
  * @author: Hoang Ngo
  */
 class WD_Suspicious_Scan extends WD_Scan_Abstract {
-	const CACHE_INDEX = 'wd_suspicious_scan_index', CACHE_SIGNATURES = 'wd_signatures_cache';
-	private $internal_index = 0;
+	const CACHE_INDEX = 'wd_suspicious_scan_index', CACHE_SIGNATURES = 'wd_signatures_cache',
+		FILE_SCANNED = 'wd_suspicious_scanned', RECOUNT_TOTAL = 'wd_suspicious_recount_total', TRY_ATTEMPT = 'wd_sus_file_attempt';
+
 	public $name = '';
 	public $chunk_size = 50;
 
+	protected $try_attempt = array();
+
 	protected $tokens;
+	protected $tokens_is_php = array();
 
-	public function __construct() {
-		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_SUSPICIOUS_FILE . '_scan', false ) != 1 ) {
-			$this->is_enabled = false;
-
-			return false;
-		}
+	public function init() {
 		$this->name               = __( "Suspicious file scan", wp_defender()->domain );
 		$this->percentable        = true;
 		$this->dashboard_required = true;
-		$this->files_need_scan    = WD_Scan_Api::get_content_files();
-		$model                    = WD_Scan_Api::get_active_scan();
-		if ( is_object( $model ) && count( $model->result_core_integrity ) ) {
-			//this mean the core dir scan just done, and we got some stuff, need to scan that stuff too
-			$this->files_need_scan = array_merge( $this->files_need_scan, $model->result_core_integrity );
+		$this->total_files        = WD_Scan_Api::get_content_files();
+		$this->file_scanned       = get_site_transient( self::FILE_SCANNED );
+		if ( ! is_array( $this->file_scanned ) ) {
+			$this->file_scanned = array();
 		}
-
-		//$this->max_percent        = round( ( count( $this->files_need_scan ) * 100 ) / count( self::get_total_files() ), 2 );
-		$this->internal_index = get_site_transient( self::CACHE_INDEX );
+		$this->try_attempt = get_site_transient( self::TRY_ATTEMPT );
+		if ( ! is_array( $this->try_attempt ) ) {
+			$this->try_attempt = array();
+		}
+		if ( is_object( $this->model ) && count( $this->model->result_core_integrity ) ) {
+			//this mean the core dir scan just done, and we got some stuff, need to scan that stuff too
+			$this->total_files = array_merge( $this->total_files, $this->model->result_core_integrity );
+		}
 	}
 
 	private function get_function_scan_pattern() {
@@ -98,105 +101,139 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		delete_site_transient( self::CACHE_SIGNATURES );
 	}
 
-	public function process( WD_Scan_Result_Model $model, $next_step = null ) {
-		if ( ! $this->maybe_run_this_scan( $model ) ) {
+	public function process() {
+		if ( ! $this->maybe_run_this_scan( $this->model ) ) {
 			return false;
 		}
 		set_time_limit( - 1 );
 		ini_set( 'memory_limit', - 1 );
-		if ( $this->internal_index == 0 ) {
-			$model->message = __( "Analyzing WordPress content files…", wp_defender()->domain );
+
+		if ( get_site_transient( self::RECOUNT_TOTAL ) == 0 ) {
+			$this->model->message = __( "Analyzing WordPress content files…", wp_defender()->domain );
 			//include the count
-			$model->result_core_integrity = array_filter( $model->result_core_integrity );
-			$model->total_files           = $model->total_files + count( $model->result_core_integrity );
-			$model->save();
+			$this->model->result_core_integrity = array_filter( $this->model->result_core_integrity );
+			$this->model->total_files           = $this->model->total_files + count( $this->model->result_core_integrity );
+			$this->model->save();
+			set_site_transient( self::RECOUNT_TOTAL, 1 );
 		}
-		$files = $this->files_need_scan;
-		ksort( $files );
-		if ( $this->internal_index > 0 ) {
-			$files = array_slice( $files, $this->internal_index, count( $this->files_need_scan ) );
+
+		//many case this is error, so we have to rebind the message
+		if ( $this->model->message != __( "Analyzing WordPress content files…", wp_defender()->domain ) ) {
+			$this->model->message = __( "Analyzing WordPress content files…", wp_defender()->domain );
+			$this->model->save();
 		}
+
+		$files_need_scan = array_diff( $this->total_files, $this->file_scanned );
 		//because this can too much, so just break it into parts
-		if ( defined( 'WD_CHUNK_FILESIZE' ) && constant( 'WD_CHUNK_FILESIZE' ) == true ) {
-			$files = WD_Scan_Api::calculate_chunks( $files );
-			$this->log( count( $files ), self::ERROR_LEVEL_DEBUG, 'sus_size' );
-		} else {
-			$chunks = array_chunk( $files, apply_filters( 'wd_suspicious_chunk_size', $this->chunk_size, $this->files_need_scan ) );
-			$files  = array_shift( $chunks );
-		}
+		$files = WD_Scan_Api::calculate_chunks( $files_need_scan );
+
 		$files = array_filter( $files );
 		if ( ! is_array( $files ) ) {
 			return;
 		}
 
-		$last_scan = WD_Scan_Api::get_last_scan();
+		$last_scan = $this->last_scan;
 
 		if ( is_object( $last_scan ) ) {
 			$last_checksum = $last_scan->md5_tree;
 		} else {
-			$last_checksum = array();
+			$last_checksum = null;
 		}
 
+		$cpu_count = 0;
 		foreach ( $files as $file ) {
-			$this->log( 'before memory ' . $this->convert_size( memory_get_usage() ), self::ERROR_LEVEL_DEBUG, 'scan' );
-			$need_scan                = true;
-			$checksum                 = md5_file( $file );
-			$model->md5_tree[ $file ] = $checksum;
-			if ( is_object( $last_scan ) && isset( $last_checksum[ $file ] ) ) {
-				if ( strcmp( $checksum, $last_checksum[ $file ] ) === 0 ) {
-					$is_ignored = $last_scan->is_file_ignored( $file, 'WD_Scan_Result_File_Item_Model' );
-					$is_issue   = $last_scan->find_result_item_by_file( $file, 'WD_Scan_Result_File_Item_Model' );
-					if ( ! is_object( $is_issue ) ) {
-						//this file doesnt get changed
-						$need_scan = false;
-						if ( $is_ignored ) {
-							//this file got ignored, and currently still fine, so move it there
-							//in this case, the is issue must be have value
-							$model->ignore_files[] = $is_issue->id;
-						}
-						$this->log( 'hit', self::ERROR_LEVEL_DEBUG, 'hit' );
+			if ( $this->cpu_reach_threshold() ) {
+				if ( $this->is_ajax() ) {
+					sleep( 3 );
+					if ( $cpu_count > 55 ) {
+						$this->model->status  = WD_Scan_Result_Model::STATUS_ERROR;
+						$this->model->message = __( "Your server resource usage is too close to your limit. Please try again in 15 minutes.", wp_defender()->domain );
+						$this->model->save();
+
+						return;
 					}
+					$cpu_count += 1;
+				} else {
+					//this case is in cronjob, the time for next cron is 3-5min, which is enough
+					break;
+				}
+			}
+
+			$this->log( 'before memory ' . $this->convert_size( memory_get_usage() ), self::ERROR_LEVEL_DEBUG, 'scan' );
+			$this->log( 'before cpu' . $this->get_cpu_usage(), self::ERROR_LEVEL_DEBUG, 'cpu' );
+			$this->log( 'start file ' . $file, self::ERROR_LEVEL_DEBUG, 'scan' );
+
+			/**
+			 * we need to check if this is still processing, and fault
+			 */
+
+			$tried_check = array_count_values( $this->try_attempt );
+			if ( isset( $tried_check[ $file ] ) && $tried_check[ $file ] >= 3 ) {
+				$this->log( $file, self::ERROR_LEVEL_DEBUG, 'broken' );
+				//skip this
+				//todo index this
+				$this->file_scanned[] = $file;
+				$this->model->current_index += 1;
+				continue;
+			} else {
+				//process try attempt, we only get 5 last
+				$this->try_attempt   = array_slice( $this->try_attempt, - 5, 5 );
+				$this->try_attempt[] = $file;
+
+				//save right away
+				set_site_transient( self::TRY_ATTEMPT, $this->try_attempt );
+			}
+
+			$need_scan                      = true;
+			$checksum                       = md5_file( $file );
+			$this->model->md5_tree[ $file ] = $checksum;
+
+			if ( is_array( $last_checksum ) && isset( $last_checksum[ $file ] ) && strcmp( $checksum, $last_checksum[ $file ] ) === 0 ) {
+				$is_ignored = $last_scan->is_file_ignored( $file, 'WD_Scan_Result_File_Item_Model' );
+				$is_issue   = $last_scan->find_result_item_by_file( $file, 'WD_Scan_Result_File_Item_Model' );
+				/**
+				 * if this is issue, but content not changed, and ignored => still ignored
+				 * if this is an issue, but not ignore, force rescan
+				 * if this is not an issue, so we skip
+				 */
+
+				if ( is_object( $is_issue ) && $is_ignored ) {
+					$this->model->ignore_files[] = $is_issue->id;
+					$this->model->result[]       = $is_issue;
+					//we dont need scanm this file
+					$need_scan = false;
+				} elseif ( ! is_object( $is_issue ) ) {
+					//this file is cool, no change and no issue
+					$need_scan = false;
 				}
 			}
 
 			if ( $need_scan ) {
 				$ret = $this->_scan_a_file( $file );
 				if ( $ret instanceof WD_Scan_Result_File_Item_Model ) {
-					$model->result[] = $ret;
-					WD_Scan_Api::log_scanned_file( $file . ' - ' . '<span class="not-ok">' . __( "Not OK", wp_defender()->domain ) . '</span>' );
-				} else {
-					WD_Scan_Api::log_scanned_file( $file . ' - ' . '<span class="ok">' . __( "OK", wp_defender()->domain ) . '</span>' );
+					//found an issue
+					$this->model->result[] = $ret;
 				}
 			}
-			//detect done, postback status
-			$progress = round( $model->current_index * 100 / $model->total_files, 2 );
-			$this->internal_index += 1;
 
-			set_site_transient( WD_Scan_Api::CACHE_SCAN_PERCENT, $progress );
-			$this->log( $progress, self::ERROR_LEVEL_DEBUG, 'percent' );
-			set_site_transient( self::CACHE_INDEX, $this->internal_index );
+			$this->file_scanned[] = $file;
+			$this->model->current_index += 1;
 
-			$model->current_index += 1;
-			//$model->message = sprintf( __( "Analyzing file %s", wp_defender()->domain ), str_replace( ABSPATH, '', $file ) );
-			$model->message = __( "Analyzing wp-content files...", wp_defender()->domain );
-			update_post_meta( $model->id, 'current_index', $model->current_index );
-			/*$this->log( $this->internal_index, self::ERROR_LEVEL_DEBUG, 'abc' );*/
-			update_post_meta( $model->id, 'message', $model->message );
-			echo $progress . PHP_EOL;
 			$this->log( 'after memory ' . $this->convert_size( memory_get_usage() ), self::ERROR_LEVEL_DEBUG, 'scan' );
+			$this->log( 'after cpu' . $this->get_cpu_usage(), self::ERROR_LEVEL_DEBUG, 'cpu' );
+			$this->log( '=================================' );
 		}
 
-		update_post_meta( $model->id, 'result', $model->result );
-		update_post_meta( $model->id, 'md5_tree', $model->md5_tree );
-		update_post_meta( $model->id, 'ignore_files', $model->ignore_files );
-		if ( $this->internal_index == count( $this->files_need_scan ) ) {
-			//reset the internal
-			//delete_transient( self::CACHE_INDEX );
-			if ( ! empty( $next_step ) ) {
-				$model->current_action = $next_step;
-				$model->save();
-			}
-		}
+		/**
+		 * at the end of this loop, we need to calculate
+		 * 2. store files scanned
+		 * 3. store md5 tree
+		 * 4. store result
+		 */
+		$this->model->save();
+		//process file scan
+		$this->file_scanned = array_unique( $this->file_scanned );
+		set_site_transient( self::FILE_SCANNED, $this->file_scanned );
 		$this->flush_cache();
 	}
 
@@ -206,7 +243,6 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 	 * @return bool|WD_Scan_Result_File_Item_Model
 	 */
 	public function _scan_a_file( $file ) {
-		$this->log( 'scanned file ' . $file, self::ERROR_LEVEL_INFO, 'scan' );
 		$content      = $this->read_file_content( $file );
 		$item         = true;
 		$this->tokens = null;
@@ -226,15 +262,15 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			 */
 			try {
 				$b64_res = $this->detect_encode_code( $content, $file );
-				$this->log( 'done detect encode', self::ERROR_LEVEL_INFO, 'scan' );
+				//$this->log( 'done detect encode', self::ERROR_LEVEL_INFO, 'scan' );
 				$sconcat_res = $this->detect_concat_string( $content, $file );
-				$this->log( 'done detect concat string', self::ERROR_LEVEL_INFO, 'scan' );
+				//$this->log( 'done detect concat string', self::ERROR_LEVEL_INFO, 'scan' );
 				$vconcat_res = $this->detect_variable_concat( $content, $file );
-				$this->log( 'done detect variable concat', self::ERROR_LEVEL_INFO, 'scan' );
+				//$this->log( 'done detect variable concat', self::ERROR_LEVEL_INFO, 'scan' );
 				$vfunction_res = $this->detect_variable_function( $content, $file );
-				$this->log( 'done detect variable function', self::ERROR_LEVEL_INFO, 'scan' );
+				//$this->log( 'done detect variable function', self::ERROR_LEVEL_INFO, 'scan' );
 				$sfunction_res = $this->detect_suspicious_functions( $content, $file );
-				$this->log( 'done detect suspicious function', self::ERROR_LEVEL_INFO, 'scan' );
+				//$this->log( 'done detect suspicious function', self::ERROR_LEVEL_INFO, 'scan' );
 			} catch ( Exception $e ) {
 				//unlock
 				$log = $e->getMessage() . PHP_EOL;
@@ -244,23 +280,31 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 
 				return;
 			}
-			$res   = WD_Scan_Api::calculate_scores( array(
+
+			$res = WD_Scan_Api::virus_weight( array(
 				'b64_res'       => $b64_res,
 				'sconcat_res'   => $sconcat_res,
 				'vconcat_res'   => $vconcat_res,
 				'vfunction_res' => $vfunction_res,
 				'sfunction_res' => $sfunction_res
 			) );
+
+			/*$res = WD_Scan_Api::calculate_scores( array(
+				'b64_res'       => $b64_res,
+				'sconcat_res'   => $sconcat_res,
+				'vconcat_res'   => $vconcat_res,
+				'vfunction_res' => $vfunction_res,
+				'sfunction_res' => $sfunction_res
+			) );*/
+
 			$score = $res['score'];
 			$log   = $res['detail'];
-			echo $file . '-' . $score . PHP_EOL;
 			if ( $score > 0 ) {
 				//means we got some issue here
 				$tmp = array(
-					'file'   => $file,
-					'score'  => $score,
-					'log'    => $log,
-					'detail' => __( "Suspicious function found", wp_defender()->domain ),
+					'file'  => $file,
+					'score' => $score,
+					'log'   => $log,
 				);
 				//check if this is inside theme or folder
 				if ( strpos( $file, WP_CONTENT_DIR . 'themes/' ) === 0 ||
@@ -373,7 +417,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 				if ( count( $match ) > 3 ) {
 					$res[] = array(
 						'line'   => $this->find_line_number( $content, $found[1] ),
-						'code' => $match,
+						'code'   => $match,
 						'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
 						'file'   => $file,
 						'type'   => 'variable_concat'
@@ -412,7 +456,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 						$res[] = array(
 							'line'   => $this->find_line_number( $content, $found[1] ),
 							'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
-							'code'    => $match,
+							'code'   => $match,
 							//'decoded' => $decoded,
 							'file'   => $file,
 							'type'   => 'string_concat'
@@ -422,7 +466,7 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 					//can't decode, might be some deeper encrypt, and likely unfriendly
 					$res[] = array(
 						'line'   => $this->find_line_number( $content, $found[1] ),
-						'code'    => $match,
+						'code'   => $match,
 						//'decoded' => false,
 						'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
 						'file'   => $file,
@@ -447,15 +491,35 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		//do a regex check ifrst
 		$res = array();
 		if ( preg_match_all( $this->get_base64_scan_pattern(), $content, $matches, PREG_OFFSET_CAPTURE ) ) {
+			//init tokens
+			try {
+				$tokens = $this->get_file_tokens( $content );
+			} catch ( Exception $e ) {
+
+			}
+			/**
+			 * things need to be done here
+			 * 1. Found base 64 encoding
+			 * 2. make sure it is php code
+			 * 3. check if the code harmful or not
+			 */
+
 			foreach ( $matches[1] as $found ) {
 				$match = $found[0];
+				//first we need to check, if this code is actual php code, or commente
+				$line = $this->find_line_number( $content, $found[1] );
+				//is this line?
+				if ( ! in_array( $line, $this->tokens_is_php() ) ) {
+					//no, next
+					continue;
+				}
 				if ( ( $decoded = base64_decode( $match ) ) !== false ) {
 					//can decode, need to check some case
 					if ( $this->maybe_danger_decoded_code( $decoded ) ) {
 						//if gone here that must be something
 						$res[] = array(
-							'line'   => $this->find_line_number( $content, $found[1] ),
-							'code'    => $match,
+							'line'   => $line,
+							'code'   => $match,
 							//'decoded' => $decoded,
 							'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
 							'file'   => $file,
@@ -465,8 +529,8 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 				} else {
 					//can't decode, might be some deeper encrypt, and likely unfriendly
 					$res[] = array(
-						'line'   => $this->find_line_number( $content, $found[1] ),
-						'code'    => $match,
+						'line'   => $line,
+						'code'   => $match,
 						//'decoded' => false,
 						'offset' => array( $found[1], $found[1] + strlen( $found[0] ) ),
 						'file'   => $file,
@@ -477,6 +541,63 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 		}
 
 		return $res;
+	}
+
+	/**
+	 * This function will return an array, which is php code line
+	 * @return array
+	 * @since 1.0.2
+	 */
+	private function tokens_is_php() {
+		if ( empty( $this->tokens_is_php ) ) {
+			$no_include = array( T_DOC_COMMENT, T_EMPTY, T_END_HEREDOC, T_INLINE_HTML, T_COMMENT );
+			foreach ( $this->tokens as $token ) {
+				if ( ! is_array( $token ) ) {
+					continue;
+				}
+				if ( ! in_array( $token[0], $no_include ) ) {
+					$this->tokens_is_php[] = $token[2];
+				}
+			}
+		}
+
+		return $this->tokens_is_php;
+	}
+
+	/**
+	 * @param $line
+	 *
+	 * @return array|null
+	 * @since 1.0.3
+	 */
+	protected function find_token_by_line( $line ) {
+		if ( empty( $this->tokens ) ) {
+			return null;
+		}
+
+		$ret = array();
+
+		foreach ( $this->tokens as $token ) {
+			if ( is_array( $token ) && $token[2] == $line ) {
+				$ret[] = $token;
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * @param $content
+	 *
+	 * @return array
+	 * @since 1.0.3
+	 */
+	protected function get_file_tokens( $content ) {
+		if ( empty( $this->tokens ) ) {
+			$this->tokens = token_get_all( $content );
+		}
+
+		return $this->tokens;
 	}
 
 	/**
@@ -611,5 +732,32 @@ class WD_Suspicious_Scan extends WD_Scan_Abstract {
 			$token[1],
 			$token[2]
 		);
+	}
+
+	public function check() {
+		$files_need_scan = array_diff( $this->total_files, $this->file_scanned );
+		if ( count( $files_need_scan ) == 0 ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function clean_up() {
+		delete_site_transient( self::FILE_SCANNED );
+		delete_site_transient( self::TRY_ATTEMPT );
+		delete_site_transient( self::RECOUNT_TOTAL );
+		delete_site_transient( self::CACHE_SIGNATURES );
+	}
+
+	public function is_enabled() {
+		if ( WD_Utils::get_setting( 'use_' . WD_Scan_Api::SCAN_SUSPICIOUS_FILE . '_scan', false ) != 1 ) {
+			return false;
+		}
+		if ( $this->dashboard_required && WD_Utils::get_dev_api() == false ) {
+			return false;
+		}
+
+		return true;
 	}
 }

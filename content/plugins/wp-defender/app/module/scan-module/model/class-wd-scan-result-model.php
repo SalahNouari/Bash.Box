@@ -5,7 +5,7 @@
  */
 class WD_Scan_Result_Model extends WD_Post_Model {
 	//constant for scan status
-	const STATUS_COMPLETE = 'complete', STATUS_PROCESSING = 'on_going', STATUS_ERROR = 'error', STATUS_PAUSE = 'pause';
+	const STATUS_COMPLETE = 'complete', STATUS_PROCESSING = 'on_going', STATUS_ERROR = 'error', STATUS_PAUSE = 'pause', STATUS_INIT = 'init';
 	//scan stage
 	const ACTION_INIT = 'init', ACTION_VULNDB = 'vulndb', ACTION_CORE_FILES = 'core_files', ACTION_CONTENT_FILES = 'content_files';
 	//result line type, mostly use for display
@@ -39,7 +39,6 @@ class WD_Scan_Result_Model extends WD_Post_Model {
 	 * @since 1.0
 	 */
 	protected $status;
-
 
 	/**
 	 * Internal use, only for system
@@ -210,7 +209,7 @@ class WD_Scan_Result_Model extends WD_Post_Model {
 	 */
 	protected function before_insert() {
 		//this is new, update the status
-		$this->status         = self::STATUS_PROCESSING;
+		$this->status         = self::STATUS_INIT;
 		$this->current_action = '';
 		$this->log            = '<!-- result will show -->';
 		$this->message        = '<i class="wdv-icon wdv-icon-fw wdv-icon-refresh spin"></i>' . __( "Initializing...", wp_defender()->domain );
@@ -250,8 +249,15 @@ class WD_Scan_Result_Model extends WD_Post_Model {
 	 */
 	public function get_results() {
 		$result = $this->result;
+		$md5    = get_site_transient( 'wd_md5_checksum' );
+		if ( $md5 == false ) {
+			$md5 = WD_Scan_Api::download_md5_files();
+			//short cache, as user might update the version anytime
+			set_site_transient( 'wd_md5_checksum', $md5, 3600 );
+		}
+
 		foreach ( $result as $key => $item ) {
-			if ( $item->check() == true ) {
+			if ( $item->check( $this ) == true ) {
 				unset( $result[ $key ] );
 				continue;
 			}
@@ -350,7 +356,8 @@ class WD_Scan_Result_Model extends WD_Post_Model {
 		unset( $this->md5_tree[ $item->name ] );
 		unset( $this->result[ $index ] );
 		//unset from md5 tree too
-		$this->save();
+		update_post_meta( $this->id, 'md5_tree', $this->md5_tree );
+		update_post_meta( $this->id, 'result', $this->result );
 		WD_Utils::flag_for_submitting();
 	}
 
@@ -465,9 +472,26 @@ class WD_Scan_Result_Model extends WD_Post_Model {
 	}
 
 	/**
+	 * @return float|int
+	 * @since 1.0.3
+	 */
+	public function get_percent() {
+		if ( $this->total_files == 0 ) {
+			return 0;
+		}
+
+		$progress = round( ( $this->current_index * 100 ) / $this->total_files, 2 );
+		if ( $progress > 100 ) {
+			$progress = 100;
+		}
+
+		return $progress;
+	}
+
+	/**
 	 * @param string $class_name
 	 *
-	 * @return mixed
+	 * @return WD_Scan_Result_Model
 	 */
 	public static function model( $class_name = __CLASS__ ) {
 		return parent::model( $class_name );

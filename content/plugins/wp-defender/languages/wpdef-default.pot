@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WP Defender package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Defender 1.0.1\n"
+"Project-Id-Version: WP Defender 1.0.3\n"
 "Report-Msgid-Bugs-To: http://premium.wpmudev.org/\n"
 "POT-Creation-Date: 2016-03-04 23:06:38+00:00\n"
 "MIME-Version: 1.0\n"
@@ -12,14 +12,15 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: app/class-wd-component.php:562
+
+#: app/class-wd-component.php:533
 #, php-format
 msgid ""
 "WPMU DEV Dashboard will be required for this action. Please visit <a href="
 "\"%s\">here</a> and install the WPMU DEV Dashboard"
 msgstr ""
 
-#: app/class-wd-component.php:617
+#: app/class-wd-component.php:588
 #: app/module/hardener-module/component/class-wd-plugin-theme-version.php:148
 msgid "N/A"
 msgstr ""
@@ -64,21 +65,21 @@ msgid ""
 "Official WPMU DEV Superhero"
 msgstr ""
 
-#: app/class-wd-utils.php:420 app/class-wd-utils.php:500
+#: app/class-wd-utils.php:479 app/class-wd-utils.php:559
 msgid "Guest"
 msgstr ""
 
-#: app/class-wd-utils.php:618
+#: app/class-wd-utils.php:677
 #: app/module/scan-module/view/widgets/scan/scan_result.php:14
 msgid "WordPress Core Integrity"
 msgstr ""
 
-#: app/class-wd-utils.php:619
+#: app/class-wd-utils.php:678
 #: app/module/scan-module/view/widgets/scan/scan_result.php:35
 msgid "Plugins & Themes vulnerability"
 msgstr ""
 
-#: app/class-wd-utils.php:620
+#: app/class-wd-utils.php:679
 #: app/module/scan-module/view/widgets/scan/scan_result.php:56
 #: app/view/settings.php:96
 msgid "Suspicious Code"
@@ -119,7 +120,7 @@ msgid "Defender"
 msgstr ""
 
 #: app/controller/class-wd-admin-controller.php:220 app/view/settings.php:5
-#: wp-defender.php:168
+#: wp-defender.php:177
 msgid "Settings"
 msgstr ""
 
@@ -181,9 +182,8 @@ msgstr ""
 #: app/module/hardener-module/component/class-wd-change-default_admin.php:327
 #: app/module/hardener-module/component/class-wd-db-prefix.php:343
 #: app/module/hardener-module/component/class-wd-disable-error-display.php:219
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:139
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:244
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:229
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:144
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:234
 #: app/module/hardener-module/component/class-wd-plugin-theme-version.php:316
 #: app/module/hardener-module/component/class-wd-protect-core-dir.php:504
 #: app/module/hardener-module/component/class-wd-protect-core-dir1.php:602
@@ -203,9 +203,8 @@ msgstr ""
 #: app/module/hardener-module/component/class-wd-change-default_admin.php:331
 #: app/module/hardener-module/component/class-wd-db-prefix.php:347
 #: app/module/hardener-module/component/class-wd-disable-error-display.php:223
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:144
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:248
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:233
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:149
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:238
 #: app/module/hardener-module/component/class-wd-plugin-theme-version.php:395
 #: app/module/hardener-module/component/class-wd-prevent-php-exec.php:283
 #: app/module/hardener-module/component/class-wd-prevent-php-exec1.php:514
@@ -320,7 +319,7 @@ msgstr ""
 
 #: app/module/hardener-module/component/class-wd-disable-error-display.php:164
 #: app/module/hardener-module/component/class-wd-disable-error-display.php:209
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:180
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:185
 #: app/module/hardener-module/component/class-wd-security-key.php:75
 msgid "Your wp-config.php isn't writable"
 msgstr ""
@@ -353,7 +352,7 @@ msgstr ""
 msgid "Disable trackbacks and pingbacks"
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:141
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:146
 msgid ""
 "Pingbacks notify a website when it has been mentioned by another website, "
 "like a form of courtesy communication. However, these notifications can be "
@@ -362,12 +361,12 @@ msgid ""
 "comments."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:162
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:167
 msgid "Trackbacks and pingbacks are turned off."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:169
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:263
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:174
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:268
 #: app/module/hardener-module/component/class-wd-prevent-php-exec.php:384
 #: app/module/hardener-module/component/class-wd-prevent-php-exec1.php:666
 #: app/module/hardener-module/component/class-wd-prevent-php-exec1.php:690
@@ -378,87 +377,45 @@ msgstr ""
 msgid "Revert"
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:173
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:178
 msgid ""
 "We will turn off trackbacks and pingbacks in your WordPress settings area."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-disable-ping-back.php:180
+#: app/module/hardener-module/component/class-wd-disable-ping-back.php:185
 msgid "Disable Pingbacks"
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:11
-msgid "Prevent access to log files"
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:110
-msgid "You don't have any log files"
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:195
-#, php-format
-msgid "There are %d log files"
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:205
-msgid "Remove All"
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:224
-#, php-format
-msgid "Can't remove log file %s"
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:233
-msgid "There are no log files."
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:246
-msgid ""
-"When developing websites locally, it is common to keep log files to help "
-"debug your installation. On a public website, however, these same files can "
-"provide hackers with valuable information about your site's vulnerabilities. "
-"We recommend preventing access to these files."
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:255
-msgid "We did't detect any log files."
-msgstr ""
-
-#: app/module/hardener-module/component/class-wd-error-log-scan.php:261
-msgid "Scanning for log files, this can take a while"
 msgstr ""
 
 #: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:12
 msgid "Disable the file editor"
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:191
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:197
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:196
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:202
 msgid ""
 "You already have ​*DISALLOW_FILE_EDIT*​ defined as true somewhere other than "
 "your `wp-config.php` file which means the file editor can’t be disabled. "
 "Please find and remove this line of code manually and try this fix again."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:231
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:236
 msgid ""
 "WordPress comes with a file editor built into the system. This means that "
 "anyone with access to your login information can edit your plugin and theme "
 "files. We recommend disabling the editor."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:256
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:261
 msgid "The file editor is disabled."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:267
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:272
 msgid ""
 "We will disable access to the file editor for you. You can enable it again "
 "anytime."
 msgstr ""
 
-#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:274
+#: app/module/hardener-module/component/class-wd-plugin-theme-editor.php:279
 msgid "Disable File Editor"
 msgstr ""
 
@@ -733,8 +690,8 @@ msgstr ""
 
 #: app/module/hardener-module/view/main.php:10
 msgid ""
-"Hardening vulnerabilities leave you easy to attack. It’s highly recommend "
-"you address these <strong>immediately</strong>."
+"Vulnerabilities leave you easy to attack. It’s highly recommend you address "
+"these <strong>immediately</strong>."
 msgstr ""
 
 #: app/module/hardener-module/view/main.php:24
@@ -759,99 +716,118 @@ msgstr ""
 msgid "Your website is well protected against hackers and bots."
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:19
+#: app/module/scan-module/component/class-wd-core-integrity-scan.php:13
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:19
 msgid "core integrity scan"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:35
+#: app/module/scan-module/component/class-wd-core-integrity-scan.php:30
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:35
 msgid "Analyzing WordPress core files…"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:89
+#: app/module/scan-module/component/class-wd-core-integrity-scan.php:59
+#: app/module/scan-module/component/class-wd-suspicious-scan.php:150
+msgid ""
+"Your server resource usage is too close to your limit. Please try again in "
+"15 minutes."
+msgstr ""
+
+#: app/module/scan-module/component/class-wd-core-integrity-scan.php:111
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:89
 msgid ""
 "There are no available checksums for your WordPress version, the scan will "
 "skip the core integrity check."
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:112
-#: app/module/scan-module/component/class-wd-suspicious-scan.php:166
-msgid "Not OK"
-msgstr ""
-
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:112
-#: app/module/scan-module/component/class-wd-suspicious-scan.php:168
-msgid "OK"
-msgstr ""
-
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:115
-msgid "Analyzing WordPress core files..."
-msgstr ""
-
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:172
+#: app/module/scan-module/component/class-wd-core-integrity-scan.php:169
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:171
 #, php-format
 msgid "File size %s, modified at %s"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-core-integrity-scan.php:186
+#: app/module/scan-module/component/class-wd-core-integrity-scan.php:183
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:185
 #, php-format
 msgid "File size %s, added at %s"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-scan-api.php:71
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:112
+#: app/module/scan-module/component/class-wd-suspicious-scan1.php:171
+msgid "Not OK"
+msgstr ""
+
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:112
+#: app/module/scan-module/component/class-wd-suspicious-scan1.php:173
+msgid "OK"
+msgstr ""
+
+#: app/module/scan-module/component/class-wd-core-integrity-scan1.php:115
+msgid "Analyzing WordPress core files..."
+msgstr ""
+
+#: app/module/scan-module/component/class-wd-scan-api.php:74
 #, php-format
 msgid ""
 "Automatic scans have been enabled. Expect your first report on <strong>%s</"
 "strong> to <strong>%s</strong>"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-scan-api.php:215
+#: app/module/scan-module/component/class-wd-scan-api.php:218
 msgid "A scan is already in progress"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-scan-api.php:263
+#: app/module/scan-module/component/class-wd-scan-api.php:266
 msgid ""
 "Please note the nested WP install on your site will not be scanned. Install "
 "WP Defender there to scan separately."
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-scan-api.php:548
+#: app/module/scan-module/component/class-wd-scan-api.php:558
 msgid "Daily"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-scan-api.php:549
+#: app/module/scan-module/component/class-wd-scan-api.php:559
 msgid "Weekly"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-scan-api.php:550
+#: app/module/scan-module/component/class-wd-scan-api.php:560
 msgid "Monthly"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-suspicious-scan.php:20
+#: app/module/scan-module/component/class-wd-suspicious-scan.php:19
+#: app/module/scan-module/component/class-wd-suspicious-scan1.php:20
 msgid "Suspicious file scan"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-suspicious-scan.php:108
+#: app/module/scan-module/component/class-wd-suspicious-scan.php:112
+#: app/module/scan-module/component/class-wd-suspicious-scan.php:121
+#: app/module/scan-module/component/class-wd-suspicious-scan.php:122
+#: app/module/scan-module/component/class-wd-suspicious-scan1.php:108
 msgid "Analyzing WordPress content files…"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-suspicious-scan.php:181
+#: app/module/scan-module/component/class-wd-suspicious-scan1.php:187
 msgid "Analyzing wp-content files..."
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-suspicious-scan.php:263
+#: app/module/scan-module/component/class-wd-suspicious-scan1.php:271
 #: app/module/scan-module/model/class-wd-scan-result-file-item-model.php:40
 msgid "Suspicious function found"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-vulndb-scan.php:16
+#: app/module/scan-module/component/class-wd-vulndb-scan.php:12
+#: app/module/scan-module/component/class-wd-vulndb-scan1.php:16
 msgid "Vulnerability scan"
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-vulndb-scan.php:34
+#: app/module/scan-module/component/class-wd-vulndb-scan.php:27
+#: app/module/scan-module/component/class-wd-vulndb-scan1.php:34
 msgid "Checking for any published vulnerabilities your plugins & themes..."
 msgstr ""
 
-#: app/module/scan-module/component/class-wd-vulndb-scan.php:49
+#: app/module/scan-module/component/class-wd-vulndb-scan.php:42
+#: app/module/scan-module/component/class-wd-vulndb-scan1.php:49
 #: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:30
 msgid "WordPress Vulnerability"
 msgstr ""
@@ -872,39 +848,39 @@ msgstr ""
 msgid "Issue"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:37
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:186
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:41
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:190
 #, php-format
 msgid "The file <strong>%s</strong> was reverted back to original state."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:48
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:52
 msgid "Detail Information"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:143
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:147
 msgid "Can't not find the issue needing to be fixed."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:230
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:234
 #: app/module/scan-module/view/scan/_scan_report.php:209
 msgid "Undo"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:247
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:308
-#: app/module/scan-module/controller/class-wd-scan-controller.php:480
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:251
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:312
+#: app/module/scan-module/controller/class-wd-scan-controller.php:489
 #: app/module/scan-module/view/scan/_scan_report.php:119
 #: app/module/scan-module/view/scan/_scan_report.php:226
 msgid "Delete"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:282
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:286
 #: app/module/scan-module/view/scan/_scan_report.php:93
 msgid "Resolve Issue"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-resolve-controller.php:288
+#: app/module/scan-module/controller/class-wd-resolve-controller.php:292
 #: app/module/scan-module/view/scan/_scan_report.php:99
 msgid "False alarm? Ignore it"
 msgstr ""
@@ -913,50 +889,50 @@ msgstr ""
 msgid "Continuing..."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:473
+#: app/module/scan-module/controller/class-wd-scan-controller.php:482
 #: app/module/scan-module/view/scan/_scanning.php:5
 msgid "Show Log"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:474
+#: app/module/scan-module/controller/class-wd-scan-controller.php:483
 msgid "Hide Log"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:475
+#: app/module/scan-module/controller/class-wd-scan-controller.php:484
 msgid ""
 "Just a reminder, by ignoring this file Defender will leave it alone and "
 "won't warn you about it again unless it changes. You can add it back to the "
 "issues list any time."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:476
+#: app/module/scan-module/controller/class-wd-scan-controller.php:485
 msgid ""
 "Deleting this file will remove it from your WordPress installation. Make "
 "sure you have a backup of your website before continuing, doing this could "
 "break your website."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:477
+#: app/module/scan-module/controller/class-wd-scan-controller.php:486
 msgid ""
 "Deleting this plugin will remove it from your WordPress installation. Make "
 "sure you have a backup of your website before continuing."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:478
+#: app/module/scan-module/controller/class-wd-scan-controller.php:487
 msgid ""
 "Deleting this theme will remove it from your WordPress installation. Make "
 "sure you have a backup of your website before continuing."
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:479
+#: app/module/scan-module/controller/class-wd-scan-controller.php:488
 msgid "Cancel"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:481
+#: app/module/scan-module/controller/class-wd-scan-controller.php:490
 msgid "Ignore"
 msgstr ""
 
-#: app/module/scan-module/controller/class-wd-scan-controller.php:497
+#: app/module/scan-module/controller/class-wd-scan-controller.php:506
 #: app/module/scan-module/view/layouts/scan.php:38
 #: app/module/scan-module/view/widgets/scan/no_scan.php:3
 #: app/module/scan-module/view/widgets/scan/scan-subscribe.php:3
@@ -1037,42 +1013,42 @@ msgstr ""
 msgid "Please make sure the folder %s writeable"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:234
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:235
 msgid "An unexpected error happened. Please try again"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:291
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:295
 #: app/module/scan-module/model/class-wd-scan-result-file-item-model.php:301
 msgid "Location: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:299
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:303
 #: app/module/scan-module/model/class-wd-scan-result-file-item-model.php:309
 msgid "Size: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:307
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:311
 msgid "Date added: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:307
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:311
 msgid "Date modified:"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:325
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:329
 msgid "Restore File"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:328
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:332
 msgid "Review changes"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:335
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:339
 #: app/module/scan-module/model/class-wd-scan-result-file-item-model.php:337
 msgid "Ignore File"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:342
+#: app/module/scan-module/model/class-wd-scan-result-core-item-model.php:346
 msgid "Delete File"
 msgstr ""
 
@@ -1157,23 +1133,23 @@ msgstr ""
 msgid "Date added/modified: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-model.php:216
+#: app/module/scan-module/model/class-wd-scan-result-model.php:215
 msgid "Initializing..."
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-model.php:324
+#: app/module/scan-module/model/class-wd-scan-result-model.php:330
 msgid "WordPress Core"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-model.php:325
+#: app/module/scan-module/model/class-wd-scan-result-model.php:331
 msgid "Other"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-model.php:326
+#: app/module/scan-module/model/class-wd-scan-result-model.php:332
 msgid "Plugin"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-model.php:327
+#: app/module/scan-module/model/class-wd-scan-result-model.php:333
 msgid "Theme"
 msgstr ""
 
@@ -1229,19 +1205,19 @@ msgstr ""
 msgid "Delete theme"
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:331
+#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:343
 msgid "Plugin name: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:333
+#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:345
 msgid "Theme name: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:344
+#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:356
 msgid "Version: "
 msgstr ""
 
-#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:352
+#: app/module/scan-module/model/class-wd-scan-result-vulndb-item-model.php:364
 msgid "Vulnerability: "
 msgstr ""
 
@@ -1257,16 +1233,12 @@ msgstr ""
 msgid "Scan Data"
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:31
+#: app/module/scan-module/view/debug/debug.php:36
 msgid "Progress: "
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:36
-msgid "Total files: "
-msgstr ""
-
 #: app/module/scan-module/view/debug/debug.php:41
-msgid "Current action: "
+msgid "Total files: "
 msgstr ""
 
 #: app/module/scan-module/view/debug/debug.php:46
@@ -1290,44 +1262,36 @@ msgid "Total Core Files: "
 msgstr ""
 
 #: app/module/scan-module/view/debug/debug.php:77
-msgid "Current core file index: "
-msgstr ""
-
-#: app/module/scan-module/view/debug/debug.php:82
 msgid "Total Contents Files: "
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:87
-msgid "Current content file index: "
-msgstr ""
-
-#: app/module/scan-module/view/debug/debug.php:93
+#: app/module/scan-module/view/debug/debug.php:83
 msgid "Memory Info"
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:97
+#: app/module/scan-module/view/debug/debug.php:87
 msgid "CPU usage: "
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:105
+#: app/module/scan-module/view/debug/debug.php:95
 msgid "Memory usage: "
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:112
+#: app/module/scan-module/view/debug/debug.php:102
 msgid "Peak Memory usage: "
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:130
+#: app/module/scan-module/view/debug/debug.php:120
 #, php-format
 msgid "Result VulnDB (%s)"
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:142
+#: app/module/scan-module/view/debug/debug.php:132
 #, php-format
 msgid "Result Core Integrity (%s)"
 msgstr ""
 
-#: app/module/scan-module/view/debug/debug.php:154
+#: app/module/scan-module/view/debug/debug.php:144
 #, php-format
 msgid "Result Suspicious Scan (%s)"
 msgstr ""
@@ -1363,15 +1327,15 @@ msgstr ""
 msgid "View Source %s"
 msgstr ""
 
-#: app/module/scan-module/view/detail/file_item.php:43
+#: app/module/scan-module/view/detail/file_item.php:42
 msgid "Navigate"
 msgstr ""
 
-#: app/module/scan-module/view/detail/file_item.php:48
+#: app/module/scan-module/view/detail/file_item.php:47
 msgid "Previous"
 msgstr ""
 
-#: app/module/scan-module/view/detail/file_item.php:53
+#: app/module/scan-module/view/detail/file_item.php:52
 msgid "Next"
 msgstr ""
 
@@ -1829,7 +1793,6 @@ msgid "Blacklist"
 msgstr ""
 
 #: app/view/widgets/blacklist/blacklist-error.php:18
-#: app/view/widgets/blacklist/blacklist-off.php:21
 msgid ""
 "We could’nt get a result from Google. This may be because your website is on "
 "a local environment. Blacklist can only work on live websites. If problems "
@@ -1847,7 +1810,7 @@ msgid ""
 "automagically."
 msgstr ""
 
-#: app/view/widgets/blacklist/blacklist-off.php:29
+#: app/view/widgets/blacklist/blacklist-off.php:22
 msgid "Activate Blacklist Monitoring"
 msgstr ""
 
@@ -1901,7 +1864,7 @@ msgstr ""
 msgid "Install"
 msgstr ""
 
-#: app/widget/class-wd-blacklist-widget.php:64
+#: app/widget/class-wd-blacklist-widget.php:65
 msgid "Something wrong happened, please try again."
 msgstr ""
 

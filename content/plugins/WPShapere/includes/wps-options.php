@@ -12,13 +12,13 @@ else {
 }
 
 //get all admin users
-global $wpdb;
-$user_query = $wpdb->get_results( "Select m.user_id, display_name From wp_users u, wp_usermeta m Where u.id = m.user_id And m.meta_key = 'wp_user_level' And m.meta_value = '10'" );
-
-if ( ! empty( $user_query ) ) {
-        foreach ( $user_query as $user_details ) {
-                $admin_users[$user_details->user_id] = $user_details->display_name;
-        }
+$user_query = new WP_User_Query( array( 'role' => 'Administrator' ) );
+if(isset($user_query) && !empty($user_query)) {
+    if ( ! empty( $user_query->results ) ) {
+            foreach ( $user_query->results as $user_detail ) {
+                    $admin_users[$user_detail->ID] = $user_detail->display_name;
+            }
+    }
 }
 
 $panel_tabs = array(

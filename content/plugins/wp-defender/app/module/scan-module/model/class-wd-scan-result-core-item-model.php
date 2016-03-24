@@ -228,6 +228,7 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 				$content = file_get_contents( $file_path );
 				global $wp_filesystem;
 				$wp_filesystem->rmdir( $path . 'wordpress', true );
+
 				return $content;
 			}
 
@@ -249,25 +250,28 @@ class WD_Scan_Result_Core_Item_Model extends WD_Scan_Result_Item_Model {
 		}
 	}
 
-	public function check() {
-		$model = WD_Scan_Api::get_last_scan();
+	public function check( $model = null, $md5 = null ) {
+		if ( ! is_object( $model ) ) {
+			$model = WD_Scan_Api::get_last_scan();
+		}
+
 		if ( ! file_exists( $this->name ) ) {
 			$model->delete_item_from_result( $this->id );
 
 			return true;
 		}
-
-		//we will need to lookpup the md5 each request to check this file content
-		$md5 = get_site_transient( 'wd_md5_checksum' );
-		if ( $md5 == false ) {
-			$md5 = WD_Scan_Api::download_md5_files();
-			if ( is_wp_error( $md5 ) ) {
-				return false;
+		if ( is_null( $md5 ) ) {
+			//we will need to lookpup the md5 each request to check this file content
+			$md5 = get_site_transient( 'wd_md5_checksum' );
+			if ( $md5 == false ) {
+				$md5 = WD_Scan_Api::download_md5_files();
+				if ( is_wp_error( $md5 ) ) {
+					return false;
+				}
+				//short cache, as user might update the version anytime
+				set_site_transient( 'wd_md5_checksum', $md5, 3600 );
 			}
-			//short cache, as user might update the version anytime
-			set_site_transient( 'wd_md5_checksum', $md5, 3600 );
 		}
-
 		if ( isset( $md5[ ltrim( $this->get_sub(), ' / ' ) ] ) ) {
 			$hash = $md5[ ltrim( $this->get_sub(), ' / ' ) ];
 			if ( $hash == md5_file( $this->name ) ) {

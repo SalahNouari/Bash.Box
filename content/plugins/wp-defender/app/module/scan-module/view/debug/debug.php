@@ -28,18 +28,18 @@
 					<div class="group">
 						<div class="col span_6_of_12">
 							<p>
+								<strong>Total Scan:</strong>
+								<?php echo get_site_transient( 'wd_scan_count' ) ?>
+							</p>
+
+							<p>
 								<strong><?php _e( "Progress: " ) ?></strong>
-								<?php echo get_site_transient( WD_Scan_APi::CACHE_SCAN_PERCENT ) ?>%
+								<?php echo is_object( $model ) ? $model->get_percent() : 0 ?>%
 							</p>
 
 							<p>
 								<strong><?php _e( "Total files: " ) ?></strong>
 								<?php echo $model->total_files ?>
-							</p>
-
-							<p>
-								<strong><?php _e( "Current action: " ) ?></strong>
-								<?php echo $model->current_action ?>
 							</p>
 
 							<p>
@@ -74,18 +74,8 @@
 							</p>
 
 							<p>
-								<strong><?php _e( "Current core file index: " ) ?></strong>
-								<?php echo get_site_transient( WD_Core_Integrity_Scan::CACHE_INDEX ) ?>
-							</p>
-
-							<p>
 								<strong><?php _e( "Total Contents Files: " ) ?></strong>
 								<?php echo count( $content_files ) ?>
-							</p>
-
-							<p>
-								<strong><?php _e( "Current content file index: " ) ?></strong>
-								<?php echo get_site_transient( WD_Suspicious_Scan::CACHE_INDEX ) ?>
 							</p>
 						</div>
 						<div class="col span_6_of_12">

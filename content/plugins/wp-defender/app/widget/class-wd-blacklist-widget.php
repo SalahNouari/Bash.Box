@@ -43,6 +43,7 @@ class WD_Blacklist_Widget extends WD_Controller {
 		$response_code = wp_remote_retrieve_response_code( $result );
 		$body          = wp_remote_retrieve_body( $result );
 		$body          = json_decode( $body, true );
+
 		if ( $response_code == 412 ) {
 			//this mean disable
 			$this->status = self::STATUS_OFF;
@@ -97,20 +98,23 @@ class WD_Blacklist_Widget extends WD_Controller {
 			//enable for API
 			$result      = $this->wpmudev_call( $this->end_point, array(), array(
 				'method' => 'POST'
-			) );
+			), true );
 			$next_status = 'on';
 		} else {
 			$endpoint    = $this->end_point . '?domain=' . $this->domain;
 			$result      = $this->wpmudev_call( $endpoint, array(), array(
 				'method' => 'DELETE'
-			) );
+			), true );
 			$next_status = 'off';
 		}
+		$response_code = wp_remote_retrieve_response_code( $result );
+		$body          = wp_remote_retrieve_body( $result );
+		$body          = json_decode( $body, true );
 		$this->log( var_export( $result, true ), self::ERROR_LEVEL_DEBUG, 'blacklist' );
-		if ( is_wp_error( $result ) ) {
+		if ( $response_code !== 200 ) {
 			wp_send_json( array(
 				'status' => 0,
-				'error'  => $result->get_error_message()
+				'error'  => $body['message']
 			) );
 		} else {
 			//maybe give it some time

@@ -84,14 +84,14 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 			//init htaccess
 			$include_path = ABSPATH . WPINC . '/';
 			if ( ! file_exists( $include_path . '.htaccess' ) ) {
-				if ( ! file_put_contents( $include_path . '.htaccess', '', LOCK_EX ) ) {
+				if ( ! @file_put_contents( $include_path . '.htaccess', '', LOCK_EX ) ) {
 					return new WP_Error( 'cant_write', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $include_path . '.htaccess' ) );
 				}
 			}
 
 			$content_path = WP_CONTENT_DIR . '/';
 			if ( ! file_exists( $content_path . '.htaccess' ) ) {
-				if ( ! file_put_contents( $content_path . '.htaccess', '', LOCK_EX ) ) {
+				if ( ! @file_put_contents( $content_path . '.htaccess', '', LOCK_EX ) ) {
 					return new WP_Error( 'cant_write', sprintf( __( "Can't write to the file %s", wp_defender()->domain ), $content_path . '.htaccess' ) );
 				}
 			}
@@ -101,7 +101,7 @@ class WD_Protect_Core_Dir extends WD_Hardener_Abstract {
 		$defender_dir = $upload_dirs['basedir'];
 
 		if ( ! file_exists( $defender_dir . '/defender-access-test.php' ) ) {
-			file_put_contents( $defender_dir . '/defender-access-test.php', '', LOCK_EX );
+			@file_put_contents( $defender_dir . '/defender-access-test.php', '', LOCK_EX );
 		}
 
 		return true;

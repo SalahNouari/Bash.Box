@@ -504,7 +504,7 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
       @media only screen and (max-width: 480px) {
         .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group {
           text-align: center; }
-          .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group label, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group input, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group select, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group .select-container {
+          .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group label, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group input, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group select, .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group .select-container {	  	 	   	 		 		 				
             display: block; }
           .wp-defender .wd-settings .setup-scan #setup-scan-form .wd-well .group .select-container {
             width: 80%;
@@ -939,8 +939,19 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
       color: #1ABC9C; }
   .wp-defender .select-list-container ul li {
     width: 100%; }
-  .wp-defender .wd-issue-detail pre span {
-    font-size: 12px; }
+  .wp-defender .wd-issue-detail pre {
+    padding: 0;
+    border: none; }
+    .wp-defender .wd-issue-detail pre span {
+      font-size: 12px;
+      -ms-word-break: break-all;
+      word-break: break-all;
+      /* Non standard for webkit */
+      word-break: break-word;
+      -webkit-hyphens: auto;
+      -moz-hyphens: auto;
+      -ms-hyphens: auto;
+      hyphens: auto; }
   .wp-defender .wd-issue-detail ins {
     background: #e6ffe6;
     text-decoration: none; }
@@ -1011,9 +1022,6 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
     font-style: italic; }
   .wp-defender .hljs-strong {
     font-weight: bold; }
-  .wp-defender pre {
-    padding: 0;
-    border: 0; }
   .wp-defender .core-integrity-detail .fixed {
     width: 30%;
     float: right;
@@ -1024,11 +1032,12 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
     right: 1%;
     width: 14.33%; }
   .wp-defender .wd-highlight {
-    background: #A2CBF6;
+    background: #E8F2FC;
     cursor: pointer;
-    border: solid 1px transparent; }
+    border: solid 1px transparent;
+    margin: 5px 0; }
   .wp-defender .wd-highlight:hover {
-    border: solid 1px #718EAC; }
+    background: #B3C8E0; }
 
 .wd-confirm-dialog {
   position: fixed;
@@ -1094,4 +1103,4 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
 /*# sourceMappingURL=wp-defender.css.map */
 
 
-/* 133620-1458147060-au */
+/* 133620-1458797650-au */
