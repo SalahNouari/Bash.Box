@@ -6,7 +6,3 @@
 
 ################################################
 ## Plugins
-[submodule "daux"]
-	path = daux
-	url = git@github.com:lakesareadesign/daux.git
-
