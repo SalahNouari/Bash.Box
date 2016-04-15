@@ -10,7 +10,7 @@ class FileEditorTest extends Hardener_Test {
 		$config      = file( $config_path );
 		//disable all the file editor
 		$test    = new WD_Plugin_Theme_Editor();
-		$pattern = "/^define\(\s*(\'|\")DISALLOW_FILE_EDIT(\'|\"),\s*.*\s*\)/";	  	 	   	 		 		 				
+		$pattern = "/^define\(\s*(\'|\")DISALLOW_FILE_EDIT(\'|\"),\s*.*\s*\)/";
 		foreach ( $config as $key => $line ) {
 			$line = trim( $line );
 			if ( preg_match( $pattern, $line ) ) {

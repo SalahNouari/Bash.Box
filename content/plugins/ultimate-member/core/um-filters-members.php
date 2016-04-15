@@ -16,14 +16,14 @@
 		extract( $args );
 
 		$query = $ultimatemember->permalinks->get_query_array();
-		
+
 		foreach( $ultimatemember->members->core_search_fields as $key ) {
-			
+
 			if ( isset( $query[$key] ) && ! empty( $query[$key]  ) ) {
 				$query_args['search']         = '*' . trim($query[$key]) . '*';
 			}
 		}
-		
+
 		return $query_args;
 	}
 
@@ -65,6 +65,12 @@
 		if ( isset( $_REQUEST['um_search'] ) ) {
 
 			$query = $ultimatemember->permalinks->get_query_array();
+
+			// if searching
+			if( isset( $query['search'] ) ) {
+				$query_args['search'] = '*' . um_filter_search( $query['search'] ) . '*';
+				unset( $query['search'] );
+			}
 
 			if ( $query && is_array( $query ) ) {
 				foreach( $query as $field => $value ) {
@@ -147,7 +153,7 @@
 					'value' => '',
 					'compare' => '!='
 				)
-				
+
 			);
 		}
 
@@ -227,6 +233,42 @@
 			$query_args['meta_key'] = '_um_last_login';
 		}
 		return $query_args;
+	}
+
+	/***
+	***	@sorting random
+	***/
+	add_filter('pre_user_query','um_modify_sortby_randomly');
+	function um_modify_sortby_randomly( $query ){
+
+		if( um_is_session_started() === FALSE ){
+				session_start();
+		}
+		
+		// Reset seed on load of initial 
+        if( ! isset( $_REQUEST['members_page'] ) || $_REQUEST['members_page'] == 0 ||  $_REQUEST['members_page'] == 1 ) {
+            if( isset( $_SESSION['seed'] ) ) {
+                unset( $_SESSION['seed'] );
+            }
+        }
+        
+        // Get seed from session variable if it exists
+        $seed = false;
+        if( isset( $_SESSION['seed'] ) ) {
+            $seed = $_SESSION['seed'];
+        }
+        
+        // Set new seed if none exists
+        if ( ! $seed ) {
+            $seed = rand();
+            $_SESSION['seed'] = $seed;
+        }
+
+ 		if($query->query_vars["orderby"] == 'random') {
+	       $query->query_orderby = 'ORDER by RAND('. $seed.')';
+	   	}
+
+		return $query;
 	}
 
 	/***

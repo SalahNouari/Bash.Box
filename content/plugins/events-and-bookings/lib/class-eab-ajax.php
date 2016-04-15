@@ -196,7 +196,7 @@ class Eab_Ajax {
 		$email = $data['user'];
 		$status = $data['status'];
 		$post_id = (int)$data['post_id'];
-		$allowed = array(Eab_EventModel::BOOKING_YES, Eab_EventModel::BOOKING_NO, Eab_EventModel::BOOKING_MAYBE);
+		$allowed = array(Eab_EventModel::BOOKING_YES, Eab_EventModel::BOOKING_NO, Eab_EventModel::BOOKING_MAYBE);	     	 	 			 		 	
 
 		$post = get_post($post_id);
 		if (is_email($email) && $post_id && in_array($status, $allowed)) {

@@ -96,7 +96,7 @@ class Wdqs_WidgetStatus extends WP_Widget {
 		$html .= '<label for="' . $this->get_field_id('link_avatars') . '">' . __('Link author avatars to their author/profile pages', 'wdqs') . '</label>';
 
 		$html .= '<br />';
-		$html .= '<input type="checkbox" name="' . $this->get_field_name('external_avatars_link') . '" id="' . $this->get_field_id('external_avatars_link') . '" value="1" ' . $external_avatars_link_checked . '"/>&nbsp;';
+		$html .= '<input type="checkbox" name="' . $this->get_field_name('external_avatars_link') . '" id="' . $this->get_field_id('external_avatars_link') . '" value="1" ' . $external_avatars_link_checked . '"/>&nbsp;';	     	 	 			  		 
 		$html .= '<label for="' . $this->get_field_id('external_avatars_link') . '">' . __('Allow external author links', 'wdqs') . '</label>';
 
 		$html .= '<br />';

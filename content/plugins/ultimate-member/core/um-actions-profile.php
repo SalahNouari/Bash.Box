@@ -120,7 +120,8 @@
 		do_action('um_user_after_updating_profile', $to_update );
 
 		if ( !isset( $args['is_signup'] ) ) {
-			exit( wp_redirect( um_edit_my_profile_cancel_uri() ) );
+			$url = $ultimatemember->permalinks->profile_url();
+			exit( wp_redirect( um_edit_my_profile_cancel_uri( $url ) ) );
 		}
 
 	}
@@ -379,10 +380,23 @@
 					<?php if ( $ultimatemember->fields->viewing == true && um_user('description') && $args['show_bio'] ) { ?>
 
 					<div class="um-meta-text">
-						<?php if( um_get_option( 'profile_show_html_bio' ) ) : ?>
-							<?php echo um_clickable_links( strip_tags( um_filtered_value('description'), '<p><a><img><br><strong><b><em><i><quote><sub><sup>') ); ?>
+						<?php 
+						$allowed_tags = array(
+							    'a' => array(
+							        'href' => array(),
+							        'title' => array()
+							    ),
+							    'br' => array(),
+							    'em' => array(),
+							    'strong' => array(),
+						);
+						
+						$description = get_user_meta( um_user('ID') , 'description', true);
+						
+						if( um_get_option( 'profile_show_html_bio' ) ) : ?>
+							<?php echo make_clickable( wp_kses( $description, $allowed_tags) ); ?>
 						<?php else : ?>
-							<?php echo um_clickable_links( wp_strip_all_tags( um_filtered_value('description') ) ); ?>
+							<?php echo esc_html( $description ); ?>
 						<?php endif; ?>
 					</div>
 
@@ -406,6 +420,12 @@
 					<?php do_action('um_after_header_meta', um_user('ID'), $args ); ?>
 
 				</div><div class="um-clear"></div>
+   
+		        <?php
+		        if ( $ultimatemember->fields->is_error( 'profile_photo' ) ) {
+		            echo $ultimatemember->fields->field_error( $ultimatemember->fields->show_error('profile_photo'), 'force_show' );
+		        }
+		        ?>
 
 				<?php do_action('um_after_header_info', um_user('ID'), $args); ?>
 

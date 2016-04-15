@@ -10,7 +10,7 @@ class MM_BroadCast_Messages
     public function __construct()
     {
         if (current_user_can('manage_options')) {
-            add_action('mm_compose_form_after_send_to', array(&$this, 'broadcast_checkbox'));
+            add_action('mm_compose_form_after_send_to', array(&$this, 'broadcast_checkbox'));									     						
             add_action('mm_compose_form_end', array(&$this, 'broadcast_script'));
             add_filter('mm_before_send_message', array(&$this, 'broadcast_ids'));
         }

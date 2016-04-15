@@ -116,6 +116,12 @@ class UM_User {
 	}
 
 	function get_cached_data( $user_id ) {
+
+		$disallow_cache = get_option('um_profile_object_cache_stop');
+		if( $disallow_cache ){
+			return '';
+		}
+
 		if ( is_numeric( $user_id ) && $user_id > 0 ) {
 			$find_user = get_option("um_cache_userdata_{$user_id}");
 			if ( $find_user ) {
@@ -829,6 +835,8 @@ class UM_User {
 
 		$args['ID'] = $this->id;
 
+		$changes = apply_filters('um_before_update_profile', $changes, $this->id);
+
 		// save or update profile meta
 		foreach( $changes as $key => $value ) {
 
@@ -891,10 +899,20 @@ class UM_User {
 		{
 			return $matches[0];
 		}
-
+		
 		$ids = get_users(array( 'fields' => 'ID', 'meta_key' => 'full_name','meta_value' => $value ,'meta_compare' => '=') );
-		if ( isset( $ids[0] ) )
+		if ( isset( $ids[0] ) && ! empty( $ids[0] ) ){
 			return $ids[0];
+		}
+
+		$value = str_replace(".", "_", $value );
+		$value = str_replace(" ", "", $value );
+		
+		$user = get_user_by( 'login', $value );
+		if ( isset( $user->ID ) &&  $user->ID > 0 ){
+			return $user->ID;
+		}
+
 		return false;
 	}
 
@@ -925,7 +943,7 @@ class UM_User {
 	 *
 	 */
 	function user_exists_by_id( $user_id ) {
-		$aux = get_userdata( $user_id );
+		$aux = get_userdata( intval( $user_id ) );
 		if($aux==false){
 			return false;
 		} else {

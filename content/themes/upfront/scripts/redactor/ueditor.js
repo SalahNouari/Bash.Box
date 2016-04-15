@@ -828,7 +828,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: ["image", "embed"],
+            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed"] : ["image"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -964,11 +964,28 @@ var Ueditor = function($el, options) {
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
+
+
+            /**
+             * Allow user to exit lists on double enter
+             */
+            if( this.utils.isEmpty( this.keydown.block.innerText ) ){
+                $(this.selection.getBlock()).remove();
+                var node;
+                if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
+                    node = $list.next("p");
+                }else{
+                    node = $(this.opts.emptyHtml);
+                    $list.after(node);
+                }
+                this.caret.setStart(node);
+            }
         }
         // Default
         else {        
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
+
     };
 
 };
@@ -1594,6 +1611,11 @@ var InsertManagerInserts = Backbone.View.extend({
     className: "ueditor-post-insert-manager",
     $block: false,
     initialize: function(options){
+		
+        if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
+					options.inserts = _.without(options.inserts, "embed");
+        }
+		
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;

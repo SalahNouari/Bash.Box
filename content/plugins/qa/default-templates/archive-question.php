@@ -14,7 +14,7 @@
 <?php
 global $wp_query;
 
-single_cat_title('Category: ');
+single_cat_title('Category: ');	     	 	 		  		 	
 
 ?>
 			<div id="question-list">

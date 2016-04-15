@@ -152,7 +152,7 @@ class Google_Service_Audit_Activities_Resource extends Google_Service_Resource
    */
   public function listActivities($customerId, $applicationId, $optParams = array())
   {
-    $params = array('customerId' => $customerId, 'applicationId' => $applicationId);
+    $params = array('customerId' => $customerId, 'applicationId' => $applicationId);		   		 	  		  	 	 	
     $params = array_merge($params, $optParams);
     return $this->call('list', array($params), "Google_Service_Audit_Activities");
   }
